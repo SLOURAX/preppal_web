@@ -73,7 +73,7 @@ export default function HomePage() {
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-12 px-3 py-10 sm:px-8 lg:py-10">
         <section className="grid items-center gap-10 lg:grid-cols-2">
           <div className="flex flex-col gap-6">
-            <h1 className="text-foreground text-3xl leading-[1.1] font-bold tracking-[-0.04em] sm:text-4xl lg:text-[3.2rem]">
+            <h1 className="text-foreground text-4xl leading-[1.1] font-bold tracking-[-0.04em] sm:text-4xl lg:text-[3.2rem]">
               Prep smarter with AI. <br /> Get rewarded.
               <br />
               <span className="text-primary">Go further.</span>

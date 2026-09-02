@@ -2,9 +2,11 @@
 
 import { LogIn, UserPlus, type LucideIcon } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 import { cn } from "@/lib/utils";
+
+import { getSafeReturnTo, withReturnTo } from "../utils";
 
 interface AuthTab {
   readonly href: string;
@@ -19,6 +21,9 @@ const tabs: readonly AuthTab[] = [
 
 export function AuthToggle() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const returnTo = getSafeReturnTo(`?${searchParams.toString()}`);
+
   if (pathname === "/forgot-password") return null;
 
   return (
@@ -38,7 +43,7 @@ export function AuthToggle() {
                 ? "bg-surface text-primary-strong shadow-sm"
                 : "text-muted-foreground hover:text-foreground",
             )}
-            href={tab.href}
+            href={withReturnTo(tab.href, returnTo)}
             key={tab.href}
           >
             <Icon aria-hidden="true" className="size-4" />

@@ -66,7 +66,8 @@ export function NavBar() {
 
   return (
     <>
-      <header className="bg-surface/75 sticky top-0 z-50 w-full shadow-[0_1px_18px_rgb(39_24_93/0.04)] backdrop-blur-xl">
+      <header className="sticky top-0 z-50 w-full shadow-[0_1px_18px_rgb(39_24_93/0.04)]">
+        <div className="bg-surface/75 absolute inset-0 -z-10 backdrop-blur-xl" />
         <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link
             className="flex items-center gap-2.5"
@@ -115,9 +116,9 @@ export function NavBar() {
                   <span className="font-bold text-amber-400">ℙ</span>
                   <span className="text-xs font-bold">{preppalBalance}</span>
                 </div>
-                
+
                 <Notifications />
-                
+
                 <div className="relative" ref={dropdownRef}>
                   <button
                     className="focus-visible:outline-primary flex items-center gap-2 rounded-full focus-visible:outline-2"
@@ -254,7 +255,7 @@ export function NavBar() {
                     href={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={cn(
-                      "flex items-center gap-3 rounded-xl px-4 py-3 font-medium text-[.85rem] transition-colors",
+                      "flex items-center gap-3 rounded-xl px-4 py-3 text-[.85rem] font-medium transition-colors",
                       isActive
                         ? "bg-primary/10 text-primary"
                         : "text-muted-foreground hover:bg-surface-subtle hover:text-foreground",

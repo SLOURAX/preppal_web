@@ -9,8 +9,7 @@ export function AppProviders({ children }: PropsWithChildren) {
   return (
     <ThemeProvider
       attribute="class"
-      defaultTheme="system"
-      enableSystem
+      defaultTheme="light"
       disableTransitionOnChange
     >
       <QueryProvider>{children}</QueryProvider>

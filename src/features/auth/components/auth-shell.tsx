@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from "react";
+import { Suspense, type PropsWithChildren } from "react";
 
 import { AuthToggle } from "./auth-toggle";
 
@@ -10,7 +10,11 @@ export function AuthShell({ children }: PropsWithChildren) {
         aria-label="Preppal account access"
       >
         <div className="p-5 sm:p-7">
-          <AuthToggle />
+          <Suspense
+            fallback={<div className="bg-surface-subtle h-11 rounded-xl" />}
+          >
+            <AuthToggle />
+          </Suspense>
           <div className="mt-6">{children}</div>
         </div>
       </section>

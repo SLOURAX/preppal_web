@@ -14,7 +14,10 @@ export default function GamesPage() {
         skills while having fun and competing with others.
       </p>
       <div className="mt-8">
-        <button className="bg-primary/50 text-primary-foreground/90 cursor-not-allowed rounded-full px-6 py-2.5 text-sm font-bold shadow-sm" disabled>
+        <button
+          className="bg-primary/50 text-primary-foreground/90 cursor-not-allowed rounded-full px-6 py-2.5 text-sm font-bold shadow-sm"
+          disabled
+        >
           Coming Soon
         </button>
       </div>

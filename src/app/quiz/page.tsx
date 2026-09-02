@@ -1,18 +1,33 @@
-import { BrainCircuit } from "lucide-react";
+import {
+  EXAM_CHOICES,
+  QuizEntryScreen,
+  SUBJECT_CHOICES,
+  type QuizPath,
+} from "@/features/quiz";
 
-export default function QuizPage() {
+interface QuizPageProps {
+  readonly searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+export default async function QuizPage({ searchParams }: QuizPageProps) {
+  const params = await searchParams;
+  const requestedPath = typeof params.path === "string" ? params.path : "exam";
+  const initialPath: QuizPath =
+    requestedPath === "subject" ? "subject" : "exam";
+  const requestedChoice =
+    typeof params.choice === "string" ? params.choice : "";
+  const availableChoices =
+    initialPath === "exam" ? EXAM_CHOICES : SUBJECT_CHOICES;
+  const initialSelection = availableChoices.some(
+    (choice) => choice.value === requestedChoice,
+  )
+    ? requestedChoice
+    : "";
+
   return (
-    <main className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 py-12 text-center">
-      <div className="bg-primary/10 mb-4 rounded-full p-4">
-        <BrainCircuit className="text-primary h-9 w-9" />
-      </div>
-      <h1 className="text-foreground mb-2 text-xl font-bold tracking-tight">
-        Quiz
-      </h1>
-      <p className="text-muted-foreground max-w-md text-sm">
-        Test your knowledge, build confidence, and earn Preppal points. Take
-        daily quizzes across a range of subjects and topics.
-      </p>
-    </main>
+    <QuizEntryScreen
+      initialPath={initialPath}
+      initialSelection={initialSelection}
+    />
   );
 }

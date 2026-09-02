@@ -11,6 +11,7 @@ import {
   AuthHeader,
   CheckboxField,
   FormField,
+  getSafeReturnTo,
   MEMBER_BENEFITS,
   PasswordField,
 } from "@/features/auth";
@@ -23,7 +24,7 @@ export default function LoginPage() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     login();
-    router.push("/");
+    router.push(getSafeReturnTo(window.location.search));
   };
 
   return (

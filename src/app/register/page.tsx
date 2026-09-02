@@ -19,6 +19,7 @@ import {
   COUNTRIES,
   EXAM_GOALS,
   FormField,
+  getSafeReturnTo,
   LEARNING_LEVELS,
   PasswordField,
   SelectField,
@@ -32,7 +33,7 @@ export default function RegisterPage() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     login();
-    router.push("/");
+    router.push(getSafeReturnTo(window.location.search));
   };
 
   return (
