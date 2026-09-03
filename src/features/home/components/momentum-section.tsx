@@ -48,7 +48,7 @@ export function MomentumSection() {
     <section>
       <div className="mx-auto max-w-2xl text-center">
         <h2 className="text-foreground mt-4 text-3xl font-bold tracking-[-0.035em]">
-          Small wins. Serious progress.
+          Small wins. Consistent progress.
         </h2>
         <p className="text-muted-foreground mt-3 text-sm leading-6">
           Check in, keep your streak alive, and turn consistent practice into

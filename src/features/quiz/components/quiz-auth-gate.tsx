@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, LockKeyhole, LogIn, UserPlus, X } from "lucide-react";
+import { LockKeyhole, LogIn, UserPlus, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
 
@@ -64,8 +64,8 @@ export function QuizAuthGate({
           <span className="text-foreground font-semibold">
             {selectionLabel}
           </span>{" "}
-          selection is saved. Sign in or create a learner account to choose
-          difficulty, timing, and begin the quiz.
+          selection is saved. Sign in or create a learner account to continue
+          setting up your practice session.
         </p>
 
         <div className="mt-6 grid gap-3 sm:grid-cols-2">

@@ -24,6 +24,7 @@ const PRODUCT_LINKS: readonly FooterLink[] = [
   { href: "/games", label: "Learning games" },
   { href: "/leaderboard", label: "Leaderboard" },
   { href: "/rewards", label: "Rewards" },
+  { href: "/pricing", label: "Pricing" },
 ];
 
 const ACCOUNT_LINKS: readonly FooterLink[] = [

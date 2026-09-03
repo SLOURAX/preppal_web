@@ -17,6 +17,8 @@ import {
   AiQuizSection,
   MomentumSection,
   ReferralSection,
+  LiveLeaderboardSection,
+  FaqSection,
 } from "@/features/home";
 
 interface Capability {
@@ -70,7 +72,7 @@ const floatingStats = [
 export default function HomePage() {
   return (
     <AppShell>
-      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-12 px-3 py-10 sm:px-8 lg:py-10">
+      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-12 px-3 py-10 sm:px-5 lg:py-10">
         <section className="grid items-center gap-10 lg:grid-cols-2">
           <div className="flex flex-col gap-6">
             <h1 className="text-foreground text-4xl leading-[1.1] font-bold tracking-[-0.04em] sm:text-4xl lg:text-[3.2rem]">
@@ -171,7 +173,7 @@ export default function HomePage() {
 
         <section
           aria-label="Platform capabilities"
-          className="grid gap-4 md:grid-cols-3"
+          className="bg-grid-pattern grid gap-4 rounded-[2rem] p-4 sm:p-6 md:grid-cols-3"
         >
           {capabilities.map((capability) => (
             <article
@@ -195,7 +197,9 @@ export default function HomePage() {
 
         <AiQuizSection />
         <MomentumSection />
+        <LiveLeaderboardSection />
         <ReferralSection />
+        <FaqSection />
       </main>
     </AppShell>
   );

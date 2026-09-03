@@ -1,19 +1,12 @@
 "use client";
 
 import {
-  BrainCircuit,
   BadgeCent,
   ChevronDown,
-  Crown,
-  Gamepad2,
-  Gift,
-  Home,
   LogOut,
-  Newspaper,
   User,
   WalletCards,
   X,
-  type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -24,21 +17,8 @@ import { useAuthStore } from "@/store";
 
 import { ThemeToggle } from "./theme-toggle";
 import { Notifications } from "./notifications";
-
-interface NavigationItem {
-  readonly href: string;
-  readonly label: string;
-  readonly icon?: LucideIcon;
-}
-
-const NAVIGATION: readonly NavigationItem[] = [
-  { href: "/", label: "Home", icon: Home },
-  { href: "/news", label: "News", icon: Newspaper },
-  { href: "/leaderboard", label: "Leaderboard", icon: Crown },
-  { href: "/quiz", label: "Quiz", icon: BrainCircuit },
-  { href: "/games", label: "Games", icon: Gamepad2 },
-  { href: "/rewards", label: "Rewards", icon: Gift },
-];
+import { DesktopNavigation } from "./desktop-navigation";
+import { NAVIGATION } from "./navigation.constants";
 
 export function NavBar() {
   const pathname = usePathname();
@@ -67,7 +47,7 @@ export function NavBar() {
   return (
     <>
       <header className="sticky top-0 z-50 w-full shadow-[0_1px_18px_rgb(39_24_93/0.04)]">
-        <div className="bg-surface/75 absolute inset-0 -z-10 backdrop-blur-xl" />
+        <div className="bg-surface/90 absolute inset-0 -z-10 backdrop-blur-xl" />
         <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link
             className="flex items-center gap-2.5"
@@ -81,32 +61,6 @@ export function NavBar() {
               Preppal
             </span>
           </Link>
-
-          <nav
-            aria-label="Primary navigation"
-            className="hidden items-center gap-1 md:flex"
-          >
-            {NAVIGATION.map((item: NavigationItem) => {
-              const isActive = pathname === item.href;
-              const Icon = item.icon;
-              return (
-                <Link
-                  aria-current={isActive ? "page" : undefined}
-                  className={cn(
-                    "flex items-center gap-2 rounded-full px-4 py-2 text-[.83rem] font-medium transition-colors",
-                    isActive
-                      ? "bg-surface-subtle text-foreground"
-                      : "text-muted-foreground hover:bg-surface-subtle/60 hover:text-foreground",
-                  )}
-                  href={item.href}
-                  key={item.href}
-                >
-                  {Icon ? <Icon className="size-4" /> : null}
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
 
           <div className="hidden items-center gap-2.5 sm:gap-4 md:flex">
             <ThemeToggle />
@@ -224,6 +178,9 @@ export function NavBar() {
               </svg>
             </button>
           </div>
+        </div>
+        <div className="bg-surface-subtle/65 hidden shadow-[inset_0_10px_24px_rgb(67_44_145/0.025)] md:block">
+          <DesktopNavigation pathname={pathname} />
         </div>
       </header>
 

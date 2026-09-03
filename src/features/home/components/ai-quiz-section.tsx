@@ -34,7 +34,8 @@ export function AiQuizSection() {
     <section className="grid items-center gap-8 lg:grid-cols-[0.85fr_1.15fr]">
       <div>
         <h2 className="text-foreground mt-4 text-3xl font-bold tracking-[-0.035em]">
-          Get help at the moment you need it.
+          Get help at the moment <br />
+          you need it.
         </h2>
         <p className="text-muted-foreground mt-4 max-w-lg text-sm leading-6">
           Ask Preppal AI for guidance for practice questions, and understand the

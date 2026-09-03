@@ -2,7 +2,7 @@ import { Gamepad2 } from "lucide-react";
 
 export default function GamesPage() {
   return (
-    <main className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 py-12 text-center">
+    <main className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 py-12 text-center md:min-h-[calc(100vh-7rem)]">
       <div className="bg-primary/10 mb-4 rounded-full p-4">
         <Gamepad2 className="text-primary h-9 w-9" />
       </div>

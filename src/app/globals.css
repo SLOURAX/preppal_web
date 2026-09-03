@@ -156,4 +156,80 @@ a {
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
+
+  .pricing-card-free {
+    background-color: var(--surface);
+    background-image:
+      radial-gradient(
+        circle at 85% 8%,
+        color-mix(in srgb, var(--primary) 6%, transparent),
+        transparent 11rem
+      ),
+      repeating-linear-gradient(
+        135deg,
+        transparent 0,
+        transparent 13px,
+        color-mix(in srgb, var(--primary) 3%, transparent) 13px,
+        color-mix(in srgb, var(--primary) 3%, transparent) 14px,
+        transparent 14px,
+        transparent 28px
+      );
+  }
+
+  .pricing-card-monthly {
+    background-color: var(--primary);
+    background-image:
+      radial-gradient(
+        circle at 82% 6%,
+        rgb(255 255 255 / 0.1),
+        transparent 10rem
+      ),
+      radial-gradient(circle at 8% 95%, rgb(20 9 76 / 0.14), transparent 12rem),
+      repeating-linear-gradient(
+        120deg,
+        transparent 0,
+        transparent 19px,
+        rgb(255 255 255 / 0.025) 19px,
+        rgb(255 255 255 / 0.025) 20px
+      ),
+      linear-gradient(145deg, var(--primary-strong), var(--primary));
+  }
+
+  .pricing-card-annual {
+    background-color: var(--surface);
+    background-image:
+      radial-gradient(
+        circle at 16% 4%,
+        color-mix(in srgb, var(--success) 5%, transparent),
+        transparent 10rem
+      ),
+      linear-gradient(
+        to right,
+        color-mix(in srgb, var(--primary) 3%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--primary) 3%, transparent) 1px,
+        transparent 1px
+      );
+    background-size:
+      auto,
+      24px 24px,
+      24px 24px;
+  }
+  .bg-grid-pattern {
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in srgb, var(--primary) 3%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--primary) 3%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 24px 24px;
+  }
 }

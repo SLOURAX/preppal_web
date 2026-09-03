@@ -1,3 +1,5 @@
-export { AiQuizSection } from "./ai-quiz-section";
-export { MomentumSection } from "./momentum-section";
-export { ReferralSection } from "./referral-section";
+export * from "./ai-quiz-section";
+export * from "./momentum-section";
+export * from "./referral-section";
+export * from "./live-leaderboard-section";
+export * from "./faq-section";
