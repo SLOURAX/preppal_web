@@ -1,6 +1,13 @@
 "use client";
 
-import { Check, Copy, Gift, Share2, UserPlus, Users } from "lucide-react";
+import {
+  SaxCopyBulk,
+  SaxCopySuccessBulk,
+  SaxGiftBulk,
+  SaxPeopleBulk,
+  SaxProfileAddBulk,
+  SaxShareBulk,
+} from "@meysam213/iconsax-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -85,14 +92,14 @@ export function ReferralSection() {
                   type="button"
                 >
                   {hasCopied ? (
-                    <Check className="size-4" />
+                    <SaxCopySuccessBulk className="size-4" />
                   ) : (
-                    <Copy className="size-4" />
+                    <SaxCopyBulk className="size-4" />
                   )}
                 </button>
               </div>
               <Button className="mt-3 gap-2" onClick={shareReferralLink}>
-                <Share2 className="size-4" /> Invite friends
+                <SaxShareBulk className="size-4" /> Invite friends
               </Button>
             </div>
           ) : (
@@ -100,7 +107,8 @@ export function ReferralSection() {
               className="bg-primary text-primary-foreground hover:bg-primary-strong mt-7 inline-flex min-h-10 items-center gap-2 rounded-full px-5 text-sm font-semibold transition-colors"
               href="/register"
             >
-              <UserPlus className="size-4" /> Create an account to invite
+              <SaxProfileAddBulk className="size-4" /> Create an account to
+              invite
             </Link>
           )}
         </div>
@@ -114,7 +122,7 @@ export function ReferralSection() {
               </p>
             </div>
             <span className="bg-primary text-primary-foreground grid size-12 place-items-center rounded-2xl">
-              <Users className="size-6" />
+              <SaxPeopleBulk className="size-6" />
             </span>
           </div>
           <div className="bg-surface-subtle mt-5 h-2 overflow-hidden rounded-full">
@@ -131,7 +139,8 @@ export function ReferralSection() {
                   {milestone.friends === 1 ? "" : "s"}
                 </span>
                 <span className="text-foreground flex items-center gap-1.5 text-sm font-semibold">
-                  <Gift className="text-primary size-4" /> {milestone.reward}
+                  <SaxGiftBulk className="text-primary size-4" />{" "}
+                  {milestone.reward}
                 </span>
               </li>
             ))}

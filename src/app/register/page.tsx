@@ -24,6 +24,7 @@ import {
   PasswordField,
   SelectField,
   GoogleAuthButton,
+  AppleAuthButton,
   AuthDivider,
 } from "@/features/auth";
 import { useAuthStore } from "@/store";
@@ -38,6 +39,11 @@ export default function RegisterPage() {
     router.push(getSafeReturnTo(window.location.search));
   };
 
+  const handleSocialLogin = () => {
+    login();
+    router.push(getSafeReturnTo(window.location.search));
+  };
+
   return (
     <>
       <AuthHeader
@@ -45,7 +51,14 @@ export default function RegisterPage() {
         title="Create your learner profile"
       />
 
-      <form className="space-y-4" onSubmit={handleSubmit}>
+      <div className="mt-8 mb-6 grid grid-cols-2 gap-3">
+        <GoogleAuthButton text="Google" onClick={handleSocialLogin} />
+        <AppleAuthButton text="Apple" onClick={handleSocialLogin} />
+      </div>
+
+      <AuthDivider />
+
+      <form className="space-y-4 mt-6" onSubmit={handleSubmit}>
         <div className="grid gap-3.5 sm:grid-cols-2">
           <FormField
             autoComplete="name"
@@ -136,14 +149,14 @@ export default function RegisterPage() {
               I agree to the{" "}
               <Link
                 className="text-primary-strong font-semibold hover:underline"
-                href="#"
+                href="terms"
               >
                 Terms of Service
               </Link>{" "}
               and{" "}
               <Link
                 className="text-primary-strong font-semibold hover:underline"
-                href="#"
+                href="privacy"
               >
                 Privacy Policy
               </Link>
@@ -156,17 +169,7 @@ export default function RegisterPage() {
         </Button>
       </form>
 
-      <AuthDivider />
 
-      <div className="mt-6 mb-6">
-        <GoogleAuthButton
-          text="Sign up with Google"
-          onClick={() => {
-            login();
-            router.push(getSafeReturnTo(window.location.search));
-          }}
-        />
-      </div>
     </>
   );
 }

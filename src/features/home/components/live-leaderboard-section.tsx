@@ -1,4 +1,11 @@
-import { Flame, Medal, Crown, TrendingUp, Trophy } from "lucide-react";
+import type { ComponentType, SVGProps } from "react";
+import {
+  SaxAwardBulk,
+  SaxChartSuccessBulk,
+  SaxCrown1Bulk,
+  SaxMedalStarBulk,
+  SaxRanking1Bulk,
+} from "@meysam213/iconsax-react";
 import Image from "next/image";
 
 import { cn } from "@/lib/utils";
@@ -19,7 +26,7 @@ const LEADERBOARD: readonly LeaderboardEntry[] = [
 ] as const;
 
 interface RankStyle {
-  readonly icon: typeof Crown;
+  readonly icon: ComponentType<SVGProps<SVGSVGElement>>;
   readonly label: string;
   readonly rankClass: string;
   readonly badgeClass: string;
@@ -29,7 +36,7 @@ interface RankStyle {
 
 const RANK_CONFIG: Record<1 | 2 | 3 | 4 | 5, RankStyle> = {
   1: {
-    icon: Crown,
+    icon: SaxCrown1Bulk,
     label: "Gold",
     rankClass: "text-amber-400 font-black text-base",
     badgeClass: "bg-amber-400/10 text-amber-300 border border-amber-400/20",
@@ -38,7 +45,7 @@ const RANK_CONFIG: Record<1 | 2 | 3 | 4 | 5, RankStyle> = {
     scoreClass: "text-amber-400",
   },
   2: {
-    icon: Trophy,
+    icon: SaxMedalStarBulk,
     label: "Silver",
     rankClass: "text-violet-400 font-black text-base",
     badgeClass: "bg-violet-400/10 text-violet-300 border border-violet-400/20",
@@ -47,7 +54,7 @@ const RANK_CONFIG: Record<1 | 2 | 3 | 4 | 5, RankStyle> = {
     scoreClass: "text-violet-400",
   },
   3: {
-    icon: Medal,
+    icon: SaxRanking1Bulk,
     label: "Bronze",
     rankClass: "text-rose-400 font-black text-base",
     badgeClass: "bg-rose-400/10 text-rose-300 border border-rose-400/20",
@@ -56,7 +63,7 @@ const RANK_CONFIG: Record<1 | 2 | 3 | 4 | 5, RankStyle> = {
     scoreClass: "text-rose-400",
   },
   4: {
-    icon: Flame,
+    icon: SaxRanking1Bulk,
     label: "",
     rankClass: "text-slate-500 font-bold",
     badgeClass: "",
@@ -64,7 +71,7 @@ const RANK_CONFIG: Record<1 | 2 | 3 | 4 | 5, RankStyle> = {
     scoreClass: "text-white",
   },
   5: {
-    icon: Flame,
+    icon: SaxRanking1Bulk,
     label: "",
     rankClass: "text-slate-500 font-bold",
     badgeClass: "",
@@ -186,7 +193,7 @@ export function LiveLeaderboardSection() {
                     </div>
 
                     <div className="flex items-center gap-1.5">
-                      <Flame className="size-3.5 text-orange-400" />
+                      <SaxAwardBulk className="size-3.5 text-orange-400" />
                       <span className="text-xs font-medium text-slate-300">
                         {entry.streak}d
                       </span>
@@ -226,7 +233,6 @@ export function LiveLeaderboardSection() {
           <div className="pointer-events-none absolute top-1/2 left-1/2 size-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-500/20 blur-[100px]" />
 
           <div className="relative aspect-square w-full max-w-sm lg:max-w-md xl:max-w-lg">
-            {/* ── Animated circuit connecting the icons ────────────── */}
             <svg
               className="pointer-events-none absolute inset-0 z-10 overflow-visible"
               viewBox="0 0 400 400"
@@ -250,7 +256,6 @@ export function LiveLeaderboardSection() {
                 </filter>
               </defs>
 
-              {/* Static faint track */}
               <path
                 d="M10,74 C150,20 280,40 396,120 C430,170 430,240 388,280 C320,360 220,420 124,384 C60,380 -40,200 10,74"
                 fill="none"
@@ -272,27 +277,25 @@ export function LiveLeaderboardSection() {
                 }}
               />
 
-              {/* Primary glowing dot */}
               <circle
                 r="5"
                 fill="rgba(196,181,253,0.95)"
                 filter="url(#glow-dot)"
               >
                 <animateMotion
-                  dur="3s"
+                  dur="6s"
                   repeatCount="indefinite"
                   path="M10,74 C150,20 280,40 396,120 C430,170 430,240 388,280 C320,360 220,420 124,384 C60,380 -40,200 10,74"
                 />
               </circle>
 
-              {/* Trailing dot (offset by half a cycle) */}
               <circle
                 r="3"
                 fill="rgba(251,191,36,0.80)"
                 filter="url(#glow-dot)"
               >
                 <animateMotion
-                  dur="3s"
+                  dur="6s"
                   begin="-1.5s"
                   repeatCount="indefinite"
                   path="M10,74 C150,20 280,40 396,120 C430,170 430,240 388,280 C320,360 220,420 124,384 C60,380 -40,200 10,74"
@@ -306,32 +309,30 @@ export function LiveLeaderboardSection() {
               `}</style>
             </svg>
 
-            {/* ── Floating glass icon orbs ─────────────────────────── */}
-            {/* Trophy — top-left */}
             <div className="absolute top-12 -left-4 z-20 rounded-2xl border border-white/10 bg-white/8 p-3.5 shadow-[0_0_30px_rgba(124,58,237,0.35)] backdrop-blur-xl sm:-left-8 sm:p-4">
-              <Trophy className="size-6 text-violet-300 sm:size-8" />
+              <SaxCrown1Bulk className="size-6 text-violet-300 sm:size-8" />
             </div>
 
-            {/* TrendingUp — top-right */}
+            {/* Progress accent — top-right */}
             <div className="absolute top-1/4 -right-4 z-20 rounded-xl border border-white/10 bg-white/8 p-2.5 shadow-[0_0_28px_rgba(99,102,241,0.3)] backdrop-blur-xl sm:-right-8 sm:p-3">
-              <TrendingUp className="size-5 text-indigo-300 sm:size-6" />
+              <SaxChartSuccessBulk className="size-5 text-indigo-300 sm:size-6" />
             </div>
 
-            {/* Flame — bottom-right */}
+            {/* Achievement accent — bottom-right */}
             <div className="absolute -right-2 bottom-1/4 z-20 rounded-2xl border border-white/10 bg-white/8 p-2.5 shadow-[0_0_24px_rgba(167,139,250,0.25)] backdrop-blur-xl sm:-right-6 sm:p-3">
-              <Flame className="size-5 text-violet-400 sm:size-6" />
+              <SaxAwardBulk className="size-5 text-violet-400 sm:size-6" />
             </div>
 
-            {/* Medal — bottom-center */}
+            {/* Medal accent — bottom-center */}
             <div className="absolute -bottom-2 left-1/4 z-20 rounded-full border border-white/10 bg-white/8 p-3 shadow-[0_0_36px_rgba(124,58,237,0.3)] backdrop-blur-xl sm:-bottom-6 sm:p-4">
-              <Medal className="size-6 text-violet-300 sm:size-8" />
+              <SaxMedalStarBulk className="size-6 text-violet-300 sm:size-8" />
             </div>
 
             <Image
               src="/mascot-leaderboard.png"
               alt="Preppal Mascot"
               fill
-              className="animate-[pulse_6s_ease-in-out_infinite] object-contain drop-shadow-2xl"
+              className="scale-[0.85] animate-[pulse_4s_ease-in-out_infinite] object-contain drop-shadow-2xl"
               priority
             />
           </div>

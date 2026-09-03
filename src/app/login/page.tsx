@@ -14,6 +14,7 @@ import {
   MEMBER_BENEFITS,
   PasswordField,
   GoogleAuthButton,
+  AppleAuthButton,
   AuthDivider,
 } from "@/features/auth";
 import { useAuthStore } from "@/store";
@@ -28,12 +29,30 @@ export default function LoginPage() {
     router.push(getSafeReturnTo(window.location.search));
   };
 
+  const handleSocialLogin = () => {
+    login();
+    router.push(getSafeReturnTo(window.location.search));
+  };
+
   return (
     <>
       <AuthHeader
         description="Continue learning, earning, and growing."
         title="Welcome back"
       />
+
+      <div className="mt-8 mb-6 grid grid-cols-2 gap-3">
+        <GoogleAuthButton 
+          text="Google" 
+          onClick={handleSocialLogin}
+        />
+        <AppleAuthButton 
+          text="Apple" 
+          onClick={handleSocialLogin}
+        />
+      </div>
+
+      <AuthDivider />
 
       <form className="space-y-4" onSubmit={handleSubmit}>
         <FormField
@@ -66,17 +85,7 @@ export default function LoginPage() {
         </Button>
       </form>
 
-      <AuthDivider />
 
-      <div className="mt-6 mb-6">
-        <GoogleAuthButton
-          text="Sign in with Google"
-          onClick={() => {
-            login();
-            router.push(getSafeReturnTo(window.location.search));
-          }}
-        />
-      </div>
 
       <AuthBenefits items={MEMBER_BENEFITS} />
     </>

@@ -17,10 +17,10 @@ const EXAMS = [
     description:
       "West African Examinations Council. Covering all core secondary school subjects.",
     subjects: ["Mathematics", "English", "Biology", "Government"],
-    color: "from-emerald-500/10 to-emerald-500/5 border-emerald-500/20",
-    iconColor: "text-emerald-600 bg-emerald-500/10",
+    color: "from-violet-500/10 to-violet-500/5 border-violet-500/20",
+    iconColor: "text-violet-600 bg-violet-500/10",
     badge: "6 subjects",
-    badgeColor: "bg-emerald-500/10 text-emerald-600",
+    badgeColor: "bg-violet-500/10 text-violet-600",
   },
   {
     name: "NECO",

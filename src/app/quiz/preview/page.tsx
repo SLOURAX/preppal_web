@@ -3,17 +3,16 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import {
-  ArrowLeft,
-  Clock,
-  FileQuestion,
-  ShieldCheck,
-  Zap,
-  Play,
-  BookOpen,
-  AlertCircle,
-  Book,
-  Sparkles,
-} from "lucide-react";
+  SaxArrowLeft2Bulk,
+  SaxBook1Bulk,
+  SaxClockBulk,
+  SaxDangerBulk,
+  SaxDocumentTextBulk,
+  SaxFlashCircle1Bulk,
+  SaxMagicStarBulk,
+  SaxPlayCircleBulk,
+  SaxShieldTickBulk,
+} from "@meysam213/iconsax-react";
 import { Button } from "@/components/ui";
 
 function QuizPreviewContent() {
@@ -28,16 +27,20 @@ function QuizPreviewContent() {
   const year = searchParams.get("year") || "2023";
 
   const EXAM_STATS = [
-    { icon: Book, label: "Exam", value: exam },
-    { icon: FileQuestion, label: "Questions", value: "40" },
+    { icon: SaxBook1Bulk, label: "Exam", value: exam },
+    { icon: SaxDocumentTextBulk, label: "Questions", value: "40" },
     {
-      icon: Zap,
+      icon: SaxFlashCircle1Bulk,
       label: "Mode",
       value: isUntimed ? "Practice Playground" : "Timed Simulation",
     },
-    { icon: Clock, label: "Time Limit", value: isUntimed ? "None" : "45 mins" },
-    { icon: BookOpen, label: "Year", value: year },
-    { icon: ShieldCheck, label: "Subject", value: subject },
+    {
+      icon: SaxClockBulk,
+      label: "Time Limit",
+      value: isUntimed ? "None" : "45 mins",
+    },
+    { icon: SaxBook1Bulk, label: "Year", value: year },
+    { icon: SaxShieldTickBulk, label: "Subject", value: subject },
   ];
 
   const INSTRUCTIONS = isUntimed
@@ -62,16 +65,20 @@ function QuizPreviewContent() {
       <header className="border-border bg-surface/80 sticky top-0 z-20 flex h-14 items-center border-b px-5 backdrop-blur-md sm:px-8">
         <button
           onClick={() => router.push("/quiz")}
-          className="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm font-medium transition-colors"
+          className="text-muted-foreground hover:text-primary flex items-center gap-2 text-sm font-semibold transition-colors"
         >
-          <ArrowLeft className="size-4" />
-          Back to setup
+          <SaxArrowLeft2Bulk className="size-5" />
+          Back
         </button>
+        <div className="flex-1"></div>
+        <span className="bg-primary/10 text-primary rounded-full px-3 py-1 text-[11px] font-bold">
+          Exam Preview
+        </span>
       </header>
 
-      <main className="mx-auto w-full max-w-2xl flex-1 px-5 py-10 sm:px-8">
-        <div className="mb-8 text-center">
-          <h1 className="text-foreground mt-4 text-3xl font-bold tracking-tight capitalize">
+      <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-6 sm:px-8 sm:py-8">
+        <div className="mb-5 text-center">
+          <h1 className="text-foreground mt-2 text-3xl font-bold tracking-tight capitalize sm:text-4xl">
             {exam} {subject}
           </h1>
           <p className="text-muted-foreground mt-2 text-sm">
@@ -80,28 +87,30 @@ function QuizPreviewContent() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 items-center justify-center gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {EXAM_STATS.map(({ icon: Icon, label, value }) => (
             <div
               key={label}
-              className="flex flex-col items-center gap-2 rounded-2xl p-4 text-center"
+              className="bg-surface-subtle flex items-center gap-3 rounded-2xl p-3 text-left"
             >
-              <div className="bg-primary/10 text-primary grid size-9 place-items-center rounded-xl">
+              <div className="bg-primary/10 text-primary grid size-9 shrink-0 place-items-center rounded-xl">
                 <Icon className="size-4" />
               </div>
-              <p className="text-muted-foreground text-[11px] font-medium tracking-wider uppercase">
-                {label}
-              </p>
-              <p className="text-foreground text-base font-bold capitalize">
-                {value}
-              </p>
+              <div className="min-w-0">
+                <p className="text-muted-foreground text-[10px] font-semibold tracking-wider uppercase">
+                  {label}
+                </p>
+                <p className="text-foreground mt-0.5 truncate text-sm font-bold capitalize">
+                  {value}
+                </p>
+              </div>
             </div>
           ))}
         </div>
 
-        <div className="surface-card mt-6 rounded-2xl p-6">
+        <div className="surface-card mt-5 rounded-3xl p-5 sm:p-6">
           <div className="mb-4 flex items-center gap-2">
-            <ShieldCheck className="text-primary size-5" />
+            <SaxShieldTickBulk className="text-primary size-6" />
             <h2 className="text-foreground font-semibold">Before you begin</h2>
           </div>
           <ul className="space-y-3">
@@ -120,7 +129,7 @@ function QuizPreviewContent() {
 
         {isUntimed ? (
           <div className="border-primary/20 bg-primary/5 mt-4 flex items-start gap-3 rounded-2xl border p-4">
-            <Sparkles className="text-primary mt-0.5 size-4 shrink-0" />
+            <SaxMagicStarBulk className="text-primary mt-0.5 size-5 shrink-0" />
             <p className="text-muted-foreground text-xs leading-relaxed">
               AI Assistance is enabled. If you get stuck, you can ask for hints
               or explanations directly on the question card to enhance your
@@ -129,7 +138,7 @@ function QuizPreviewContent() {
           </div>
         ) : (
           <div className="mt-4 flex items-start gap-3 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4">
-            <AlertCircle className="mt-0.5 size-4 shrink-0 text-amber-500" />
+            <SaxDangerBulk className="mt-0.5 size-5 shrink-0 text-amber-500" />
             <p className="text-muted-foreground text-xs leading-relaxed">
               Once the exam starts, the timer cannot be paused. Ensure you are
               in a quiet environment with a stable internet connection.
@@ -150,7 +159,7 @@ function QuizPreviewContent() {
             }
             className="flex items-center gap-2 px-8 text-sm font-semibold"
           >
-            <Play className="size-4" fill="currentColor" />
+            <SaxPlayCircleBulk className="size-5" />
             Start {isUntimed ? "Practice" : "Exam"}
           </Button>
         </div>

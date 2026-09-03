@@ -7,7 +7,6 @@ import {
   Pencil,
   Shield,
   Target,
-  UserRound,
 } from "lucide-react";
 import { useAuthStore } from "@/store";
 

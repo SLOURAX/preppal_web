@@ -1,8 +1,8 @@
 import {
   BadgeCent,
   BookOpen,
-  ChartNoAxesCombined,
   Flame,
+  ArrowUpRight,
   Target,
   Zap,
 } from "lucide-react";
@@ -72,14 +72,18 @@ export function OverviewTab() {
   return (
     <div className="space-y-6">
       {/* Welcome banner */}
-      <div className="from-primary/10 to-primary/5 border-primary/10 rounded-2xl border bg-gradient-to-br p-6">
-        <div className="flex items-center gap-4">
-          <div className="bg-primary text-primary-foreground grid size-14 shrink-0 place-items-center rounded-2xl text-xl font-black shadow-md">
+      <div className="from-primary/15 via-primary/5 to-surface relative overflow-hidden rounded-3xl bg-gradient-to-br p-6 sm:p-7">
+        <div className="bg-primary/10 pointer-events-none absolute -right-16 -bottom-24 size-64 rounded-full blur-3xl" />
+        <div className="relative flex items-center gap-4">
+          <div className="bg-primary text-primary-foreground shadow-primary/20 grid size-14 shrink-0 place-items-center rounded-2xl text-xl font-black shadow-lg">
             {userName.slice(0, 1).toUpperCase()}
           </div>
           <div>
-            <p className="text-muted-foreground text-sm">Welcome back 👋</p>
+            <p className="text-muted-foreground text-sm">Welcome back</p>
             <h2 className="text-foreground text-2xl font-bold">{userName}</h2>
+            <p className="text-muted-foreground mt-1 text-xs">
+              Ready for your next win?
+            </p>
           </div>
           <div className="ml-auto hidden items-center gap-2 rounded-full bg-orange-500/10 px-4 py-2 sm:flex">
             <Flame className="size-4 text-orange-500" />
@@ -93,14 +97,20 @@ export function OverviewTab() {
       {/* Stats grid */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {STATS.map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="surface-card p-4 sm:p-5">
+          <div
+            key={label}
+            className="surface-card p-4 transition-transform hover:-translate-y-0.5 sm:p-5"
+          >
             <span
               className={`inline-grid size-10 place-items-center rounded-xl ${color}`}
             >
               <Icon className="size-5" />
             </span>
             <p className="text-foreground mt-4 text-xl font-bold">{value}</p>
-            <p className="text-muted-foreground mt-0.5 text-xs">{label}</p>
+            <div className="mt-0.5 flex items-center justify-between gap-2">
+              <p className="text-muted-foreground text-xs">{label}</p>
+              <ArrowUpRight className="text-muted-foreground size-3" />
+            </div>
           </div>
         ))}
       </div>
@@ -108,8 +118,15 @@ export function OverviewTab() {
       {/* Weekly progress */}
       <div className="surface-card p-5 sm:p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-foreground font-semibold">Weekly goal</h3>
-          <span className="text-primary text-sm font-bold">5 / 7 days</span>
+          <div>
+            <h3 className="text-foreground font-semibold">Weekly goal</h3>
+            <p className="text-muted-foreground mt-1 text-xs">
+              A little consistency goes a long way
+            </p>
+          </div>
+          <span className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-bold">
+            5 / 7 days
+          </span>
         </div>
         <div className="flex gap-1.5">
           {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, i) => (
@@ -118,7 +135,7 @@ export function OverviewTab() {
               className="flex flex-1 flex-col items-center gap-1.5"
             >
               <div
-                className={`h-8 w-full rounded-md ${
+                className={`h-8 w-full rounded-md transition-colors ${
                   i < 5 ? "bg-primary" : "bg-surface-subtle"
                 }`}
               />
@@ -131,7 +148,12 @@ export function OverviewTab() {
       {/* Recent activity */}
       <div className="surface-card overflow-hidden p-5 sm:p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-foreground font-semibold">Recent quizzes</h3>
+          <div>
+            <h3 className="text-foreground font-semibold">Recent quizzes</h3>
+            <p className="text-muted-foreground mt-1 text-xs">
+              Your latest practice activity
+            </p>
+          </div>
           <div className="bg-primary/10 flex items-center gap-1.5 rounded-full px-3 py-1">
             <Zap className="text-primary size-3" />
             <span className="text-primary text-xs font-bold">Live</span>

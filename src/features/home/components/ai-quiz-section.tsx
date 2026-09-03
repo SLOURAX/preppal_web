@@ -1,6 +1,10 @@
 "use client";
 
-import { BrainCircuit, CheckCircle2, RefreshCw } from "lucide-react";
+import {
+  SaxCpuChargeBulk,
+  SaxRefreshCircleBulk,
+  SaxTickCircleBulk,
+} from "@meysam213/iconsax-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui";
@@ -48,7 +52,7 @@ export function AiQuizSection() {
             "Fresh practice questions based on weak areas",
           ].map((benefit) => (
             <li className="flex items-center gap-2" key={benefit}>
-              <CheckCircle2 className="text-success size-4 shrink-0" />
+              <SaxTickCircleBulk className="text-success size-4 shrink-0" />
               {benefit}
             </li>
           ))}
@@ -65,7 +69,7 @@ export function AiQuizSection() {
               Which organelle is known as the powerhouse of the cell?
             </h3>
           </div>
-          <BrainCircuit className="text-primary size-6 shrink-0" />
+          <SaxCpuChargeBulk className="text-primary size-6 shrink-0" />
         </div>
 
         <div className="mt-5 grid gap-2 sm:grid-cols-2">
@@ -115,7 +119,7 @@ export function AiQuizSection() {
             className="bg-surface-subtle text-foreground hover:bg-border gap-2"
             onClick={resetQuestion}
           >
-            <RefreshCw className="size-4" /> Reset
+            <SaxRefreshCircleBulk className="size-4" /> Reset
           </Button>
         </div>
       </div>

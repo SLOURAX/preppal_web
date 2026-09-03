@@ -1,17 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
 import {
-  BrainCircuit,
-  BrainCog,
-  BadgePlus,
-  ChartNoAxesCombined,
-  Crown,
-  Gamepad2,
-  Gift,
-  HandCoins,
-  PartyPopper,
-  Star,
-} from "lucide-react";
+  SaxAwardBulk,
+  SaxChartSuccessBulk,
+  SaxCoinBulk,
+  SaxCpuChargeBulk,
+  SaxCrown1Bulk,
+  SaxGameBulk,
+  SaxGiftBulk,
+  SaxMagicStarBulk,
+  SaxStar1Bulk,
+} from "@meysam213/iconsax-react";
 import { AppShell } from "@/components/layout";
 import { AppDownloadButtons } from "@/components/ui/app-download-buttons";
 import {
@@ -31,21 +30,21 @@ interface Capability {
 
 const capabilities: readonly Capability[] = [
   {
-    icon: <BrainCog className="h-6 w-6" />,
+    icon: <SaxCpuChargeBulk className="h-6 w-6" />,
     title: "Learn smarter",
     detail:
       "Master topics with AI-generated practice exams, instant deep-dive explanations, and smart insights.",
     color: "text-[#8659d3] bg-[#e6e2f8] dark:bg-[#8659d3]/20",
   },
   {
-    icon: <HandCoins className="h-6 w-6" />,
+    icon: <SaxCoinBulk className="h-6 w-6" />,
     title: "Earn coins",
     detail:
       "Every correct answer earns Preppal coins. Reward yourself for studying.",
     color: "text-[#f28e2b] bg-[#ebd6c8] dark:bg-[#f28e2b]/20",
   },
   {
-    icon: <PartyPopper className="h-6 w-6" />,
+    icon: <SaxGiftBulk className="h-6 w-6" />,
     title: "Redeem prizes",
     detail: "Swap coins for gift cards, premium plans, and exclusive prizes.",
     color: "text-[#1ba472] bg-[#d0e5d9] dark:bg-[#1ba472]/20",
@@ -56,17 +55,17 @@ const floatingStats = [
   {
     label: "Coins earned",
     value: "12,450 P",
-    icon: <HandCoins className="h-3.5 w-3.5 text-amber-400" />,
+    icon: <SaxCoinBulk className="h-3.5 w-3.5 text-amber-400" />,
   },
   {
     label: "Top rank",
     value: "#4 🏆",
-    icon: <Crown className="h-3.5 w-3.5 text-violet-400" />,
+    icon: <SaxCrown1Bulk className="h-3.5 w-3.5 text-violet-400" />,
   },
   {
     label: "Day streak",
     value: "7 days",
-    icon: <ChartNoAxesCombined className="h-3.5 w-3.5 text-orange-400" />,
+    icon: <SaxChartSuccessBulk className="h-3.5 w-3.5 text-orange-400" />,
   },
 ];
 
@@ -93,13 +92,13 @@ export default function HomePage() {
                 href="/register"
                 className="bg-primary hover:bg-primary-strong text-primary-foreground shadow-primary/25 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold shadow-lg transition-all active:scale-[0.98]"
               >
-                <Star className="h-4 w-4" /> Get Started Free
+                <SaxStar1Bulk className="h-4 w-4" /> Get Started Free
               </Link>
               <Link
                 href="/quiz"
                 className="bg-surface-subtle hover:bg-border text-foreground border-border inline-flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold transition-all"
               >
-                <BrainCircuit className="h-4 w-4" /> Try a Quiz
+                <SaxCpuChargeBulk className="h-4 w-4" /> Try a Quiz
               </Link>
             </div>
             <div className="mt-1">
@@ -268,29 +267,29 @@ export default function HomePage() {
                     className="h-56 w-56 object-contain drop-shadow-xl sm:h-72 sm:w-72"
                   />
                   <div className="bg-surface border-border relative z-20 -mt-8 flex items-center gap-1 rounded-full border px-3 py-1 shadow-sm sm:-mt-12">
-                    <BadgePlus className="h-3.5 w-3.5 text-amber-400" />
+                    <SaxAwardBulk className="h-3.5 w-3.5 text-amber-400" />
                     <span className="text-xs font-bold">+50 coins earned!</span>
                   </div>
                 </div>
               </div>
 
               <div className="bg-surface border-border absolute -top-4 -right-4 z-20 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg">
-                <BrainCircuit className="text-primary h-5 w-5" />
+                <SaxCpuChargeBulk className="text-primary h-5 w-5" />
               </div>
               <div className="bg-surface border-border absolute top-1/2 -right-8 z-20 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg">
-                <Gamepad2 className="h-5 w-5 text-violet-500" />
+                <SaxGameBulk className="h-5 w-5 text-violet-500" />
               </div>
               <div className="bg-surface border-border absolute -right-4 -bottom-4 z-20 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg">
-                <Gift className="h-5 w-5 text-emerald-500" />
+                <SaxGiftBulk className="h-5 w-5 text-emerald-500" />
               </div>
               <div className="bg-surface border-border absolute -bottom-4 -left-4 z-20 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg">
-                <Crown className="h-5 w-5 text-amber-500" />
+                <SaxCrown1Bulk className="h-5 w-5 text-amber-500" />
               </div>
               <div className="bg-surface border-border absolute top-1/2 -left-8 z-20 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg">
-                <ChartNoAxesCombined className="h-5 w-5 text-orange-500" />
+                <SaxChartSuccessBulk className="h-5 w-5 text-orange-500" />
               </div>
               <div className="bg-surface border-border absolute -top-4 -left-4 z-20 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg">
-                <Star className="h-5 w-5 text-yellow-500" />
+                <SaxMagicStarBulk className="h-5 w-5 text-yellow-500" />
               </div>
             </div>
 

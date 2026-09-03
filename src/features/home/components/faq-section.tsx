@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import { SaxArrowDown1Bulk } from "@meysam213/iconsax-react";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -81,7 +81,7 @@ export function FaqSection() {
                   <span className="text-foreground text-sm leading-snug font-semibold">
                     {faq.question}
                   </span>
-                  <ChevronDown
+                  <SaxArrowDown1Bulk
                     aria-hidden="true"
                     className={cn(
                       "text-muted-foreground size-4 shrink-0 transition-transform duration-200",

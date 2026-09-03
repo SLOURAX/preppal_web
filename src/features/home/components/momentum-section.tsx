@@ -1,12 +1,12 @@
 "use client";
 
 import {
-  BadgePlus,
-  CalendarCheck2,
-  ChartNoAxesCombined,
-  Crown,
-  Target,
-} from "lucide-react";
+  SaxAwardBulk,
+  SaxCalendarTickBulk,
+  SaxChartSuccessBulk,
+  SaxCrown1Bulk,
+  SaxFlag2Bulk,
+} from "@meysam213/iconsax-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui";
@@ -16,19 +16,19 @@ const MOMENTUM_STATS = [
   {
     label: "Current streak",
     value: "7 days",
-    icon: ChartNoAxesCombined,
+    icon: SaxChartSuccessBulk,
     color: "text-orange-500 bg-orange-500/10",
   },
   {
     label: "Weekly goal",
     value: "4 of 6",
-    icon: Target,
+    icon: SaxFlag2Bulk,
     color: "text-success bg-success/10",
   },
   {
     label: "Weekly rank",
     value: "#4",
-    icon: Crown,
+    icon: SaxCrown1Bulk,
     color: "text-amber-500 bg-amber-500/10",
   },
 ] as const;
@@ -69,11 +69,11 @@ export function MomentumSection() {
                 rewards.
               </p>
             </div>
-            <CalendarCheck2 className="size-8 shrink-0" />
+            <SaxCalendarTickBulk className="size-8 shrink-0" />
           </div>
           <div className="mt-7 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 font-bold">
-              <BadgePlus className="size-5 text-amber-300" /> +10 P today
+              <SaxAwardBulk className="size-5 text-amber-300" /> +10 P today
             </div>
             <Button
               className="bg-surface text-foreground hover:bg-surface-subtle"
