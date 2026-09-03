@@ -106,11 +106,11 @@ export function NavBar() {
                       </div>
                       <Link
                         className="hover:bg-surface-subtle flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors"
-                        href="/profile"
+                        href="/dashboard"
                         onClick={() => setIsDropdownOpen(false)}
                       >
                         <User className="size-4" />
-                        My profile
+                        My Dashboard
                       </Link>
                       <Link
                         className="hover:bg-surface-subtle flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors"
@@ -251,11 +251,11 @@ export function NavBar() {
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <Link
-                      href="/profile"
+                      href="/dashboard"
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="hover:bg-surface-subtle rounded-xl px-3 py-2.5 text-center text-sm font-medium"
                     >
-                      My profile
+                      My Dashboard
                     </Link>
                     <Link
                       href="/wallet"

@@ -14,9 +14,15 @@ const AUTH_ROUTES: readonly string[] = [
   "/forgot-password",
 ];
 
+// Routes that render their own full-page chrome (no shared nav/footer)
+const STANDALONE_ROUTES: readonly string[] = ["/dashboard"];
+
 export function SiteChrome({ children }: PropsWithChildren) {
   const pathname = usePathname();
   const isAuthRoute = AUTH_ROUTES.includes(pathname);
+  const isStandalone = STANDALONE_ROUTES.some((r) => pathname.startsWith(r));
+
+  if (isStandalone) return <>{children}</>;
 
   return (
     <>
@@ -32,3 +38,4 @@ export function SiteChrome({ children }: PropsWithChildren) {
     </>
   );
 }
+
