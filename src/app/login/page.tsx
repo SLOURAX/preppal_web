@@ -4,7 +4,6 @@ import { Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
-
 import { Button } from "@/components/ui";
 import {
   AuthBenefits,
@@ -14,6 +13,8 @@ import {
   getSafeReturnTo,
   MEMBER_BENEFITS,
   PasswordField,
+  GoogleAuthButton,
+  AuthDivider,
 } from "@/features/auth";
 import { useAuthStore } from "@/store";
 
@@ -33,6 +34,7 @@ export default function LoginPage() {
         description="Continue learning, earning, and growing."
         title="Welcome back"
       />
+
       <form className="space-y-4" onSubmit={handleSubmit}>
         <FormField
           autoComplete="email"
@@ -63,6 +65,19 @@ export default function LoginPage() {
           Sign in
         </Button>
       </form>
+
+      <AuthDivider />
+
+      <div className="mt-6 mb-6">
+        <GoogleAuthButton
+          text="Sign in with Google"
+          onClick={() => {
+            login();
+            router.push(getSafeReturnTo(window.location.search));
+          }}
+        />
+      </div>
+
       <AuthBenefits items={MEMBER_BENEFITS} />
     </>
   );

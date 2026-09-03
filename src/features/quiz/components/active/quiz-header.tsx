@@ -7,7 +7,7 @@ import { QuizTimer } from "./quiz-timer";
 interface QuizHeaderProps {
   readonly currentIndex: number;
   readonly total: number;
-  readonly secondsLeft: number;
+  readonly secondsLeft?: number;
   readonly onExit: () => void;
   readonly onSubmit: () => void;
 }
@@ -26,7 +26,7 @@ export function QuizHeader({
       <div className="flex min-w-0 items-center gap-3">
         <button
           onClick={onExit}
-          className="text-muted-foreground hover:text-red-500 hover:bg-red-500/10 flex size-8 shrink-0 items-center justify-center rounded-full transition-colors"
+          className="text-muted-foreground flex size-8 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-red-500/10 hover:text-red-500"
         >
           <X className="size-4" />
         </button>
@@ -34,7 +34,9 @@ export function QuizHeader({
           <p className="text-foreground truncate text-sm font-semibold">
             JAMB Mathematics
           </p>
-          <p className="text-muted-foreground text-xs">2023 · Timed Simulation</p>
+          <p className="text-muted-foreground text-xs">
+            2023 · Timed Simulation
+          </p>
         </div>
       </div>
 
@@ -51,7 +53,9 @@ export function QuizHeader({
       </div>
 
       <div className="flex items-center gap-2">
-        <QuizTimer secondsLeft={secondsLeft} />
+        {secondsLeft !== undefined ? (
+          <QuizTimer secondsLeft={secondsLeft} />
+        ) : null}
         <Button
           onClick={onSubmit}
           className="hidden gap-1.5 px-4 text-xs sm:flex"

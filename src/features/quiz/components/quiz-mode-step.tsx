@@ -37,27 +37,27 @@ export function QuizModeStep({
       </button>
 
       <div className="bg-surface border-border mt-5 flex flex-wrap items-center gap-2 rounded-xl border p-3">
-        <span className="text-muted-foreground text-xs font-medium uppercase tracking-wider">
+        <span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
           {context.path === "exam" ? "Exam" : "Subject"} Practice:
         </span>
         <div className="flex flex-wrap gap-2">
           {context.examLabel && (
-            <span className="bg-surface text-foreground rounded-full px-4 py-1 border text-xs font-semibold">
+            <span className="bg-surface text-foreground rounded-full border px-4 py-1 text-xs font-semibold">
               {context.examLabel}
             </span>
           )}
           {context.subjectLabel && (
-            <span className="bg-surface text-foreground rounded-full px-4 py-1 border text-xs font-semibold">
+            <span className="bg-surface text-foreground rounded-full border px-4 py-1 text-xs font-semibold">
               {context.subjectLabel}
             </span>
           )}
           {context.yearLabel && (
-            <span className="bg-surface text-foreground rounded-full px-4 py-1 border text-xs font-semibold">
+            <span className="bg-surface text-foreground rounded-full border px-4 py-1 text-xs font-semibold">
               {context.yearLabel}
             </span>
           )}
           {context.difficulty && (
-            <span className="bg-surface text-foreground rounded-full px-4 py-1 border text-xs font-semibold capitalize">
+            <span className="bg-surface text-foreground rounded-full border px-4 py-1 text-xs font-semibold capitalize">
               {context.difficulty}
             </span>
           )}
@@ -69,7 +69,8 @@ export function QuizModeStep({
           How would you like to practice?
         </h2>
         <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
-          Choose to simulate real exam conditions or learn at your own pace with AI assistance.
+          Choose to simulate real exam conditions or learn at your own pace with
+          AI assistance.
         </p>
       </div>
 
@@ -84,7 +85,7 @@ export function QuizModeStep({
               className={cn(
                 "relative rounded-2xl border p-6 text-left transition-all",
                 isSelected
-                  ? "border bg-surface-subtle shadow-primary/10 shadow-lg"
+                  ? "bg-surface-subtle shadow-primary/10 border shadow-lg"
                   : "bg-surface border-transparent hover:-translate-y-0.5",
               )}
               key={mode.value}
@@ -103,11 +104,11 @@ export function QuizModeStep({
                   <Icon className="size-6" />
                 </span>
                 {mode.value === "timed" ? (
-                  <span className="bg-amber-500/10 text-amber-600 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide">
+                  <span className="rounded-full bg-amber-500/10 px-2.5 py-1 text-[10px] font-bold tracking-wide text-amber-600 uppercase">
                     Take a quiz
                   </span>
                 ) : (
-                  <span className="bg-emerald-500/10 text-emerald-600 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide">
+                  <span className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold tracking-wide text-emerald-600 uppercase">
                     Practice playground
                   </span>
                 )}

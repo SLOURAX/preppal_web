@@ -17,8 +17,8 @@ export function QuestionGrid({
   onSelect,
 }: QuestionGridProps) {
   return (
-    <div 
-      className="grid gap-y-3 p-1.5" 
+    <div
+      className="grid gap-y-3 p-1.5"
       style={{ gridTemplateColumns: "repeat(11, minmax(0, 1fr))" }}
     >
       {Array.from({ length: total }, (_, idx) => {
@@ -32,8 +32,8 @@ export function QuestionGrid({
         const colStart = row % 2 === 0 ? colInRow * 2 + 1 : colInRow * 2 + 2;
 
         return (
-          <div 
-            key={questionId} 
+          <div
+            key={questionId}
             className="flex justify-center"
             style={{ gridColumn: `${colStart} / span 2` }}
           >
@@ -42,17 +42,18 @@ export function QuestionGrid({
               title={`Question ${questionId}`}
               className={cn(
                 "relative flex size-9 items-center justify-center rounded-full text-xs font-semibold transition-all",
-                isCurrent && "ring-2 ring-primary ring-offset-2 ring-offset-surface",
-                status === "answered" && "bg-primary text-primary-foreground shadow-sm",
-                status === "flagged" &&
-                  "bg-amber-400/20 text-amber-600",
+                isCurrent &&
+                  "ring-primary ring-offset-surface ring-2 ring-offset-2",
+                status === "answered" &&
+                  "bg-primary text-primary-foreground shadow-sm",
+                status === "flagged" && "bg-amber-400/20 text-amber-600",
                 status === "unanswered" &&
                   "bg-surface-subtle text-muted-foreground hover:bg-primary/10 hover:text-primary",
               )}
             >
               {questionId}
               {status === "flagged" && (
-                <span className="bg-amber-400 absolute top-0 right-0 size-2 rounded-full border-2 border-surface" />
+                <span className="border-surface absolute top-0 right-0 size-2 rounded-full border-2 bg-amber-400" />
               )}
             </button>
           </div>

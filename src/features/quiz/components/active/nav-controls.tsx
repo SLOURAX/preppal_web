@@ -28,7 +28,7 @@ export function NavControls({
       <button
         onClick={() => onNavigate(currentIndex - 1)}
         disabled={currentIndex === 0}
-        className="text-muted-foreground hover:text-foreground flex items-center gap-2 rounded-full border border-transparent px-4 py-2 text-sm font-medium transition-all hover:border-border disabled:pointer-events-none disabled:opacity-40"
+        className="text-muted-foreground hover:text-foreground hover:border-border flex items-center gap-2 rounded-full border border-transparent px-4 py-2 text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-40"
       >
         <ChevronLeft className="size-4" />
         Previous
@@ -50,7 +50,7 @@ export function NavControls({
                   : status === "answered"
                     ? "bg-primary/40 size-2"
                     : status === "flagged"
-                      ? "bg-amber-400 size-2"
+                      ? "size-2 bg-amber-400"
                       : "bg-border size-2",
               )}
             />
@@ -61,7 +61,7 @@ export function NavControls({
       <button
         onClick={() => onNavigate(currentIndex + 1)}
         disabled={currentIndex === total - 1}
-        className="bg-primary text-primary-foreground flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-all hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-40"
+        className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-all disabled:pointer-events-none disabled:opacity-40"
       >
         Next
         <ChevronRight className="size-4" />

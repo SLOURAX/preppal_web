@@ -13,7 +13,7 @@ export function ThemeToggle() {
     () => true,
     () => false,
   );
-  
+
   const currentTheme = mounted ? theme : "light";
 
   return (

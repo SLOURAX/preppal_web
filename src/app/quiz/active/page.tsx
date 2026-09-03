@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { Send } from "lucide-react";
+import { useState, useEffect, useCallback, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Send, RobotArm } from "lucide-react";
+
 import { Button } from "@/components/ui";
 import { QuizHeader } from "@/features/quiz/components/active/quiz-header";
 import { QuestionCard } from "@/features/quiz/components/active/question-card";
@@ -11,7 +12,10 @@ import { QuizSidebar } from "@/features/quiz/components/active/quiz-sidebar";
 import { InstructionsModal } from "@/features/quiz/components/active/instructions-modal";
 import { SubmitModal } from "@/features/quiz/components/active/submit-modal";
 import { QuestionAudioPlayer } from "@/features/quiz/components/active/question-audio-player";
-import type { Question, QuestionStatus } from "@/features/quiz/components/active/types";
+import type {
+  Question,
+  QuestionStatus,
+} from "@/features/quiz/components/active/types";
 
 const TOTAL_SECONDS = 45 * 60;
 
@@ -67,8 +71,11 @@ const QUESTIONS: Question[] = Array.from({ length: 40 }, (_, i) => ({
 const GRID_BG =
   "linear-gradient(to right, rgba(124,58,237,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(124,58,237,0.04) 1px, transparent 1px)";
 
-export default function ActiveQuizPage() {
+function ActiveQuizContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const mode = searchParams.get("mode") || "timed";
+  const isUntimed = mode === "untimed";
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
@@ -76,22 +83,24 @@ export default function ActiveQuizPage() {
   const [secondsLeft, setSecondsLeft] = useState(TOTAL_SECONDS);
   const [showInstructions, setShowInstructions] = useState(false);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [aiHints, setAiHints] = useState<Record<number, string>>({});
 
   const currentQ = QUESTIONS[currentIndex]!;
   const answeredCount = Object.keys(answers).length;
   const flaggedCount = Object.values(flagged).filter(Boolean).length;
   const unansweredCount = QUESTIONS.length - answeredCount;
-  
-  const textToRead = `Question ${currentIndex + 1}. ${currentQ.text}. Options: ${currentQ.options.map((opt, i) => `${String.fromCharCode(65 + i)}: ${opt}`).join('. ')}.`;
+
+  const textToRead = `Question ${currentIndex + 1}. ${currentQ.text}. Options: ${currentQ.options.map((opt, i) => `${String.fromCharCode(65 + i)}: ${opt}`).join(". ")}.`;
 
   useEffect(() => {
-    if (secondsLeft <= 0) return;
+    if (isUntimed || secondsLeft <= 0) return;
     const timer = setInterval(
       () => setSecondsLeft((s) => Math.max(0, s - 1)),
       1000,
     );
     return () => clearInterval(timer);
-  }, [secondsLeft]);
+  }, [secondsLeft, isUntimed]);
 
   const goTo = useCallback((idx: number) => {
     setCurrentIndex(Math.max(0, Math.min(QUESTIONS.length - 1, idx)));
@@ -121,12 +130,24 @@ export default function ActiveQuizPage() {
     [currentQ.id],
   );
 
+  const requestAiHint = () => {
+    if (aiHints[currentQ.id]) return;
+    setIsAiLoading(true);
+    setTimeout(() => {
+      setAiHints((prev) => ({
+        ...prev,
+        [currentQ.id]: `Here's a hint for question ${currentQ.id}: Try isolating the variable step by step, or remember the key formula for this topic. Notice how the options are structured.`,
+      }));
+      setIsAiLoading(false);
+    }, 1500);
+  };
+
   return (
     <div className="bg-background flex h-screen flex-col overflow-hidden">
       <QuizHeader
         currentIndex={currentIndex}
         total={QUESTIONS.length}
-        secondsLeft={secondsLeft}
+        secondsLeft={isUntimed ? undefined : secondsLeft}
         onExit={() => router.push("/quiz/preview")}
         onSubmit={() => setShowSubmitModal(true)}
       />
@@ -147,6 +168,35 @@ export default function ActiveQuizPage() {
               onToggleFlag={handleToggleFlag}
               onOpenInstructions={() => setShowInstructions(true)}
             />
+
+            {isUntimed && (
+              <div className="surface-card border-primary/20 bg-primary/5 mt-6 rounded-2xl border p-4 shadow-sm sm:p-5">
+                <div className="mb-3 flex items-center gap-2">
+                  <div className="bg-primary/20 rounded-lg p-1.5">
+                    <RobotArm className="text-primary size-5" />
+                  </div>
+                  <h3 className="text-foreground text-sm font-semibold">
+                    Preppal AI
+                  </h3>
+                </div>
+
+                {aiHints[currentQ.id] ? (
+                  <div className="text-foreground bg-surface border-border rounded-xl border p-4 text-sm shadow-sm">
+                    {aiHints[currentQ.id]}
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    className="border-primary/30 hover:bg-primary/10 text-primary flex h-10 w-full items-center justify-center gap-2 rounded-xl border text-sm font-medium transition-colors"
+                    onClick={requestAiHint}
+                    disabled={isAiLoading}
+                  >
+                    {isAiLoading ? "Thinking..." : "Ask AI for a Hint"}
+                  </button>
+                )}
+              </div>
+            )}
+
             <NavControls
               currentIndex={currentIndex}
               total={QUESTIONS.length}
@@ -154,10 +204,10 @@ export default function ActiveQuizPage() {
               getStatus={getStatus}
               onNavigate={goTo}
             />
-            
-            <QuestionAudioPlayer 
-              textToRead={textToRead} 
-              questionId={currentQ.id} 
+
+            <QuestionAudioPlayer
+              textToRead={textToRead}
+              questionId={currentQ.id}
             />
 
             <div className="mt-6 sm:hidden">
@@ -188,8 +238,8 @@ export default function ActiveQuizPage() {
         <InstructionsModal
           currentIndex={currentIndex}
           total={QUESTIONS.length}
-          onClose={() => setShowInstructions(false)}
           onNavigate={goTo}
+          onClose={() => setShowInstructions(false)}
         />
       )}
 
@@ -203,5 +253,13 @@ export default function ActiveQuizPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function ActiveQuizPage() {
+  return (
+    <Suspense fallback={<div className="bg-background h-screen" />}>
+      <ActiveQuizContent />
+    </Suspense>
   );
 }

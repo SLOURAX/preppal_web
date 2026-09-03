@@ -33,7 +33,7 @@ export function SubmitModal({
       <div className="bg-surface relative z-10 w-full max-w-sm overflow-hidden rounded-2xl shadow-2xl">
         <div className="px-6 py-6">
           <div className="mb-5 flex items-start gap-3">
-            <div className="bg-amber-500/10 grid size-10 shrink-0 place-items-center rounded-xl">
+            <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-amber-500/10">
               <AlertTriangle className="size-5 text-amber-500" />
             </div>
             <div>

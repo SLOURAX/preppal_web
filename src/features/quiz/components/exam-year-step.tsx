@@ -1,4 +1,10 @@
-import { ArrowLeft, ArrowRight, CalendarDays, Check, ChevronRight } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CalendarDays,
+  Check,
+  ChevronRight,
+} from "lucide-react";
 
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
@@ -50,7 +56,7 @@ export function ExamYearStep({
                 "rounded-xl py-3 text-center text-[.8rem] font-semibold transition-colors",
                 isSelected
                   ? "bg-primary text-primary-foreground shadow-primary/20 shadow-lg"
-                  : "bg-surface border text-foreground hover:bg-primary/5",
+                  : "bg-surface text-foreground hover:bg-primary/5 border",
               )}
               key={year}
               onClick={() => onSelectYear(year)}
@@ -66,11 +72,7 @@ export function ExamYearStep({
         <p className="text-muted-foreground text-center text-xs sm:text-left">
           You can change the year later if needed.
         </p>
-        <Button
-          className="gap-2"
-          disabled={!selectedYear}
-          onClick={onContinue}
-        >
+        <Button className="gap-2" disabled={!selectedYear} onClick={onContinue}>
           Choose mode <ArrowRight className="size-4" />
         </Button>
       </div>

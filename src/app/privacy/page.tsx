@@ -3,7 +3,8 @@ import { ShieldCheck } from "lucide-react";
 
 export const metadata = {
   title: "Privacy Policy — Preppal",
-  description: "Learn how Preppal collects, uses, and protects your personal data.",
+  description:
+    "Learn how Preppal collects, uses, and protects your personal data.",
 };
 
 const SECTIONS = [
@@ -85,7 +86,7 @@ export default function PrivacyPage() {
               <h2 className="text-foreground mb-3 text-lg font-semibold">
                 {section.title}
               </h2>
-              <p className="text-muted-foreground whitespace-pre-line text-[.95rem] leading-7">
+              <p className="text-muted-foreground text-[.95rem] leading-7 whitespace-pre-line">
                 {section.body}
               </p>
             </section>

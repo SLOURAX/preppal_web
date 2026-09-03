@@ -5,7 +5,7 @@ import { useAuthStore } from "@/store";
 
 export function WalletTab() {
   const preppalBalance = useAuthStore((s) => s.preppalBalance);
-  
+
   return (
     <div className="space-y-4">
       <div>

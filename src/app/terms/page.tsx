@@ -3,7 +3,8 @@ import { Scale } from "lucide-react";
 
 export const metadata = {
   title: "Terms of Use — Preppal",
-  description: "Read the Terms of Use for Preppal, the AI-powered exam prep platform.",
+  description:
+    "Read the Terms of Use for Preppal, the AI-powered exam prep platform.",
 };
 
 const SECTIONS = [

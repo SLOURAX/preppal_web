@@ -84,7 +84,7 @@ export function DashboardShell() {
 
   return (
     <div className="bg-background flex min-h-dvh flex-col">
-      <header className="bg-surface/95 border-border sticky top-0 z-40 border-b backdrop-blur-xl shadow-sm">
+      <header className="bg-surface/95 border-border sticky top-0 z-40 border-b shadow-sm backdrop-blur-xl">
         <div className="mx-auto flex h-14 max-w-[1400px] items-center justify-between gap-4 px-4 sm:px-6">
           <div className="flex items-center gap-3">
             <Link
@@ -119,8 +119,12 @@ export function DashboardShell() {
                 {userName.slice(0, 1).toUpperCase()}
               </div>
               <div className="hidden flex-col sm:flex">
-                <span className="text-foreground text-xs font-bold leading-tight">{userName}</span>
-                <span className="text-muted-foreground text-[10px]">{userPlan}</span>
+                <span className="text-foreground text-xs leading-tight font-bold">
+                  {userName}
+                </span>
+                <span className="text-muted-foreground text-[10px]">
+                  {userPlan}
+                </span>
               </div>
             </div>
 
@@ -150,7 +154,12 @@ export function DashboardShell() {
                         : "text-muted-foreground hover:bg-surface/60 hover:text-foreground",
                     )}
                   >
-                    <Icon className={cn("size-4 shrink-0", isActive && "text-primary")} />
+                    <Icon
+                      className={cn(
+                        "size-4 shrink-0",
+                        isActive && "text-primary",
+                      )}
+                    />
                     {label}
                   </button>
                 );

@@ -18,10 +18,22 @@ const STATS = [
 ] as const;
 
 const ACHIEVEMENTS = [
-  { label: "First Quiz", description: "Completed your first quiz", earned: true },
+  {
+    label: "First Quiz",
+    description: "Completed your first quiz",
+    earned: true,
+  },
   { label: "Week Warrior", description: "7-day study streak", earned: true },
-  { label: "High Scorer", description: "Score 90%+ on any quiz", earned: false },
-  { label: "Subject Master", description: "Complete 50 quizzes in one subject", earned: false },
+  {
+    label: "High Scorer",
+    description: "Score 90%+ on any quiz",
+    earned: false,
+  },
+  {
+    label: "Subject Master",
+    description: "Complete 50 quizzes in one subject",
+    earned: false,
+  },
 ] as const;
 
 export function ProfileTab() {
@@ -36,15 +48,17 @@ export function ProfileTab() {
         <div className="flex items-center gap-5">
           <div className="bg-primary text-primary-foreground relative grid size-20 shrink-0 place-items-center rounded-2xl text-2xl font-black shadow-md">
             {userName.slice(0, 1).toUpperCase()}
-            <button className="bg-surface absolute -right-2 -bottom-2 grid size-7 place-items-center rounded-full border shadow-sm transition-colors hover:bg-surface-subtle">
-              <Pencil className="size-3.5 text-muted-foreground" />
+            <button className="bg-surface hover:bg-surface-subtle absolute -right-2 -bottom-2 grid size-7 place-items-center rounded-full border shadow-sm transition-colors">
+              <Pencil className="text-muted-foreground size-3.5" />
             </button>
           </div>
           <div className="flex-1">
-            <p className="text-muted-foreground text-xs font-medium uppercase tracking-widest">
+            <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
               Learner profile
             </p>
-            <h2 className="text-foreground mt-1 text-2xl font-bold">{userName}</h2>
+            <h2 className="text-foreground mt-1 text-2xl font-bold">
+              {userName}
+            </h2>
             <div className="mt-2 flex flex-wrap items-center gap-3">
               <span className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-semibold">
                 {userPlan} plan
@@ -90,11 +104,17 @@ export function ProfileTab() {
                 <Shield className="size-4" />
               </div>
               <div>
-                <p className="text-foreground text-sm font-semibold">{ach.label}</p>
-                <p className="text-muted-foreground text-xs">{ach.description}</p>
+                <p className="text-foreground text-sm font-semibold">
+                  {ach.label}
+                </p>
+                <p className="text-muted-foreground text-xs">
+                  {ach.description}
+                </p>
               </div>
               {ach.earned && (
-                <span className="text-primary ml-auto text-xs font-bold">✓</span>
+                <span className="text-primary ml-auto text-xs font-bold">
+                  ✓
+                </span>
               )}
             </div>
           ))}

@@ -3,7 +3,8 @@ import { Cookie } from "lucide-react";
 
 export const metadata = {
   title: "Cookies Policy — Preppal",
-  description: "Understand how Preppal uses cookies and similar tracking technologies.",
+  description:
+    "Understand how Preppal uses cookies and similar tracking technologies.",
 };
 
 const COOKIE_TYPES = [

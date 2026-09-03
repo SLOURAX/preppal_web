@@ -6,3 +6,4 @@ export * from "./checkbox-field";
 export * from "./form-field";
 export * from "./password-field";
 export * from "./select-field";
+export * from "./google-auth-button";

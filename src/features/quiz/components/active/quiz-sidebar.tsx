@@ -42,15 +42,15 @@ export function QuizSidebar({
   ];
 
   return (
-    <aside 
+    <aside
       className="border-border hidden w-[30%] shrink-0 flex-col border-l md:flex"
-      style={{ 
+      style={{
         backgroundColor: "var(--surface)",
-        backgroundImage: ZIGZAG_BG 
+        backgroundImage: ZIGZAG_BG,
       }}
     >
       <div className="flex h-full flex-col p-5">
-        <h3 className="text-foreground mb-4 text-xs font-bold uppercase tracking-widest">
+        <h3 className="text-foreground mb-4 text-[.85rem] font-bold tracking-widest uppercase">
           Question Overview
         </h3>
 
@@ -58,7 +58,7 @@ export function QuizSidebar({
           {stats.map(({ label, value, color }) => (
             <div key={label} className="bg-surface-subtle rounded-xl p-2.5">
               <p className={cn("text-lg font-bold", color)}>{value}</p>
-              <p className="text-muted-foreground mt-0.5 text-[10px] leading-tight">
+              <p className="text-muted-foreground mt-0.5 text-[11px] leading-tight">
                 {label}
               </p>
             </div>
@@ -69,7 +69,7 @@ export function QuizSidebar({
           {LEGEND.map(({ dot, label }) => (
             <div key={label} className="flex items-center gap-1.5">
               <span className={cn("block size-2 rounded-full", dot)} />
-              <span className="text-muted-foreground text-[10px]">{label}</span>
+              <span className="text-muted-foreground text-[12px]">{label}</span>
             </div>
           ))}
         </div>

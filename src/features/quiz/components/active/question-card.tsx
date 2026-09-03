@@ -30,16 +30,20 @@ export function QuestionCard({
     <div>
       <div className="mb-5 flex items-center justify-between gap-2 sm:gap-3">
         <div className="flex shrink-0 items-baseline gap-1.5 whitespace-nowrap">
-          <span className="text-muted-foreground text-[10px] sm:text-[.9rem] font-medium uppercase tracking-widest">
+          <span className="text-muted-foreground text-[10px] font-medium tracking-widest uppercase sm:text-[.9rem]">
             Question
           </span>
-          <span className="text-foreground text-sm sm:text-base font-bold">{index + 1}</span>
-          <span className="text-muted-foreground text-[10px] sm:text-[.8rem]">of {total}</span>
+          <span className="text-foreground text-sm font-bold sm:text-base">
+            {index + 1}
+          </span>
+          <span className="text-muted-foreground text-[10px] sm:text-[.8rem]">
+            of {total}
+          </span>
         </div>
         <div className="flex shrink-0 items-center gap-1 sm:gap-2">
           <button
             onClick={onOpenInstructions}
-            className="text-muted-foreground hover:text-foreground hover:bg-surface-subtle flex items-center gap-1.5 rounded-full p-2 sm:px-3 sm:py-1.5 text-xs font-medium transition-colors"
+            className="text-muted-foreground hover:text-foreground hover:bg-surface-subtle flex items-center gap-1.5 rounded-full p-2 text-xs font-medium transition-colors sm:px-3 sm:py-1.5"
             title="Read Instructions"
           >
             <Info className="size-4 sm:size-3.5" />
@@ -48,7 +52,7 @@ export function QuestionCard({
           <button
             onClick={onToggleFlag}
             className={cn(
-              "flex items-center gap-1.5 rounded-full p-2 sm:px-3 sm:py-1.5 text-xs font-semibold transition-all",
+              "flex items-center gap-1.5 rounded-full p-2 text-xs font-semibold transition-all sm:px-3 sm:py-1.5",
               isFlagged
                 ? "bg-amber-500/15 text-amber-600"
                 : "text-muted-foreground hover:text-foreground hover:bg-surface-subtle",
@@ -59,13 +63,15 @@ export function QuestionCard({
               className="size-4 sm:size-3.5"
               fill={isFlagged ? "currentColor" : "none"}
             />
-            <span className="hidden sm:inline">{isFlagged ? "Flagged" : "Flag Question"}</span>
+            <span className="hidden sm:inline">
+              {isFlagged ? "Flagged" : "Flag Question"}
+            </span>
           </button>
         </div>
       </div>
 
       <div className="surface-card rounded-2xl p-6 sm:p-8">
-        <p className="text-foreground text-[.85rem] font-medium leading-normal sm:text-[1rem]">
+        <p className="text-foreground text-[.85rem] leading-normal font-medium sm:text-[1rem]">
           {question.text}
         </p>
         <div className="mt-7 space-y-3">

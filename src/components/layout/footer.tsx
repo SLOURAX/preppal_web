@@ -77,7 +77,7 @@ function FooterLinkGroup({
         {links.map((link) => (
           <li key={link.href}>
             <Link
-              className="text-muted-foreground font-normal hover:text-primary text-[.85rem] transition-colors"
+              className="text-muted-foreground hover:text-primary text-[.85rem] font-normal transition-colors"
               href={link.href}
             >
               {link.label}

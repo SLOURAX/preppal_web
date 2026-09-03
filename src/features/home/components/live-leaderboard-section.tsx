@@ -226,7 +226,6 @@ export function LiveLeaderboardSection() {
           <div className="pointer-events-none absolute top-1/2 left-1/2 size-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-500/20 blur-[100px]" />
 
           <div className="relative aspect-square w-full max-w-sm lg:max-w-md xl:max-w-lg">
-
             {/* ── Animated circuit connecting the icons ────────────── */}
             <svg
               className="pointer-events-none absolute inset-0 z-10 overflow-visible"
@@ -274,7 +273,11 @@ export function LiveLeaderboardSection() {
               />
 
               {/* Primary glowing dot */}
-              <circle r="5" fill="rgba(196,181,253,0.95)" filter="url(#glow-dot)">
+              <circle
+                r="5"
+                fill="rgba(196,181,253,0.95)"
+                filter="url(#glow-dot)"
+              >
                 <animateMotion
                   dur="3s"
                   repeatCount="indefinite"
@@ -283,7 +286,11 @@ export function LiveLeaderboardSection() {
               </circle>
 
               {/* Trailing dot (offset by half a cycle) */}
-              <circle r="3" fill="rgba(251,191,36,0.80)" filter="url(#glow-dot)">
+              <circle
+                r="3"
+                fill="rgba(251,191,36,0.80)"
+                filter="url(#glow-dot)"
+              >
                 <animateMotion
                   dur="3s"
                   begin="-1.5s"
@@ -311,7 +318,7 @@ export function LiveLeaderboardSection() {
             </div>
 
             {/* Flame — bottom-right */}
-            <div className="absolute bottom-1/4 -right-2 z-20 rounded-2xl border border-white/10 bg-white/8 p-2.5 shadow-[0_0_24px_rgba(167,139,250,0.25)] backdrop-blur-xl sm:-right-6 sm:p-3">
+            <div className="absolute -right-2 bottom-1/4 z-20 rounded-2xl border border-white/10 bg-white/8 p-2.5 shadow-[0_0_24px_rgba(167,139,250,0.25)] backdrop-blur-xl sm:-right-6 sm:p-3">
               <Flame className="size-5 text-violet-400 sm:size-6" />
             </div>
 

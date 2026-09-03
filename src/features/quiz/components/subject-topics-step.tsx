@@ -83,7 +83,7 @@ export function SubjectTopicsStep({
                 "flex min-h-12 items-center gap-3 rounded-xl px-4 text-left text-sm font-medium transition-colors",
                 isSelected
                   ? "bg-primary/10 text-primary"
-                  : "bg-surface border text-foreground hover:bg-primary/5",
+                  : "bg-surface text-foreground hover:bg-primary/5 border",
               )}
               key={topic}
               onClick={() => onToggleTopic(topic)}

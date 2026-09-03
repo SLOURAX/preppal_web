@@ -66,8 +66,8 @@ export function ListSelect({
         id={id}
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "border-border bg-surface text-foreground hover:border-primary/50 relative flex h-14 w-full items-center justify-between rounded-2xl border px-4 text-left text-sm font-medium transition-all focus:outline-none focus:ring-4 focus:ring-primary/15",
-          isOpen && "border-primary ring-4 ring-primary/15",
+          "border-border bg-surface text-foreground hover:border-primary/50 focus:ring-primary/15 relative flex h-14 w-full items-center justify-between rounded-2xl border px-4 text-left text-sm font-medium transition-all focus:ring-4 focus:outline-none",
+          isOpen && "border-primary ring-primary/15 ring-4",
         )}
       >
         <div className="flex items-center gap-3 overflow-hidden">
@@ -80,7 +80,11 @@ export function ListSelect({
             />
           )}
           <span className="truncate">
-            {selectedOption ? selectedOption.label : <span className="text-muted-foreground">{placeholder}</span>}
+            {selectedOption ? (
+              selectedOption.label
+            ) : (
+              <span className="text-muted-foreground">{placeholder}</span>
+            )}
           </span>
         </div>
         <ChevronDown
@@ -93,9 +97,9 @@ export function ListSelect({
 
       {/* Modal / Dropdown */}
       {isOpen && (
-        <div className="animate-in fade-in zoom-in-95 absolute top-full left-0 z-50 mt-2 w-full origin-top rounded-2xl border border-border bg-surface-subtle p-2 shadow-2xl backdrop-blur-xl">
+        <div className="animate-in fade-in zoom-in-95 border-border bg-surface-subtle absolute top-full left-0 z-50 mt-2 w-full origin-top rounded-2xl border p-2 shadow-2xl backdrop-blur-xl">
           <div className="mb-2 px-3 pt-2">
-            <span className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">
+            <span className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
               {placeholder}
             </span>
           </div>
@@ -117,7 +121,9 @@ export function ListSelect({
                   )}
                 >
                   <div>
-                    <p className={cn("text-sm font-semibold")}>{option.label}</p>
+                    <p className={cn("text-sm font-semibold")}>
+                      {option.label}
+                    </p>
                     {option.description && (
                       <p
                         className={cn(

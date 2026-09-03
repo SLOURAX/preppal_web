@@ -81,7 +81,9 @@ export function QuizEntryScreen({
   const [selectedExam, setSelectedExam] = useState<string>(
     initialPath === "exam" ? initialSelection : "",
   );
-  const [selectedExamSubject, setSelectedExamSubject] = useState<string | null>(null);
+  const [selectedExamSubject, setSelectedExamSubject] = useState<string | null>(
+    null,
+  );
   const [selectedSubject, setSelectedSubject] = useState<string>(
     initialPath === "subject" ? initialSelection : "",
   );
@@ -99,7 +101,7 @@ export function QuizEntryScreen({
   );
   const progressItems =
     quizPath === "exam" ? EXAM_SETUP_STEPS : SUBJECT_SETUP_STEPS;
-  
+
   let activeStepIndex = 0;
   if (setupStep !== "entry") {
     if (quizPath === "exam") {
@@ -169,12 +171,21 @@ export function QuizEntryScreen({
   };
 
   const handleStartPractice = () => {
-    router.push("/quiz/preview");
+    const params = new URLSearchParams();
+    if (selectedMode) params.set("mode", selectedMode);
+    if (quizPath) params.set("path", quizPath);
+    if (selectedExam) params.set("exam", selectedExam);
+    if (selectedExamSubject) params.set("subject", selectedExamSubject);
+    if (selectedSubject) params.set("subject", selectedSubject);
+    if (selectedYear) params.set("year", selectedYear.toString());
+
+    router.push(`/quiz/preview?${params.toString()}`);
   };
 
   // Find label for context
-  const selectedExamSubjectLabel = selectedExamSubject 
-    ? (EXAM_CHOICES.find(c => c.value === selectedExamSubject)?.label ?? selectedExamSubject) // Note: this isn't strictly right since EXAM_CHOICES doesn't have subjects, but it'll fallback. Actually, it should be looked up from EXAM_SUBJECTS in a real app, but for context chip the value is fine.
+  const selectedExamSubjectLabel = selectedExamSubject
+    ? (EXAM_CHOICES.find((c) => c.value === selectedExamSubject)?.label ??
+      selectedExamSubject) // Note: this isn't strictly right since EXAM_CHOICES doesn't have subjects, but it'll fallback. Actually, it should be looked up from EXAM_SUBJECTS in a real app, but for context chip the value is fine.
     : undefined;
 
   return (
@@ -354,8 +365,15 @@ export function QuizEntryScreen({
             selectedMode={selectedMode}
             context={{
               path: quizPath,
-              examLabel: quizPath === "exam" ? selectedChoice?.label : undefined,
-              subjectLabel: quizPath === "exam" ? (selectedExamSubject ? selectedExamSubject.charAt(0).toUpperCase() + selectedExamSubject.slice(1) : undefined) : selectedChoice?.label,
+              examLabel:
+                quizPath === "exam" ? selectedChoice?.label : undefined,
+              subjectLabel:
+                quizPath === "exam"
+                  ? selectedExamSubject
+                    ? selectedExamSubject.charAt(0).toUpperCase() +
+                      selectedExamSubject.slice(1)
+                    : undefined
+                  : selectedChoice?.label,
               yearLabel: selectedYear ? String(selectedYear) : undefined,
               difficulty: selectedDifficulty ?? undefined,
             }}

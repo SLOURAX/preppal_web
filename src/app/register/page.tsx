@@ -23,6 +23,8 @@ import {
   LEARNING_LEVELS,
   PasswordField,
   SelectField,
+  GoogleAuthButton,
+  AuthDivider,
 } from "@/features/auth";
 import { useAuthStore } from "@/store";
 
@@ -42,6 +44,7 @@ export default function RegisterPage() {
         description="Tell us what you are preparing for so quizzes can match your goals."
         title="Create your learner profile"
       />
+
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div className="grid gap-3.5 sm:grid-cols-2">
           <FormField
@@ -152,6 +155,18 @@ export default function RegisterPage() {
           Create account
         </Button>
       </form>
+
+      <AuthDivider />
+
+      <div className="mt-6 mb-6">
+        <GoogleAuthButton
+          text="Sign up with Google"
+          onClick={() => {
+            login();
+            router.push(getSafeReturnTo(window.location.search));
+          }}
+        />
+      </div>
     </>
   );
 }

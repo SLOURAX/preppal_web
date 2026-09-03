@@ -12,7 +12,8 @@ export type QuizMode = "timed" | "untimed";
 export interface QuizChoice {
   readonly value: string;
   readonly label: string;
-  readonly description?: string;}
+  readonly description?: string;
+}
 
 export interface DifficultyChoice {
   readonly value: QuizDifficulty;

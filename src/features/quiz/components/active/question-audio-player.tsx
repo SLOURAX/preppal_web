@@ -9,7 +9,10 @@ interface QuestionAudioPlayerProps {
   readonly questionId: number; // Used to reset audio when question changes
 }
 
-export function QuestionAudioPlayer({ textToRead, questionId }: QuestionAudioPlayerProps) {
+export function QuestionAudioPlayer({
+  textToRead,
+  questionId,
+}: QuestionAudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const synthRef = useRef<SpeechSynthesis | null>(null);
@@ -20,7 +23,7 @@ export function QuestionAudioPlayer({ textToRead, questionId }: QuestionAudioPla
     if (typeof window !== "undefined") {
       synthRef.current = window.speechSynthesis;
     }
-    
+
     return () => {
       if (synthRef.current) {
         synthRef.current.cancel();
@@ -48,17 +51,17 @@ export function QuestionAudioPlayer({ textToRead, questionId }: QuestionAudioPla
     }
 
     synthRef.current.cancel(); // Stop any current speech
-    
+
     const utterance = new SpeechSynthesisUtterance(textToRead);
     utterance.rate = 0.9; // Slightly slower for better comprehension
-    
+
     utterance.onend = () => {
       setIsPlaying(false);
       setIsPaused(false);
     };
 
     utterance.onerror = (event) => {
-      if (event.error !== 'canceled') {
+      if (event.error !== "canceled") {
         setIsPlaying(false);
         setIsPaused(false);
       }
@@ -89,32 +92,43 @@ export function QuestionAudioPlayer({ textToRead, questionId }: QuestionAudioPla
   const togglePlayPause = isPlaying ? handlePause : handlePlay;
 
   return (
-    <div className="surface-card mt-8 flex items-center justify-between rounded-2xl p-4 sm:p-5 shadow-sm border border-border/50">
+    <div className="surface-card border-border/50 mt-8 flex items-center justify-between rounded-2xl border p-4 shadow-sm sm:p-5">
       <div className="flex items-center gap-3">
-        <div className={cn(
-          "grid size-10 place-items-center rounded-xl transition-colors duration-500",
-          isPlaying ? "bg-primary/10 text-primary" : "bg-surface-subtle text-muted-foreground"
-        )}>
-          <Volume2 className={cn("size-5 transition-transform duration-500", isPlaying && "scale-110")} />
+        <div
+          className={cn(
+            "grid size-10 place-items-center rounded-xl transition-colors duration-500",
+            isPlaying
+              ? "bg-primary/10 text-primary"
+              : "bg-surface-subtle text-muted-foreground",
+          )}
+        >
+          <Volume2
+            className={cn(
+              "size-5 transition-transform duration-500",
+              isPlaying && "scale-110",
+            )}
+          />
         </div>
         <div>
-          <h3 className="text-sm font-semibold text-foreground">Read Aloud</h3>
-          <div className="flex items-center gap-1.5 mt-0.5 h-3 overflow-hidden">
+          <h3 className="text-foreground text-sm font-semibold">Read Aloud</h3>
+          <div className="mt-0.5 flex h-3 items-center gap-1.5 overflow-hidden">
             {isPlaying ? (
               // Animated sound wave bars
               Array.from({ length: 5 }).map((_, i) => (
                 <div
                   key={i}
-                  className="w-1 bg-primary rounded-full animate-pulse"
-                  style={{ 
+                  className="bg-primary w-1 animate-pulse rounded-full"
+                  style={{
                     height: `${Math.max(40, Math.random() * 100)}%`,
                     animationDuration: `${0.5 + Math.random() * 0.5}s`,
-                    animationDelay: `${Math.random() * 0.5}s`
+                    animationDelay: `${Math.random() * 0.5}s`,
                   }}
                 />
               ))
             ) : (
-              <p className="text-xs text-muted-foreground">Listen to the question</p>
+              <p className="text-muted-foreground text-xs">
+                Listen to the question
+              </p>
             )}
           </div>
         </div>
@@ -124,7 +138,7 @@ export function QuestionAudioPlayer({ textToRead, questionId }: QuestionAudioPla
         {(isPlaying || isPaused) && (
           <button
             onClick={handleStop}
-            className="flex size-9 items-center justify-center rounded-full bg-surface-subtle text-muted-foreground hover:bg-red-500/10 hover:text-red-500 transition-colors"
+            className="bg-surface-subtle text-muted-foreground flex size-9 items-center justify-center rounded-full transition-colors hover:bg-red-500/10 hover:text-red-500"
             title="Stop"
           >
             <Square className="size-3.5 fill-current" />
@@ -132,13 +146,13 @@ export function QuestionAudioPlayer({ textToRead, questionId }: QuestionAudioPla
         )}
         <button
           onClick={togglePlayPause}
-          className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 transition-all hover:scale-105 active:scale-95"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 flex size-10 items-center justify-center rounded-full shadow-sm transition-all hover:scale-105 active:scale-95"
           title={isPlaying ? "Pause" : "Play"}
         >
           {isPlaying ? (
             <Pause className="size-4 fill-current" />
           ) : (
-            <Play className="size-4 ml-0.5 fill-current" />
+            <Play className="ml-0.5 size-4 fill-current" />
           )}
         </button>
       </div>

@@ -106,7 +106,7 @@ export default function HomePage() {
               <AppDownloadButtons />
             </div>
 
-            <p className="text-muted-foreground text-xs mt-2">
+            <p className="text-muted-foreground mt-2 text-xs">
               Join{" "}
               <span className="text-foreground font-semibold">10,000+</span>{" "}
               students already earning while they learn
@@ -201,15 +201,15 @@ export default function HomePage() {
 
               {/* Node endpoint dots */}
               {[
-                [164, 74],   // Star
-                [444, 74],   // BrainCircuit
-                [555, 34],   // Coins stat
-                [460, 210],  // Gamepad2
-                [545, 340],  // DayStreak stat
-                [444, 354],  // Gift
-                [164, 354],  // Crown
-                [42,  210],  // TopRank stat
-                [144, 210],  // Chart
+                [164, 74], // Star
+                [444, 74], // BrainCircuit
+                [555, 34], // Coins stat
+                [460, 210], // Gamepad2
+                [545, 340], // DayStreak stat
+                [444, 354], // Gift
+                [164, 354], // Crown
+                [42, 210], // TopRank stat
+                [144, 210], // Chart
               ].map(([cx, cy]) => (
                 <circle
                   key={`${cx}-${cy}`}
@@ -223,7 +223,11 @@ export default function HomePage() {
               ))}
 
               {/* Travelling orb */}
-              <circle r="4" fill="rgba(124,58,237,0.95)" filter="url(#hero-glow-dot)">
+              <circle
+                r="4"
+                fill="rgba(124,58,237,0.95)"
+                filter="url(#hero-glow-dot)"
+              >
                 <animateMotion
                   dur="6s"
                   repeatCount="indefinite"
@@ -232,7 +236,11 @@ export default function HomePage() {
               </circle>
 
               {/* Trailing orb */}
-              <circle r="2.5" fill="rgba(245,158,11,0.9)" filter="url(#hero-glow-dot)">
+              <circle
+                r="2.5"
+                fill="rgba(245,158,11,0.9)"
+                filter="url(#hero-glow-dot)"
+              >
                 <animateMotion
                   dur="6s"
                   begin="-3s"
