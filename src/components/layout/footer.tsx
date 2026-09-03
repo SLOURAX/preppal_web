@@ -28,10 +28,16 @@ const PRODUCT_LINKS: readonly FooterLink[] = [
 ];
 
 const ACCOUNT_LINKS: readonly FooterLink[] = [
-  { href: "/profile", label: "My profile" },
+  { href: "/dashboard", label: "My dashboard" },
   { href: "/wallet", label: "My wallet" },
   { href: "/login", label: "Account login" },
   { href: "/register", label: "Create account" },
+];
+
+const COMPANY_LINKS: readonly FooterLink[] = [
+  { href: "/terms", label: "Terms of Use" },
+  { href: "/privacy", label: "Privacy Policy" },
+  { href: "/cookies", label: "Cookies Policy" },
 ];
 
 const SOCIAL_LINKS: readonly SocialLink[] = [
@@ -66,12 +72,12 @@ function FooterLinkGroup({
 }) {
   return (
     <div>
-      <h2 className="text-foreground text-sm font-semibold">{title}</h2>
+      <h2 className="text-foreground text-[.9rem] font-semibold">{title}</h2>
       <ul className="mt-4 space-y-3">
         {links.map((link) => (
           <li key={link.href}>
             <Link
-              className="text-muted-foreground hover:text-primary text-[.85rem] transition-colors"
+              className="text-muted-foreground font-normal hover:text-primary text-[.85rem] transition-colors"
               href={link.href}
             >
               {link.label}
@@ -86,7 +92,7 @@ function FooterLinkGroup({
 export function Footer() {
   return (
     <footer className="bg-surface/80 mt-auto shadow-[0_-12px_45px_rgb(58_34_140/0.05)] backdrop-blur-xl">
-      <div className="mx-auto grid max-w-350 gap-10 px-5 py-10 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1.1fr] lg:px-8">
+      <div className="mx-auto grid max-w-350 gap-10 px-5 py-10 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr_1.1fr] lg:px-8">
         <div className="max-w-sm">
           <Link className="inline-flex items-center gap-2.5" href="/">
             <span className="bg-primary text-primary-foreground grid size-10 place-items-center rounded-xl text-base font-black shadow-sm">
@@ -125,6 +131,7 @@ export function Footer() {
 
         <FooterLinkGroup links={PRODUCT_LINKS} title="Explore" />
         <FooterLinkGroup links={ACCOUNT_LINKS} title="Account" />
+        <FooterLinkGroup links={COMPANY_LINKS} title="Company" />
 
         <div>
           <h2 className="text-foreground text-sm font-semibold">Need help?</h2>

@@ -110,6 +110,140 @@ export default function HomePage() {
           </div>
 
           <div className="relative flex h-[420px] items-center justify-center lg:h-[480px]">
+            {/* ── Orthogonal circuit — connects all 9 nodes ──────── */}
+            <svg
+              className="pointer-events-none absolute inset-0 z-10 h-full w-full overflow-visible"
+              viewBox="0 0 600 420"
+              preserveAspectRatio="xMidYMid meet"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <defs>
+                <filter id="hero-glow-dot">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+
+              {/*
+                Node centres (viewBox 600×420, circle at 300,210):
+                  Star         : 164, 74   top-left icon
+                  BrainCircuit : 444, 74   top-right icon
+                  Coins card   : 555, 34   far top-right stat
+                  Gamepad2     : 460, 210  mid-right icon
+                  DayStreak    : 545, 340  far bottom-right stat
+                  Gift         : 444, 354  bottom-right icon
+                  Crown        : 164, 354  bottom-left icon
+                  TopRank card :  42, 210  far left stat
+                  Chart        : 144, 210  mid-left icon
+
+                Routing (right-angle segments):
+                  Star → BrainCircuit  : horizontal y=74
+                  BrainCircuit → Coins : up to y=34, right to x=555
+                  Coins → Gamepad2     : down to y=210, left to x=460
+                  Gamepad2 → DayStreak : right to x=545, down to y=340
+                  DayStreak → Gift     : down to y=354, left to x=444
+                  Gift → Crown         : horizontal y=354
+                  Crown → TopRank      : left to x=42, up to y=210
+                  TopRank → Chart      : right to x=144
+                  Chart → Star         : up to y=74, right to x=164
+              */}
+
+              {/* Faint static track */}
+              <path
+                d="
+                  M164,74 L444,74
+                  L444,34 L555,34
+                  L555,210 L460,210
+                  L460,340 L545,340
+                  L545,354 L444,354
+                  L164,354
+                  L42,354 L42,210
+                  L144,210
+                  L144,74 L164,74
+                "
+                fill="none"
+                stroke="rgba(124,58,237,0.12)"
+                strokeWidth="1"
+                strokeLinejoin="round"
+              />
+
+              {/* Animated dashed stream */}
+              <path
+                d="
+                  M164,74 L444,74
+                  L444,34 L555,34
+                  L555,210 L460,210
+                  L460,340 L545,340
+                  L545,354 L444,354
+                  L164,354
+                  L42,354 L42,210
+                  L144,210
+                  L144,74 L164,74
+                "
+                fill="none"
+                stroke="rgba(124,58,237,0.55)"
+                strokeWidth="1"
+                strokeLinejoin="round"
+                strokeLinecap="round"
+                style={{
+                  strokeDasharray: "6 16",
+                  animation: "hero-circuit-flow 6s linear infinite",
+                }}
+              />
+
+              {/* Node endpoint dots */}
+              {[
+                [164, 74],   // Star
+                [444, 74],   // BrainCircuit
+                [555, 34],   // Coins stat
+                [460, 210],  // Gamepad2
+                [545, 340],  // DayStreak stat
+                [444, 354],  // Gift
+                [164, 354],  // Crown
+                [42,  210],  // TopRank stat
+                [144, 210],  // Chart
+              ].map(([cx, cy]) => (
+                <circle
+                  key={`${cx}-${cy}`}
+                  cx={cx}
+                  cy={cy}
+                  r="3.5"
+                  fill="white"
+                  stroke="rgba(124,58,237,0.6)"
+                  strokeWidth="1.5"
+                />
+              ))}
+
+              {/* Travelling orb */}
+              <circle r="4" fill="rgba(124,58,237,0.95)" filter="url(#hero-glow-dot)">
+                <animateMotion
+                  dur="6s"
+                  repeatCount="indefinite"
+                  path="M164,74 L444,74 L444,34 L555,34 L555,210 L460,210 L460,340 L545,340 L545,354 L444,354 L164,354 L42,354 L42,210 L144,210 L144,74 Z"
+                />
+              </circle>
+
+              {/* Trailing orb */}
+              <circle r="2.5" fill="rgba(245,158,11,0.9)" filter="url(#hero-glow-dot)">
+                <animateMotion
+                  dur="6s"
+                  begin="-3s"
+                  repeatCount="indefinite"
+                  path="M164,74 L444,74 L444,34 L555,34 L555,210 L460,210 L460,340 L545,340 L545,354 L444,354 L164,354 L42,354 L42,210 L144,210 L144,74 Z"
+                />
+              </circle>
+
+              <style>{`
+                @keyframes hero-circuit-flow {
+                  to { stroke-dashoffset: -88; }
+                }
+              `}</style>
+            </svg>
+
             <div className="relative h-72 w-72 sm:h-80 sm:w-80">
               <div className="bg-primary/20 absolute inset-0 scale-110 rounded-full blur-3xl" />
               <div className="from-primary/30 via-primary/10 border-primary/20 relative z-10 flex h-full w-full flex-col items-center justify-center gap-1 rounded-full border bg-gradient-to-br to-transparent shadow-xl backdrop-blur-sm">
@@ -128,22 +262,22 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="bg-surface border-border absolute -top-4 -right-4 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg">
+              <div className="bg-surface border-border absolute -top-4 -right-4 z-20 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg">
                 <BrainCircuit className="text-primary h-5 w-5" />
               </div>
-              <div className="bg-surface border-border absolute top-1/2 -right-8 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg">
+              <div className="bg-surface border-border absolute top-1/2 -right-8 z-20 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg">
                 <Gamepad2 className="h-5 w-5 text-violet-500" />
               </div>
-              <div className="bg-surface border-border absolute -right-4 -bottom-4 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg">
+              <div className="bg-surface border-border absolute -right-4 -bottom-4 z-20 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg">
                 <Gift className="h-5 w-5 text-emerald-500" />
               </div>
-              <div className="bg-surface border-border absolute -bottom-4 -left-4 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg">
+              <div className="bg-surface border-border absolute -bottom-4 -left-4 z-20 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg">
                 <Crown className="h-5 w-5 text-amber-500" />
               </div>
-              <div className="bg-surface border-border absolute top-1/2 -left-8 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg">
+              <div className="bg-surface border-border absolute top-1/2 -left-8 z-20 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg">
                 <ChartNoAxesCombined className="h-5 w-5 text-orange-500" />
               </div>
-              <div className="bg-surface border-border absolute -top-4 -left-4 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg">
+              <div className="bg-surface border-border absolute -top-4 -left-4 z-20 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg">
                 <Star className="h-5 w-5 text-yellow-500" />
               </div>
             </div>
@@ -151,7 +285,7 @@ export default function HomePage() {
             {floatingStats.map((stat, i) => (
               <div
                 key={i}
-                className="bg-surface border-border absolute flex items-center gap-2 rounded-2xl border px-3.5 py-2.5 text-xs font-semibold shadow-lg"
+                className="bg-surface border-border absolute z-20 flex items-center gap-2 rounded-2xl border px-3.5 py-2.5 text-xs font-semibold shadow-lg"
                 style={{
                   top: i === 0 ? "8%" : i === 1 ? "50%" : "80%",
                   left: i === 1 ? "0%" : "auto",

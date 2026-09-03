@@ -71,7 +71,7 @@ export function SubjectDifficultyStep({
                 "rounded-2xl p-4 text-left transition-all",
                 isSelected
                   ? "bg-primary text-primary-foreground shadow-primary/15 shadow-lg"
-                  : "bg-surface-subtle text-foreground hover:-translate-y-0.5",
+                  : "bg-surface border text-foreground hover:-translate-y-0.5",
               )}
               key={difficulty.value}
               onClick={() => onSelectDifficulty(difficulty.value)}

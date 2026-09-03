@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  BadgeCent,
   BarChart3,
   BookOpenCheck,
   GraduationCap,
@@ -26,11 +27,14 @@ import { AnalyticsTab } from "./tabs/analytics-tab";
 import { ProfileTab } from "./tabs/profile-tab";
 import { SettingsTab } from "./tabs/settings-tab";
 
+import { WalletTab } from "./tabs/wallet-tab";
+
 type TabId =
   | "overview"
   | "exams"
   | "subjects"
   | "leaderboard"
+  | "wallet"
   | "analytics"
   | "profile"
   | "settings";
@@ -44,6 +48,7 @@ const TABS: Array<{
   { id: "exams", label: "Exams", icon: GraduationCap },
   { id: "subjects", label: "Subjects", icon: BookOpenCheck },
   { id: "leaderboard", label: "Leaderboard", icon: Trophy },
+  { id: "wallet", label: "Wallet", icon: BadgeCent },
   { id: "analytics", label: "Analytics", icon: BarChart3 },
   { id: "profile", label: "Profile", icon: UserRound },
   { id: "settings", label: "Settings", icon: Settings2 },
@@ -59,6 +64,8 @@ function TabContent({ activeTab }: { activeTab: TabId }) {
       return <SubjectsTab />;
     case "leaderboard":
       return <LeaderboardTab />;
+    case "wallet":
+      return <WalletTab />;
     case "analytics":
       return <AnalyticsTab />;
     case "profile":
@@ -77,10 +84,8 @@ export function DashboardShell() {
 
   return (
     <div className="bg-background flex min-h-dvh flex-col">
-      {/* ── Top header bar ─────────────────────────────────────────────── */}
       <header className="bg-surface/95 border-border sticky top-0 z-40 border-b backdrop-blur-xl shadow-sm">
         <div className="mx-auto flex h-14 max-w-[1400px] items-center justify-between gap-4 px-4 sm:px-6">
-          {/* Logo + back link */}
           <div className="flex items-center gap-3">
             <Link
               href="/"
@@ -101,9 +106,7 @@ export function DashboardShell() {
             </Link>
           </div>
 
-          {/* Right controls */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Balance */}
             <div className="hidden items-center gap-1 rounded-full bg-[#21194d] px-4 py-1 text-white sm:flex">
               <span className="font-bold text-amber-400">ℙ</span>
               <span className="text-xs font-bold">{preppalBalance}</span>
@@ -111,7 +114,6 @@ export function DashboardShell() {
 
             <ThemeToggle />
 
-            {/* User badge */}
             <div className="flex items-center gap-2">
               <div className="bg-primary text-primary-foreground grid size-8 place-items-center rounded-full text-xs font-bold">
                 {userName.slice(0, 1).toUpperCase()}
@@ -134,7 +136,7 @@ export function DashboardShell() {
 
         <div className="bg-surface-subtle/50 border-border border-t">
           <nav className="mx-auto max-w-[1400px] overflow-x-auto px-4 sm:px-6">
-            <div className="flex min-w-max gap-0.5 py-1">
+            <div className="flex min-w-max gap-0.5 py-3">
               {TABS.map(({ id, label, icon: Icon }) => {
                 const isActive = activeTab === id;
                 return (
@@ -158,7 +160,7 @@ export function DashboardShell() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 py-8 sm:px-6">
+      <main className="mx-auto w-full max-w-[1200px] flex-1 px-4 py-8 sm:px-6">
         <TabContent activeTab={activeTab} />
       </main>
     </div>

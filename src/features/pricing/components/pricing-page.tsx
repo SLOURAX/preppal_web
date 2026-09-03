@@ -54,9 +54,6 @@ export function PricingPage() {
 
       <section className="surface-card mt-6 grid gap-5 p-5 sm:p-6 lg:grid-cols-[1fr_1.4fr] lg:items-start">
         <div>
-          <span className="bg-primary/10 text-primary grid size-10 place-items-center rounded-2xl">
-            <ShieldCheck className="size-5" />
-          </span>
           <h2 className="text-foreground mt-3 text-base font-semibold">
             Clear terms, confident choice
           </h2>

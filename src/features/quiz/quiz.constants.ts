@@ -1,13 +1,18 @@
 export type QuizPath = "exam" | "subject";
 export type QuizSetupStep =
-  "entry" | "exam-year" | "subject-difficulty" | "subject-topics";
+  | "entry"
+  | "exam-subject"
+  | "exam-year"
+  | "subject-difficulty"
+  | "subject-topics"
+  | "quiz-mode";
 export type QuizDifficulty = "easy" | "medium" | "hard";
+export type QuizMode = "timed" | "untimed";
 
 export interface QuizChoice {
   readonly value: string;
   readonly label: string;
-  readonly description: string;
-}
+  readonly description?: string;}
 
 export interface DifficultyChoice {
   readonly value: QuizDifficulty;
@@ -150,3 +155,165 @@ export const SUBJECT_TOPICS: Readonly<Record<string, readonly string[]>> = {
     "International relations",
   ],
 };
+
+export const EXAM_SUBJECTS: Readonly<Record<string, readonly QuizChoice[]>> = {
+  jamb: [
+    {
+      value: "mathematics",
+      label: "Mathematics",
+    },
+    {
+      value: "english",
+      label: "English Language",
+    },
+    {
+      value: "biology",
+      label: "Biology",
+    },
+    {
+      value: "chemistry",
+      label: "Chemistry",
+    },
+    {
+      value: "physics",
+      label: "Physics",
+    },
+    {
+      value: "government",
+      label: "Government",
+    },
+    {
+      value: "economics",
+      label: "Economics",
+    },
+    {
+      value: "commerce",
+      label: "Commerce",
+    },
+    {
+      value: "accounting",
+      label: "Accounting",
+    },
+    {
+      value: "literature",
+      label: "Literature in English",
+    },
+    {
+      value: "geography",
+      label: "Geography",
+    },
+    {
+      value: "history",
+      label: "History",
+    },
+  ],
+  waec: [
+    {
+      value: "mathematics",
+      label: "Mathematics",
+    },
+    {
+      value: "english",
+      label: "English Language",
+    },
+    {
+      value: "biology",
+      label: "Biology",
+    },
+    {
+      value: "chemistry",
+      label: "Chemistry",
+    },
+    {
+      value: "physics",
+      label: "Physics",
+    },
+    {
+      value: "economics",
+      label: "Economics",
+    },
+    {
+      value: "government",
+      label: "Government",
+    },
+    {
+      value: "accounting",
+      label: "Financial Accounting",
+    },
+    {
+      value: "commerce",
+      label: "Commerce",
+    },
+    {
+      value: "geography",
+      label: "Geography",
+    },
+    {
+      value: "agric",
+      label: "Agricultural Science",
+    },
+    {
+      value: "civic",
+      label: "Civic Education",
+    },
+  ],
+  neco: [
+    {
+      value: "mathematics",
+      label: "Mathematics",
+    },
+    {
+      value: "english",
+      label: "English Language",
+    },
+    {
+      value: "biology",
+      label: "Biology",
+    },
+    {
+      value: "chemistry",
+      label: "Chemistry",
+    },
+    {
+      value: "physics",
+      label: "Physics",
+    },
+    {
+      value: "government",
+      label: "Government",
+    },
+    {
+      value: "economics",
+      label: "Economics",
+    },
+    {
+      value: "agric",
+      label: "Agricultural Science",
+    },
+    {
+      value: "civic",
+      label: "Civic Education",
+    },
+    {
+      value: "commerce",
+      label: "Commerce",
+    },
+  ],
+};
+
+export const QUIZ_MODES = [
+  {
+    value: "timed",
+    label: "Timed Quiz",
+    description:
+      "Race against the clock. Simulates real exam conditions with a countdown timer.",
+    icon: "Timer",
+  },
+  {
+    value: "untimed",
+    label: "Untimed Quiz",
+    description:
+      "Learn at your own pace. Ask for AI explanations and explore topics deeply.",
+    icon: "BoomBox",
+  },
+] as const;

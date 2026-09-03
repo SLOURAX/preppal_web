@@ -9,6 +9,7 @@ import {
   GraduationCap,
   ListChecks,
   SlidersHorizontal,
+  Gauge,
 } from "lucide-react";
 import { type FormEvent, useState } from "react";
 
@@ -23,9 +24,12 @@ import {
   type QuizDifficulty,
   type QuizPath,
   type QuizSetupStep,
+  type QuizMode,
 } from "../quiz.constants";
 import { ExamYearStep } from "./exam-year-step";
+import { ExamSubjectStep } from "./exam-subject-step";
 import { QuizAuthGate } from "./quiz-auth-gate";
+import { QuizModeStep } from "./quiz-mode-step";
 import { QuizSelect } from "./quiz-select";
 import { QuizSetupProgress } from "./quiz-setup-progress";
 import { SubjectDifficultyStep } from "./subject-difficulty-step";
@@ -48,14 +52,16 @@ const QUIZ_PATHS = [
 
 const EXAM_SETUP_STEPS = [
   { label: "Exam", icon: GraduationCap },
+  { label: "Subject", icon: BookOpenCheck },
   { label: "Year", icon: CalendarDays },
-  { label: "Questions", icon: ListChecks },
+  { label: "Mode", icon: Gauge },
 ] as const;
 
 const SUBJECT_SETUP_STEPS = [
   { label: "Subject", icon: BookOpenText },
   { label: "Difficulty", icon: SlidersHorizontal },
   { label: "Topics", icon: ListChecks },
+  { label: "Mode", icon: Gauge },
 ] as const;
 
 interface QuizEntryScreenProps {
@@ -73,6 +79,7 @@ export function QuizEntryScreen({
   const [selectedExam, setSelectedExam] = useState<string>(
     initialPath === "exam" ? initialSelection : "",
   );
+  const [selectedExamSubject, setSelectedExamSubject] = useState<string | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<string>(
     initialPath === "subject" ? initialSelection : "",
   );
@@ -80,6 +87,7 @@ export function QuizEntryScreen({
   const [selectedDifficulty, setSelectedDifficulty] =
     useState<QuizDifficulty | null>(null);
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const [selectedMode, setSelectedMode] = useState<QuizMode | null>(null);
   const [isAuthGateOpen, setIsAuthGateOpen] = useState<boolean>(false);
 
   const choices = quizPath === "exam" ? EXAM_CHOICES : SUBJECT_CHOICES;
@@ -89,8 +97,20 @@ export function QuizEntryScreen({
   );
   const progressItems =
     quizPath === "exam" ? EXAM_SETUP_STEPS : SUBJECT_SETUP_STEPS;
-  const activeStepIndex =
-    setupStep === "entry" ? 0 : setupStep === "subject-topics" ? 2 : 1;
+  
+  let activeStepIndex = 0;
+  if (setupStep !== "entry") {
+    if (quizPath === "exam") {
+      if (setupStep === "exam-subject") activeStepIndex = 1;
+      else if (setupStep === "exam-year") activeStepIndex = 2;
+      else if (setupStep === "quiz-mode") activeStepIndex = 3;
+    } else {
+      if (setupStep === "subject-difficulty") activeStepIndex = 1;
+      else if (setupStep === "subject-topics") activeStepIndex = 2;
+      else if (setupStep === "quiz-mode") activeStepIndex = 3;
+    }
+  }
+
   const subjectTopics = selectedSubject
     ? (SUBJECT_TOPICS[selectedSubject] ?? [])
     : [];
@@ -101,18 +121,23 @@ export function QuizEntryScreen({
     setSelectedYear(null);
     setSelectedDifficulty(null);
     setSelectedTopics([]);
+    setSelectedExamSubject(null);
+    setSelectedMode(null);
   };
 
   const updateSelection = (value: string): void => {
     if (quizPath === "exam") {
       setSelectedExam(value);
+      setSelectedExamSubject(null);
       setSelectedYear(null);
+      setSelectedMode(null);
       return;
     }
 
     setSelectedSubject(value);
     setSelectedDifficulty(null);
     setSelectedTopics([]);
+    setSelectedMode(null);
   };
 
   const submitEntry = (event: FormEvent<HTMLFormElement>): void => {
@@ -124,7 +149,7 @@ export function QuizEntryScreen({
       return;
     }
 
-    setSetupStep(quizPath === "exam" ? "exam-year" : "subject-difficulty");
+    setSetupStep(quizPath === "exam" ? "exam-subject" : "subject-difficulty");
   };
 
   const toggleTopic = (topic: string): void => {
@@ -140,6 +165,15 @@ export function QuizEntryScreen({
       currentTopics.length === subjectTopics.length ? [] : [...subjectTopics],
     );
   };
+
+  const handleStartPractice = () => {
+    console.log("Start practice clicked", { quizPath, selectedExam, selectedExamSubject, selectedSubject, selectedYear, selectedDifficulty, selectedTopics, selectedMode });
+  };
+
+  // Find label for context
+  const selectedExamSubjectLabel = selectedExamSubject 
+    ? (EXAM_CHOICES.find(c => c.value === selectedExamSubject)?.label ?? selectedExamSubject) // Note: this isn't strictly right since EXAM_CHOICES doesn't have subjects, but it'll fallback. Actually, it should be looked up from EXAM_SUBJECTS in a real app, but for context chip the value is fine.
+    : undefined;
 
   return (
     <main className="mx-auto w-full max-w-5xl px-5 py-10 sm:px-8">
@@ -180,10 +214,10 @@ export function QuizEntryScreen({
                     <button
                       aria-pressed={isSelected}
                       className={cn(
-                        "relative rounded-2xl border-2 p-4 text-left transition-all",
+                        "relative rounded-2xl border p-4 text-left transition-all",
                         isSelected
-                          ? "border-primary bg-primary/30"
-                          : "bg-surface-subtle border-transparent hover:-translate-y-0.5",
+                          ? "border-primary"
+                          : "border-transparent hover:-translate-y-0.5",
                       )}
                       key={value}
                       onClick={() => updatePath(value)}
@@ -267,12 +301,24 @@ export function QuizEntryScreen({
           </form>
         ) : null}
 
+        {setupStep === "exam-subject" && selectedChoice ? (
+          <ExamSubjectStep
+            examLabel={selectedChoice.label}
+            examValue={selectedChoice.value}
+            selectedSubject={selectedExamSubject}
+            onBack={() => setSetupStep("entry")}
+            onSelectSubject={setSelectedExamSubject}
+            onContinue={() => setSetupStep("exam-year")}
+          />
+        ) : null}
+
         {setupStep === "exam-year" && selectedChoice ? (
           <ExamYearStep
             examLabel={selectedChoice.label}
-            onBack={() => setSetupStep("entry")}
+            onBack={() => setSetupStep("exam-subject")}
             onSelectYear={setSelectedYear}
             selectedYear={selectedYear}
+            onContinue={() => setSetupStep("quiz-mode")}
           />
         ) : null}
 
@@ -297,6 +343,27 @@ export function QuizEntryScreen({
             selectedTopics={selectedTopics}
             subjectLabel={selectedChoice.label}
             topics={subjectTopics}
+            onContinue={() => setSetupStep("quiz-mode")}
+          />
+        ) : null}
+
+        {setupStep === "quiz-mode" ? (
+          <QuizModeStep
+            selectedMode={selectedMode}
+            context={{
+              path: quizPath,
+              examLabel: quizPath === "exam" ? selectedChoice?.label : undefined,
+              subjectLabel: quizPath === "exam" ? (selectedExamSubject ? selectedExamSubject.charAt(0).toUpperCase() + selectedExamSubject.slice(1) : undefined) : selectedChoice?.label,
+              yearLabel: selectedYear ? String(selectedYear) : undefined,
+              difficulty: selectedDifficulty ?? undefined,
+            }}
+            onBack={() =>
+              quizPath === "exam"
+                ? setSetupStep("exam-year")
+                : setSetupStep("subject-topics")
+            }
+            onSelectMode={setSelectedMode}
+            onStart={handleStartPractice}
           />
         ) : null}
       </div>

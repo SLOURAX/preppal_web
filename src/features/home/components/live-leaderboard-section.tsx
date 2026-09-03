@@ -1,4 +1,4 @@
-import { Crown, Flame, Medal, Trophy } from "lucide-react";
+import { Flame, Medal, Crown, TrendingUp, Trophy } from "lucide-react";
 import Image from "next/image";
 
 import { cn } from "@/lib/utils";
@@ -226,6 +226,100 @@ export function LiveLeaderboardSection() {
           <div className="pointer-events-none absolute top-1/2 left-1/2 size-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-500/20 blur-[100px]" />
 
           <div className="relative aspect-square w-full max-w-sm lg:max-w-md xl:max-w-lg">
+
+            {/* ── Animated circuit connecting the icons ────────────── */}
+            <svg
+              className="pointer-events-none absolute inset-0 z-10 overflow-visible"
+              viewBox="0 0 400 400"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <defs>
+                <filter id="glow-dot">
+                  <feGaussianBlur stdDeviation="3.5" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+                <filter id="glow-line">
+                  <feGaussianBlur stdDeviation="2" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+
+              {/* Static faint track */}
+              <path
+                d="M10,74 C150,20 280,40 396,120 C430,170 430,240 388,280 C320,360 220,420 124,384 C60,380 -40,200 10,74"
+                fill="none"
+                stroke="rgba(167,139,250,0.10)"
+                strokeWidth="1.5"
+              />
+
+              {/* Animated dashed stream */}
+              <path
+                d="M10,74 C150,20 280,40 396,120 C430,170 430,240 388,280 C320,360 220,420 124,384 C60,380 -40,200 10,74"
+                fill="none"
+                stroke="rgba(167,139,250,0.55)"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                filter="url(#glow-line)"
+                style={{
+                  strokeDasharray: "10 22",
+                  animation: "circuit-flow 3s linear infinite",
+                }}
+              />
+
+              {/* Primary glowing dot */}
+              <circle r="5" fill="rgba(196,181,253,0.95)" filter="url(#glow-dot)">
+                <animateMotion
+                  dur="3s"
+                  repeatCount="indefinite"
+                  path="M10,74 C150,20 280,40 396,120 C430,170 430,240 388,280 C320,360 220,420 124,384 C60,380 -40,200 10,74"
+                />
+              </circle>
+
+              {/* Trailing dot (offset by half a cycle) */}
+              <circle r="3" fill="rgba(251,191,36,0.80)" filter="url(#glow-dot)">
+                <animateMotion
+                  dur="3s"
+                  begin="-1.5s"
+                  repeatCount="indefinite"
+                  path="M10,74 C150,20 280,40 396,120 C430,170 430,240 388,280 C320,360 220,420 124,384 C60,380 -40,200 10,74"
+                />
+              </circle>
+
+              <style>{`
+                @keyframes circuit-flow {
+                  to { stroke-dashoffset: -128; }
+                }
+              `}</style>
+            </svg>
+
+            {/* ── Floating glass icon orbs ─────────────────────────── */}
+            {/* Trophy — top-left */}
+            <div className="absolute top-12 -left-4 z-20 rounded-2xl border border-white/10 bg-white/8 p-3.5 shadow-[0_0_30px_rgba(124,58,237,0.35)] backdrop-blur-xl sm:-left-8 sm:p-4">
+              <Trophy className="size-6 text-violet-300 sm:size-8" />
+            </div>
+
+            {/* TrendingUp — top-right */}
+            <div className="absolute top-1/4 -right-4 z-20 rounded-xl border border-white/10 bg-white/8 p-2.5 shadow-[0_0_28px_rgba(99,102,241,0.3)] backdrop-blur-xl sm:-right-8 sm:p-3">
+              <TrendingUp className="size-5 text-indigo-300 sm:size-6" />
+            </div>
+
+            {/* Flame — bottom-right */}
+            <div className="absolute bottom-1/4 -right-2 z-20 rounded-2xl border border-white/10 bg-white/8 p-2.5 shadow-[0_0_24px_rgba(167,139,250,0.25)] backdrop-blur-xl sm:-right-6 sm:p-3">
+              <Flame className="size-5 text-violet-400 sm:size-6" />
+            </div>
+
+            {/* Medal — bottom-center */}
+            <div className="absolute -bottom-2 left-1/4 z-20 rounded-full border border-white/10 bg-white/8 p-3 shadow-[0_0_36px_rgba(124,58,237,0.3)] backdrop-blur-xl sm:-bottom-6 sm:p-4">
+              <Medal className="size-6 text-violet-300 sm:size-8" />
+            </div>
+
             <Image
               src="/mascot-leaderboard.png"
               alt="Preppal Mascot"

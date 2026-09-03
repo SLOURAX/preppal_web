@@ -5,7 +5,6 @@ import {
   ChevronDown,
   LogOut,
   User,
-  WalletCards,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -111,14 +110,6 @@ export function NavBar() {
                       >
                         <User className="size-4" />
                         My Dashboard
-                      </Link>
-                      <Link
-                        className="hover:bg-surface-subtle flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors"
-                        href="/wallet"
-                        onClick={() => setIsDropdownOpen(false)}
-                      >
-                        <WalletCards className="size-4" />
-                        Wallet & transactions
                       </Link>
                       <div className="bg-border/60 my-1 h-px" />
                       <button
@@ -249,20 +240,13 @@ export function NavBar() {
                       {preppalBalance}
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 gap-2">
                     <Link
                       href="/dashboard"
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="hover:bg-surface-subtle rounded-xl px-3 py-2.5 text-center text-sm font-medium"
                     >
                       My Dashboard
-                    </Link>
-                    <Link
-                      href="/wallet"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="hover:bg-surface-subtle rounded-xl px-3 py-2.5 text-center text-sm font-medium"
-                    >
-                      Wallet
                     </Link>
                   </div>
                   <button
