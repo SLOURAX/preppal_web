@@ -13,6 +13,7 @@ import {
   Star,
 } from "lucide-react";
 import { AppShell } from "@/components/layout";
+import { AppDownloadButtons } from "@/components/ui/app-download-buttons";
 import {
   AiQuizSection,
   MomentumSection,
@@ -101,8 +102,11 @@ export default function HomePage() {
                 <BrainCircuit className="h-4 w-4" /> Try a Quiz
               </Link>
             </div>
+            <div className="mt-1">
+              <AppDownloadButtons />
+            </div>
 
-            <p className="text-muted-foreground text-xs">
+            <p className="text-muted-foreground text-xs mt-2">
               Join{" "}
               <span className="text-foreground font-semibold">10,000+</span>{" "}
               students already earning while they learn

@@ -89,6 +89,8 @@ function FooterLinkGroup({
   );
 }
 
+import { AppDownloadButtons } from "@/components/ui/app-download-buttons";
+
 export function Footer() {
   return (
     <footer className="bg-surface/80 mt-auto shadow-[0_-12px_45px_rgb(58_34_140/0.05)] backdrop-blur-xl">
@@ -106,13 +108,10 @@ export function Footer() {
             Study smarter, practise with confidence, and earn rewards as you
             make progress.
           </p>
-          <Link
-            className="text-primary mt-5 inline-flex items-center gap-1.5 text-xs font-semibold transition-all hover:gap-2.5"
-            href="/quiz"
-          >
-            Start practising <ArrowUpRight className="size-4" />
-          </Link>
-          <div className="mt-5 flex items-center gap-2">
+          <div className="mt-5">
+            <AppDownloadButtons />
+          </div>
+          <div className="mt-6 flex items-center gap-2">
             {SOCIAL_LINKS.map(({ href, label, icon: Icon }) => (
               <a
                 aria-label={`Follow Preppal on ${label}`}
