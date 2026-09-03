@@ -12,6 +12,7 @@ import {
   Gauge,
 } from "lucide-react";
 import { type FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
@@ -73,6 +74,7 @@ export function QuizEntryScreen({
   initialPath = "exam",
   initialSelection = "",
 }: QuizEntryScreenProps) {
+  const router = useRouter();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [quizPath, setQuizPath] = useState<QuizPath>(initialPath);
   const [setupStep, setSetupStep] = useState<QuizSetupStep>("entry");
@@ -167,7 +169,7 @@ export function QuizEntryScreen({
   };
 
   const handleStartPractice = () => {
-    console.log("Start practice clicked", { quizPath, selectedExam, selectedExamSubject, selectedSubject, selectedYear, selectedDifficulty, selectedTopics, selectedMode });
+    router.push("/quiz/preview");
   };
 
   // Find label for context

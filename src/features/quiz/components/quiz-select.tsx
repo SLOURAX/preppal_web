@@ -1,5 +1,5 @@
-import { ChevronDown, type LucideIcon } from "lucide-react";
-
+import { ListSelect } from "@/components/ui/list-select";
+import type { LucideIcon } from "lucide-react";
 import type { QuizChoice } from "../quiz.constants";
 
 interface QuizSelectProps {
@@ -14,7 +14,7 @@ interface QuizSelectProps {
 
 export function QuizSelect({
   id,
-  icon: Icon,
+  icon,
   label,
   options,
   placeholder,
@@ -22,27 +22,14 @@ export function QuizSelect({
   onChange,
 }: QuizSelectProps) {
   return (
-    <div>
-      <label className="text-foreground text-sm font-semibold" htmlFor={id}>
-        {label}
-      </label>
-      <div className="relative mt-2">
-        <Icon className="text-primary pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2" />
-        <select
-          className="border-border bg-surface text-foreground focus:border-primary focus:ring-primary/15 h-14 w-full appearance-none rounded-2xl border pr-12 pl-12 text-sm font-medium transition outline-none focus:ring-4"
-          id={id}
-          onChange={(event) => onChange(event.target.value)}
-          value={value}
-        >
-          <option value="">{placeholder}</option>
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <ChevronDown className="text-muted-foreground pointer-events-none absolute top-1/2 right-4 size-5 -translate-y-1/2" />
-      </div>
-    </div>
+    <ListSelect
+      id={id}
+      icon={icon}
+      label={label}
+      options={options}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+    />
   );
 }
