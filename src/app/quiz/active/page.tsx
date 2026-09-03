@@ -10,6 +10,7 @@ import { NavControls } from "@/features/quiz/components/active/nav-controls";
 import { QuizSidebar } from "@/features/quiz/components/active/quiz-sidebar";
 import { InstructionsModal } from "@/features/quiz/components/active/instructions-modal";
 import { SubmitModal } from "@/features/quiz/components/active/submit-modal";
+import { QuestionAudioPlayer } from "@/features/quiz/components/active/question-audio-player";
 import type { Question, QuestionStatus } from "@/features/quiz/components/active/types";
 
 const TOTAL_SECONDS = 45 * 60;
@@ -80,6 +81,8 @@ export default function ActiveQuizPage() {
   const answeredCount = Object.keys(answers).length;
   const flaggedCount = Object.values(flagged).filter(Boolean).length;
   const unansweredCount = QUESTIONS.length - answeredCount;
+  
+  const textToRead = `Question ${currentIndex + 1}. ${currentQ.text}. Options: ${currentQ.options.map((opt, i) => `${String.fromCharCode(65 + i)}: ${opt}`).join('. ')}.`;
 
   useEffect(() => {
     if (secondsLeft <= 0) return;
@@ -151,6 +154,12 @@ export default function ActiveQuizPage() {
               getStatus={getStatus}
               onNavigate={goTo}
             />
+            
+            <QuestionAudioPlayer 
+              textToRead={textToRead} 
+              questionId={currentQ.id} 
+            />
+
             <div className="mt-6 sm:hidden">
               <Button
                 onClick={() => setShowSubmitModal(true)}

@@ -28,36 +28,38 @@ export function QuestionCard({
 }: QuestionCardProps) {
   return (
     <div>
-      <div className="mb-5 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <span className="text-muted-foreground text-[.9rem] font-medium uppercase tracking-widest">
+      <div className="mb-5 flex items-center justify-between gap-2 sm:gap-3">
+        <div className="flex shrink-0 items-baseline gap-1.5 whitespace-nowrap">
+          <span className="text-muted-foreground text-[10px] sm:text-[.9rem] font-medium uppercase tracking-widest">
             Question
           </span>
-          <span className="text-foreground text-sm font-bold">{index + 1}</span>
-          <span className="text-muted-foreground text-[.8rem]">of {total}</span>
+          <span className="text-foreground text-sm sm:text-base font-bold">{index + 1}</span>
+          <span className="text-muted-foreground text-[10px] sm:text-[.8rem]">of {total}</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
           <button
             onClick={onOpenInstructions}
-            className="text-muted-foreground hover:text-foreground hover:bg-surface-subtle flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors"
+            className="text-muted-foreground hover:text-foreground hover:bg-surface-subtle flex items-center gap-1.5 rounded-full p-2 sm:px-3 sm:py-1.5 text-xs font-medium transition-colors"
+            title="Read Instructions"
           >
-            <Info className="size-3.5" />
-            Read Instructions
+            <Info className="size-4 sm:size-3.5" />
+            <span className="hidden sm:inline">Read Instructions</span>
           </button>
           <button
             onClick={onToggleFlag}
             className={cn(
-              "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all",
+              "flex items-center gap-1.5 rounded-full p-2 sm:px-3 sm:py-1.5 text-xs font-semibold transition-all",
               isFlagged
                 ? "bg-amber-500/15 text-amber-600"
                 : "text-muted-foreground hover:text-foreground hover:bg-surface-subtle",
             )}
+            title="Flag Question"
           >
             <Flag
-              className="size-3.5"
+              className="size-4 sm:size-3.5"
               fill={isFlagged ? "currentColor" : "none"}
             />
-            {isFlagged ? "Flagged" : "Flag Question"}
+            <span className="hidden sm:inline">{isFlagged ? "Flagged" : "Flag Question"}</span>
           </button>
         </div>
       </div>

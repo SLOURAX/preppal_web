@@ -23,6 +23,8 @@ const LEGEND = [
   { dot: "bg-border", label: "Unanswered" },
 ] as const;
 
+const ZIGZAG_BG = `url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20l10-10 20 20 10-10' stroke='rgba(124, 58, 237, 0.03)' stroke-width='1' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`;
+
 export function QuizSidebar({
   total,
   currentIndex,
@@ -40,7 +42,13 @@ export function QuizSidebar({
   ];
 
   return (
-    <aside className="border-border bg-surface hidden w-[30%] shrink-0 flex-col border-l md:flex">
+    <aside 
+      className="border-border hidden w-[30%] shrink-0 flex-col border-l md:flex"
+      style={{ 
+        backgroundColor: "var(--surface)",
+        backgroundImage: ZIGZAG_BG 
+      }}
+    >
       <div className="flex h-full flex-col p-5">
         <h3 className="text-foreground mb-4 text-xs font-bold uppercase tracking-widest">
           Question Overview
