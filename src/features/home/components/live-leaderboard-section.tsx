@@ -119,7 +119,6 @@ export function LiveLeaderboardSection() {
           </div>
 
           <div className="relative w-full max-w-[500px] overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-2xl backdrop-blur-md">
-            {/* Card-level Grid Lines */}
             <div
               className="pointer-events-none absolute inset-0 opacity-[0.03]"
               style={{
@@ -199,7 +198,6 @@ export function LiveLeaderboardSection() {
                       </span>
                     </div>
 
-                    {/* Score */}
                     <div className="w-20 text-right">
                       <span
                         className={cn(
@@ -332,7 +330,7 @@ export function LiveLeaderboardSection() {
               src="/mascot-leaderboard.png"
               alt="Preppal Mascot"
               fill
-              className="scale-[0.85] animate-[pulse_4s_ease-in-out_infinite] object-contain drop-shadow-2xl"
+              className="scale-[0.75] animate-[pulse_4s_ease-in-out_infinite] object-contain drop-shadow-2xl"
               priority
             />
           </div>

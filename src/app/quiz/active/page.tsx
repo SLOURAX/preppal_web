@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Calculator, Lightbulb, Send, RobotArm, X } from "lucide-react";
-import { SaxMessageQuestionBulk } from "@meysam213/iconsax-react";
+import { SaxMessageQuestionBulk, SaxCalculatorBold } from "@meysam213/iconsax-react";
 
 import { QuizHeader } from "@/features/quiz/components/active/quiz-header";
 import { QuestionCard } from "@/features/quiz/components/active/question-card";
@@ -349,11 +349,11 @@ function ActiveQuizContent() {
         ) : null}
         <button
           aria-label={showCalculator ? "Close calculator" : "Open calculator"}
-          className="bg-surface text-primary border-primary/20 grid size-11 place-items-center rounded-xl border shadow-lg transition-transform hover:-translate-y-0.5"
+          className="bg-primary text-primary border-primary/20 grid size-12 place-items-center rounded-xl border shadow-lg transition-transform hover:-translate-y-0.5"
           onClick={() => setShowCalculator((current) => !current)}
           type="button"
         >
-          <Calculator className="size-5" />
+          <SaxCalculatorBold className="size-7" color="white" />
         </button>
       </div>
     </div>
