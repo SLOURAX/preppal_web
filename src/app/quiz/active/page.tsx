@@ -69,8 +69,8 @@ const QUESTIONS: Question[] = Array.from({ length: 40 }, (_, i) => ({
   options: RAW_QUESTIONS[i % RAW_QUESTIONS.length]!.options,
 }));
 
-const GRID_BG =
-  "linear-gradient(to right, rgba(124,58,237,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(124,58,237,0.04) 1px, transparent 1px)";
+const QUIZ_PATTERN_BG =
+  "url(\"data:image/svg+xml,%3Csvg width='140' height='140' viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='rgba(124,58,237,0.14)' stroke-width='1.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 22h16v20H15zM15 22l8-4 8 4M15 42l8-4 8 4'/%3E%3Cpath d='M102 14l2 5 5 2-5 2-2 5-2-5-5-2 5-2z'/%3E%3Cpath d='M61 15h15M68 8v15'/%3E%3Ccircle cx='106' cy='52' r='8'/%3E%3Cpath d='M103 51a3 3 0 0 1 6 0c0 2-3 2-3 5m0 3v.5'/%3E%3Cpath d='M22 76h18m-9-9v18'/%3E%3Cpath d='M75 67h17v14H75zM75 67l8-5 9 5'/%3E%3Ccircle cx='27' cy='115' r='8'/%3E%3Cpath d='M24 115a3 3 0 0 1 6 0c0 2-3 2-3 4m0 3v.5'/%3E%3Cpath d='M105 99l3 3 7-8M101 107h17'/%3E%3Cpath d='M55 112c5-6 12-6 17 0'/%3E%3Cpath d='M67 91h14m-7-7v14'/%3E%3C/g%3E%3C/svg%3E\")";
 
 function ActiveQuizContent() {
   const router = useRouter();
@@ -176,7 +176,10 @@ function ActiveQuizContent() {
       <div className="flex min-h-0 flex-1 overflow-hidden">
         <main
           className="flex min-w-0 flex-1 flex-col overflow-y-auto"
-          style={{ backgroundImage: GRID_BG, backgroundSize: "40px 40px" }}
+          style={{
+            backgroundImage: QUIZ_PATTERN_BG,
+            backgroundSize: "80px 80px",
+          }}
         >
           <div className="mx-auto w-full max-w-xl flex-1 px-4 py-8 sm:px-8 sm:py-10">
             <div className="relative">

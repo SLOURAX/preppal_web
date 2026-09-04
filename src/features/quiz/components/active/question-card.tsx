@@ -43,7 +43,7 @@ export function QuestionCard({
         <div className="flex shrink-0 items-center gap-1 sm:gap-2">
           <button
             onClick={onOpenInstructions}
-            className="text-muted-foreground hover:text-foreground hover:bg-surface-subtle flex items-center gap-1.5 rounded-full p-2 text-xs font-medium transition-colors sm:px-3 sm:py-1.5"
+            className="text-muted-foreground hover:text-foreground hover:bg-surface-subtle bg-surface/65 flex items-center gap-1.5 rounded-full p-2 text-xs font-medium shadow-sm backdrop-blur-sm transition-colors sm:px-3 sm:py-1.5"
             title="Read Instructions"
           >
             <Info className="size-4 sm:size-3.5" />
@@ -55,7 +55,7 @@ export function QuestionCard({
               "flex items-center gap-1.5 rounded-full p-2 text-xs font-semibold transition-all sm:px-3 sm:py-1.5",
               isFlagged
                 ? "bg-amber-500/15 text-amber-600"
-                : "text-muted-foreground hover:text-foreground hover:bg-surface-subtle",
+                : "text-muted-foreground hover:text-foreground hover:bg-surface-subtle bg-surface/65 shadow-sm backdrop-blur-sm",
             )}
             title="Flag Question"
           >

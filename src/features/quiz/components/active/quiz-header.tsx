@@ -41,7 +41,7 @@ export function QuizHeader({
       </div>
 
       <div className="flex items-center gap-3">
-        <span className="text-primary bg-primary/10 rounded-full px-2.5 py-1 text-xs font-semibold">
+        <span className="text-primary bg-primary/10 hidden rounded-full px-2.5 py-1 text-xs font-semibold sm:inline-flex">
           {currentIndex + 1} / {total}
         </span>
         <div className="bg-surface-subtle hidden h-1.5 w-24 overflow-hidden rounded-full sm:block">

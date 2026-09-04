@@ -28,7 +28,7 @@ export function NavControls({
       <button
         onClick={() => onNavigate(currentIndex - 1)}
         disabled={currentIndex === 0}
-        className="text-muted-foreground hover:text-foreground hover:border-border flex items-center gap-2 rounded-full border border-transparent px-4 py-2 text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-40"
+        className="text-muted-foreground hover:text-foreground hover:border-border border-border/60 bg-surface/70 flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium shadow-sm backdrop-blur-sm transition-all disabled:pointer-events-none disabled:opacity-40"
       >
         <ChevronLeft className="size-4" />
         Previous
