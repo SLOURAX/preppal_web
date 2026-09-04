@@ -281,7 +281,7 @@ export function QuizEntryScreen({
               />
             </div>
 
-            {selectedChoice ? (
+            {/* {selectedChoice ? (
               <div className="bg-surface-subtle mt-4 flex items-start gap-3 rounded-2xl p-4">
                 <span className="bg-success/10 text-success grid size-8 shrink-0 place-items-center rounded-full">
                   <Check className="size-4" />
@@ -295,7 +295,7 @@ export function QuizEntryScreen({
                   </p>
                 </div>
               </div>
-            ) : null}
+            ) : null} */}
 
             <div className="mt-6 flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
               <p className="text-muted-foreground text-center text-xs sm:text-left">
@@ -308,7 +308,7 @@ export function QuizEntryScreen({
                 disabled={!selectedChoice}
                 type="submit"
               >
-                Continue setup <ArrowRight className="size-4" />
+                Continue <ArrowRight className="size-4" />
               </Button>
             </div>
           </form>

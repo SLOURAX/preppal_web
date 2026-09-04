@@ -15,7 +15,7 @@ interface AuthTab {
 }
 
 const tabs: readonly AuthTab[] = [
-  { href: "/login", label: "Log in", icon: LogIn },
+  { href: "/login", label: "Sign in", icon: LogIn },
   { href: "/register", label: "Sign up", icon: UserPlus },
 ];
 

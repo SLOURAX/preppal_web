@@ -304,17 +304,17 @@ export const EXAM_SUBJECTS: Readonly<Record<string, readonly QuizChoice[]>> = {
 
 export const QUIZ_MODES = [
   {
+    value: "untimed",
+    label: "Practice Playground",
+    description:
+      "Learn at your own pace. Ask for AI explanations and explore topics deeply.",
+    icon: "BoomBox",
+  },
+  {
     value: "timed",
     label: "Timed Quiz",
     description:
       "Race against the clock. Simulates real exam conditions with a countdown timer.",
     icon: "Timer",
-  },
-  {
-    value: "untimed",
-    label: "Untimed Quiz",
-    description:
-      "Learn at your own pace. Ask for AI explanations and explore topics deeply.",
-    icon: "BoomBox",
   },
 ] as const;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Play, Pause, Square, Volume2 } from "lucide-react";
+import { Pause, Play, Square, Volume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface QuestionAudioPlayerProps {
@@ -92,11 +92,11 @@ export function QuestionAudioPlayer({
   const togglePlayPause = isPlaying ? handlePause : handlePlay;
 
   return (
-    <div className="surface-card border-border/50 mt-8 flex items-center justify-between rounded-2xl border p-4 shadow-sm sm:p-5">
+    <div className="surface-card border-border/50 mt-6 flex items-center justify-between rounded-2xl border p-3.5 shadow-sm sm:p-4">
       <div className="flex items-center gap-3">
         <div
           className={cn(
-            "grid size-10 place-items-center rounded-xl transition-colors duration-500",
+            "grid size-9 place-items-center rounded-xl transition-colors duration-500",
             isPlaying
               ? "bg-primary/10 text-primary"
               : "bg-surface-subtle text-muted-foreground",
@@ -104,7 +104,7 @@ export function QuestionAudioPlayer({
         >
           <Volume2
             className={cn(
-              "size-5 transition-transform duration-500",
+              "size-4 transition-transform duration-500",
               isPlaying && "scale-110",
             )}
           />
@@ -113,20 +113,19 @@ export function QuestionAudioPlayer({
           <h3 className="text-foreground text-sm font-semibold">Read Aloud</h3>
           <div className="mt-0.5 flex h-3 items-center gap-1.5 overflow-hidden">
             {isPlaying ? (
-              // Animated sound wave bars
-              Array.from({ length: 5 }).map((_, i) => (
+              [45, 75, 55, 90, 65].map((height, i) => (
                 <div
                   key={i}
                   className="bg-primary w-1 animate-pulse rounded-full"
                   style={{
-                    height: `${Math.max(40, Math.random() * 100)}%`,
-                    animationDuration: `${0.5 + Math.random() * 0.5}s`,
-                    animationDelay: `${Math.random() * 0.5}s`,
+                    height: `${height}%`,
+                    animationDuration: `${0.55 + i * 0.08}s`,
+                    animationDelay: `${i * 0.08}s`,
                   }}
                 />
               ))
             ) : (
-              <p className="text-muted-foreground text-xs">
+              <p className="text-muted-foreground text-xs ">
                 Listen to the question
               </p>
             )}
@@ -138,7 +137,7 @@ export function QuestionAudioPlayer({
         {(isPlaying || isPaused) && (
           <button
             onClick={handleStop}
-            className="bg-surface-subtle text-muted-foreground flex size-9 items-center justify-center rounded-full transition-colors hover:bg-red-500/10 hover:text-red-500"
+            className="bg-surface-subtle text-muted-foreground flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-red-500/10 hover:text-red-500"
             title="Stop"
           >
             <Square className="size-3.5 fill-current" />
@@ -146,7 +145,7 @@ export function QuestionAudioPlayer({
         )}
         <button
           onClick={togglePlayPause}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 flex size-10 items-center justify-center rounded-full shadow-sm transition-all hover:scale-105 active:scale-95"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 flex size-9 items-center justify-center rounded-xl shadow-sm transition-all hover:scale-105 active:scale-95"
           title={isPlaying ? "Pause" : "Play"}
         >
           {isPlaying ? (

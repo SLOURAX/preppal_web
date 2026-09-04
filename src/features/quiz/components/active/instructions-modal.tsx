@@ -60,30 +60,6 @@ export function InstructionsModal({
           </ul>
         </div>
 
-        <div className="border-border flex items-center justify-between border-t px-6 py-5">
-          <button
-            onClick={() => {
-              onNavigate(currentIndex - 1);
-              onClose();
-            }}
-            disabled={currentIndex === 0}
-            className="text-muted-foreground hover:text-foreground border-border flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-40"
-          >
-            <ChevronLeft className="size-4" />
-            Previous
-          </button>
-          <button
-            onClick={() => {
-              onNavigate(currentIndex + 1);
-              onClose();
-            }}
-            disabled={currentIndex === total - 1}
-            className="bg-primary text-primary-foreground flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium disabled:pointer-events-none disabled:opacity-40"
-          >
-            Next
-            <ChevronRight className="size-4" />
-          </button>
-        </div>
       </div>
     </div>
   );

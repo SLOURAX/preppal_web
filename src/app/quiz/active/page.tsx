@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Send, RobotArm } from "lucide-react";
+import { Calculator, Lightbulb, Send, RobotArm, X } from "lucide-react";
+import { SaxMessageQuestionBulk } from "@meysam213/iconsax-react";
 
-import { Button } from "@/components/ui";
 import { QuizHeader } from "@/features/quiz/components/active/quiz-header";
 import { QuestionCard } from "@/features/quiz/components/active/question-card";
 import { NavControls } from "@/features/quiz/components/active/nav-controls";
@@ -12,6 +12,7 @@ import { QuizSidebar } from "@/features/quiz/components/active/quiz-sidebar";
 import { InstructionsModal } from "@/features/quiz/components/active/instructions-modal";
 import { SubmitModal } from "@/features/quiz/components/active/submit-modal";
 import { QuestionAudioPlayer } from "@/features/quiz/components/active/question-audio-player";
+import { QuickCalculator } from "@/features/quiz/components/active/quick-calculator";
 import type {
   Question,
   QuestionStatus,
@@ -85,6 +86,12 @@ function ActiveQuizContent() {
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [aiHints, setAiHints] = useState<Record<number, string>>({});
+  const [aiConversation, setAiConversation] = useState<
+    Record<number, string[]>
+  >({});
+  const [aiInput, setAiInput] = useState<string>("");
+  const [showCalculator, setShowCalculator] = useState<boolean>(false);
+  const [showAiPanel, setShowAiPanel] = useState<boolean>(false);
 
   const currentQ = QUESTIONS[currentIndex]!;
   const answeredCount = Object.keys(answers).length;
@@ -142,6 +149,20 @@ function ActiveQuizContent() {
     }, 1500);
   };
 
+  const askAiFollowUp = (): void => {
+    const question = aiInput.trim();
+    if (!question || isAiLoading) return;
+    setAiInput("");
+    setAiConversation((prev) => ({
+      ...prev,
+      [currentQ.id]: [
+        ...(prev[currentQ.id] ?? []),
+        `You: ${question}`,
+        "Preppal AI: Good question. Break the problem into smaller steps and compare your working with each answer option. I can help you reason through the next step.",
+      ],
+    }));
+  };
+
   return (
     <div className="bg-background flex h-screen flex-col overflow-hidden">
       <QuizHeader
@@ -158,44 +179,18 @@ function ActiveQuizContent() {
           style={{ backgroundImage: GRID_BG, backgroundSize: "40px 40px" }}
         >
           <div className="mx-auto w-full max-w-xl flex-1 px-4 py-8 sm:px-8 sm:py-10">
-            <QuestionCard
-              question={currentQ}
-              index={currentIndex}
-              total={QUESTIONS.length}
-              selectedAnswer={answers[currentQ.id]}
-              isFlagged={!!flagged[currentQ.id]}
-              onSelectAnswer={handleSelectAnswer}
-              onToggleFlag={handleToggleFlag}
-              onOpenInstructions={() => setShowInstructions(true)}
-            />
-
-            {isUntimed && (
-              <div className="surface-card border-primary/20 bg-primary/5 mt-6 rounded-2xl border p-4 shadow-sm sm:p-5">
-                <div className="mb-3 flex items-center gap-2">
-                  <div className="bg-primary/20 rounded-lg p-1.5">
-                    <RobotArm className="text-primary size-5" />
-                  </div>
-                  <h3 className="text-foreground text-sm font-semibold">
-                    Preppal AI
-                  </h3>
-                </div>
-
-                {aiHints[currentQ.id] ? (
-                  <div className="text-foreground bg-surface border-border rounded-xl border p-4 text-sm shadow-sm">
-                    {aiHints[currentQ.id]}
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    className="border-primary/30 hover:bg-primary/10 text-primary flex h-10 w-full items-center justify-center gap-2 rounded-xl border text-sm font-medium transition-colors"
-                    onClick={requestAiHint}
-                    disabled={isAiLoading}
-                  >
-                    {isAiLoading ? "Thinking..." : "Ask AI for a Hint"}
-                  </button>
-                )}
-              </div>
-            )}
+            <div className="relative">
+              <QuestionCard
+                question={currentQ}
+                index={currentIndex}
+                total={QUESTIONS.length}
+                selectedAnswer={answers[currentQ.id]}
+                isFlagged={!!flagged[currentQ.id]}
+                onSelectAnswer={handleSelectAnswer}
+                onToggleFlag={handleToggleFlag}
+                onOpenInstructions={() => setShowInstructions(true)}
+              />
+            </div>
 
             <NavControls
               currentIndex={currentIndex}
@@ -205,19 +200,111 @@ function ActiveQuizContent() {
               onNavigate={goTo}
             />
 
-            <QuestionAudioPlayer
-              textToRead={textToRead}
-              questionId={currentQ.id}
-            />
-
-            <div className="mt-6 sm:hidden">
-              <Button
-                onClick={() => setShowSubmitModal(true)}
-                className="w-full gap-2"
+            {isUntimed && showAiPanel && (
+              <div
+                className="fixed right-4 bottom-4 z-50 w-[calc(100vw-2rem)] max-w-md overflow-hidden rounded-2xl border border-violet-300/30 bg-[#3a2b68] p-4 text-white shadow-[0_16px_36px_rgb(76_45_180/0.24)] sm:right-[max(1.5rem,calc((100vw-640px)/2))] sm:bottom-6 sm:p-5"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(circle at 85% 10%, rgba(196,181,253,.16), transparent 38%), url(\"data:image/svg+xml,%3Csvg width='44' height='32' viewBox='0 0 44 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 16L11 5l11 11L33 5l11 11' fill='none' stroke='rgba(221,214,254,.07)' stroke-width='1'/%3E%3C/svg%3E\")",
+                  backgroundSize: "auto, 44px 32px",
+                }}
               >
-                <Send className="size-4" />
-                Submit Exam
-              </Button>
+                <div className="mb-3 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className="rounded-lg bg-violet-400/20 p-1.5">
+                      <RobotArm className="size-5 text-violet-200" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-white">
+                        Preppal AI
+                      </h3>
+                      <p className="text-[11px] text-violet-200/75">
+                        Ask, clarify, and keep learning
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    aria-label="Close Preppal AI"
+                    className="rounded-lg p-1 text-violet-100/70 transition-colors hover:bg-white/10 hover:text-white"
+                    onClick={() => setShowAiPanel(false)}
+                    type="button"
+                  >
+                    <X className="size-4" />
+                  </button>
+                </div>
+
+                {aiHints[currentQ.id] || aiConversation[currentQ.id]?.length ? (
+                  <div className="mb-3 max-h-40 space-y-2 overflow-y-auto rounded-xl border border-white/10 bg-black/20 p-3 text-xs leading-5">
+                    {aiHints[currentQ.id] ? (
+                      <p className="text-violet-100">{aiHints[currentQ.id]}</p>
+                    ) : null}
+                    {aiConversation[currentQ.id]?.map((message, index) => (
+                      <p
+                        className={
+                          message.startsWith("You:")
+                            ? "text-violet-200"
+                            : "text-violet-100/75"
+                        }
+                        key={`${message}-${index}`}
+                      >
+                        {message}
+                      </p>
+                    ))}
+                  </div>
+                ) : null}
+                {!aiHints[currentQ.id] ? (
+                  <button
+                    type="button"
+                    className="mx-auto mt-3 mb-3 flex h-9 w-[60%] items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/90 text-sm font-semibold text-violet-900 transition-colors hover:bg-white"
+                    onClick={requestAiHint}
+                    disabled={isAiLoading}
+                  >
+                    <Lightbulb className="size-4" />
+                    {isAiLoading ? "Thinking..." : "Get a hint"}
+                  </button>
+                ) : null}
+                <div className="flex items-center gap-2">
+                  <input
+                    aria-label="Ask Preppal AI a question"
+                    className="min-w-0 flex-1 rounded-xl bg-white/10 px-3 py-2.5 text-xs text-white ring-1 ring-white/15 outline-none placeholder:text-violet-200/60 focus:ring-violet-300"
+                    onChange={(event) => setAiInput(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") askAiFollowUp();
+                    }}
+                    placeholder="Ask a follow-up question..."
+                    value={aiInput}
+                  />
+                  <button
+                    aria-label="Send question to AI"
+                    className="grid size-9 shrink-0 place-items-center rounded-xl bg-violet-400 text-white shadow-lg shadow-violet-950/30 disabled:opacity-50"
+                    disabled={!aiInput.trim()}
+                    onClick={askAiFollowUp}
+                    type="button"
+                  >
+                    <Send className="size-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+              <div className="min-w-0 flex-1">
+                <QuestionAudioPlayer
+                  textToRead={textToRead}
+                  questionId={currentQ.id}
+                />
+              </div>
+              {isUntimed && !showAiPanel ? (
+                <button
+                  aria-label="Ask Preppal AI"
+                  className="bg-surface text-primary border-primary/30 shadow-primary/10 mb-0 flex w-full shrink-0 items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-semibold whitespace-nowrap shadow-lg transition-transform hover:-translate-y-0.5 sm:w-auto"
+                  onClick={() => setShowAiPanel(true)}
+                  type="button"
+                >
+                  <SaxMessageQuestionBulk className="size-5 shrink-0" />
+                  Ask Preppal AI
+                </button>
+              ) : null}
             </div>
           </div>
         </main>
@@ -252,6 +339,20 @@ function ActiveQuizContent() {
           onSubmit={() => router.push("/quiz/results")}
         />
       )}
+
+      <div className="fixed bottom-5 left-4 z-40 sm:bottom-6 sm:left-6">
+        {showCalculator ? (
+          <QuickCalculator onClose={() => setShowCalculator(false)} />
+        ) : null}
+        <button
+          aria-label={showCalculator ? "Close calculator" : "Open calculator"}
+          className="bg-surface text-primary border-primary/20 grid size-11 place-items-center rounded-xl border shadow-lg transition-transform hover:-translate-y-0.5"
+          onClick={() => setShowCalculator((current) => !current)}
+          type="button"
+        >
+          <Calculator className="size-5" />
+        </button>
+      </div>
     </div>
   );
 }

@@ -36,7 +36,7 @@ export function AnswerOption({
       >
         {letter}
       </span>
-      <span className="text-foreground flex-1">{text}</span>
+      <span className="text-foreground text-[.8rem] flex-1">{text}</span>
       {isSelected && <CheckCircle2 className="text-primary size-4 shrink-0" />}
     </button>
   );

@@ -62,7 +62,7 @@ function QuizPreviewContent() {
 
   return (
     <div className="bg-background flex min-h-screen flex-col">
-      <header className="border-border bg-surface/80 sticky top-0 z-20 flex h-14 items-center border-b px-5 backdrop-blur-md sm:px-8">
+      {/* <header className="border-border bg-surface/80 sticky top-0 z-20 flex h-14 items-center border-b px-5 backdrop-blur-md sm:px-8">
         <button
           onClick={() => router.push("/quiz")}
           className="text-muted-foreground hover:text-primary flex items-center gap-2 text-sm font-semibold transition-colors"
@@ -74,17 +74,21 @@ function QuizPreviewContent() {
         <span className="bg-primary/10 text-primary rounded-full px-3 py-1 text-[11px] font-bold">
           Exam Preview
         </span>
-      </header>
+      </header> */}
+      
 
       <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-6 sm:px-8 sm:py-8">
         <div className="mb-5 text-center">
-          <h1 className="text-foreground mt-2 text-3xl font-bold tracking-tight capitalize sm:text-4xl">
+          {/* <h1 className="text-foreground mt-2 text-3xl font-bold tracking-tight capitalize sm:text-4xl">
             {exam} {subject}
           </h1>
           <p className="text-muted-foreground mt-2 text-sm">
             {isUntimed ? "Practice Mode" : "Official Past Questions"} · {year}{" "}
             Edition
-          </p>
+          </p> */}
+          <h1 className="text-foreground mt-2 text-3xl font-bold tracking-tight capitalize sm:text-4xl">
+            Exam Preview
+          </h1>
         </div>
 
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">

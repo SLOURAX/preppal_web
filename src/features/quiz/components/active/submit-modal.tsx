@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, Send } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Send } from "lucide-react";
 import { Button } from "@/components/ui";
 
 interface SubmitModalProps {
@@ -33,30 +33,30 @@ export function SubmitModal({
       <div className="bg-surface relative z-10 w-full max-w-sm overflow-hidden rounded-2xl shadow-2xl">
         <div className="px-6 py-6">
           <div className="mb-5 flex items-start gap-3">
-            <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-amber-500/10">
+            {/* <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-amber-500/10">
               <AlertTriangle className="size-5 text-amber-500" />
-            </div>
+            </div> */}
             <div>
               <h2 className="text-foreground font-bold">Submit Exam?</h2>
-              <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
+              <p className="text-muted-foreground text-[.75rem] leading-relaxed">
                 Once submitted, you cannot change your answers.
               </p>
             </div>
           </div>
 
-          <div className="bg-surface-subtle mb-5 grid grid-cols-3 gap-2 rounded-xl p-3 text-center">
+          {/* <div className="bg-surface-subtle mb-5 grid grid-cols-3 gap-2 rounded-xl p-3 text-center">
             {stats.map(({ label, value, color }) => (
               <div key={label}>
                 <p className={`text-xl font-bold ${color}`}>{value}</p>
-                <p className="text-muted-foreground mt-0.5 text-[10px]">
+                <p className="text-muted-foreground mt-0.5 text-[11px]">
                   {label}
                 </p>
               </div>
             ))}
-          </div>
+          </div> */}
 
           {unansweredCount > 0 && (
-            <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-amber-500/20 bg-amber-500/5 p-3">
+            <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-amber-500/20 bg-amber-500/5 px-3 py-2">
               <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-500" />
               <p className="text-xs leading-relaxed text-amber-600">
                 {unansweredCount} question
@@ -66,12 +66,13 @@ export function SubmitModal({
             </div>
           )}
 
-          <div className="flex flex-col gap-2">
+          <div className="flex gap-2 mt-3">
             <button
               onClick={onClose}
-              className="border-border text-muted-foreground hover:text-foreground w-full rounded-full border py-2.5 text-sm font-medium transition-colors"
+              className="border-border text-muted-foreground hover:text-foreground flex w-full items-center justify-center gap-2 rounded-full border py-2.5 text-[.8rem] font-medium transition-colors"
             >
-              Continue Review
+              <ArrowLeft className="size-4" />
+              Continue exam
             </button>
             <Button onClick={onSubmit} className="w-full gap-2">
               <Send className="size-4" />

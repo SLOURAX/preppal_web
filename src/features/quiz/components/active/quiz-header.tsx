@@ -58,10 +58,11 @@ export function QuizHeader({
         ) : null}
         <Button
           onClick={onSubmit}
-          className="hidden gap-1.5 px-4 text-xs sm:flex"
+          aria-label="Submit quiz"
+          className="flex gap-1.5 px-2.5 text-xs sm:px-4"
         >
           <Send className="size-3.5" />
-          Submit Quiz
+          <span>Submit Quiz</span>
         </Button>
       </div>
     </header>

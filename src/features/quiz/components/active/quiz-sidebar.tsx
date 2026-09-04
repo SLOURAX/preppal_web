@@ -56,7 +56,7 @@ export function QuizSidebar({
 
         <div className="mb-4 grid grid-cols-3 gap-2 text-center">
           {stats.map(({ label, value, color }) => (
-            <div key={label} className="bg-surface-subtle rounded-xl p-2.5">
+            <div key={label} className="bg-surface-subtle rounded-md p-2.5">
               <p className={cn("text-lg font-bold", color)}>{value}</p>
               <p className="text-muted-foreground mt-0.5 text-[11px] leading-tight">
                 {label}
