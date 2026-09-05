@@ -80,7 +80,9 @@ export function OverviewTab() {
           </div>
           <div>
             <p className="text-muted-foreground text-sm">Welcome back</p>
-            <h2 className="text-foreground text-2xl font-bold">{userName}</h2>
+            <h2 className="text-foreground text-xl font-bold sm:text-2xl">
+              {userName}
+            </h2>
             <p className="text-muted-foreground mt-1 text-xs">
               Ready for your next win?
             </p>
@@ -106,9 +108,13 @@ export function OverviewTab() {
             >
               <Icon className="size-5" />
             </span>
-            <p className="text-foreground mt-4 text-xl font-bold">{value}</p>
+            <p className="text-foreground mt-4 text-lg font-bold sm:text-xl">
+              {value}
+            </p>
             <div className="mt-0.5 flex items-center justify-between gap-2">
-              <p className="text-muted-foreground text-xs">{label}</p>
+              <p className="text-muted-foreground text-[11px] sm:text-xs">
+                {label}
+              </p>
               <ArrowUpRight className="text-muted-foreground size-3" />
             </div>
           </div>

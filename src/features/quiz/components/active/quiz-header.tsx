@@ -78,7 +78,7 @@ export function QuizHeader({
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-5">
         {secondsLeft !== undefined ? (
           <QuizTimer secondsLeft={secondsLeft} />
         ) : null}

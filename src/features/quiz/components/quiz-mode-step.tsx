@@ -33,7 +33,7 @@ export function QuizModeStep({
         onClick={onBack}
         type="button"
       >
-        <ArrowLeft className="size-4" /> Back to previous step
+        <ArrowLeft className="size-5" />
       </button>
 
       <div className="bg-surface border-border mt-5 flex flex-wrap items-center gap-2 rounded-xl border p-3">
@@ -64,7 +64,7 @@ export function QuizModeStep({
         </div>
       </div>
 
-      <div className="mt-8">
+      <div className="mt-5">
         <h2 className="text-foreground text-xl font-bold">
           How would you like to practice?
         </h2>

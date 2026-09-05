@@ -52,10 +52,10 @@ export function ProfileTab() {
             </button>
           </div>
           <div className="flex-1">
-            <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
+            {/* <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
               Learner profile
-            </p>
-            <h2 className="text-foreground mt-1 text-2xl font-bold">
+            </p> */}
+            <h2 className="text-foreground mt-1 text-xl font-bold">
               {userName}
             </h2>
             <div className="mt-2 flex flex-wrap items-center gap-3">

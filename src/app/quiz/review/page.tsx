@@ -26,7 +26,6 @@ export default function QuizReviewPage() {
   const activeQuestion = QUIZ_QUESTIONS[activeIndex]!;
   const number = String(activeQuestion.id).padStart(2, "0");
   const { text, options, correctAnswer: correct, explanation } = activeQuestion;
-  const title = text.length > 42 ? `${text.slice(0, 42)}…` : text;
   const selected = SELECTIONS[activeIndex];
   const isCorrect = selected === correct;
 
@@ -39,10 +38,10 @@ export default function QuizReviewPage() {
             className="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm font-semibold"
             type="button"
           >
-            <ArrowLeft className="size-4" /> Back to result
+            <ArrowLeft className="size-4" /> Back
           </button>
           <span className="text-muted-foreground text-xs font-semibold">
-            JAMB Mathematics · Review
+            JAMB Mathematics
           </span>
         </div>
       </header>
@@ -57,12 +56,12 @@ export default function QuizReviewPage() {
           </p>
         </div>
         <section className="surface-card overflow-hidden">
-          <div className="flex items-center gap-3 p-4 sm:p-5">
-            <span className="text-muted-foreground w-7 text-xs font-bold">
-              {number}
-            </span>
+          <div className="flex items-center gap-2 p-4 sm:p-5">
             <span
               className={`grid size-9 place-items-center rounded-xl ${isCorrect ? "bg-emerald-500/10 text-emerald-600" : "bg-rose-500/10 text-rose-600"}`}
+              aria-label={
+                isCorrect ? "Correct question" : "Question needs review"
+              }
             >
               {isCorrect ? (
                 <CheckCircle2 className="size-5" />
@@ -70,13 +69,14 @@ export default function QuizReviewPage() {
                 <XCircle className="size-5" />
               )}
             </span>
-            <h2 className="text-foreground min-w-0 flex-1 text-sm font-semibold sm:text-[.9rem]">
-              {title}
-            </h2>
+            <span className="text-muted-foreground text-sm font-bold tabular-nums">
+              {number}/{QUIZ_QUESTIONS.length}
+            </span>
+            <div className="flex-1"></div>
             <span
               className={`text-xs font-semibold ${isCorrect ? "text-emerald-600" : selected ? "text-rose-600" : "text-muted-foreground"}`}
             >
-              {selected ? (isCorrect ? "Correct" : "Review") : "Unanswered"}
+              {selected ? (isCorrect ? "Correct" : "Wrong") : "Unanswered"}
             </span>
           </div>
           {open ? (
@@ -130,7 +130,7 @@ export default function QuizReviewPage() {
         </section>
         <div className="mt-5 flex items-center justify-between gap-3">
           <button
-            className="border-border text-muted-foreground hover:text-foreground flex items-center gap-1 rounded-xl border px-3 py-2 text-sm font-semibold disabled:opacity-40"
+            className="border-border text-muted-foreground hover:text-foreground flex items-center gap-1 rounded-xl border px-3 py-2 text-[.75rem] font-semibold disabled:opacity-40"
             disabled={activeIndex === 0}
             onClick={() => {
               setActiveIndex((value) => value - 1);
@@ -140,25 +140,8 @@ export default function QuizReviewPage() {
           >
             <ChevronLeft className="size-4" /> Previous
           </button>
-          <div
-            className="flex items-center gap-1.5"
-            aria-label="Review progress"
-          >
-            {QUIZ_QUESTIONS.slice(0, 5).map((item, index) => (
-              <button
-                key={item.id}
-                type="button"
-                aria-label={`Review question ${index + 1}`}
-                onClick={() => {
-                  setActiveIndex(index);
-                  setOpen(true);
-                }}
-                className={`size-2.5 rounded-full transition-colors ${index === activeIndex ? "bg-primary" : "bg-primary/20"}`}
-              />
-            ))}
-          </div>
           <button
-            className="bg-primary text-primary-foreground flex items-center gap-1 rounded-xl px-3 py-2 text-sm font-semibold disabled:opacity-40"
+            className="bg-primary text-primary-foreground flex items-center gap-1 rounded-xl px-3 py-2 text-[.75rem] font-semibold disabled:opacity-40"
             disabled={activeIndex === 4}
             onClick={() => {
               setActiveIndex((value) => value + 1);

@@ -31,7 +31,7 @@ export function ExamSubjectStep({
         onClick={onBack}
         type="button"
       >
-        <ArrowLeft className="size-4" /> Back to path selection
+        <ArrowLeft className="size-5" />
       </button>
 
       <div className="mt-5">

@@ -41,7 +41,7 @@ export function SubjectDifficultyStep({
         onClick={onBack}
         type="button"
       >
-        <ArrowLeft className="size-4" /> Back to subject selection
+        <ArrowLeft className="size-5" />
       </button>
 
       <div className="mt-5 flex items-start gap-3">

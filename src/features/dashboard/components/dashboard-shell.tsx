@@ -31,8 +31,8 @@ const TABS: Array<{
 }> = [
   { id: "home", label: "Overview", icon: LayoutDashboard },
   { id: "learn", label: "Learn", icon: BookOpen },
-  { id: "wallet", label: "Wallet", icon: BadgeCent },
   { id: "analytics", label: "Analytics", icon: BarChart3 },
+  { id: "wallet", label: "Wallet", icon: BadgeCent },
   { id: "account", label: "Account", icon: UserRound },
 ];
 
@@ -65,12 +65,12 @@ export function DashboardShell() {
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="text-muted-foreground hover:text-foreground hidden items-center gap-1.5 rounded-lg p-1.5 text-xs font-medium transition-colors sm:flex"
+              className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 rounded-lg p-1.5 text-xs font-medium transition-colors"
               title="Back to homepage"
             >
-              <Home className="size-4" aria-hidden="true" />
+              <Home className="size-5 sm:size-4" aria-hidden="true" />
             </Link>
-            <div className="bg-border h-4 w-px" />
+            <div className="bg-border hidden h-4 w-px sm:block" />
             <Link href="/dashboard" className="flex items-center gap-2">
               <span className="text-foreground hidden text-sm font-bold sm:block">
                 My Dashboard

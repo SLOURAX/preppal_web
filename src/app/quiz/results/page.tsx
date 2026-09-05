@@ -9,6 +9,7 @@ import {
   SaxClockBulk,
   SaxCloseCircleBulk,
   SaxShareBulk,
+  SaxStar1Bulk,
   SaxTickCircleBulk,
 } from "@meysam213/iconsax-react";
 import { useRouter } from "next/navigation";
@@ -98,49 +99,92 @@ export default function QuizResultsPage() {
           >
             <SaxArrowLeftBulk className="size-4" /> Back to quizzes
           </button>
-          <button
+          {/* <button
             className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold shadow-sm"
             onClick={shareResult}
             type="button"
           >
             <SaxShareBulk className="size-4" />{" "}
             {shared ? "Copied!" : "Share result"}
-          </button>
+          </button> */}
         </div>
       </header>
       <div className="mx-auto w-full max-w-5xl space-y-5 px-5 py-8 sm:px-8 sm:py-10">
-        <section className="from-primary/15 via-primary/5 to-surface relative overflow-hidden rounded-3xl bg-gradient-to-br p-6 sm:p-8">
+        <section className="from-primary/15 via-primary/5 to-surface relative overflow-hidden rounded-3xl bg-gradient-to-br p-5 sm:p-7">
+          <div className="pointer-events-none absolute inset-0 [background-image:linear-gradient(135deg,transparent_25%,hsl(var(--primary)/.06)_25%,hsl(var(--primary)/.06)_26%,transparent_26%,transparent_75%,hsl(var(--primary)/.06)_75%,hsl(var(--primary)/.06)_76%,transparent_76%)] [background-size:34px_34px] opacity-40" />
           <div className="bg-primary/10 pointer-events-none absolute -right-16 -bottom-24 size-72 rounded-full blur-3xl" />
-          <div className="relative flex flex-col items-center gap-7 text-center sm:flex-row sm:text-left">
-            <div
-              className="relative grid size-36 shrink-0 place-items-center rounded-2xl p-2 shadow-sm sm:size-44"
-              style={{
-                background:
-                  "conic-gradient(hsl(var(--primary)) 0deg 288deg, hsl(var(--border)) 288deg 360deg)",
-              }}
-            >
-              <div className="bg-surface grid size-full place-items-center rounded-xl">
-                <div>
-                  <p className="text-foreground text-4xl font-black sm:text-5xl">
-                    80%
-                  </p>
-                  <p className="text-muted-foreground text-[10px] font-semibold tracking-wider uppercase">
-                    Score
-                  </p>
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute right-8 bottom-0 hidden h-32 w-56 items-end justify-end gap-2 opacity-35 sm:flex"
+          >
+            {[36, 58, 44, 78, 64, 96, 72, 112].map((height, index) => (
+              <span
+                key={index}
+                className="from-primary/20 to-primary/5 w-5 rounded-t-md bg-gradient-to-t"
+                style={{ height }}
+              />
+            ))}
+          </div>
+          <div className="relative grid items-center gap-6 sm:grid-cols-[180px_1fr] sm:gap-8">
+            <div className="bg-surface relative mx-auto flex w-full max-w-[180px] flex-col items-center rounded-2xl border border-white/70 p-4 shadow-lg shadow-violet-900/10 sm:mx-0">
+              <span className="bg-primary/10 text-primary absolute top-3 right-3 grid size-5 place-items-center rounded-full">
+                <SaxStar1Bulk className="size-4" />
+              </span>
+              <div
+                aria-label="Score progress: 80 percent"
+                role="img"
+                className="relative grid size-32 place-items-center"
+              >
+                <svg
+                  aria-hidden="true"
+                  className="absolute inset-0 size-full -rotate-90"
+                  viewBox="0 0 120 120"
+                >
+                  <circle
+                    cx="60"
+                    cy="60"
+                    r="50"
+                    fill="none"
+                    stroke="var(--primary)"
+                    strokeOpacity="0.1"
+                    strokeWidth="12"
+                  />
+                  <circle
+                    cx="60"
+                    cy="60"
+                    r="50"
+                    fill="none"
+                    stroke="var(--primary)"
+                    strokeWidth="12"
+                    strokeLinecap="round"
+                    strokeDasharray="314.16"
+                    strokeDashoffset="62.83"
+                  />
+                </svg>
+                <div className="bg-surface relative grid size-[6.6rem] place-items-center rounded-full">
+                  <div className="text-center">
+                    <p className="text-foreground text-2xl font-black">80%</p>
+                    <p className="text-muted-foreground text-[10px] font-semibold tracking-wider uppercase">
+                      Score
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="min-w-0 flex-1">
-              <h1 className="text-foreground text-2xl font-bold tracking-tight sm:text-3xl">
+            <div className="min-w-0 text-center sm:text-left">
+              <div className="bg-primary/10 text-primary mb-2 inline-flex size-10 items-center justify-center rounded-xl">
+                <SaxAwardBulk className="size-5" />
+              </div>
+              <h1 className="text-foreground text-xl font-bold tracking-tight sm:text-2xl">
                 Great work on JAMB Mathematics
               </h1>
-              <p className="text-muted-foreground mt-2 max-w-xl text-sm leading-6">
+              <p className="text-muted-foreground mt-2 max-w-xl text-sm leading-5">
                 You’re building strong momentum. Review the questions below and
                 turn today’s misses into tomorrow’s strengths.
               </p>
-              <div className="mt-5 flex flex-wrap justify-center gap-2 sm:justify-start">
+              <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
                 <span className="bg-surface text-foreground rounded-full px-3 py-1.5 text-xs font-semibold">
-                  +80 Preppal points
+                  +80 Points gained
                 </span>
                 <span className="rounded-full bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-600">
                   Top 22% this week
@@ -257,7 +301,7 @@ export default function QuizResultsPage() {
             </p>
           </div>
           <button
-            className="bg-primary text-primary-foreground w-full rounded-xl px-4 py-2.5 text-sm font-semibold sm:w-auto"
+            className="bg-primary text-primary-foreground w-full rounded-xl px-4 py-2.5 text-[.8rem] font-semibold sm:w-auto"
             onClick={() => router.push("/quiz/review")}
             type="button"
           >

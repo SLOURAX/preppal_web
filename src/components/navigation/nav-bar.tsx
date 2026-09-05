@@ -176,8 +176,8 @@ export function NavBar() {
             className="bg-background/80 fixed inset-0 backdrop-blur-sm"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          <div className="bg-surface border-border animate-in slide-in-from-right fixed inset-y-0 right-0 flex h-full w-3/4 max-w-sm flex-col border-l p-6 shadow-2xl">
-            <div className="mb-8 flex items-center justify-between">
+          <div className="bg-surface border-border animate-in slide-in-from-right fixed inset-y-0 right-0 flex h-full w-3/4 max-w-sm flex-col border-l p-4 shadow-2xl sm:p-5">
+            <div className="mb-5 flex items-center justify-between">
               <span className="text-lg font-bold">Menu</span>
               <button
                 className="hover:bg-surface-subtle -mr-2 rounded-full p-2"
@@ -187,7 +187,7 @@ export function NavBar() {
               </button>
             </div>
 
-            <nav className="flex flex-1 flex-col gap-2 overflow-y-auto">
+            <nav className="flex flex-1 flex-col gap-1 overflow-y-auto">
               {NAVIGATION.map((item) => {
                 const isActive = pathname === item.href;
                 const Icon = item.icon;
@@ -197,7 +197,7 @@ export function NavBar() {
                     href={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={cn(
-                      "flex items-center gap-3 rounded-xl px-4 py-3 text-[.85rem] font-medium transition-colors",
+                      "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
                       isActive
                         ? "bg-primary/10 text-primary"
                         : "text-muted-foreground hover:bg-surface-subtle hover:text-foreground",
@@ -210,8 +210,8 @@ export function NavBar() {
               })}
             </nav>
 
-            <div className="border-border mt-auto flex flex-col gap-4 border-t pt-6">
-              <div className="flex items-center justify-between px-2">
+            <div className="border-border mt-auto flex flex-col gap-3 border-t pt-4">
+              <div className="flex items-center justify-between px-1">
                 <span className="text-muted-foreground text-sm font-medium">
                   Theme
                 </span>
@@ -258,14 +258,14 @@ export function NavBar() {
                   <Link
                     href="/register"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="bg-primary hover:bg-primary-strong text-primary-foreground w-full rounded-xl py-3 text-center font-medium shadow-sm"
+                    className="bg-primary hover:bg-primary-strong text-primary-foreground w-full rounded-xl py-2.5 text-center text-sm font-medium shadow-sm"
                   >
                     Get started
                   </Link>
                   <Link
                     href="/login"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="border-border hover:bg-surface-subtle text-foreground w-full rounded-xl border py-3 text-center font-medium"
+                    className="border-border hover:bg-surface-subtle text-foreground w-full rounded-xl border py-2.5 text-center text-sm font-medium"
                   >
                     Log in
                   </Link>
