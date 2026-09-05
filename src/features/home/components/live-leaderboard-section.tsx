@@ -331,7 +331,6 @@ export function LiveLeaderboardSection() {
               alt="Preppal Mascot"
               fill
               className="scale-[0.75] animate-[pulse_4s_ease-in-out_infinite] object-contain drop-shadow-2xl"
-              priority
             />
           </div>
         </div>
