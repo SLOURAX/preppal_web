@@ -98,21 +98,6 @@ export function QuestionCard({
         <p className="text-foreground text-[.8rem] leading-normal font-medium sm:text-[.9rem]">
           {question.text}
         </p>
-        {isPracticeMode && feedback ? (
-          <div
-            className={`mt-4 flex items-center gap-2 rounded-xl px-3 py-4 text-xs font-semibold ${feedback === "correct" ? "bg-emerald-500/10 text-emerald-700" : "bg-rose-500/10 text-rose-700"}`}
-            role="status"
-          >
-            <span className="text-base" aria-hidden="true">
-              {feedback === "correct" ? "✦" : "↗"}
-            </span>
-            <span>
-              {feedback === "correct"
-                ? "Great work! +10 Preppal points"
-                : `Keep going — the correct answer is ${correctAnswer}.`}
-            </span>
-          </div>
-        ) : null}
         <div className="mt-5 space-y-2.5">
           {question.options.map((option, idx) => (
             <AnswerOption
@@ -123,8 +108,13 @@ export function QuestionCard({
               disabled={isPracticeMode && Boolean(selectedAnswer)}
               isCorrect={Boolean(
                 isPracticeMode &&
+                ((feedback === "incorrect" && correctAnswer === option) ||
+                  (feedback === "correct" && selectedAnswer === option)),
+              )}
+              isIncorrect={Boolean(
+                isPracticeMode &&
                 feedback === "incorrect" &&
-                correctAnswer === option,
+                selectedAnswer === option,
               )}
               onSelect={() => onSelectAnswer(option)}
             />

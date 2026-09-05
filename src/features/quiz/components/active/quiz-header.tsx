@@ -31,7 +31,7 @@ export function QuizHeader({
       <div className="flex min-w-0 items-center gap-3">
         <button
           onClick={onExit}
-          className="text-muted-foreground flex size-8 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-red-500/10 hover:text-red-500"
+          className="text-muted-foreground hidden size-8 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-red-500/10 hover:text-red-500 sm:flex"
         >
           <X className="size-4" />
         </button>
@@ -43,18 +43,6 @@ export function QuizHeader({
             2023 · {isUntimed ? "Practice Playground" : "Timed Simulation"}
           </p>
         </div>
-      </div>
-
-      <div className="flex items-center gap-3">
-        {isUntimed ? (
-          <div className="hidden items-center gap-2 rounded-full bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-700 sm:flex">
-            <SaxFlashBulk className="size-4" />
-            <span>{correctCount * 10} XP</span>
-            <span className="text-amber-300">•</span>
-            <SaxAwardBulk className="size-4" />
-            <span>{correctCount} correct</span>
-          </div>
-        ) : null}
         {isUntimed ? (
           <div
             className="flex items-center gap-1.5 rounded-full bg-amber-50 px-2 py-1 text-[10px] font-bold text-amber-700 sm:hidden"
@@ -65,6 +53,18 @@ export function QuizHeader({
             <span className="text-amber-300">•</span>
             <SaxAwardBulk className="size-3.5" />
             <span>{correctCount}</span>
+          </div>
+        ) : null}
+      </div>
+
+      <div className="flex items-center gap-3">
+        {isUntimed ? (
+          <div className="hidden items-center gap-2 rounded-full bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-700 sm:flex">
+            <SaxFlashBulk className="size-4" />
+            <span>{correctCount * 10} XP</span>
+            <span className="text-amber-300">•</span>
+            <SaxAwardBulk className="size-4" />
+            <span>{correctCount} correct</span>
           </div>
         ) : null}
         <span className="text-primary bg-primary/10 hidden rounded-full px-2.5 py-1 text-xs font-semibold sm:inline-flex">

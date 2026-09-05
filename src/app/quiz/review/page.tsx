@@ -98,7 +98,7 @@ export default function QuizReviewPage() {
                       key={option}
                       className={`flex items-center gap-3 rounded-xl px-3 py-3 text-[.8rem] ${optionIsCorrect ? "bg-emerald-500/10 font-semibold text-emerald-700" : optionWasSelected ? "bg-rose-500/10 font-semibold text-rose-700" : "bg-surface text-muted-foreground"}`}
                     >
-                      <span className="grid size-6 shrink-0 place-items-center rounded-md bg-black/5 text-xs font-bold">
+                      <span className="grid size-6 shrink-0 place-items-center text-xs font-bold">
                         {String.fromCharCode(65 + optionIndex)}
                       </span>
                       <span className="flex-1 text-[.75rem]">{option}</span>

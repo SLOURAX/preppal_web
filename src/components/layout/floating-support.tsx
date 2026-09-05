@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaWhatsapp } from "react-icons/fa6";
 import {
   SaxCloseCircleBulk,
@@ -9,8 +9,41 @@ import {
 
 export function FloatingSupport() {
   const [open, setOpen] = useState<boolean>(false);
+  const [offset, setOffset] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
+  const dragStart = useRef<{
+    pointerX: number;
+    pointerY: number;
+    x: number;
+    y: number;
+  } | null>(null);
+
+  useEffect(() => {
+    const handleMove = (event: PointerEvent): void => {
+      if (!dragStart.current) return;
+      setOffset({
+        x: dragStart.current.x + event.clientX - dragStart.current.pointerX,
+        y: dragStart.current.y + event.clientY - dragStart.current.pointerY,
+      });
+    };
+    const handleUp = (): void => {
+      dragStart.current = null;
+    };
+    window.addEventListener("pointermove", handleMove);
+    window.addEventListener("pointerup", handleUp);
+    return () => {
+      window.removeEventListener("pointermove", handleMove);
+      window.removeEventListener("pointerup", handleUp);
+    };
+  }, []);
+
   return (
-    <div className="fixed right-4 bottom-4 z-50 sm:right-6 sm:bottom-6">
+    <div
+      className="fixed right-4 bottom-4 z-50 sm:right-6 sm:bottom-6"
+      style={{ transform: `translate3d(${offset.x}px, ${offset.y}px, 0)` }}
+    >
       {open ? (
         <div className="bg-surface border-border mb-3 w-[min(18rem,calc(100vw-2rem))] rounded-2xl border p-4 shadow-xl">
           <div className="flex items-start justify-between gap-3">
@@ -47,9 +80,17 @@ export function FloatingSupport() {
       ) : null}
       <button
         aria-label={open ? "Close support" : "Open support"}
+        onPointerDown={(event) => {
+          dragStart.current = {
+            pointerX: event.clientX,
+            pointerY: event.clientY,
+            x: offset.x,
+            y: offset.y,
+          };
+        }}
         onClick={() => setOpen((value) => !value)}
         type="button"
-        className="bg-primary text-primary-foreground shadow-primary/25 flex items-center gap-2 rounded-full px-3 py-3 text-sm font-bold shadow-lg transition-transform hover:-translate-y-0.5"
+        className="bg-primary text-primary-foreground shadow-primary/25 flex cursor-grab touch-none items-center gap-2 rounded-full px-3 py-3 text-sm font-bold shadow-lg transition-transform hover:-translate-y-0.5 active:cursor-grabbing"
       >
         <SaxMessageQuestionBulk className="size-6" />
       </button>

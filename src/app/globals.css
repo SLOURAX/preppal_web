@@ -19,6 +19,25 @@
   --page-wash: rgb(255 255 255 / 0.72);
 }
 
+.dark .whatsapp-community {
+  background-color: #173d2b;
+  background-image: url("data:image/svg+xml,%3Csvg width='56' height='28' viewBox='0 0 56 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 14L7 7l7 7 7-7 7 7 7-7 7 7 7-7' fill='none' stroke='rgba(37,211,102,.10)' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size: 56px 28px;
+}
+
+.dark .whatsapp-community-title {
+  color: #ffffff;
+}
+
+.dark .whatsapp-community-copy {
+  color: rgb(209 250 229 / 0.8);
+}
+
+.dark .whatsapp-community-cta {
+  background-color: #25d366;
+  color: #082014;
+}
+
 .dark {
   color-scheme: dark;
   --background: #0b1020;

@@ -32,7 +32,7 @@ export function SiteChrome({ children }: PropsWithChildren) {
     return (
       <>
         {children}
-        <FloatingSupport />
+        {!pathname.startsWith("/quiz") ? <FloatingSupport /> : null}
       </>
     );
 
@@ -45,7 +45,7 @@ export function SiteChrome({ children }: PropsWithChildren) {
         <>
           {children}
           <Footer />
-          <FloatingSupport />
+          {!pathname.startsWith("/quiz") ? <FloatingSupport /> : null}
         </>
       )}
     </>
