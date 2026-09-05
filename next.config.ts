@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   turbopack: { root: process.cwd() },
   reactStrictMode: true,
   poweredByHeader: false,
+  devIndicators: false,
   compress: true,
   experimental: {
     optimizePackageImports: ["lucide-react", "@meysam213/iconsax-react"],

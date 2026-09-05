@@ -85,14 +85,16 @@ export function QuestionCard({
         }}
       >
         <div className="via-primary pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-violet-400 to-fuchsia-400" />
-        <div className="mb-3 flex items-center justify-between">
-          <span className="text-primary/70 text-[10px] font-bold tracking-[0.18em] uppercase">
-            Playground challenge
-          </span>
-          <span className="bg-primary/10 text-primary rounded-full px-2 py-1 text-[10px] font-bold">
-            +10 P
-          </span>
-        </div>
+        {isPracticeMode ? (
+          <div className="mb-3 flex items-center justify-between">
+            <span className="text-primary/70 text-[10px] font-bold tracking-[0.18em] uppercase">
+              Playground challenge
+            </span>
+            <span className="bg-primary/10 text-primary rounded-full px-2 py-1 text-[10px] font-bold">
+              +10 P
+            </span>
+          </div>
+        ) : null}
         <p className="text-foreground text-[.8rem] leading-normal font-medium sm:text-[.9rem]">
           {question.text}
         </p>

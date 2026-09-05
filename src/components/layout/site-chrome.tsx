@@ -7,6 +7,7 @@ import { AuthShell } from "@/features/auth";
 
 import { NavBar } from "../navigation";
 import { Footer } from "./footer";
+import { FloatingSupport } from "./floating-support";
 
 const AUTH_ROUTES: readonly string[] = [
   "/login",
@@ -27,7 +28,13 @@ export function SiteChrome({ children }: PropsWithChildren) {
   const isAuthRoute = AUTH_ROUTES.includes(pathname);
   const isStandalone = STANDALONE_ROUTES.some((r) => pathname.startsWith(r));
 
-  if (isStandalone) return <>{children}</>;
+  if (isStandalone)
+    return (
+      <>
+        {children}
+        <FloatingSupport />
+      </>
+    );
 
   return (
     <>
@@ -38,6 +45,7 @@ export function SiteChrome({ children }: PropsWithChildren) {
         <>
           {children}
           <Footer />
+          <FloatingSupport />
         </>
       )}
     </>

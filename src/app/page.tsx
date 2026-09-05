@@ -19,6 +19,7 @@ import {
   ReferralSection,
   LiveLeaderboardSection,
   FaqSection,
+  WhatsAppSection,
 } from "@/features/home";
 
 interface Capability {
@@ -344,6 +345,7 @@ export default function HomePage() {
         <MomentumSection />
         <LiveLeaderboardSection />
         <ReferralSection />
+        <WhatsAppSection />
         <FaqSection />
       </main>
     </AppShell>
