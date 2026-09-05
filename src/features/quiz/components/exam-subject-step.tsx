@@ -66,7 +66,7 @@ export function ExamSubjectStep({
                   <Check className="size-2.5" strokeWidth={3} />
                 </div>
               )}
-              <span className="block text-sm font-semibold">
+              <span className="block text-[.8rem] font-semibold">
                 {subject.label}
               </span>
             </button>

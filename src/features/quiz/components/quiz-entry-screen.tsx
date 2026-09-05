@@ -229,8 +229,8 @@ export function QuizEntryScreen({
                       className={cn(
                         "relative rounded-2xl border p-4 text-left transition-all",
                         isSelected
-                          ? "border-primary"
-                          : "border-transparent hover:-translate-y-0.5",
+                          ? "border-primary bg-surface-subtle shadow-primary/10 shadow-lg"
+                          : "border-transparent hover:-translate-y-0.5 *:bg-surface",
                       )}
                       key={value}
                       onClick={() => updatePath(value)}
@@ -274,7 +274,7 @@ export function QuizEntryScreen({
                 options={choices}
                 placeholder={
                   quizPath === "exam"
-                    ? "Choose JAMB, WAEC, or NECO"
+                    ? "Choose an exam"
                     : "Choose a subject"
                 }
                 value={selectedValue}

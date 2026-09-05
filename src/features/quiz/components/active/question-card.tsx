@@ -1,6 +1,7 @@
 "use client";
 
-import { Flag, Info } from "lucide-react";
+import { Info } from "lucide-react";
+import { SaxFlag2Bulk } from "@meysam213/iconsax-react";
 import { cn } from "@/lib/utils";
 import { AnswerOption } from "./answer-option";
 import type { Question } from "./types";
@@ -14,6 +15,9 @@ interface QuestionCardProps {
   readonly onSelectAnswer: (answer: string) => void;
   readonly onToggleFlag: () => void;
   readonly onOpenInstructions: () => void;
+  readonly isPracticeMode?: boolean;
+  readonly feedback?: "correct" | "incorrect";
+  readonly correctAnswer?: string;
 }
 
 export function QuestionCard({
@@ -25,18 +29,21 @@ export function QuestionCard({
   onSelectAnswer,
   onToggleFlag,
   onOpenInstructions,
+  isPracticeMode = false,
+  feedback,
+  correctAnswer,
 }: QuestionCardProps) {
   return (
     <div>
       <div className="mb-5 flex items-center justify-between gap-2 sm:gap-3">
         <div className="flex shrink-0 items-baseline gap-1.5 whitespace-nowrap">
-          <span className="text-muted-foreground text-[10px] font-medium tracking-widest uppercase sm:text-[.9rem]">
+          <span className="text-muted-foreground text-[9px] font-medium tracking-widest uppercase sm:text-[.8rem]">
             Question
           </span>
-          <span className="text-foreground text-sm font-bold sm:text-base">
+          <span className="text-foreground text-[9px] font-bold sm:text-base">
             {index + 1}
           </span>
-          <span className="text-muted-foreground text-[10px] sm:text-[.8rem]">
+          <span className="text-muted-foreground text-[9px] sm:text-[.8rem]">
             of {total}
           </span>
         </div>
@@ -59,7 +66,7 @@ export function QuestionCard({
             )}
             title="Flag Question"
           >
-            <Flag
+            <SaxFlag2Bulk
               className="size-4 sm:size-3.5"
               fill={isFlagged ? "currentColor" : "none"}
             />
@@ -70,17 +77,38 @@ export function QuestionCard({
         </div>
       </div>
 
-      <div className="surface-card rounded-2xl p-6 sm:p-8">
-        <p className="text-foreground text-[.85rem] leading-normal font-medium sm:text-[1rem]">
+      <div className="surface-card rounded-2xl p-6 sm:p-6">
+        <p className="text-foreground text-[.8rem] leading-normal font-medium sm:text-[.9rem]">
           {question.text}
         </p>
-        <div className="mt-7 space-y-3">
+        {isPracticeMode && feedback ? (
+          <div
+            className={`mt-4 flex items-center gap-2 rounded-xl px-3 py-4 text-xs font-semibold ${feedback === "correct" ? "bg-emerald-500/10 text-emerald-700" : "bg-rose-500/10 text-rose-700"}`}
+            role="status"
+          >
+            <span className="text-base" aria-hidden="true">
+              {/* {feedback === "correct" ? "🎉" : "💡"} */}
+            </span>
+            <span>
+              {feedback === "correct"
+                ? "Great work! +10 Preppal points"
+                : `Keep going — the correct answer is ${correctAnswer}.`}
+            </span>
+          </div>
+        ) : null}
+        <div className="mt-5 space-y-2.5">
           {question.options.map((option, idx) => (
             <AnswerOption
               key={option}
               letter={String.fromCharCode(65 + idx)}
               text={option}
               isSelected={selectedAnswer === option}
+              disabled={isPracticeMode && Boolean(selectedAnswer)}
+              isCorrect={Boolean(
+                isPracticeMode &&
+                feedback === "incorrect" &&
+                correctAnswer === option,
+              )}
               onSelect={() => onSelectAnswer(option)}
             />
           ))}

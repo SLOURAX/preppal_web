@@ -2,8 +2,11 @@
 
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Calculator, Lightbulb, Send, RobotArm, X } from "lucide-react";
-import { SaxMessageQuestionBulk, SaxCalculatorBold } from "@meysam213/iconsax-react";
+import { Lightbulb, Send, RobotArm, X } from "lucide-react";
+import {
+  SaxMessageQuestionBulk,
+  SaxCalculatorBold,
+} from "@meysam213/iconsax-react";
 
 import { QuizHeader } from "@/features/quiz/components/active/quiz-header";
 import { QuestionCard } from "@/features/quiz/components/active/question-card";
@@ -13,17 +16,15 @@ import { InstructionsModal } from "@/features/quiz/components/active/instruction
 import { SubmitModal } from "@/features/quiz/components/active/submit-modal";
 import { QuestionAudioPlayer } from "@/features/quiz/components/active/question-audio-player";
 import { QuickCalculator } from "@/features/quiz/components/active/quick-calculator";
-import type {
-  Question,
-  QuestionStatus,
-} from "@/features/quiz/components/active/types";
+import type { QuestionStatus } from "@/features/quiz/components/active/types";
+import { QUIZ_QUESTIONS } from "@/features/quiz/mock-questions";
 
 const TOTAL_SECONDS = 45 * 60;
 
-const RAW_QUESTIONS = [
+/*
   {
     text: "In the diagram, PQR is a straight line. If (a + 12)° + (a + b)° + (3b + 12)° = 180°. Find 2b + a.",
-    options: ["120°", "140°", "160°", "180°"] as const,
+    options: ["68°", "78°", "88°", "98°"] as const,
   },
   {
     text: "Which of the following is a factor of the polynomial x³ − 3x² + 2x?",
@@ -63,11 +64,26 @@ const RAW_QUESTIONS = [
   },
 ] satisfies Array<{ text: string; options: readonly string[] }>;
 
-const QUESTIONS: Question[] = Array.from({ length: 40 }, (_, i) => ({
-  id: i + 1,
-  text: RAW_QUESTIONS[i % RAW_QUESTIONS.length]!.text,
-  options: RAW_QUESTIONS[i % RAW_QUESTIONS.length]!.options,
-}));
+const CORRECT_ANSWERS = [
+  "78°",
+  "(x − 2)",
+  "150 km/h",
+  "6",
+  "9",
+  "7 cm",
+  "3x − 2",
+  "{3, 5}",
+  "1",
+  "100 m",
+] as const;
+
+const ALL_QUESTIONS: (Question & { readonly correctAnswer: string })[] =
+  Array.from({ length: 40 }, (_, i) => ({
+    id: i + 1,
+    text: RAW_QUESTIONS[i % RAW_QUESTIONS.length]!.text,
+    options: RAW_QUESTIONS[i % RAW_QUESTIONS.length]!.options,
+    correctAnswer: CORRECT_ANSWERS[i % CORRECT_ANSWERS.length]!,
+  })); */
 
 const QUIZ_PATTERN_BG =
   "url(\"data:image/svg+xml,%3Csvg width='140' height='140' viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='rgba(124,58,237,0.14)' stroke-width='1.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 22h16v20H15zM15 22l8-4 8 4M15 42l8-4 8 4'/%3E%3Cpath d='M102 14l2 5 5 2-5 2-2 5-2-5-5-2 5-2z'/%3E%3Cpath d='M61 15h15M68 8v15'/%3E%3Ccircle cx='106' cy='52' r='8'/%3E%3Cpath d='M103 51a3 3 0 0 1 6 0c0 2-3 2-3 5m0 3v.5'/%3E%3Cpath d='M22 76h18m-9-9v18'/%3E%3Cpath d='M75 67h17v14H75zM75 67l8-5 9 5'/%3E%3Ccircle cx='27' cy='115' r='8'/%3E%3Cpath d='M24 115a3 3 0 0 1 6 0c0 2-3 2-3 4m0 3v.5'/%3E%3Cpath d='M105 99l3 3 7-8M101 107h17'/%3E%3Cpath d='M55 112c5-6 12-6 17 0'/%3E%3Cpath d='M67 91h14m-7-7v14'/%3E%3C/g%3E%3C/svg%3E\")";
@@ -77,6 +93,11 @@ function ActiveQuizContent() {
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode") || "timed";
   const isUntimed = mode === "untimed";
+  const parsedCount = Number(searchParams.get("count") || 40);
+  const questionCount = isUntimed
+    ? Math.max(5, Math.min(30, Number.isFinite(parsedCount) ? parsedCount : 10))
+    : 40;
+  const questions = QUIZ_QUESTIONS.slice(0, questionCount);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
@@ -92,11 +113,17 @@ function ActiveQuizContent() {
   const [aiInput, setAiInput] = useState<string>("");
   const [showCalculator, setShowCalculator] = useState<boolean>(false);
   const [showAiPanel, setShowAiPanel] = useState<boolean>(false);
+  const [feedback, setFeedback] = useState<
+    Record<number, "correct" | "incorrect">
+  >({});
 
-  const currentQ = QUESTIONS[currentIndex]!;
+  const currentQ = questions[Math.min(currentIndex, questions.length - 1)]!;
   const answeredCount = Object.keys(answers).length;
   const flaggedCount = Object.values(flagged).filter(Boolean).length;
-  const unansweredCount = QUESTIONS.length - answeredCount;
+  const unansweredCount = questions.length - answeredCount;
+  const correctCount = Object.values(feedback).filter(
+    (value) => value === "correct",
+  ).length;
 
   const textToRead = `Question ${currentIndex + 1}. ${currentQ.text}. Options: ${currentQ.options.map((opt, i) => `${String.fromCharCode(65 + i)}: ${opt}`).join(". ")}.`;
 
@@ -109,9 +136,9 @@ function ActiveQuizContent() {
     return () => clearInterval(timer);
   }, [secondsLeft, isUntimed]);
 
-  const goTo = useCallback((idx: number) => {
-    setCurrentIndex(Math.max(0, Math.min(QUESTIONS.length - 1, idx)));
-  }, []);
+  const goTo = (idx: number): void => {
+    setCurrentIndex(Math.max(0, Math.min(questions.length - 1, idx)));
+  };
 
   const getStatus = useCallback(
     (id: number): QuestionStatus => {
@@ -122,20 +149,52 @@ function ActiveQuizContent() {
     [flagged, answers],
   );
 
+  const playAnswerTone = (isCorrect: boolean): void => {
+    if (typeof window === "undefined") return;
+    const AudioContextClass =
+      window.AudioContext ??
+      (window as Window & { webkitAudioContext?: typeof AudioContext })
+        .webkitAudioContext;
+    if (!AudioContextClass) return;
+    const context = new AudioContextClass();
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    oscillator.type = "sine";
+    oscillator.frequency.value = isCorrect ? 660 : 220;
+    gain.gain.setValueAtTime(0.0001, context.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.08, context.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(
+      0.0001,
+      context.currentTime + (isCorrect ? 0.24 : 0.3),
+    );
+    oscillator.connect(gain).connect(context.destination);
+    oscillator.start();
+    oscillator.stop(context.currentTime + 0.32);
+    window.setTimeout(() => void context.close(), 450);
+  };
+
   const handleSelectAnswer = useCallback(
-    (answer: string) =>
-      setAnswers((prev) => ({ ...prev, [currentQ.id]: answer })),
-    [currentQ.id],
+    (answer: string) => {
+      if (isUntimed && answers[currentQ.id]) return;
+      setAnswers((prev) => ({ ...prev, [currentQ.id]: answer }));
+      if (isUntimed) {
+        const isCorrect = answer === currentQ.correctAnswer;
+        setFeedback((prev) => ({
+          ...prev,
+          [currentQ.id]: isCorrect ? "correct" : "incorrect",
+        }));
+        playAnswerTone(isCorrect);
+      }
+    },
+    [answers, currentQ, isUntimed],
   );
 
-  const handleToggleFlag = useCallback(
-    () =>
-      setFlagged((prev) => ({
-        ...prev,
-        [currentQ.id]: !prev[currentQ.id],
-      })),
-    [currentQ.id],
-  );
+  const handleToggleFlag = (): void => {
+    setFlagged((prev) => ({
+      ...prev,
+      [currentQ.id]: !prev[currentQ.id],
+    }));
+  };
 
   const requestAiHint = () => {
     if (aiHints[currentQ.id]) return;
@@ -167,10 +226,14 @@ function ActiveQuizContent() {
     <div className="bg-background flex h-screen flex-col overflow-hidden">
       <QuizHeader
         currentIndex={currentIndex}
-        total={QUESTIONS.length}
+        total={questions.length}
         secondsLeft={isUntimed ? undefined : secondsLeft}
         onExit={() => router.push("/quiz/preview")}
-        onSubmit={() => setShowSubmitModal(true)}
+        isUntimed={isUntimed}
+        correctCount={correctCount}
+        onSubmit={() =>
+          isUntimed ? router.push("/quiz") : setShowSubmitModal(true)
+        }
       />
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
@@ -186,19 +249,22 @@ function ActiveQuizContent() {
               <QuestionCard
                 question={currentQ}
                 index={currentIndex}
-                total={QUESTIONS.length}
+                total={questions.length}
                 selectedAnswer={answers[currentQ.id]}
                 isFlagged={!!flagged[currentQ.id]}
                 onSelectAnswer={handleSelectAnswer}
                 onToggleFlag={handleToggleFlag}
                 onOpenInstructions={() => setShowInstructions(true)}
+                isPracticeMode={isUntimed}
+                feedback={feedback[currentQ.id]}
+                correctAnswer={currentQ.correctAnswer}
               />
             </div>
 
             <NavControls
               currentIndex={currentIndex}
-              total={QUESTIONS.length}
-              questions={QUESTIONS}
+              total={questions.length}
+              questions={questions}
               getStatus={getStatus}
               onNavigate={goTo}
             />
@@ -300,7 +366,7 @@ function ActiveQuizContent() {
               {isUntimed && !showAiPanel ? (
                 <button
                   aria-label="Ask Preppal AI"
-                  className="bg-surface text-primary border-primary/30 shadow-primary/10 mb-0 flex w-full shrink-0 items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-semibold whitespace-nowrap shadow-lg transition-transform hover:-translate-y-0.5 sm:w-auto"
+                  className="bg-surface text-primary border-primary/30 shadow-primary/10 mb-0 flex w-full shrink-0 items-center justify-center gap-2 rounded-xl border px-4 py-3 text-[.8rem] font-semibold whitespace-nowrap shadow-lg transition-transform hover:-translate-y-0.5 sm:w-auto"
                   onClick={() => setShowAiPanel(true)}
                   type="button"
                 >
@@ -313,27 +379,30 @@ function ActiveQuizContent() {
         </main>
 
         <QuizSidebar
-          total={QUESTIONS.length}
+          total={questions.length}
           currentIndex={currentIndex}
           answeredCount={answeredCount}
           flaggedCount={flaggedCount}
           unansweredCount={unansweredCount}
           getStatus={getStatus}
           onSelectQuestion={goTo}
-          onSubmit={() => setShowSubmitModal(true)}
+          isUntimed={isUntimed}
+          onSubmit={() =>
+            isUntimed ? router.push("/quiz") : setShowSubmitModal(true)
+          }
         />
       </div>
 
       {showInstructions && (
         <InstructionsModal
           currentIndex={currentIndex}
-          total={QUESTIONS.length}
+          total={questions.length}
           onNavigate={goTo}
           onClose={() => setShowInstructions(false)}
         />
       )}
 
-      {showSubmitModal && (
+      {showSubmitModal && !isUntimed && (
         <SubmitModal
           answeredCount={answeredCount}
           flaggedCount={flaggedCount}

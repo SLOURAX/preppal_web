@@ -1,6 +1,7 @@
 "use client";
 
-import { X, Send } from "lucide-react";
+import { LogOut, Send, X } from "lucide-react";
+import { SaxAwardBulk, SaxFlashBulk } from "@meysam213/iconsax-react";
 import { Button } from "@/components/ui";
 import { QuizTimer } from "./quiz-timer";
 
@@ -10,6 +11,8 @@ interface QuizHeaderProps {
   readonly secondsLeft?: number;
   readonly onExit: () => void;
   readonly onSubmit: () => void;
+  readonly isUntimed?: boolean;
+  readonly correctCount?: number;
 }
 
 export function QuizHeader({
@@ -18,6 +21,8 @@ export function QuizHeader({
   secondsLeft,
   onExit,
   onSubmit,
+  isUntimed = false,
+  correctCount = 0,
 }: QuizHeaderProps) {
   const progress = ((currentIndex + 1) / total) * 100;
 
@@ -35,12 +40,33 @@ export function QuizHeader({
             JAMB Mathematics
           </p>
           <p className="text-muted-foreground text-xs">
-            2023 · Timed Simulation
+            2023 · {isUntimed ? "Practice Playground" : "Timed Simulation"}
           </p>
         </div>
       </div>
 
       <div className="flex items-center gap-3">
+        {isUntimed ? (
+          <div className="hidden items-center gap-2 rounded-full bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-700 sm:flex">
+            <SaxFlashBulk className="size-4" />
+            <span>{correctCount * 10} XP</span>
+            <span className="text-amber-300">•</span>
+            <SaxAwardBulk className="size-4" />
+            <span>{correctCount} correct</span>
+          </div>
+        ) : null}
+        {isUntimed ? (
+          <div
+            className="flex items-center gap-1.5 rounded-full bg-amber-50 px-2 py-1 text-[10px] font-bold text-amber-700 sm:hidden"
+            aria-label={`${correctCount * 10} XP, ${correctCount} correct`}
+          >
+            <SaxFlashBulk className="size-3.5" />
+            <span>{correctCount * 10} XP</span>
+            <span className="text-amber-300">•</span>
+            <SaxAwardBulk className="size-3.5" />
+            <span>{correctCount}</span>
+          </div>
+        ) : null}
         <span className="text-primary bg-primary/10 hidden rounded-full px-2.5 py-1 text-xs font-semibold sm:inline-flex">
           {currentIndex + 1} / {total}
         </span>
@@ -58,11 +84,15 @@ export function QuizHeader({
         ) : null}
         <Button
           onClick={onSubmit}
-          aria-label="Submit quiz"
+          aria-label={isUntimed ? "Exit playground" : "Submit quiz"}
           className="flex gap-1.5 px-2.5 text-xs sm:px-4"
         >
-          <Send className="size-3.5" />
-          <span>Submit Quiz</span>
+          {isUntimed ? (
+            <LogOut className="size-3.5" />
+          ) : (
+            <Send className="size-3.5" />
+          )}
+          <span>{isUntimed ? "Exit playground" : "Submit Quiz"}</span>
         </Button>
       </div>
     </header>

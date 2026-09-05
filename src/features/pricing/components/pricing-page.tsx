@@ -26,12 +26,12 @@ export function PricingPage() {
         <h1 className="text-foreground mt-4 text-2xl font-bold tracking-[-0.04em] sm:text-3xl">
           Choose the support your learning needs
         </h1>
-        <p className="text-muted-foreground mx-auto mt-3 max-w-xl text-sm leading-6">
+        <p className="text-muted-foreground mx-auto mt-1 max-w-xl text-sm leading-6">
           Start free, then upgrade when you want deeper AI support, an ad-free
           experience, richer insights, and faster rewards.
         </p>
 
-        <div className="mt-4 flex flex-wrap justify-center gap-x-5 gap-y-2">
+        <div className="mt-8 flex flex-wrap justify-center gap-x-5 gap-y-2 mb-5">
           {PRICING_ASSURANCES.map((assurance) => (
             <span
               className="text-muted-foreground flex items-center gap-2 text-xs font-medium"

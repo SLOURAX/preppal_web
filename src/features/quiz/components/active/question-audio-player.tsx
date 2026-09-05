@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Pause, Play, Square, Volume2 } from "lucide-react";
+import {
+  SaxPauseCircleBulk,
+  SaxPlayCircleBulk,
+  SaxStopCircleBulk,
+  SaxVolumeHighBulk,
+} from "@meysam213/iconsax-react";
 import { cn } from "@/lib/utils";
 
 interface QuestionAudioPlayerProps {
@@ -102,7 +107,7 @@ export function QuestionAudioPlayer({
               : "bg-surface-subtle text-muted-foreground",
           )}
         >
-          <Volume2
+          <SaxVolumeHighBulk
             className={cn(
               "size-4 transition-transform duration-500",
               isPlaying && "scale-110",
@@ -110,7 +115,7 @@ export function QuestionAudioPlayer({
           />
         </div>
         <div>
-          <h3 className="text-foreground text-sm font-semibold">Read Aloud</h3>
+          <h3 className="text-foreground text-[.85rem] font-semibold">Read Aloud</h3>
           <div className="mt-0.5 flex h-3 items-center gap-1.5 overflow-hidden">
             {isPlaying ? (
               [45, 75, 55, 90, 65].map((height, i) => (
@@ -125,7 +130,7 @@ export function QuestionAudioPlayer({
                 />
               ))
             ) : (
-              <p className="text-muted-foreground text-xs ">
+              <p className="text-muted-foreground text-[.75rem]">
                 Listen to the question
               </p>
             )}
@@ -137,21 +142,21 @@ export function QuestionAudioPlayer({
         {(isPlaying || isPaused) && (
           <button
             onClick={handleStop}
-            className="bg-surface-subtle text-muted-foreground flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-red-500/10 hover:text-red-500"
+            className="text-muted-foreground flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-red-500/10 hover:text-red-500"
             title="Stop"
           >
-            <Square className="size-3.5 fill-current" />
+            <SaxStopCircleBulk className="size-4" />
           </button>
         )}
         <button
           onClick={togglePlayPause}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 flex size-9 items-center justify-center rounded-xl shadow-sm transition-all hover:scale-105 active:scale-95"
+          className="text-primary flex size-9 items-center justify-center transition-all hover:scale-105 active:scale-95"
           title={isPlaying ? "Pause" : "Play"}
         >
           {isPlaying ? (
-            <Pause className="size-4 fill-current" />
+            <SaxPauseCircleBulk className="size-7" />
           ) : (
-            <Play className="ml-0.5 size-4 fill-current" />
+            <SaxPlayCircleBulk className="ml-0.5 size-7" />
           )}
         </button>
       </div>

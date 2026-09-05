@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import {
   SaxBook1Bulk,
   SaxClockBulk,
@@ -24,10 +24,15 @@ function QuizPreviewContent() {
   const subject = searchParams.get("subject") || "Mathematics";
   const exam = searchParams.get("exam") || "JAMB";
   const year = searchParams.get("year") || "2023";
+  const [questionCount, setQuestionCount] = useState<number>(10);
 
   const EXAM_STATS = [
     { icon: SaxBook1Bulk, label: "Exam", value: exam },
-    { icon: SaxDocumentTextBulk, label: "Questions", value: "40" },
+    {
+      icon: SaxDocumentTextBulk,
+      label: "Questions",
+      value: isUntimed ? String(questionCount) : "40",
+    },
     {
       icon: SaxFlashCircle1Bulk,
       label: "Mode",
@@ -89,6 +94,48 @@ function QuizPreviewContent() {
           ))}
         </div>
 
+        {isUntimed ? (
+          <section
+            className="surface-card mt-5 rounded-2xl p-4 sm:p-5"
+            aria-labelledby="practice-size-title"
+          >
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2
+                  id="practice-size-title"
+                  className="text-foreground text-sm font-semibold"
+                >
+                  Practice set size
+                </h2>
+                <p className="text-muted-foreground mt-1 text-xs">
+                  Choose how many questions you want to explore today.
+                </p>
+              </div>
+              <div
+                className="flex flex-wrap gap-2"
+                role="group"
+                aria-label="Number of questions"
+              >
+                {[5, 10, 15, 20, 30].map((count) => (
+                  <button
+                    key={count}
+                    type="button"
+                    aria-pressed={questionCount === count}
+                    onClick={() => setQuestionCount(count)}
+                    className={`rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
+                      questionCount === count
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "bg-surface-subtle text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {count}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
+
         <div className="surface-card mt-5 rounded-3xl p-5 sm:p-6">
           <div className="mb-4 flex items-center gap-2">
             <SaxShieldTickBulk className="text-primary size-6" />
@@ -135,9 +182,11 @@ function QuizPreviewContent() {
             Cancel
           </button>
           <Button
-            onClick={() =>
-              router.push(`/quiz/active?${searchParams.toString()}`)
-            }
+            onClick={() => {
+              const params = new URLSearchParams(searchParams.toString());
+              if (isUntimed) params.set("count", String(questionCount));
+              router.push(`/quiz/active?${params.toString()}`);
+            }}
             className="flex items-center gap-2 px-8 text-sm font-semibold"
           >
             <SaxPlayCircleBulk className="size-5" />

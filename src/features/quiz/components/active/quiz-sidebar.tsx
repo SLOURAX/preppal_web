@@ -1,6 +1,11 @@
 "use client";
 
-import { Send } from "lucide-react";
+import { LogOut, Send } from "lucide-react";
+import {
+  SaxAwardBulk,
+  SaxChartSuccessBulk,
+  SaxFlag2Bulk,
+} from "@meysam213/iconsax-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui";
 import { QuestionGrid } from "./question-grid";
@@ -15,6 +20,7 @@ interface QuizSidebarProps {
   readonly getStatus: (id: number) => QuestionStatus;
   readonly onSelectQuestion: (idx: number) => void;
   readonly onSubmit: () => void;
+  readonly isUntimed?: boolean;
 }
 
 const LEGEND = [
@@ -34,11 +40,27 @@ export function QuizSidebar({
   getStatus,
   onSelectQuestion,
   onSubmit,
+  isUntimed = false,
 }: QuizSidebarProps) {
   const stats = [
-    { label: "Answered", value: answeredCount, color: "text-primary" },
-    { label: "Flagged", value: flaggedCount, color: "text-amber-500" },
-    { label: "Left", value: unansweredCount, color: "text-muted-foreground" },
+    {
+      label: "Answered",
+      value: answeredCount,
+      color: "text-primary",
+      icon: SaxChartSuccessBulk,
+    },
+    {
+      label: "Flagged",
+      value: flaggedCount,
+      color: "text-amber-500",
+      icon: SaxFlag2Bulk,
+    },
+    {
+      label: "Left",
+      value: unansweredCount,
+      color: "text-muted-foreground",
+      icon: SaxAwardBulk,
+    },
   ];
 
   return (
@@ -55,12 +77,13 @@ export function QuizSidebar({
         </h3>
 
         <div className="mb-4 grid grid-cols-3 gap-2 text-center">
-          {stats.map(({ label, value, color }) => (
-            <div key={label} className="bg-surface-subtle rounded-md p-2.5">
-              <p className={cn("text-lg font-bold", color)}>{value}</p>
-              <p className="text-muted-foreground mt-0.5 text-[11px] leading-tight">
+          {stats.map(({ label, value, color, icon: Icon }) => (
+            <div key={label} className="bg-surface-subtle rounded-md p-x2.5 py-3">
+              <Icon className={cn("mx-auto mb-1 size-8", color)} />
+              <p className="text-muted-foreground mt-3 text-[11px] leading-tight">
                 {label}
               </p>
+              <p className={cn("text-[1rem] font-bold", color)}>{value}</p>
             </div>
           ))}
         </div>
@@ -69,7 +92,7 @@ export function QuizSidebar({
           {LEGEND.map(({ dot, label }) => (
             <div key={label} className="flex items-center gap-1.5">
               <span className={cn("block size-2 rounded-full", dot)} />
-              <span className="text-muted-foreground text-[12px]">{label}</span>
+              <span className="text-muted-foreground text-[11px]">{label}</span>
             </div>
           ))}
         </div>
@@ -85,8 +108,12 @@ export function QuizSidebar({
 
         <div className="border-border mt-4 border-t pt-4">
           <Button onClick={onSubmit} className="w-full gap-2 text-sm">
-            <Send className="size-4" />
-            Submit Exam
+            {isUntimed ? (
+              <LogOut className="size-4" />
+            ) : (
+              <Send className="size-4" />
+            )}
+            {isUntimed ? "Exit playground" : "Submit Exam"}
           </Button>
         </div>
       </div>

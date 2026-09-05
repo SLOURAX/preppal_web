@@ -15,7 +15,12 @@ const AUTH_ROUTES: readonly string[] = [
 ];
 
 // Routes that render their own full-page chrome (no shared nav/footer)
-const STANDALONE_ROUTES: readonly string[] = ["/dashboard", "/quiz/active"];
+const STANDALONE_ROUTES: readonly string[] = [
+  "/dashboard",
+  "/quiz/active",
+  "/quiz/review",
+  "/quiz/results",
+];
 
 export function SiteChrome({ children }: PropsWithChildren) {
   const pathname = usePathname();

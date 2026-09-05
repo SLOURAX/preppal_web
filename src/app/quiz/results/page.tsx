@@ -2,36 +2,77 @@
 
 import { useState } from "react";
 import {
-  ArrowLeft,
-  ArrowUpRight,
-  CheckCircle2,
-  ChevronDown,
-  Clock3,
-  Share2,
-  Sparkles,
-  Target,
-  Trophy,
-  XCircle,
-} from "lucide-react";
+  SaxArrowDown2Bulk,
+  SaxArrowLeftBulk,
+  SaxAwardBulk,
+  SaxChartSuccessBulk,
+  SaxClockBulk,
+  SaxCloseCircleBulk,
+  SaxShareBulk,
+  SaxTickCircleBulk,
+} from "@meysam213/iconsax-react";
 import { useRouter } from "next/navigation";
 
 const REVIEW = [
-  ["01", "Angles in a straight line", "Correct", "2m 14s", true],
-  ["02", "Factorising polynomials", "Correct", "1m 08s", true],
-  ["03", "Average speed", "Review", "3m 42s", false],
-  ["04", "Logarithms", "Correct", "1m 27s", true],
-  ["05", "Interior angles", "Review", "2m 31s", false],
+  {
+    number: "01",
+    title: "Angles in a straight line",
+    time: "2m 14s",
+    selected: "78°",
+    correct: "78°",
+    options: ["68°", "78°", "88°", "98°"],
+    explanation:
+      "Combine the angles on the straight line, simplify, and isolate the expression to get 78°.",
+  },
+  {
+    number: "02",
+    title: "Factorising polynomials",
+    time: "1m 08s",
+    selected: "(x − 2)",
+    correct: "(x − 2)",
+    options: ["(x − 3)", "(x − 2)", "(x + 1)", "(x + 2)"],
+    explanation:
+      "x³ − 3x² + 2x factors to x(x − 1)(x − 2), so (x − 2) is a factor.",
+  },
+  {
+    number: "03",
+    title: "Average speed",
+    time: "3m 42s",
+    selected: "120 km/h",
+    correct: "150 km/h",
+    options: ["100 km/h", "120 km/h", "150 km/h", "180 km/h"],
+    explanation: "Average speed is distance ÷ time: 300 ÷ 2 = 150 km/h.",
+  },
+  {
+    number: "04",
+    title: "Logarithms",
+    time: "1m 27s",
+    selected: "6",
+    correct: "6",
+    options: ["4", "5", "6", "8"],
+    explanation: "Because 2⁶ = 64, log₂ 64 equals 6.",
+  },
+  {
+    number: "05",
+    title: "Interior angles",
+    time: "2m 31s",
+    selected: undefined,
+    correct: "9",
+    options: ["7", "8", "9", "10"],
+    explanation: "Use (n − 2) × 180 = 1260, giving n = 9 sides.",
+  },
 ] as const;
 const RESULT_STATS = [
-  ["32", "Correct", CheckCircle2, "text-emerald-600 bg-emerald-500/10"],
-  ["8", "To review", XCircle, "text-rose-600 bg-rose-500/10"],
-  ["24m", "Time spent", Clock3, "text-primary bg-primary/10"],
-  ["+80", "Points earned", Sparkles, "text-amber-600 bg-amber-500/10"],
+  ["32", "Correct", SaxTickCircleBulk, "text-emerald-600 bg-emerald-500/10"],
+  ["8", "To review", SaxCloseCircleBulk, "text-rose-600 bg-rose-500/10"],
+  ["24m", "Time spent", SaxClockBulk, "text-primary bg-primary/10"],
+  ["+80", "Points earned", SaxAwardBulk, "text-amber-600 bg-amber-500/10"],
 ] as const;
 
 export default function QuizResultsPage() {
   const router = useRouter();
   const [shared, setShared] = useState<boolean>(false);
+  const [openReview, setOpenReview] = useState<string | null>(null);
 
   const shareResult = async (): Promise<void> => {
     const text = "I just completed a Preppal practice quiz with an 80% score!";
@@ -55,14 +96,14 @@ export default function QuizResultsPage() {
             onClick={() => router.push("/quiz")}
             type="button"
           >
-            <ArrowLeft className="size-4" /> Back to quizzes
+            <SaxArrowLeftBulk className="size-4" /> Back to quizzes
           </button>
           <button
-            className="border-border text-primary hover:bg-primary/5 flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold shadow-sm"
             onClick={shareResult}
             type="button"
           >
-            <Share2 className="size-3.5" />{" "}
+            <SaxShareBulk className="size-4" />{" "}
             {shared ? "Copied!" : "Share result"}
           </button>
         </div>
@@ -72,15 +113,17 @@ export default function QuizResultsPage() {
           <div className="bg-primary/10 pointer-events-none absolute -right-16 -bottom-24 size-72 rounded-full blur-3xl" />
           <div className="relative flex flex-col items-center gap-7 text-center sm:flex-row sm:text-left">
             <div
-              className="relative grid size-40 shrink-0 place-items-center rounded-full"
+              className="relative grid size-36 shrink-0 place-items-center rounded-2xl p-2 shadow-sm sm:size-44"
               style={{
                 background:
                   "conic-gradient(hsl(var(--primary)) 0deg 288deg, hsl(var(--border)) 288deg 360deg)",
               }}
             >
-              <div className="bg-surface grid size-32 place-items-center rounded-full">
+              <div className="bg-surface grid size-full place-items-center rounded-xl">
                 <div>
-                  <p className="text-foreground text-4xl font-black">80%</p>
+                  <p className="text-foreground text-4xl font-black sm:text-5xl">
+                    80%
+                  </p>
                   <p className="text-muted-foreground text-[10px] font-semibold tracking-wider uppercase">
                     Score
                   </p>
@@ -103,6 +146,14 @@ export default function QuizResultsPage() {
                   Top 22% this week
                 </span>
               </div>
+              <button
+                onClick={shareResult}
+                type="button"
+                className="bg-primary text-primary-foreground mt-4 inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold shadow-sm transition-transform hover:-translate-y-0.5"
+              >
+                <SaxShareBulk className="size-4" />{" "}
+                {shared ? "Result copied" : "Share your result"}
+              </button>
             </div>
           </div>
         </section>
@@ -132,7 +183,7 @@ export default function QuizResultsPage() {
                   See where your score came from
                 </p>
               </div>
-              <Target className="text-primary size-5" />
+              <SaxChartSuccessBulk className="text-primary size-5" />
             </div>
             <div className="space-y-4">
               {[
@@ -172,7 +223,7 @@ export default function QuizResultsPage() {
                   A small step for a big gain
                 </p>
               </div>
-              <Sparkles className="text-primary size-5" />
+              <SaxAwardBulk className="text-primary size-5" />
             </div>
             <div className="mt-5 rounded-2xl bg-amber-500/10 p-4">
               <p className="text-xs font-bold tracking-wider text-amber-700 uppercase">
@@ -196,7 +247,25 @@ export default function QuizResultsPage() {
           </section> */}
         </div>
 
-        <section className="surface-card overflow-hidden">
+        <section className="surface-card flex flex-col items-start gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+          <div>
+            <h2 className="text-foreground font-semibold">
+              Review your questions
+            </h2>
+            <p className="text-muted-foreground mt-1 text-xs">
+              Open the full walkthrough with answers and explanations.
+            </p>
+          </div>
+          <button
+            className="bg-primary text-primary-foreground w-full rounded-xl px-4 py-2.5 text-sm font-semibold sm:w-auto"
+            onClick={() => router.push("/quiz/review")}
+            type="button"
+          >
+            Review all questions
+          </button>
+        </section>
+
+        <section className="surface-card hidden overflow-hidden">
           <div className="flex items-center justify-between p-5 sm:p-6">
             <div>
               <h2 className="text-foreground font-semibold">
@@ -210,42 +279,93 @@ export default function QuizResultsPage() {
               className="text-primary flex items-center gap-1 text-xs font-bold"
               type="button"
             >
-              View all <ChevronDown className="size-3.5 -rotate-90" />
+              View all <SaxArrowDown2Bulk className="size-3.5 -rotate-90" />
             </button>
           </div>
           <div className="divide-border divide-y">
-            {REVIEW.map(([number, title, status, time, correct]) => (
-              <button
-                className="hover:bg-surface-subtle flex w-full items-center gap-3 px-5 py-3.5 text-left transition-colors sm:px-6"
-                key={number}
-                type="button"
-              >
-                <span className="text-muted-foreground w-6 text-xs font-bold">
-                  {number}
-                </span>
-                <span
-                  className={`grid size-8 place-items-center rounded-lg ${correct ? "bg-emerald-500/10 text-emerald-600" : "bg-rose-500/10 text-rose-600"}`}
-                >
-                  {correct ? (
-                    <CheckCircle2 className="size-4" />
-                  ) : (
-                    <XCircle className="size-4" />
-                  )}
-                </span>
-                <span className="text-foreground min-w-0 flex-1 truncate text-sm font-medium">
-                  {title}
-                </span>
-                <span className="text-muted-foreground hidden text-xs sm:block">
-                  {time}
-                </span>
-                <span
-                  className={`text-xs font-semibold ${correct ? "text-emerald-600" : "text-rose-600"}`}
-                >
-                  {status}
-                </span>
-                <ArrowUpRight className="text-muted-foreground size-4" />
-              </button>
-            ))}
+            {REVIEW.map((item) => {
+              const isCorrect = item.selected === item.correct;
+              const isOpen = openReview === item.number;
+              return (
+                <div key={item.number}>
+                  <button
+                    className="hover:bg-surface-subtle flex w-full items-center gap-3 px-5 py-3.5 text-left transition-colors sm:px-6"
+                    onClick={() => setOpenReview(isOpen ? null : item.number)}
+                    type="button"
+                    aria-expanded={isOpen}
+                  >
+                    <span className="text-muted-foreground w-6 text-xs font-bold">
+                      {item.number}
+                    </span>
+                    <span
+                      className={`grid size-8 place-items-center rounded-lg ${isCorrect ? "bg-emerald-500/10 text-emerald-600" : "bg-rose-500/10 text-rose-600"}`}
+                    >
+                      {isCorrect ? (
+                        <SaxTickCircleBulk className="size-4" />
+                      ) : (
+                        <SaxCloseCircleBulk className="size-4" />
+                      )}
+                    </span>
+                    <span className="text-foreground min-w-0 flex-1 truncate text-sm font-medium">
+                      {item.title}
+                    </span>
+                    <span className="text-muted-foreground hidden text-xs sm:block">
+                      {item.time}
+                    </span>
+                    <span
+                      className={`text-xs font-semibold ${isCorrect ? "text-emerald-600" : "text-rose-600"}`}
+                    >
+                      {item.selected
+                        ? isCorrect
+                          ? "Correct"
+                          : "Review"
+                        : "Unanswered"}
+                    </span>
+                    <SaxArrowDown2Bulk
+                      className={`text-muted-foreground size-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                    />
+                  </button>
+                  {isOpen ? (
+                    <div className="bg-surface-subtle/60 px-5 pt-1 pb-5 sm:px-16">
+                      <div className="space-y-2">
+                        {item.options.map((option, optionIndex) => {
+                          const optionIsCorrect = option === item.correct;
+                          const optionWasSelected = option === item.selected;
+                          return (
+                            <div
+                              key={option}
+                              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm ${optionIsCorrect ? "bg-emerald-500/10 font-semibold text-emerald-700" : optionWasSelected ? "bg-rose-500/10 font-semibold text-rose-700" : "bg-surface text-muted-foreground"}`}
+                            >
+                              <span className="grid size-6 shrink-0 place-items-center rounded-md bg-black/5 text-xs font-bold">
+                                {String.fromCharCode(65 + optionIndex)}
+                              </span>
+                              <span className="flex-1">{option}</span>
+                              {optionIsCorrect ? (
+                                <span className="text-[11px] font-bold">
+                                  Correct answer
+                                </span>
+                              ) : optionWasSelected ? (
+                                <span className="text-[11px] font-bold">
+                                  Your answer
+                                </span>
+                              ) : null}
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="bg-primary/5 mt-4 rounded-xl px-3 py-3">
+                        <p className="text-primary text-[11px] font-bold tracking-wide uppercase">
+                          Explanation
+                        </p>
+                        <p className="text-muted-foreground mt-1 text-xs leading-5">
+                          {item.explanation}
+                        </p>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
           </div>
         </section>
       </div>

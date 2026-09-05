@@ -56,9 +56,9 @@ export function SubmitModal({
           </div> */}
 
           {unansweredCount > 0 && (
-            <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-amber-500/20 bg-amber-500/5 px-3 py-2">
-              <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-500" />
-              <p className="text-xs leading-relaxed text-amber-600">
+            <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-amber-500/20 bg-amber-500/10 px-3 py-2">
+              <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-700" />
+              <p className="text-xs leading-relaxed text-amber-700">
                 {unansweredCount} question
                 {unansweredCount > 1 ? "s are" : " is"} still unanswered.
                 Consider reviewing before submitting.
@@ -75,8 +75,8 @@ export function SubmitModal({
               Continue exam
             </button>
             <Button onClick={onSubmit} className="w-full gap-2">
-              <Send className="size-4" />
               Submit Exam
+              <Send className="size-4" />
             </Button>
           </div>
         </div>
