@@ -152,7 +152,14 @@ export function AnalyticsTab() {
       </div>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map(([label, value, note, Icon, color]) => (
-          <div className="surface-card p-4" key={label}>
+          <div
+            className="surface-card relative overflow-hidden p-4"
+            key={label}
+          >
+            <Icon
+              aria-hidden="true"
+              className="text-primary/5 pointer-events-none absolute -right-3 -bottom-3 size-24"
+            />
             <span
               className={`grid size-9 place-items-center rounded-xl ${color}`}
             >

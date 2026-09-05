@@ -19,7 +19,9 @@ export function LearnTab() {
   return (
     <section className="space-y-6">
       <div className="from-primary/10 via-primary/5 to-surface relative overflow-hidden rounded-3xl bg-gradient-to-br p-6 sm:p-8">
+        <div className="pointer-events-none absolute inset-0 [background-image:linear-gradient(135deg,transparent_24%,color-mix(in_srgb,var(--primary)_6%,transparent)_25%,transparent_26%)] [background-size:28px_28px] opacity-50" />
         <div className="bg-primary/10 pointer-events-none absolute -right-10 -bottom-20 size-56 rounded-full blur-3xl" />
+        <GraduationCap className="text-primary/10 pointer-events-none absolute -right-5 -bottom-8 size-48 rotate-12" />
         <div className="relative flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <div>
             <h1 className="text-foreground mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
@@ -44,10 +46,11 @@ export function LearnTab() {
 
       <div className="grid gap-3 sm:grid-cols-2">
         <button
-          className={`group flex items-center gap-4 rounded-2xl p-4 text-left transition-all ${mode === "exams" ? "bg-primary text-primary-foreground shadow-primary/20 shadow-lg" : "surface-card text-foreground hover:-translate-y-0.5"}`}
+          className={`group relative flex items-center gap-4 overflow-hidden rounded-2xl p-4 text-left transition-all ${mode === "exams" ? "bg-primary text-primary-foreground shadow-primary/20 shadow-lg" : "surface-card text-foreground hover:-translate-y-0.5"}`}
           onClick={() => setMode("exams")}
           type="button"
         >
+          <GraduationCap className="pointer-events-none absolute -right-3 -bottom-5 size-24 opacity-10" />
           <span
             className={`grid size-11 shrink-0 place-items-center rounded-xl ${mode === "exams" ? "bg-white/15" : "bg-primary/10 text-primary"}`}
           >
@@ -64,10 +67,11 @@ export function LearnTab() {
           <ArrowUpRight className="size-4 opacity-70 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </button>
         <button
-          className={`group flex items-center gap-4 rounded-2xl p-4 text-left transition-all ${mode === "subjects" ? "bg-primary text-primary-foreground shadow-primary/20 shadow-lg" : "surface-card text-foreground hover:-translate-y-0.5"}`}
+          className={`group relative flex items-center gap-4 overflow-hidden rounded-2xl p-4 text-left transition-all ${mode === "subjects" ? "bg-primary text-primary-foreground shadow-primary/20 shadow-lg" : "surface-card text-foreground hover:-translate-y-0.5"}`}
           onClick={() => setMode("subjects")}
           type="button"
         >
+          <BookOpenCheck className="pointer-events-none absolute -right-3 -bottom-5 size-24 opacity-10" />
           <span
             className={`grid size-11 shrink-0 place-items-center rounded-xl ${mode === "subjects" ? "bg-white/15" : "bg-primary/10 text-primary"}`}
           >

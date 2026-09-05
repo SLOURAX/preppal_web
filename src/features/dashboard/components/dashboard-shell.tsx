@@ -9,6 +9,7 @@ import {
   LogOut,
   UserRound,
 } from "lucide-react";
+import { SaxFlashBulk } from "@meysam213/iconsax-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -56,6 +57,7 @@ export function DashboardShell() {
   const userName = useAuthStore((s) => s.userName);
   const userPlan = useAuthStore((s) => s.userPlan);
   const preppalBalance = useAuthStore((s) => s.preppalBalance);
+  const experiencePoints = useAuthStore((s) => s.experiencePoints);
   const logout = useAuthStore((s) => s.logout);
 
   return (
@@ -82,6 +84,12 @@ export function DashboardShell() {
             <div className="hidden items-center gap-1 rounded-full bg-[#21194d] px-4 py-1 text-white sm:flex">
               <span className="font-bold text-amber-400">ℙ</span>
               <span className="text-xs font-bold">{preppalBalance}</span>
+            </div>
+            <div className="hidden items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-1 text-amber-600 sm:flex">
+              <SaxFlashBulk className="size-3.5" />
+              <span className="text-xs font-bold">
+                {experiencePoints.toLocaleString()} XP
+              </span>
             </div>
 
             <ThemeToggle />

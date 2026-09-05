@@ -101,8 +101,12 @@ export function OverviewTab() {
         {STATS.map(({ label, value, icon: Icon, color }) => (
           <div
             key={label}
-            className="surface-card p-4 transition-transform hover:-translate-y-0.5 sm:p-5"
+            className="surface-card relative overflow-hidden p-4 transition-transform hover:-translate-y-0.5 sm:p-5"
           >
+            <Icon
+              aria-hidden="true"
+              className="text-primary/5 pointer-events-none absolute -right-3 -bottom-3 size-24"
+            />
             <span
               className={`inline-grid size-10 place-items-center rounded-xl ${color}`}
             >

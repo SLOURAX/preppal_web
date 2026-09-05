@@ -1,26 +1,23 @@
 "use client";
 
 import {
-  BadgePlus,
-  CalendarCheck2,
-  ChartNoAxesCombined,
-  ChevronLeft,
-  ChevronRight,
-  Check,
-} from "lucide-react";
+  SaxAddCircleBulk,
+  SaxArrowLeft2Bulk,
+  SaxArrowRight2Bulk,
+  SaxCalendarTickBulk,
+  SaxChartSuccessBulk,
+  SaxTickCircleBulk,
+} from "@meysam213/iconsax-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import { useAuthStore } from "@/store";
 
 const CURRENT_DAY = 2;
-const CHECK_IN_REWARD = 10;
+const CHECK_IN_REWARD = 2;
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
 
 export function DailyCheckInCard() {
-  const balance = useAuthStore((state) => state.preppalBalance);
-  const setBalance = useAuthStore((state) => state.setBalance);
   const [visibleMonth, setVisibleMonth] = useState<Date>(new Date(2026, 8, 1));
   const [hasCheckedIn, setHasCheckedIn] = useState<boolean>(false);
   const monthLabel = new Intl.DateTimeFormat("en", {
@@ -42,7 +39,6 @@ export function DailyCheckInCard() {
 
   const checkIn = (): void => {
     if (hasCheckedIn) return;
-    setBalance(balance + CHECK_IN_REWARD);
     setHasCheckedIn(true);
   };
 
@@ -51,17 +47,17 @@ export function DailyCheckInCard() {
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
           <span className="bg-primary/10 text-primary grid size-10 place-items-center rounded-xl">
-            <CalendarCheck2 className="size-5" />
+            <SaxCalendarTickBulk className="size-5" />
           </span>
           <div>
             <h2 className="text-foreground font-semibold">Daily check-in</h2>
             <p className="text-muted-foreground mt-0.5 text-xs">
-              Build consistency and earn a daily bonus.
+              Check in every day to earn experience points.
             </p>
           </div>
         </div>
         <span className="bg-surface-subtle text-foreground flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold">
-          <ChartNoAxesCombined className="text-primary size-3.5" /> 1 day
+          <SaxChartSuccessBulk className="text-primary size-3.5" /> 1 day
         </span>
       </div>
 
@@ -72,7 +68,7 @@ export function DailyCheckInCard() {
           onClick={() => moveMonth(-1)}
           type="button"
         >
-          <ChevronLeft className="size-4" />
+          <SaxArrowLeft2Bulk className="size-4" />
         </button>
         <p className="text-sm font-semibold">{monthLabel}</p>
         <button
@@ -81,7 +77,7 @@ export function DailyCheckInCard() {
           onClick={() => moveMonth(1)}
           type="button"
         >
-          <ChevronRight className="size-4" />
+          <SaxArrowRight2Bulk className="size-4" />
         </button>
       </div>
 
@@ -113,7 +109,7 @@ export function DailyCheckInCard() {
                 )}
                 key={day}
               >
-                {isComplete ? <Check className="size-3.5" /> : day}
+                {isComplete ? <SaxTickCircleBulk className="size-3.5" /> : day}
               </span>
             );
           },
@@ -136,11 +132,13 @@ export function DailyCheckInCard() {
         onClick={checkIn}
       >
         {hasCheckedIn ? (
-          <Check className="size-4" />
+          <SaxTickCircleBulk className="size-4" />
         ) : (
-          <BadgePlus className="size-4" />
+          <SaxAddCircleBulk className="size-4" />
         )}
-        {hasCheckedIn ? "Checked in" : `Check in · +${CHECK_IN_REWARD} P`}
+        {hasCheckedIn
+          ? "Checked in today"
+          : `Check in · +${CHECK_IN_REWARD} XP`}
       </Button>
     </section>
   );

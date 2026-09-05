@@ -7,7 +7,6 @@ import { AuthShell } from "@/features/auth";
 
 import { NavBar } from "../navigation";
 import { Footer } from "./footer";
-import { FloatingSupport } from "./floating-support";
 
 const AUTH_ROUTES: readonly string[] = [
   "/login",
@@ -32,7 +31,7 @@ export function SiteChrome({ children }: PropsWithChildren) {
     return (
       <>
         {children}
-        {!pathname.startsWith("/quiz") ? <FloatingSupport /> : null}
+        {/* Floating support temporarily disabled. */}
       </>
     );
 
@@ -45,7 +44,7 @@ export function SiteChrome({ children }: PropsWithChildren) {
         <>
           {children}
           <Footer />
-          {!pathname.startsWith("/quiz") ? <FloatingSupport /> : null}
+          {/* Floating support temporarily disabled. */}
         </>
       )}
     </>

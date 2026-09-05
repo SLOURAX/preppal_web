@@ -3,6 +3,7 @@ import { create } from "zustand";
 interface AuthState {
   isAuthenticated: boolean;
   preppalBalance: number;
+  experiencePoints: number;
   userName: string;
   userPlan: string;
   login: () => void;
@@ -13,6 +14,7 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: false,
   preppalBalance: 200,
+  experiencePoints: 1240,
   userName: "Solomon Udumizi",
   userPlan: "Level 1",
   login: (): void => set({ isAuthenticated: true }),

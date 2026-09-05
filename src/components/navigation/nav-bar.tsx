@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store";
+import { SaxCategory2Bulk, SaxFlashBulk } from "@meysam213/iconsax-react";
 
 import { ThemeToggle } from "./theme-toggle";
 import { Notifications } from "./notifications";
@@ -17,6 +18,7 @@ export function NavBar() {
   const pathname = usePathname();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const preppalBalance = useAuthStore((state) => state.preppalBalance);
+  const experiencePoints = useAuthStore((state) => state.experiencePoints);
   const userName = useAuthStore((state) => state.userName);
   const userPlan = useAuthStore((state) => state.userPlan);
   const logout = useAuthStore((state) => state.logout);
@@ -63,6 +65,20 @@ export function NavBar() {
                   <span className="font-bold text-amber-400">ℙ</span>
                   <span className="text-xs font-bold">{preppalBalance}</span>
                 </div>
+                <div className="hidden items-center gap-1.5 rounded-full bg-amber-500/10 px-3.5 py-1.5 text-amber-600 sm:flex">
+                  <SaxFlashBulk className="size-4" />
+                  <span className="text-xs font-bold">
+                    {experiencePoints.toLocaleString()} XP
+                  </span>
+                </div>
+
+                <Link
+                  href="/dashboard"
+                  className="bg-primary text-primary-foreground hover:bg-primary-strong hidden items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold shadow-sm transition-colors lg:inline-flex"
+                >
+                  <SaxCategory2Bulk className="size-4" />
+                  Dashboard
+                </Link>
 
                 <Notifications />
 
