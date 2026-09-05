@@ -77,7 +77,22 @@ export function QuestionCard({
         </div>
       </div>
 
-      <div className="surface-card rounded-2xl p-6 sm:p-6">
+      <div
+        className="surface-card relative overflow-hidden rounded-[1.35rem] p-5 shadow-[0_14px_0_-7px_rgba(124,58,237,0.12),0_18px_34px_-18px_rgba(76,45,180,0.35)] sm:p-6"
+        style={{
+          clipPath:
+            "polygon(0 16px, 16px 0, calc(100% - 16px) 0, 100% 16px, 100% calc(100% - 16px), calc(100% - 16px) 100%, 16px 100%, 0 calc(100% - 16px))",
+        }}
+      >
+        <div className="via-primary pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-violet-400 to-fuchsia-400" />
+        <div className="mb-3 flex items-center justify-between">
+          <span className="text-primary/70 text-[10px] font-bold tracking-[0.18em] uppercase">
+            Playground challenge
+          </span>
+          <span className="bg-primary/10 text-primary rounded-full px-2 py-1 text-[10px] font-bold">
+            +10 P
+          </span>
+        </div>
         <p className="text-foreground text-[.8rem] leading-normal font-medium sm:text-[.9rem]">
           {question.text}
         </p>
@@ -87,7 +102,7 @@ export function QuestionCard({
             role="status"
           >
             <span className="text-base" aria-hidden="true">
-              {/* {feedback === "correct" ? "🎉" : "💡"} */}
+              {feedback === "correct" ? "✦" : "↗"}
             </span>
             <span>
               {feedback === "correct"
