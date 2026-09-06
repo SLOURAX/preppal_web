@@ -241,10 +241,12 @@ export function OverviewTab() {
               Your latest practice activity
             </p>
           </div>
-          <div className="bg-primary/10 flex items-center gap-1.5 rounded-full px-3 py-1">
-            {/* <Zap className="text-primary size-3" /> */}
-            <span className="text-primary text-xs font-bold">Live</span>
-          </div>
+          <Link
+            className="text-primary hover:bg-primary/10 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-bold transition-colors"
+            href="/dashboard?view=quiz-history"
+          >
+            View all <ArrowRight className="size-3.5" />
+          </Link>
         </div>
         <div className="divide-border divide-y">
           {quizAttempts.length === 0 ? (

@@ -9,6 +9,7 @@ import {
   SaxTickCircleBulk,
 } from "@meysam213/iconsax-react";
 import { useState, type ReactNode } from "react";
+import Link from "next/link";
 
 import { Button } from "@/components/ui";
 
@@ -22,7 +23,7 @@ const REFERRAL_STATS = [
   { label: "XP earned", value: "50 XP" },
 ] as const;
 
-const REFERRALS = [
+export const REFERRALS = [
   { name: "Amaka O.", status: "Completed first quiz", reward: "+50 XP" },
   { name: "Daniel K.", status: "Invite sent", reward: "Pending" },
   { name: "Fatima A.", status: "Invite sent", reward: "Pending" },
@@ -91,10 +92,20 @@ export function ReferralRewardsCard() {
       <div className="mt-5">
         <div className="mb-2 flex items-center justify-between">
           <p className="text-foreground text-xs font-semibold">Your invites</p>
-          <span className="text-muted-foreground text-[10px]">50 XP each</span>
+          <div className="flex items-center gap-3">
+            <span className="text-muted-foreground text-[10px]">
+              50 XP each
+            </span>
+            <Link
+              className="text-primary inline-flex items-center text-[10px] font-bold"
+              href="/rewards/referrals"
+            >
+              View all
+            </Link>
+          </div>
         </div>
         <div className="divide-border border-border/60 divide-y rounded-xl border px-3">
-          {REFERRALS.map((referral) => (
+          {REFERRALS.slice(0, 3).map((referral) => (
             <div
               className="flex items-center justify-between gap-3 py-2.5"
               key={referral.name}

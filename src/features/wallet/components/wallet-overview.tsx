@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import {
   ArrowDownLeft,
   ArrowUpRight,
@@ -109,14 +110,16 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
           <div className="mt-5 grid gap-2 text-xs sm:grid-cols-3">
             <div className="rounded-xl bg-white/10 p-3">
               <p className="text-violet-200">Preppal coins</p>
-              <p className="mt-1 font-bold text-[13px]">{balance.toLocaleString()} P</p>
+              <p className="mt-1 text-[13px] font-bold">
+                {balance.toLocaleString()} P
+              </p>
               <p className="mt-1 text-[11px] text-violet-200/80">
                 Withdrawable
               </p>
             </div>
             <div className="rounded-xl bg-white/10 p-3">
               <p className="text-violet-200">Experience points</p>
-              <p className="mt-1 font-bold text-[13px]">
+              <p className="mt-1 text-[13px] font-bold">
                 {experiencePoints.toLocaleString()} XP
               </p>
               <p className="mt-1 text-[11px] text-violet-200/80">
@@ -125,7 +128,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             </div>
             <div className="rounded-xl bg-white/10 p-3">
               <p className="text-violet-200">Deposited funds</p>
-              <p className="mt-1 font-bold text-[13px]">
+              <p className="mt-1 text-[13px] font-bold">
                 {depositedFunds.toLocaleString()} NGN
               </p>
               <p className="mt-1 text-[11px] text-violet-200/80">
@@ -335,7 +338,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
               <History className="size-5" />
             </span>
             <div>
-              <h2 className="text-foreground font-semibold">
+              <h2 className="text-foreground text-[.9rem] font-semibold">
                 Transaction history
               </h2>
               <p className="text-muted-foreground mt-0.5 text-xs">
@@ -343,12 +346,12 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
               </p>
             </div>
           </div>
-          <button
+          <Link
             className="text-primary inline-flex items-center gap-1 text-xs font-bold"
-            type="button"
+            href="/dashboard?view=wallet-history"
           >
             View all <ChevronRight className="size-3.5" />
-          </button>
+          </Link>
         </div>
         <div className="divide-border divide-y">
           {WALLET_TRANSACTIONS.map((transaction) => {
@@ -366,7 +369,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                     <Icon className="size-4" />
                   </span>
                   <div className="min-w-0">
-                    <p className="text-foreground truncate text-sm font-semibold">
+                    <p className="text-foreground truncate text-[.8rem] font-semibold">
                       {transaction.label}
                     </p>
                     <p className="text-muted-foreground text-xs">
