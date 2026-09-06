@@ -109,26 +109,26 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
           <div className="mt-5 grid gap-2 text-xs sm:grid-cols-3">
             <div className="rounded-xl bg-white/10 p-3">
               <p className="text-violet-200">Preppal coins</p>
-              <p className="mt-1 font-bold">{balance.toLocaleString()} P</p>
-              <p className="mt-1 text-[10px] text-violet-200/80">
+              <p className="mt-1 font-bold text-[13px]">{balance.toLocaleString()} P</p>
+              <p className="mt-1 text-[11px] text-violet-200/80">
                 Withdrawable
               </p>
             </div>
             <div className="rounded-xl bg-white/10 p-3">
               <p className="text-violet-200">Experience points</p>
-              <p className="mt-1 font-bold">
+              <p className="mt-1 font-bold text-[13px]">
                 {experiencePoints.toLocaleString()} XP
               </p>
-              <p className="mt-1 text-[10px] text-violet-200/80">
+              <p className="mt-1 text-[11px] text-violet-200/80">
                 Convert to coins
               </p>
             </div>
             <div className="rounded-xl bg-white/10 p-3">
               <p className="text-violet-200">Deposited funds</p>
-              <p className="mt-1 font-bold">
+              <p className="mt-1 font-bold text-[13px]">
                 {depositedFunds.toLocaleString()} NGN
               </p>
-              <p className="mt-1 text-[10px] text-violet-200/80">
+              <p className="mt-1 text-[11px] text-violet-200/80">
                 Not withdrawable
               </p>
             </div>
