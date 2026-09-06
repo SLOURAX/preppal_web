@@ -45,6 +45,7 @@ export function AccountTab() {
   const weeklyGoal = useAuthStore((s) => s.weeklyGoal);
   const setWeeklyGoal = useAuthStore((s) => s.setWeeklyGoal);
   const openSignOutModal = useAuthStore((s) => s.openSignOutModal);
+  const setUserName = useAuthStore((s) => s.setUserName);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordChanged, setPasswordChanged] = useState(false);
@@ -54,6 +55,8 @@ export function AccountTab() {
     next: "",
     confirm: "",
   });
+  const [editingName, setEditingName] = useState(false);
+  const [draftName, setDraftName] = useState(userName);
   const [notificationSettings, setNotificationSettings] = useState<
     Record<string, boolean>
   >(() =>
@@ -85,7 +88,14 @@ export function AccountTab() {
       <div className="surface-card flex items-center gap-5 rounded-3xl p-6 shadow-sm">
         <div className="bg-primary text-primary-foreground relative grid size-16 shrink-0 place-items-center rounded-2xl text-2xl font-black shadow-md sm:size-20">
           {userName.slice(0, 1).toUpperCase()}
-          <button className="bg-surface hover:bg-surface-subtle absolute -right-2 -bottom-2 grid size-7 place-items-center rounded-full border shadow-sm transition-colors">
+          <button
+            className="bg-surface hover:bg-surface-subtle absolute -right-2 -bottom-2 grid size-7 place-items-center rounded-full border shadow-sm transition-colors"
+            onClick={() => {
+              setDraftName(userName);
+              setEditingName(true);
+            }}
+            type="button"
+          >
             <Pencil className="text-muted-foreground size-3.5" />
           </button>
         </div>
@@ -117,11 +127,40 @@ export function AccountTab() {
             <p className="text-foreground text-sm font-semibold">
               Display name
             </p>
-            <p className="text-muted-foreground mt-1 text-xs">{userName}</p>
+            {editingName ? (
+              <div className="mt-1 flex items-center gap-2">
+                <input
+                  className="border-border bg-surface focus:border-primary h-8 min-w-0 rounded-lg border px-2 text-xs outline-none"
+                  onChange={(event) => setDraftName(event.target.value)}
+                  value={draftName}
+                />
+                <button
+                  className="text-primary text-xs font-bold"
+                  onClick={() => {
+                    setUserName(draftName);
+                    setEditingName(false);
+                  }}
+                  type="button"
+                >
+                  Save
+                </button>
+              </div>
+            ) : (
+              <p className="text-muted-foreground mt-1 text-xs">{userName}</p>
+            )}
           </div>
-          <button className="border-border hover:bg-surface-subtle rounded-full border px-4 py-1.5 text-xs font-medium transition-colors">
-            Edit
-          </button>
+          {!editingName ? (
+            <button
+              className="border-border hover:bg-surface-subtle rounded-full border px-4 py-1.5 text-xs font-medium transition-colors"
+              onClick={() => {
+                setDraftName(userName);
+                setEditingName(true);
+              }}
+              type="button"
+            >
+              Edit
+            </button>
+          ) : null}
         </div>
         <div className="flex items-center justify-between gap-4 px-5 py-5">
           <div>

@@ -19,6 +19,7 @@ import { QuickCalculator } from "@/features/quiz/components/active/quick-calcula
 import { ConfirmationModal } from "@/components/ui";
 import type { QuestionStatus } from "@/features/quiz/components/active/types";
 import { QUIZ_QUESTIONS } from "@/features/quiz/mock-questions";
+import { useAuthStore } from "@/store";
 
 const TOTAL_SECONDS = 45 * 60;
 
@@ -92,6 +93,7 @@ const QUIZ_PATTERN_BG =
 function ActiveQuizContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const recordQuizAttempt = useAuthStore((state) => state.recordQuizAttempt);
   const mode = searchParams.get("mode") || "timed";
   const isUntimed = mode === "untimed";
   const parsedCount = Number(searchParams.get("count") || 40);
@@ -226,6 +228,27 @@ function ActiveQuizContent() {
 
   const confirmExit = (): void => {
     router.push(isUntimed ? "/quiz" : "/quiz/preview");
+  };
+
+  const submitQuiz = (): void => {
+    const correct = questions.filter(
+      (question) => answers[question.id] === question.correctAnswer,
+    ).length;
+    recordQuizAttempt({
+      id: `attempt-${Date.now()}`,
+      subject: searchParams.get("subject") || "Mathematics",
+      exam: searchParams.get("exam") || "JAMB",
+      mode: isUntimed ? "untimed" : "timed",
+      score: questions.length
+        ? Math.round((correct / questions.length) * 100)
+        : 0,
+      total: questions.length,
+      correct,
+      date: new Date().toISOString(),
+      durationSeconds: TOTAL_SECONDS - secondsLeft,
+      answers,
+    });
+    router.push("/quiz/results");
   };
 
   return (
@@ -414,7 +437,7 @@ function ActiveQuizContent() {
           flaggedCount={flaggedCount}
           unansweredCount={unansweredCount}
           onClose={() => setShowSubmitModal(false)}
-          onSubmit={() => router.push("/quiz/results")}
+          onSubmit={submitQuiz}
         />
       )}
 

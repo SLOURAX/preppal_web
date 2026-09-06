@@ -13,6 +13,8 @@ import {
   SaxTickCircleBulk,
 } from "@meysam213/iconsax-react";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store";
+import { QUIZ_QUESTIONS } from "@/features/quiz/mock-questions";
 
 const REVIEW = [
   {
@@ -63,20 +65,57 @@ const REVIEW = [
     explanation: "Use (n − 2) × 180 = 1260, giving n = 9 sides.",
   },
 ] as const;
-const RESULT_STATS = [
-  ["32", "Correct", SaxTickCircleBulk, "text-emerald-600 bg-emerald-500/10"],
-  ["8", "To review", SaxCloseCircleBulk, "text-rose-600 bg-rose-500/10"],
-  ["24m", "Time spent", SaxClockBulk, "text-primary bg-primary/10"],
-  ["+80", "Points earned", SaxAwardBulk, "text-amber-600 bg-amber-500/10"],
-] as const;
-
 export default function QuizResultsPage() {
   const router = useRouter();
   const [shared, setShared] = useState<boolean>(false);
   const [openReview, setOpenReview] = useState<string | null>(null);
+  const latestAttempt = useAuthStore((state) => state.quizAttempts[0]);
+  const reviewItems = latestAttempt
+    ? QUIZ_QUESTIONS.slice(0, latestAttempt.total).map((question, index) => ({
+        number: String(index + 1).padStart(2, "0"),
+        title: question.text,
+        time: "—",
+        selected: latestAttempt.answers[question.id],
+        correct: question.correctAnswer,
+        options: question.options,
+        explanation: question.explanation,
+      }))
+    : REVIEW;
+  const resultScore = latestAttempt?.score ?? 80;
+  const resultCorrect = latestAttempt?.correct ?? 32;
+  const resultTotal = latestAttempt?.total ?? 40;
+  const resultPoints = resultCorrect * 10;
+  const resultStats = [
+    [
+      String(resultCorrect),
+      "Correct",
+      SaxTickCircleBulk,
+      "text-emerald-600 bg-emerald-500/10",
+    ],
+    [
+      String(Math.max(0, resultTotal - resultCorrect)),
+      "To review",
+      SaxCloseCircleBulk,
+      "text-rose-600 bg-rose-500/10",
+    ],
+    [
+      latestAttempt
+        ? `${Math.round(latestAttempt.durationSeconds / 60)}m`
+        : "24m",
+      "Time spent",
+      SaxClockBulk,
+      "text-primary bg-primary/10",
+    ],
+    [
+      `+${resultPoints}`,
+      "Points earned",
+      SaxAwardBulk,
+      "text-amber-600 bg-amber-500/10",
+    ],
+  ] as const;
 
   const shareResult = async (): Promise<void> => {
-    const text = "I just completed a Preppal practice quiz with an 80% score!";
+    const text = `I just completed a Preppal practice quiz with a ${resultScore}% score!`;
     if (navigator.share)
       await navigator.share({
         title: "My Preppal result",
@@ -131,7 +170,7 @@ export default function QuizResultsPage() {
                 <SaxStar1Bulk className="size-4" />
               </span>
               <div
-                aria-label="Score progress: 80 percent"
+                aria-label={`Score progress: ${resultScore} percent`}
                 role="img"
                 className="relative grid size-32 place-items-center"
               >
@@ -158,12 +197,16 @@ export default function QuizResultsPage() {
                     strokeWidth="12"
                     strokeLinecap="round"
                     strokeDasharray="314.16"
-                    strokeDashoffset="62.83"
+                    strokeDashoffset={String(
+                      314.16 - (314.16 * resultScore) / 100,
+                    )}
                   />
                 </svg>
                 <div className="bg-surface relative grid size-[6.6rem] place-items-center rounded-full">
                   <div className="text-center">
-                    <p className="text-foreground text-2xl font-black">80%</p>
+                    <p className="text-foreground text-2xl font-black">
+                      {resultScore}%
+                    </p>
                     <p className="text-muted-foreground text-[10px] font-semibold tracking-wider uppercase">
                       Score
                     </p>
@@ -184,7 +227,7 @@ export default function QuizResultsPage() {
               </p>
               <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
                 <span className="bg-surface text-foreground rounded-full px-3 py-1.5 text-xs font-semibold">
-                  +80 Points gained
+                  +{resultPoints} Points gained
                 </span>
                 <span className="rounded-full bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-600">
                   Top 22% this week
@@ -203,7 +246,7 @@ export default function QuizResultsPage() {
         </section>
 
         <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {RESULT_STATS.map(([value, label, Icon, color]) => (
+          {resultStats.map(([value, label, Icon, color]) => (
             <div className="surface-card p-4" key={label as string}>
               <span
                 className={`grid size-9 place-items-center rounded-xl ${color}`}
@@ -231,7 +274,7 @@ export default function QuizResultsPage() {
             </div>
             <div className="space-y-4">
               {[
-                ["Accuracy", 80, "Questions answered correctly"],
+                ["Accuracy", resultScore, "Questions answered correctly"],
                 ["Consistency", 74, "Steady performance across the quiz"],
                 ["Pace", 68, "Time spent per question"],
               ].map(([label, value, detail]) => (
@@ -327,7 +370,7 @@ export default function QuizResultsPage() {
             </button>
           </div>
           <div className="divide-border divide-y">
-            {REVIEW.map((item) => {
+            {reviewItems.map((item) => {
               const isCorrect = item.selected === item.correct;
               const isOpen = openReview === item.number;
               return (

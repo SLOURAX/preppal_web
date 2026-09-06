@@ -9,76 +9,51 @@ import {
 import Image from "next/image";
 import { useAuthStore } from "@/store";
 
-const RECENT_ACTIVITY = [
-  {
-    subject: "Mathematics",
-    exam: "JAMB",
-    score: 82,
-    date: "Today",
-    passed: true,
-  },
-  {
-    subject: "English Language",
-    exam: "WAEC",
-    score: 74,
-    date: "Yesterday",
-    passed: true,
-  },
-  {
-    subject: "Physics",
-    exam: "JAMB",
-    score: 58,
-    date: "2 days ago",
-    passed: false,
-  },
-  {
-    subject: "Chemistry",
-    exam: "NECO",
-    score: 91,
-    date: "3 days ago",
-    passed: true,
-  },
-] as const;
-
-const STATS = [
-  {
-    label: "Quizzes completed",
-    value: "24",
-    icon: BookOpen,
-    color: "text-primary bg-primary/10",
-  },
-  {
-    label: "Current streak",
-    value: "7 days",
-    icon: Flame,
-    color: "text-orange-500 bg-orange-500/10",
-  },
-  {
-    label: "Average score",
-    value: "78%",
-    icon: Target,
-    color: "text-emerald-600 bg-emerald-500/10",
-  },
-  {
-    label: "Points earned",
-    value: "12,450 P",
-    icon: BadgeCent,
-    color: "text-amber-500 bg-amber-500/10",
-  },
-] as const;
-
 export function OverviewTab() {
   const userName = useAuthStore((s) => s.userName);
   const weeklyGoal = useAuthStore((s) => s.weeklyGoal);
   const weeklyActivity = useAuthStore((s) => s.weeklyActivity);
   const setWeeklyGoal = useAuthStore((s) => s.setWeeklyGoal);
+  const quizAttempts = useAuthStore((s) => s.quizAttempts);
 
   const completedDays = weeklyActivity.filter(Boolean).length;
+  const averageScore = quizAttempts.length
+    ? Math.round(
+        quizAttempts.reduce((sum, attempt) => sum + attempt.score, 0) /
+          quizAttempts.length,
+      )
+    : 0;
+  const stats = [
+    [
+      "Quizzes completed",
+      String(quizAttempts.length),
+      BookOpen,
+      "text-primary bg-primary/10",
+    ],
+    [
+      "Current streak",
+      weeklyGoal ? `${completedDays} days` : "—",
+      Flame,
+      "text-orange-500 bg-orange-500/10",
+    ],
+    [
+      "Average score",
+      `${averageScore}%`,
+      Target,
+      "text-emerald-600 bg-emerald-500/10",
+    ],
+    [
+      "Points earned",
+      `${quizAttempts.reduce((sum, attempt) => sum + attempt.correct * 10, 0).toLocaleString()} P`,
+      BadgeCent,
+      "text-amber-500 bg-amber-500/10",
+    ],
+  ] as const;
 
   return (
     <div className="space-y-6">
       {/* Welcome banner */}
-      <div className="from-primary/15 via-primary/5 to-surface relative overflow-hidden rounded-3xl bg-gradient-to-br p-5 sm:p-5">
+      <div className="from-primary/15 via-primary/5 to-surface relative overflow-hidden rounded-3xl bg-gradient-to-br p-4 sm:p-5">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 opacity-30"
@@ -89,28 +64,30 @@ export function OverviewTab() {
           }}
         />
         <div className="bg-primary/10 pointer-events-none absolute -right-16 -bottom-24 size-64 rounded-full blur-3xl" />
-        <div className="relative flex items-center gap-4">
-          <div className="bg-primary text-primary-foreground shadow-primary/20 grid size-14 shrink-0 place-items-center rounded-2xl text-xl font-black shadow-lg">
+        <div className="relative flex min-w-0 items-center gap-3 sm:gap-4">
+          <div className="bg-primary text-primary-foreground shadow-primary/20 grid size-12 shrink-0 place-items-center rounded-2xl text-lg font-black shadow-lg sm:size-14 sm:text-xl">
             {userName.slice(0, 1).toUpperCase()}
           </div>
-          <div>
-            <p className="text-muted-foreground text-sm">Welcome back</p>
-            <h2 className="text-foreground text-xl font-bold sm:text-2xl">
+          <div className="min-w-0 flex-1">
+            <p className="text-muted-foreground text-xs sm:text-sm">
+              Welcome back
+            </p>
+            <h2 className="text-foreground mt-0.5 max-w-[11rem] text-lg leading-tight font-bold sm:max-w-none sm:text-2xl">
               {userName}
             </h2>
-            <p className="text-muted-foreground mt-1 text-xs">
+            <p className="text-muted-foreground mt-1 text-[11px] sm:text-xs">
               Ready for your next win?
             </p>
           </div>
-          <div className="relative ml-auto flex h-20 w-24 shrink-0 sm:h-28 sm:w-32">
+          <div className="relative ml-auto flex h-16 w-20 shrink-0 sm:h-28 sm:w-32">
             <Image
               alt="Preppal mascot waving hello"
               className="object-contain object-bottom drop-shadow-sm"
               fill
-              sizes="128px"
+              sizes="112px"
               src="/owl-mascot.png"
             />
-            <span className="bg-surface/80 text-primary absolute -top-1 right-0 rounded-full px-2 py-1 text-[10px] font-bold shadow-sm">
+            <span className="bg-surface/80 text-primary absolute -top-1 right-0 rounded-full px-1.5 py-0.5 text-[9px] font-bold shadow-sm sm:px-2 sm:py-1 sm:text-[10px]">
               Hi there!
             </span>
           </div>
@@ -119,7 +96,7 @@ export function OverviewTab() {
 
       {/* Stats grid */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {STATS.map(({ label, value, icon: Icon, color }) => (
+        {stats.map(([label, value, Icon, color]) => (
           <div
             key={label}
             className="surface-card relative overflow-hidden p-4 transition-transform hover:-translate-y-0.5 sm:p-5"
@@ -225,37 +202,44 @@ export function OverviewTab() {
           </div>
         </div>
         <div className="divide-border divide-y">
-          {RECENT_ACTIVITY.map((item) => (
-            <div
-              key={item.subject}
-              className="flex items-center justify-between gap-4 py-3"
-            >
-              <div className="min-w-0">
-                <p className="text-foreground truncate text-[.8rem] font-semibold">
-                  {item.subject}
-                </p>
-                <p className="text-muted-foreground text-[.75rem]">
-                  {item.exam} · {item.date}
-                </p>
+          {quizAttempts.length === 0 ? (
+            <p className="text-muted-foreground py-6 text-center text-xs">
+              No quizzes yet. Start a practice session to see your progress
+              here.
+            </p>
+          ) : (
+            quizAttempts.slice(0, 4).map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center justify-between gap-4 py-3"
+              >
+                <div className="min-w-0">
+                  <p className="text-foreground truncate text-[.8rem] font-semibold">
+                    {item.subject}
+                  </p>
+                  <p className="text-muted-foreground text-[.75rem]">
+                    {item.exam} · {item.date}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`text-[.85rem] font-bold ${item.score >= 50 ? "text-emerald-600" : "text-rose-500"}`}
+                  >
+                    {item.score}%
+                  </span>
+                  <span
+                    className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                      item.score >= 50
+                        ? "bg-emerald-500/10 text-emerald-600"
+                        : "bg-rose-500/10 text-rose-500"
+                    }`}
+                  >
+                    {item.score >= 50 ? "Pass" : "Retry"}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <span
-                  className={`text-[.85rem] font-bold ${item.passed ? "text-emerald-600" : "text-rose-500"}`}
-                >
-                  {item.score}%
-                </span>
-                <span
-                  className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
-                    item.passed
-                      ? "bg-emerald-500/10 text-emerald-600"
-                      : "bg-rose-500/10 text-rose-500"
-                  }`}
-                >
-                  {item.passed ? "Pass" : "Retry"}
-                </span>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>

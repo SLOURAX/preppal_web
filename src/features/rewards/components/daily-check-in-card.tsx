@@ -12,6 +12,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/store";
 
 const CURRENT_DAY = 2;
 const CHECK_IN_REWARD = 2;
@@ -19,7 +20,9 @@ const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
 
 export function DailyCheckInCard() {
   const [visibleMonth, setVisibleMonth] = useState<Date>(new Date(2026, 8, 1));
-  const [hasCheckedIn, setHasCheckedIn] = useState<boolean>(false);
+  const lastCheckIn = useAuthStore((state) => state.lastCheckIn);
+  const completeCheckIn = useAuthStore((state) => state.completeCheckIn);
+  const hasCheckedIn = lastCheckIn === new Date().toISOString().slice(0, 10);
   const monthLabel = new Intl.DateTimeFormat("en", {
     month: "long",
     year: "numeric",
@@ -39,7 +42,7 @@ export function DailyCheckInCard() {
 
   const checkIn = (): void => {
     if (hasCheckedIn) return;
-    setHasCheckedIn(true);
+    completeCheckIn();
   };
 
   return (

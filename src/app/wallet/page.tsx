@@ -15,7 +15,7 @@ export default function WalletPage() {
       <main className="mx-auto w-full max-w-4xl px-5 py-10">
         <Link
           className="text-muted-foreground hover:text-foreground inline-flex items-center gap-2 text-sm"
-          href="/"
+          href="/dashboard"
         >
           <ArrowLeft className="size-4" /> Back to dashboard
         </Link>

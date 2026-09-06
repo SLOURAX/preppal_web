@@ -4,6 +4,7 @@ import {
   Gamepad2,
   Gift,
   Home,
+  LayoutDashboard,
   Newspaper,
   ReceiptText,
   type LucideIcon,
@@ -23,4 +24,10 @@ export const NAVIGATION: readonly NavigationItem[] = [
   { href: "/games", label: "Games", icon: Gamepad2 },
   { href: "/rewards", label: "Rewards", icon: Gift },
   { href: "/pricing", label: "Pricing", icon: ReceiptText },
+];
+
+/** Mobile drawer navigation prioritises the signed-in dashboard over Home. */
+export const MOBILE_NAVIGATION: readonly NavigationItem[] = [
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  ...NAVIGATION.filter((item) => item.href !== "/"),
 ];

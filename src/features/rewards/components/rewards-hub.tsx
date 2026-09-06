@@ -19,6 +19,7 @@ import { RewardCatalog } from "./reward-catalog";
 export function RewardsHub() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const balance = useAuthStore((state) => state.preppalBalance);
+  const experiencePoints = useAuthStore((state) => state.experiencePoints);
 
   return (
     <AppShell>
@@ -62,7 +63,9 @@ export function RewardsHub() {
                   <p className="text-muted-foreground text-[9px] font-medium tracking-wide uppercase">
                     XP
                   </p>
-                  <p className="text-foreground text-xs font-bold">1,240</p>
+                  <p className="text-foreground text-xs font-bold">
+                    {experiencePoints.toLocaleString()}
+                  </p>
                 </div>
               </div>
             </div>

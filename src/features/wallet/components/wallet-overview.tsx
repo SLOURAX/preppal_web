@@ -17,6 +17,7 @@ import { ConfirmationModal } from "@/components/ui";
 import { SaxSecuritySafeBulk } from "@meysam213/iconsax-react";
 
 import { WALLET_TRANSACTIONS } from "../constants";
+import { useAuthStore } from "@/store";
 
 interface WalletOverviewProps {
   readonly balance: number;
@@ -30,6 +31,8 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
   const [isBankLinked, setIsBankLinked] = useState(false);
   const [showBankModal, setShowBankModal] = useState(false);
   const [bankDetails, setBankDetails] = useState({ bank: "", account: "" });
+  const setBalance = useAuthStore((state) => state.setBalance);
+  const addExperience = useAuthStore((state) => state.addExperience);
   const convertedCoins = useMemo(() => Math.floor(Number(xp || 0) / 10), [xp]);
   const actionCopy =
     pendingAction === "convert"
@@ -179,7 +182,13 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             description={actionCopy.description}
             confirmLabel={actionCopy.confirmLabel}
             onCancel={() => setPendingAction(null)}
-            onConfirm={() => setPendingAction(null)}
+            onConfirm={() => {
+              if (pendingAction === "convert") {
+                setBalance(balance + convertedCoins);
+                addExperience(-Number(xp || 0));
+              }
+              setPendingAction(null);
+            }}
           />
         ) : null}
       </div>

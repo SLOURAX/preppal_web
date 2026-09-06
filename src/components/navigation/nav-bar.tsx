@@ -1,9 +1,17 @@
 "use client";
 
-import { BadgeCent, ChevronDown, LogOut, User, X } from "lucide-react";
+import {
+  BadgeCent,
+  ChevronDown,
+  ChevronRight,
+  LogOut,
+  User,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store";
@@ -12,7 +20,7 @@ import { SaxCategory2Bulk, SaxFlashBulk } from "@meysam213/iconsax-react";
 import { ThemeToggle } from "./theme-toggle";
 import { Notifications } from "./notifications";
 import { DesktopNavigation } from "./desktop-navigation";
-import { NAVIGATION } from "./navigation.constants";
+import { MOBILE_NAVIGATION } from "./navigation.constants";
 
 export function NavBar() {
   const pathname = usePathname();
@@ -146,7 +154,7 @@ export function NavBar() {
                   Log in
                 </Link>
                 <Link
-                  className="bg-primary text-[.85rem] text-primary-foreground hover:bg-primary-strong rounded-full px-5 py-2.5 text-sm font-medium shadow-sm transition sm:px-5"
+                  className="bg-primary text-primary-foreground hover:bg-primary-strong rounded-full px-5 py-2.5 text-sm text-[.85rem] font-medium shadow-sm transition sm:px-5"
                   href="/register"
                 >
                   Get started
@@ -192,9 +200,11 @@ export function NavBar() {
             className="bg-background/80 fixed inset-0 backdrop-blur-sm"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          <div className="bg-surface border-border animate-in slide-in-from-right fixed inset-y-0 right-0 flex h-full w-3/4 max-w-sm flex-col border-l p-4 shadow-2xl sm:p-5">
+          <div className="bg-surface border-border animate-in slide-in-from-right fixed inset-y-0 right-0 flex h-full w-[86%] max-w-sm flex-col border-l p-5 shadow-2xl sm:p-6">
             <div className="mb-5 flex items-center justify-between">
-              <span className="text-lg font-bold">Menu</span>
+              <span className="text-muted-foreground text-xs font-bold tracking-widest uppercase">
+                Preppal
+              </span>
               <button
                 className="hover:bg-surface-subtle -mr-2 rounded-full p-2"
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -203,8 +213,33 @@ export function NavBar() {
               </button>
             </div>
 
+            {isAuthenticated ? (
+              <div className="mb-5 flex items-center gap-3">
+                <div className="bg-primary/10 relative size-14 shrink-0 overflow-hidden rounded-2xl">
+                  <Image
+                    alt="Preppal mascot"
+                    className="object-contain"
+                    fill
+                    sizes="56px"
+                    src="/owl-mascot.png"
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-foreground truncate text-sm font-bold">
+                    {userName}
+                  </p>
+                  <p className="text-muted-foreground mt-0.5 text-xs">
+                    {userPlan}
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-1 text-sm font-bold text-amber-500">
+                  <BadgeCent className="size-4" /> {preppalBalance}
+                </div>
+              </div>
+            ) : null}
+
             <nav className="flex flex-1 flex-col gap-1 overflow-y-auto">
-              {NAVIGATION.map((item) => {
+              {MOBILE_NAVIGATION.map((item) => {
                 const isActive = pathname === item.href;
                 const Icon = item.icon;
                 return (
@@ -221,6 +256,7 @@ export function NavBar() {
                   >
                     {Icon ? <Icon className="h-5 w-5" /> : null}
                     {item.label}
+                    <ChevronRight className="text-muted-foreground/60 ml-auto size-4" />
                   </Link>
                 );
               })}
@@ -236,36 +272,12 @@ export function NavBar() {
 
               {isAuthenticated ? (
                 <div className="flex flex-col gap-3">
-                  <div className="bg-primary/5 flex items-center justify-between rounded-xl p-3 px-2">
-                    <div className="flex flex-col">
-                      <span className="text-foreground font-bold">
-                        {userName}
-                      </span>
-                      <span className="text-muted-foreground text-xs">
-                        {userPlan}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1 font-bold text-amber-500">
-                      <BadgeCent className="h-4 w-4" />
-                      {preppalBalance}
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 gap-2">
-                    <Link
-                      href="/dashboard"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="bg-primary text-primary-foreground hover:bg-primary-strong flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-bold shadow-sm transition-colors"
-                    >
-                      <SaxCategory2Bulk className="size-5" />
-                      My Dashboard
-                    </Link>
-                  </div>
                   <button
                     onClick={() => {
                       setIsMobileMenuOpen(false);
                       openSignOutModal();
                     }}
-                    className="text-danger hover:bg-surface-subtle flex w-full items-center justify-center gap-2 rounded-xl py-3 font-medium transition-colors"
+                    className="text-danger hover:bg-surface-subtle flex w-full items-center justify-center gap-2 rounded-xl py-2 text-sm font-semibold transition-colors"
                   >
                     <LogOut className="h-4 w-4" /> Sign out
                   </button>

@@ -9,6 +9,7 @@ import {
   TrendingUp,
   Trophy,
 } from "lucide-react";
+import { useState } from "react";
 
 const SCORES = [68, 72, 70, 76, 74, 81, 78, 84, 82, 88, 86, 91];
 const SUBJECTS = [
@@ -102,6 +103,7 @@ function TrendChart() {
 }
 
 export function AnalyticsTab() {
+  const [period, setPeriod] = useState("Last 6 months");
   const cards = [
     [
       "Overall score",
@@ -146,8 +148,13 @@ export function AnalyticsTab() {
         <button
           className="border-border text-muted-foreground hover:bg-surface-subtle inline-flex w-fit items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors"
           type="button"
+          onClick={() =>
+            setPeriod((current) =>
+              current === "Last 6 months" ? "Last 30 days" : "Last 6 months",
+            )
+          }
         >
-          Last 6 months <ArrowUpRight className="size-3.5" />
+          {period} <ArrowUpRight className="size-3.5" />
         </button>
       </div>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
