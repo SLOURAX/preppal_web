@@ -6,6 +6,7 @@ import {
   Target,
   Zap,
 } from "lucide-react";
+import Image from "next/image";
 import { useAuthStore } from "@/store";
 
 const RECENT_ACTIVITY = [
@@ -70,13 +71,23 @@ export function OverviewTab() {
   const userName = useAuthStore((s) => s.userName);
   const weeklyGoal = useAuthStore((s) => s.weeklyGoal);
   const weeklyActivity = useAuthStore((s) => s.weeklyActivity);
-  
+  const setWeeklyGoal = useAuthStore((s) => s.setWeeklyGoal);
+
   const completedDays = weeklyActivity.filter(Boolean).length;
 
   return (
     <div className="space-y-6">
       {/* Welcome banner */}
-      <div className="from-primary/15 via-primary/5 to-surface relative overflow-hidden rounded-3xl bg-gradient-to-br p-6 sm:p-7">
+      <div className="from-primary/15 via-primary/5 to-surface relative overflow-hidden rounded-3xl bg-gradient-to-br p-5 sm:p-5">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-30"
+          style={{
+            backgroundImage:
+              "linear-gradient(90deg, hsl(var(--primary) / .12) 1px, transparent 1px), linear-gradient(hsl(var(--primary) / .12) 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
+          }}
+        />
         <div className="bg-primary/10 pointer-events-none absolute -right-16 -bottom-24 size-64 rounded-full blur-3xl" />
         <div className="relative flex items-center gap-4">
           <div className="bg-primary text-primary-foreground shadow-primary/20 grid size-14 shrink-0 place-items-center rounded-2xl text-xl font-black shadow-lg">
@@ -91,10 +102,16 @@ export function OverviewTab() {
               Ready for your next win?
             </p>
           </div>
-          <div className="ml-auto hidden items-center gap-2 rounded-full bg-orange-500/10 px-4 py-2 sm:flex">
-            <Flame className="size-4 text-orange-500" />
-            <span className="text-sm font-bold text-orange-600">
-              7 day streak
+          <div className="relative ml-auto flex h-20 w-24 shrink-0 sm:h-28 sm:w-32">
+            <Image
+              alt="Preppal mascot waving hello"
+              className="object-contain object-bottom drop-shadow-sm"
+              fill
+              sizes="128px"
+              src="/owl-mascot.png"
+            />
+            <span className="bg-surface/80 text-primary absolute -top-1 right-0 rounded-full px-2 py-1 text-[10px] font-bold shadow-sm">
+              Hi there!
             </span>
           </div>
         </div>
@@ -138,28 +155,59 @@ export function OverviewTab() {
               A little consistency goes a long way
             </p>
           </div>
-          <span className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-bold">
-            {completedDays} / {weeklyGoal} days
-          </span>
+          {weeklyGoal ? (
+            <span className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-bold">
+              {completedDays} / {weeklyGoal} days
+            </span>
+          ) : (
+            <span className="rounded-full bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-600">
+              Goal not set
+            </span>
+          )}
         </div>
-        <div className="flex gap-1.5">
-          {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, i) => {
-            const isActive = weeklyActivity[i];
-            return (
-              <div
-                key={day}
-                className="flex flex-1 flex-col items-center gap-1.5"
-              >
+        {weeklyGoal ? (
+          <div className="flex gap-1.5">
+            {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, i) => {
+              const isActive = weeklyActivity[i];
+              return (
                 <div
-                  className={`h-8 w-full rounded-md transition-colors ${
-                    isActive ? "bg-primary" : "bg-surface-subtle"
-                  }`}
-                />
-                <span className="text-muted-foreground text-[10px]">{day}</span>
-              </div>
-            );
-          })}
-        </div>
+                  key={day}
+                  className="flex flex-1 flex-col items-center gap-1.5"
+                >
+                  <div
+                    className={`h-8 w-full rounded-md transition-colors ${
+                      isActive ? "bg-primary" : "bg-surface-subtle"
+                    }`}
+                  />
+                  <span className="text-muted-foreground text-[10px]">
+                    {day}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="border-border/70 bg-surface-subtle/40 rounded-2xl border border-dashed p-4">
+            <p className="text-foreground text-sm font-semibold">
+              Add a new weekly goal
+            </p>
+            <p className="text-muted-foreground mt-1 text-xs">
+              Choose how many days you want to practice each week.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {[3, 5, 7].map((days) => (
+                <button
+                  className="border-primary/25 text-primary hover:bg-primary/10 rounded-full border px-4 py-1.5 text-xs font-bold transition-colors"
+                  key={days}
+                  onClick={() => setWeeklyGoal(days)}
+                  type="button"
+                >
+                  {days} days
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Recent activity */}
@@ -167,7 +215,7 @@ export function OverviewTab() {
         <div className="mb-4 flex items-center justify-between">
           <div>
             <h3 className="text-foreground font-semibold">Recent quizzes</h3>
-            <p className="text-muted-foreground mt-1 text-xs">
+            <p className="text-muted-foreground text-xs">
               Your latest practice activity
             </p>
           </div>
@@ -183,16 +231,16 @@ export function OverviewTab() {
               className="flex items-center justify-between gap-4 py-3"
             >
               <div className="min-w-0">
-                <p className="text-foreground truncate text-sm font-semibold">
+                <p className="text-foreground truncate text-[.8rem] font-semibold">
                   {item.subject}
                 </p>
-                <p className="text-muted-foreground text-xs">
+                <p className="text-muted-foreground text-[.75rem]">
                   {item.exam} · {item.date}
                 </p>
               </div>
               <div className="flex items-center gap-3">
                 <span
-                  className={`text-sm font-bold ${item.passed ? "text-emerald-600" : "text-rose-500"}`}
+                  className={`text-[.85rem] font-bold ${item.passed ? "text-emerald-600" : "text-rose-500"}`}
                 >
                   {item.score}%
                 </span>

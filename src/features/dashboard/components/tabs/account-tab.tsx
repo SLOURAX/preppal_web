@@ -153,7 +153,9 @@ export function AccountTab() {
               Weekly target
             </p>
             <p className="text-muted-foreground mt-1 text-xs">
-              Days per week you aim to practice
+              {weeklyGoal
+                ? "Days per week you aim to practice"
+                : "No weekly goal yet — choose one to get started"}
             </p>
           </div>
           <div className="bg-surface-subtle/80 flex w-fit items-center gap-1 rounded-full p-1">
