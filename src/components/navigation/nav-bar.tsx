@@ -254,8 +254,9 @@ export function NavBar() {
                     <Link
                       href="/dashboard"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="hover:bg-surface-subtle rounded-xl px-3 py-2.5 text-center text-sm font-medium"
+                      className="bg-primary text-primary-foreground hover:bg-primary-strong flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-bold shadow-sm transition-colors"
                     >
+                      <SaxCategory2Bulk className="size-5" />
                       My Dashboard
                     </Link>
                   </div>
