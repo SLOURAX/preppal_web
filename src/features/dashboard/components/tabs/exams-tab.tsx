@@ -3,6 +3,7 @@ import Link from "next/link";
 
 const EXAMS = [
   {
+    value: "jamb",
     name: "JAMB UTME",
     description:
       "Joint Admissions and Matriculation Board. Nigeria's foremost university entrance exam.",
@@ -13,6 +14,7 @@ const EXAMS = [
     badgeColor: "bg-primary text-primary-foreground",
   },
   {
+    value: "waec",
     name: "WAEC SSCE",
     description:
       "West African Examinations Council. Covering all core secondary school subjects.",
@@ -23,6 +25,7 @@ const EXAMS = [
     badgeColor: "bg-violet-500/10 text-violet-600",
   },
   {
+    value: "neco",
     name: "NECO",
     description:
       "National Examinations Council. Widely accepted alternative to WAEC across Nigeria.",
@@ -84,7 +87,7 @@ export function ExamsTab() {
             </div>
 
             <Link
-              href="/quiz"
+              href={`/quiz?path=exam&choice=${exam.value}`}
               className="bg-primary text-primary-foreground hover:bg-primary/90 mt-auto flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition-colors"
             >
               Start practice <ArrowRight className="size-4" />
@@ -106,7 +109,7 @@ export function ExamsTab() {
           </p>
         </div>
         <Link
-          href="/quiz"
+          href="/quiz?path=subject&choice=mathematics"
           className="border-border hover:bg-surface-subtle text-foreground hidden items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium transition-colors sm:flex"
         >
           Go <ArrowRight className="size-4" />

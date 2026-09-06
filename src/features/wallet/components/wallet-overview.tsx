@@ -32,6 +32,8 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
   const [showBankModal, setShowBankModal] = useState(false);
   const [bankDetails, setBankDetails] = useState({ bank: "", account: "" });
   const setBalance = useAuthStore((state) => state.setBalance);
+  const depositedFunds = useAuthStore((state) => state.depositedFunds);
+  const experiencePoints = useAuthStore((state) => state.experiencePoints);
   const addExperience = useAuthStore((state) => state.addExperience);
   const convertedCoins = useMemo(() => Math.floor(Number(xp || 0) / 10), [xp]);
   const actionCopy =
@@ -44,7 +46,8 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
       : pendingAction === "withdraw"
         ? {
             title: "Withdraw funds?",
-            description: "Review your withdrawal details before continuing.",
+            description:
+              "Withdrawable Preppal coins only. Deposited funds cannot be withdrawn through rewards.",
             confirmLabel: "Continue",
           }
         : {
@@ -103,13 +106,40 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
               Withdraw funds
             </button>
           </div>
-          <div className="mt-7 flex items-center justify-between border-t border-white/10 pt-4 text-xs">
+          <div className="mt-5 grid gap-2 text-xs sm:grid-cols-3">
+            <div className="rounded-xl bg-white/10 p-3">
+              <p className="text-violet-200">Preppal coins</p>
+              <p className="mt-1 font-bold">{balance.toLocaleString()} P</p>
+              <p className="mt-1 text-[10px] text-violet-200/80">
+                Withdrawable
+              </p>
+            </div>
+            <div className="rounded-xl bg-white/10 p-3">
+              <p className="text-violet-200">Experience points</p>
+              <p className="mt-1 font-bold">
+                {experiencePoints.toLocaleString()} XP
+              </p>
+              <p className="mt-1 text-[10px] text-violet-200/80">
+                Convert to coins
+              </p>
+            </div>
+            <div className="rounded-xl bg-white/10 p-3">
+              <p className="text-violet-200">Deposited funds</p>
+              <p className="mt-1 font-bold">
+                {depositedFunds.toLocaleString()} NGN
+              </p>
+              <p className="mt-1 text-[10px] text-violet-200/80">
+                Not withdrawable
+              </p>
+            </div>
+          </div>
+          {/* <div className="mt-7 flex items-center justify-between border-t border-white/10 pt-4 text-xs">
             <span className="text-violet-200">Wallet status</span>
             <span className="inline-flex items-center gap-1.5 font-semibold text-emerald-300">
               <span className="size-1.5 rounded-full bg-emerald-300" />
               Active & secure
             </span>
-          </div>
+          </div> */}
         </section>
 
         <section className="surface-card relative overflow-hidden p-5 sm:p-6">

@@ -3,7 +3,7 @@
 import { Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type { FormEvent } from "react";
+import { useEffect, type FormEvent } from "react";
 import { Button } from "@/components/ui";
 import {
   AuthBenefits,
@@ -20,8 +20,15 @@ import {
 import { useAuthStore } from "@/store";
 
 export default function LoginPage() {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const login = useAuthStore((state) => state.login);
   const router = useRouter();
+
+  useEffect(() => {
+    if (isAuthenticated) router.replace("/dashboard");
+  }, [isAuthenticated, router]);
+
+  if (isAuthenticated) return null;
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
@@ -42,14 +49,8 @@ export default function LoginPage() {
       />
 
       <div className="mt-8 mb-6 grid grid-cols-2 gap-3">
-        <GoogleAuthButton 
-          text="Google" 
-          onClick={handleSocialLogin}
-        />
-        <AppleAuthButton 
-          text="Apple" 
-          onClick={handleSocialLogin}
-        />
+        <GoogleAuthButton text="Google" onClick={handleSocialLogin} />
+        <AppleAuthButton text="Apple" onClick={handleSocialLogin} />
       </div>
 
       <AuthDivider />
@@ -84,8 +85,6 @@ export default function LoginPage() {
           Sign in
         </Button>
       </form>
-
-
 
       <AuthBenefits items={MEMBER_BENEFITS} />
     </>

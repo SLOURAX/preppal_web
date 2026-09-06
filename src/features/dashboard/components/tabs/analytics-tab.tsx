@@ -10,6 +10,7 @@ import {
   Trophy,
 } from "lucide-react";
 import { useState } from "react";
+import { useAuthStore } from "@/store";
 
 const SCORES = [68, 72, 70, 76, 74, 81, 78, 84, 82, 88, 86, 91];
 const SUBJECTS = [
@@ -104,32 +105,49 @@ function TrendChart() {
 
 export function AnalyticsTab() {
   const [period, setPeriod] = useState("Last 6 months");
+  const attempts = useAuthStore((state) => state.quizAttempts);
+  const answered = attempts.reduce((sum, attempt) => sum + attempt.total, 0);
+  const correct = attempts.reduce((sum, attempt) => sum + attempt.correct, 0);
+  const averageScore = attempts.length
+    ? Math.round(
+        attempts.reduce((sum, attempt) => sum + attempt.score, 0) /
+          attempts.length,
+      )
+    : 0;
   const cards = [
     [
       "Overall score",
-      "78%",
-      "+6.4% vs last month",
+      `${averageScore}%`,
+      attempts.length
+        ? `${attempts.length} quiz${attempts.length === 1 ? "" : "zes"} tracked`
+        : "Complete a quiz to unlock",
       TrendingUp,
       "text-emerald-600 bg-emerald-500/10",
     ],
     [
       "Questions answered",
-      "248",
-      "32 this week",
+      String(answered),
+      attempts.length ? `${correct} correct answers` : "No answers yet",
       CheckCircle2,
       "text-primary bg-primary/10",
     ],
     [
       "Study streak",
-      "7 days",
-      "Personal best: 14",
+      attempts.length
+        ? `${attempts.length} session${attempts.length === 1 ? "" : "s"}`
+        : "—",
+      attempts.length
+        ? "Keep practising to build a streak"
+        : "Start your first session",
       Target,
       "text-amber-600 bg-amber-500/10",
     ],
     [
       "Class percentile",
-      "Top 18%",
-      "Up from top 24%",
+      attempts.length ? "—" : "—",
+      attempts.length
+        ? "Ranking unlocks with more activity"
+        : "Complete quizzes to compare",
       Trophy,
       "text-violet-600 bg-violet-500/10",
     ],
@@ -208,13 +226,14 @@ export function AnalyticsTab() {
           <div
             className="relative mx-auto mt-5 grid size-36 place-items-center rounded-full"
             style={{
-              background:
-                "conic-gradient(hsl(var(--primary)) 0deg 284deg, hsl(var(--border)) 284deg 360deg)",
+              background: `conic-gradient(hsl(var(--primary)) 0deg ${averageScore * 3.6}deg, hsl(var(--border)) ${averageScore * 3.6}deg 360deg)`,
             }}
           >
             <div className="bg-surface grid size-28 place-items-center rounded-full">
               <div className="text-center">
-                <p className="text-foreground text-3xl font-black">79</p>
+                <p className="text-foreground text-3xl font-black">
+                  {averageScore}
+                </p>
                 <p className="text-muted-foreground text-[10px] font-semibold uppercase">
                   of 100
                 </p>

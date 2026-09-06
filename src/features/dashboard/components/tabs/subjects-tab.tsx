@@ -1,5 +1,6 @@
 import { ArrowRight, BookOpen } from "lucide-react";
 import Link from "next/link";
+import { useAuthStore } from "@/store";
 
 const SUBJECTS = [
   {
@@ -78,6 +79,7 @@ function ProgressBar({ value }: { value: number }) {
 }
 
 export function SubjectsTab() {
+  const attempts = useAuthStore((state) => state.quizAttempts);
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -96,40 +98,55 @@ export function SubjectsTab() {
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {SUBJECTS.map((subject) => (
-          <div
-            key={subject.name}
-            className="surface-card group flex flex-col gap-3 p-4"
-          >
-            <div className="flex items-center justify-between">
-              <span
-                className={`grid size-10 place-items-center rounded-xl text-lg ${subject.color}`}
-              >
-                {subject.icon}
-              </span>
-              <span className="text-muted-foreground text-xs font-medium">
-                {subject.quizzes} quizzes
-              </span>
-            </div>
-            <div>
-              <p className="text-foreground text-sm font-semibold">
-                {subject.name}
-              </p>
-              <div className="mt-2 flex items-center justify-between gap-2">
-                <ProgressBar value={subject.progress} />
-                <span className="text-muted-foreground shrink-0 text-xs font-bold">
-                  {subject.progress}%
+        {SUBJECTS.map((subject) => {
+          const subjectAttempts = attempts.filter(
+            (attempt) =>
+              attempt.subject.toLowerCase() === subject.name.toLowerCase(),
+          );
+          const progress = subjectAttempts.length
+            ? Math.round(
+                subjectAttempts.reduce(
+                  (sum, attempt) => sum + attempt.score,
+                  0,
+                ) / subjectAttempts.length,
+              )
+            : 0;
+          return (
+            <div
+              key={subject.name}
+              className="surface-card group flex flex-col gap-3 p-4"
+            >
+              <div className="flex items-center justify-between">
+                <span
+                  className={`grid size-10 place-items-center rounded-xl text-lg ${subject.color}`}
+                >
+                  {subject.icon}
+                </span>
+                <span className="text-muted-foreground text-xs font-medium">
+                  {subjectAttempts.length || "No"}{" "}
+                  {subjectAttempts.length === 1 ? "quiz" : "quizzes"}
                 </span>
               </div>
+              <div>
+                <p className="text-foreground text-sm font-semibold">
+                  {subject.name}
+                </p>
+                <div className="mt-2 flex items-center justify-between gap-2">
+                  <ProgressBar value={progress} />
+                  <span className="text-muted-foreground shrink-0 text-xs font-bold">
+                    {progress ? `${progress}%` : "Not started"}
+                  </span>
+                </div>
+              </div>
+              <Link
+                href={`/quiz?path=subject&choice=${encodeURIComponent(subject.name.toLowerCase().replace(/\s+/g, "-"))}`}
+                className="text-primary group-hover:text-primary/80 flex items-center gap-1 text-xs font-semibold transition-colors"
+              >
+                Practice <ArrowRight className="size-3" />
+              </Link>
             </div>
-            <Link
-              href="/quiz"
-              className="text-primary group-hover:text-primary/80 flex items-center gap-1 text-xs font-semibold transition-colors"
-            >
-              Practice <ArrowRight className="size-3" />
-            </Link>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

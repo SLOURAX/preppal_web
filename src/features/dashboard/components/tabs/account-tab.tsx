@@ -46,6 +46,10 @@ export function AccountTab() {
   const setWeeklyGoal = useAuthStore((s) => s.setWeeklyGoal);
   const openSignOutModal = useAuthStore((s) => s.openSignOutModal);
   const setUserName = useAuthStore((s) => s.setUserName);
+  const notificationSettings = useAuthStore((s) => s.notificationSettings);
+  const setNotificationPreference = useAuthStore(
+    (s) => s.setNotificationPreference,
+  );
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordChanged, setPasswordChanged] = useState(false);
@@ -57,13 +61,6 @@ export function AccountTab() {
   });
   const [editingName, setEditingName] = useState(false);
   const [draftName, setDraftName] = useState(userName);
-  const [notificationSettings, setNotificationSettings] = useState<
-    Record<string, boolean>
-  >(() =>
-    Object.fromEntries(
-      NOTIFICATION_PREFS.map((pref) => [pref.label, pref.defaultOn]),
-    ),
-  );
 
   const submitPasswordChange = (
     event: React.FormEvent<HTMLFormElement>,
@@ -276,10 +273,10 @@ export function AccountTab() {
               aria-label={`Toggle ${pref.label}`}
               aria-pressed={notificationSettings[pref.label]}
               onClick={() =>
-                setNotificationSettings((settings) => ({
-                  ...settings,
-                  [pref.label]: !settings[pref.label],
-                }))
+                setNotificationPreference(
+                  pref.label,
+                  !notificationSettings[pref.label],
+                )
               }
               className={`relative h-6 w-11 rounded-full transition-colors ${
                 notificationSettings[pref.label]

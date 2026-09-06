@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type { FormEvent } from "react";
+import { useEffect, type FormEvent } from "react";
 
 import { Button } from "@/components/ui";
 import {
@@ -30,8 +30,15 @@ import {
 import { useAuthStore } from "@/store";
 
 export default function RegisterPage() {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const login = useAuthStore((state) => state.login);
   const router = useRouter();
+
+  useEffect(() => {
+    if (isAuthenticated) router.replace("/dashboard");
+  }, [isAuthenticated, router]);
+
+  if (isAuthenticated) return null;
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
@@ -58,7 +65,7 @@ export default function RegisterPage() {
 
       <AuthDivider />
 
-      <form className="space-y-4 mt-6" onSubmit={handleSubmit}>
+      <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
         <div className="grid gap-3.5 sm:grid-cols-2">
           <FormField
             autoComplete="name"
@@ -168,8 +175,6 @@ export default function RegisterPage() {
           Create account
         </Button>
       </form>
-
-
     </>
   );
 }

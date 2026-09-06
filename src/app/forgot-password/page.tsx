@@ -3,12 +3,23 @@
 import { Mail, ArrowLeft, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui";
 import { AuthHeader, FormField } from "@/features/auth";
+import { useAuthStore } from "@/store";
 
 export default function ForgotPasswordPage() {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const router = useRouter();
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) router.replace("/dashboard");
+  }, [isAuthenticated, router]);
+
+  if (isAuthenticated) return null;
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();

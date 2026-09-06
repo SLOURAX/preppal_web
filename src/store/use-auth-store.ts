@@ -17,6 +17,7 @@ export interface QuizAttempt {
 interface AuthState {
   isAuthenticated: boolean;
   preppalBalance: number;
+  depositedFunds: number;
   experiencePoints: number;
   userName: string;
   userPlan: string;
@@ -24,15 +25,18 @@ interface AuthState {
   weeklyActivity: boolean[];
   quizAttempts: QuizAttempt[];
   lastCheckIn: string | null;
+  notificationSettings: Record<string, boolean>;
   isSignOutModalOpen: boolean;
   login: () => void;
   logout: () => void;
   setBalance: (balance: number) => void;
+  setDepositedFunds: (amount: number) => void;
   setUserName: (userName: string) => void;
   setWeeklyGoal: (goal: number) => void;
   addExperience: (amount: number) => void;
   completeCheckIn: () => boolean;
   recordQuizAttempt: (attempt: QuizAttempt) => void;
+  setNotificationPreference: (label: string, enabled: boolean) => void;
   openSignOutModal: () => void;
   closeSignOutModal: () => void;
 }
@@ -44,6 +48,7 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       isAuthenticated: false,
       preppalBalance: 200,
+      depositedFunds: 0,
       experiencePoints: 1240,
       userName: "Solomon Udumizi",
       userPlan: "Level 1",
@@ -51,6 +56,10 @@ export const useAuthStore = create<AuthState>()(
       weeklyActivity: initialActivity,
       quizAttempts: [],
       lastCheckIn: null,
+      notificationSettings: {
+        "Quiz reminders": true,
+        "Leaderboard updates": true,
+      },
       isSignOutModalOpen: false,
       login: (): void => {
         set({ isAuthenticated: true });
@@ -63,10 +72,17 @@ export const useAuthStore = create<AuthState>()(
           weeklyActivity: initialActivity,
           quizAttempts: [],
           lastCheckIn: null,
+          notificationSettings: {
+            "Quiz reminders": true,
+            "Leaderboard updates": true,
+          },
         });
       },
       setBalance: (preppalBalance: number): void => {
         set({ preppalBalance });
+      },
+      setDepositedFunds: (depositedFunds: number): void => {
+        set({ depositedFunds: Math.max(0, depositedFunds) });
       },
       setUserName: (userName: string): void => {
         set({ userName: userName.trim() || "Learner" });
@@ -101,6 +117,14 @@ export const useAuthStore = create<AuthState>()(
             ...state.quizAttempts.filter((item) => item.id !== attempt.id),
           ].slice(0, 50),
           experiencePoints: state.experiencePoints + attempt.correct * 10,
+        }));
+      },
+      setNotificationPreference: (label: string, enabled: boolean): void => {
+        set((state) => ({
+          notificationSettings: {
+            ...state.notificationSettings,
+            [label]: enabled,
+          },
         }));
       },
       openSignOutModal: (): void => {

@@ -4,9 +4,10 @@ import {
   Flame,
   ArrowUpRight,
   Target,
-  Zap,
+  ArrowRight,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useAuthStore } from "@/store";
 
 export function OverviewTab() {
@@ -17,6 +18,22 @@ export function OverviewTab() {
   const quizAttempts = useAuthStore((s) => s.quizAttempts);
 
   const completedDays = weeklyActivity.filter(Boolean).length;
+  const formatLabel = (value: string): string =>
+    value.replace(/\b\w/g, (character) => character.toUpperCase());
+  const formatDate = (value: string): string => {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    const day = date.getDate();
+    const suffix =
+      day % 10 === 1 && day !== 11
+        ? "st"
+        : day % 10 === 2 && day !== 12
+          ? "nd"
+          : day % 10 === 3 && day !== 13
+            ? "rd"
+            : "th";
+    return `${day}${suffix} of ${date.toLocaleDateString("en-US", { month: "long", year: "numeric" })}`;
+  };
   const averageScore = quizAttempts.length
     ? Math.round(
         quizAttempts.reduce((sum, attempt) => sum + attempt.score, 0) /
@@ -93,6 +110,34 @@ export function OverviewTab() {
           </div>
         </div>
       </div>
+
+      <section className="from-primary to-primary-strong shadow-primary/15 relative overflow-hidden rounded-3xl bg-gradient-to-br p-5 text-white shadow-lg sm:p-6">
+        <div className="pointer-events-none absolute -right-8 -bottom-14 size-40 rounded-full border-[18px] border-white/10" />
+        <div className="relative flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+          <div>
+            <p className="text-primary-foreground/70 text-[10px] font-bold tracking-widest uppercase">
+              {quizAttempts[0] ? "Keep your momentum" : "Your next best move"}
+            </p>
+            <h3 className="mt-1 text-lg font-bold">
+              {quizAttempts[0]
+                ? `Review your ${formatLabel(quizAttempts[0].subject)} attempt`
+                : "Start your first practice quiz"}
+            </h3>
+            <p className="text-primary-foreground/75 mt-1 text-xs">
+              {quizAttempts[0]
+                ? `You scored ${quizAttempts[0].score}%. Turn the misses into your next win.`
+                : "Build a streak and unlock personalized insights as you learn."}
+            </p>
+          </div>
+          <Link
+            className="bg-surface text-primary inline-flex shrink-0 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-transform hover:-translate-y-0.5"
+            href={quizAttempts[0] ? "/quiz/results" : "/quiz"}
+          >
+            {quizAttempts[0] ? "Review attempt" : "Start practice"}
+            <ArrowRight className="size-3.5" />
+          </Link>
+        </div>
+      </section>
 
       {/* Stats grid */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -197,7 +242,7 @@ export function OverviewTab() {
             </p>
           </div>
           <div className="bg-primary/10 flex items-center gap-1.5 rounded-full px-3 py-1">
-            <Zap className="text-primary size-3" />
+            {/* <Zap className="text-primary size-3" /> */}
             <span className="text-primary text-xs font-bold">Live</span>
           </div>
         </div>
@@ -215,10 +260,10 @@ export function OverviewTab() {
               >
                 <div className="min-w-0">
                   <p className="text-foreground truncate text-[.8rem] font-semibold">
-                    {item.subject}
+                    {formatLabel(item.subject)}
                   </p>
                   <p className="text-muted-foreground text-[.75rem]">
-                    {item.exam} · {item.date}
+                    {formatLabel(item.exam)} · {formatDate(item.date)}
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -226,15 +271,6 @@ export function OverviewTab() {
                     className={`text-[.85rem] font-bold ${item.score >= 50 ? "text-emerald-600" : "text-rose-500"}`}
                   >
                     {item.score}%
-                  </span>
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
-                      item.score >= 50
-                        ? "bg-emerald-500/10 text-emerald-600"
-                        : "bg-rose-500/10 text-rose-500"
-                    }`}
-                  >
-                    {item.score >= 50 ? "Pass" : "Retry"}
                   </span>
                 </div>
               </div>

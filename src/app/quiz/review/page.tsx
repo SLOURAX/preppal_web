@@ -10,23 +10,18 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { QUIZ_QUESTIONS } from "@/features/quiz/mock-questions";
-
-const SELECTIONS: readonly (string | undefined)[] = [
-  "78°",
-  "(x − 2)",
-  "120 km/h",
-  "6",
-  undefined,
-];
+import { useAuthStore } from "@/store";
 
 export default function QuizReviewPage() {
   const router = useRouter();
-  const [activeIndex, setActiveIndex] = useState<number>(2);
+  const latestAttempt = useAuthStore((state) => state.quizAttempts[0]);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(true);
-  const activeQuestion = QUIZ_QUESTIONS[activeIndex]!;
+  const reviewQuestions = QUIZ_QUESTIONS.slice(0, latestAttempt?.total ?? 40);
+  const activeQuestion = reviewQuestions[activeIndex]!;
   const number = String(activeQuestion.id).padStart(2, "0");
   const { text, options, correctAnswer: correct, explanation } = activeQuestion;
-  const selected = SELECTIONS[activeIndex];
+  const selected = latestAttempt?.answers[activeQuestion.id];
   const isCorrect = selected === correct;
 
   return (
@@ -41,7 +36,9 @@ export default function QuizReviewPage() {
             <ArrowLeft className="size-4" /> Back
           </button>
           <span className="text-muted-foreground text-xs font-semibold">
-            JAMB Mathematics
+            {latestAttempt
+              ? `${latestAttempt.exam} ${latestAttempt.subject}`
+              : "Quiz review"}
           </span>
         </div>
       </header>
@@ -70,7 +67,7 @@ export default function QuizReviewPage() {
               )}
             </span>
             <span className="text-muted-foreground text-sm font-bold tabular-nums">
-              {number}/{QUIZ_QUESTIONS.length}
+              {number}/{reviewQuestions.length}
             </span>
             <div className="flex-1"></div>
             <span
@@ -142,7 +139,7 @@ export default function QuizReviewPage() {
           </button>
           <button
             className="bg-primary text-primary-foreground flex items-center gap-1 rounded-xl px-3 py-2 text-[.75rem] font-semibold disabled:opacity-40"
-            disabled={activeIndex === 4}
+            disabled={activeIndex === reviewQuestions.length - 1}
             onClick={() => {
               setActiveIndex((value) => value + 1);
               setOpen(true);
