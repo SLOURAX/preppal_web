@@ -6,9 +6,15 @@ interface AuthState {
   experiencePoints: number;
   userName: string;
   userPlan: string;
+  weeklyGoal: number;
+  weeklyActivity: boolean[];
+  isSignOutModalOpen: boolean;
   login: () => void;
   logout: () => void;
   setBalance: (balance: number) => void;
+  setWeeklyGoal: (goal: number) => void;
+  openSignOutModal: () => void;
+  closeSignOutModal: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -17,7 +23,14 @@ export const useAuthStore = create<AuthState>((set) => ({
   experiencePoints: 1240,
   userName: "Solomon Udumizi",
   userPlan: "Level 1",
+  weeklyGoal: 5,
+  // Mock activity: Mon(true), Tue(true), Wed(false), Thu(true), Fri(false), Sat(false), Sun(false)
+  weeklyActivity: [true, true, false, true, false, false, false],
+  isSignOutModalOpen: false,
   login: (): void => set({ isAuthenticated: true }),
-  logout: (): void => set({ isAuthenticated: false }),
+  logout: (): void => set({ isAuthenticated: false, isSignOutModalOpen: false }),
   setBalance: (preppalBalance: number): void => set({ preppalBalance }),
+  setWeeklyGoal: (weeklyGoal: number): void => set({ weeklyGoal }),
+  openSignOutModal: (): void => set({ isSignOutModalOpen: true }),
+  closeSignOutModal: (): void => set({ isSignOutModalOpen: false }),
 }));

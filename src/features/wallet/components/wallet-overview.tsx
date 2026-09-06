@@ -13,6 +13,8 @@ import {
   PiggyBank,
   Vault,
 } from "lucide-react";
+import { ConfirmationModal } from "@/components/ui";
+import { SaxSecuritySafeBulk } from "@meysam213/iconsax-react";
 
 import { WALLET_TRANSACTIONS } from "../constants";
 
@@ -22,7 +24,32 @@ interface WalletOverviewProps {
 
 export function WalletOverview({ balance }: WalletOverviewProps) {
   const [xp, setXp] = useState<string>("500");
+  const [pendingAction, setPendingAction] = useState<
+    "deposit" | "withdraw" | "convert" | null
+  >(null);
+  const [isBankLinked, setIsBankLinked] = useState(false);
+  const [showBankModal, setShowBankModal] = useState(false);
+  const [bankDetails, setBankDetails] = useState({ bank: "", account: "" });
   const convertedCoins = useMemo(() => Math.floor(Number(xp || 0) / 10), [xp]);
+  const actionCopy =
+    pendingAction === "convert"
+      ? {
+          title: "Convert XP to Coins?",
+          description: `This will convert ${Number(xp || 0).toLocaleString()} XP into ${convertedCoins.toLocaleString()} Preppal Coins.`,
+          confirmLabel: "Convert",
+        }
+      : pendingAction === "withdraw"
+        ? {
+            title: "Withdraw funds?",
+            description: "Review your withdrawal details before continuing.",
+            confirmLabel: "Continue",
+          }
+        : {
+            title: "Deposit funds?",
+            description:
+              "You’re about to start a deposit into your Preppal wallet.",
+            confirmLabel: "Continue",
+          };
 
   return (
     <div className="space-y-5">
@@ -55,6 +82,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             <button
               className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-2.5 text-[.8rem] font-semibold text-[#21194d] transition-transform hover:-translate-y-0.5"
               type="button"
+              onClick={() => setPendingAction("deposit")}
             >
               <Plus className="size-4" />
               Deposit funds
@@ -62,6 +90,11 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             <button
               className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-6 py-2.5 text-[.8rem] font-semibold text-white ring-1 ring-white/15 transition-colors ring-inset hover:bg-white/15"
               type="button"
+              onClick={() =>
+                isBankLinked
+                  ? setPendingAction("withdraw")
+                  : setShowBankModal(true)
+              }
             >
               <Send className="size-4" />
               Withdraw funds
@@ -134,12 +167,127 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             <button
               className="bg-primary text-primary-foreground hover:bg-primary/90 mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-bold transition-colors"
               type="button"
+              onClick={() => setPendingAction("convert")}
             >
               Convert XP <ChevronRight className="size-4" />
             </button>
           </div>
         </section>
+        {pendingAction ? (
+          <ConfirmationModal
+            title={actionCopy.title}
+            description={actionCopy.description}
+            confirmLabel={actionCopy.confirmLabel}
+            onCancel={() => setPendingAction(null)}
+            onConfirm={() => setPendingAction(null)}
+          />
+        ) : null}
       </div>
+
+      {showBankModal ? (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+          <button
+            aria-label="Close bank account dialog"
+            className="absolute inset-0 cursor-default bg-black/45 backdrop-blur-sm"
+            onClick={() => setShowBankModal(false)}
+            type="button"
+          />
+          <form
+            className="bg-surface relative z-10 w-full max-w-sm space-y-4 rounded-3xl p-5 shadow-2xl"
+            onSubmit={(event) => {
+              event.preventDefault();
+              if (!bankDetails.bank || bankDetails.account.length < 6) return;
+              setIsBankLinked(true);
+              setShowBankModal(false);
+              setPendingAction("withdraw");
+            }}
+          >
+            <div>
+              <div className="bg-primary/10 text-primary mb-3 flex size-10 items-center justify-center rounded-xl">
+                <SaxSecuritySafeBulk className="size-5" />
+              </div>
+              <h2 className="text-foreground text-base font-bold">
+                Link a bank account
+              </h2>
+              <p className="text-muted-foreground mt-1 text-xs">
+                Link an account securely before withdrawing your coins.
+              </p>
+            </div>
+            <label className="text-foreground block text-xs font-semibold">
+              Bank name
+              <input
+                className="border-border bg-surface focus:border-primary mt-1.5 h-10 w-full rounded-xl border px-3 text-[.8rem] outline-none"
+                onChange={(event) =>
+                  setBankDetails((value) => ({
+                    ...value,
+                    bank: event.target.value,
+                  }))
+                }
+                placeholder="e.g. First bank"
+                required
+                value={bankDetails.bank}
+              />
+            </label>
+            <label className="text-foreground block text-xs font-semibold">
+              Account number
+              <input
+                className="border-border bg-surface focus:border-primary mt-1.5 h-10 w-full rounded-xl border px-3 text-[.8rem] outline-none"
+                inputMode="numeric"
+                minLength={6}
+                onChange={(event) =>
+                  setBankDetails((value) => ({
+                    ...value,
+                    account: event.target.value.replace(/\D/g, ""),
+                  }))
+                }
+                placeholder="Enter account number"
+                required
+                value={bankDetails.account}
+              />
+            </label>
+            <div className="flex gap-2 pt-1">
+              <button
+                className="border-border text-muted-foreground flex-1 rounded-xl border px-3 py-2 text-xs font-semibold"
+                onClick={() => setShowBankModal(false)}
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-primary text-primary-foreground flex-1 rounded-xl px-3 py-2 text-xs font-bold"
+                type="submit"
+              >
+                Link account
+              </button>
+            </div>
+          </form>
+        </div>
+      ) : null}
+
+      <section className="surface-card flex flex-wrap items-center justify-between gap-4 p-4 sm:p-5">
+        <div className="flex items-center gap-3">
+          <span className="bg-primary/10 text-primary grid size-10 place-items-center rounded-xl">
+            <CreditCard className="size-5" />
+          </span>
+          <div>
+            <h2 className="text-foreground text-sm font-bold">
+              Withdrawal account
+            </h2>
+            <p className="text-muted-foreground mt-0.5 text-xs">
+              {isBankLinked
+                ? `Linked · ${bankDetails.bank}`
+                : "Link a bank account to withdraw funds"}
+            </p>
+          </div>
+        </div>
+        <button
+          className="border-border text-primary hover:bg-primary/5 rounded-xl border px-4 py-2 text-xs font-bold transition-colors"
+          onClick={() => setShowBankModal(true)}
+          type="button"
+        >
+          {isBankLinked ? "Update account" : "Link account"}
+        </button>
+      </section>
 
       <section className="surface-card p-5 sm:p-6">
         <div className="mb-4 flex items-center justify-between gap-3">

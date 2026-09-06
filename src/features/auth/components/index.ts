@@ -8,3 +8,4 @@ export * from "./password-field";
 export * from "./select-field";
 export * from "./google-auth-button";
 export * from "./apple-auth-button";
+export * from "./sign-out-modal";

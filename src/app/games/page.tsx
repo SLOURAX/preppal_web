@@ -150,12 +150,15 @@ export default function GamesPage() {
                 <p className="text-primary text-[10px] font-bold tracking-[0.18em] uppercase">
                   Featured game
                 </p>
-                <h2 className="text-foreground mt-1 text-xl font-bold">
-                  Quick Math Sprint
-                </h2>
-                <p className="text-muted-foreground mt-1 text-xs">
-                  Five bite-sized questions. Instant feedback. Big brain energy.
-                </p>
+                <div className="blur-sm select-none" aria-hidden="true">
+                  <h2 className="text-foreground mt-1 text-xl font-bold">
+                    Quick Math Sprint
+                  </h2>
+                  <p className="text-muted-foreground mt-1 text-xs">
+                    Five bite-sized questions. Instant feedback. Big brain
+                    energy.
+                  </p>
+                </div>
               </div>
             </div>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-1.5 text-xs font-semibold text-amber-600">
@@ -165,7 +168,7 @@ export default function GamesPage() {
 
           {!started ? (
             <div className="from-primary/10 to-surface-subtle mt-6 flex flex-col items-center justify-between gap-5 rounded-2xl bg-gradient-to-r p-5 sm:flex-row sm:p-6">
-              <div>
+              <div className="blur-sm select-none" aria-hidden="true">
                 <p className="text-foreground text-sm font-semibold">
                   Ready for a warm-up?
                 </p>
@@ -174,11 +177,11 @@ export default function GamesPage() {
                 </p>
               </div>
               <button
-                className="bg-primary text-primary-foreground inline-flex min-h-10 items-center gap-2 rounded-full px-6 text-sm font-bold shadow-sm transition hover:-translate-y-0.5"
-                onClick={startGame}
+                className="bg-surface-subtle text-muted-foreground inline-flex min-h-10 cursor-not-allowed items-center gap-2 rounded-full px-6 text-sm font-bold"
+                disabled
                 type="button"
               >
-                <SaxFlash1Bulk className="size-4" /> Start sprint
+                <SaxLock1Bulk className="size-4" /> Coming soon
               </button>
             </div>
           ) : finished ? (

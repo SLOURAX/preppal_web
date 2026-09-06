@@ -21,7 +21,7 @@ export function NavBar() {
   const experiencePoints = useAuthStore((state) => state.experiencePoints);
   const userName = useAuthStore((state) => state.userName);
   const userPlan = useAuthStore((state) => state.userPlan);
-  const logout = useAuthStore((state) => state.logout);
+  const openSignOutModal = useAuthStore((state) => state.openSignOutModal);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -125,8 +125,8 @@ export function NavBar() {
                       <button
                         className="text-danger hover:bg-surface-subtle flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-colors"
                         onClick={() => {
-                          logout();
                           setIsDropdownOpen(false);
+                          openSignOutModal();
                         }}
                         type="button"
                       >
@@ -146,7 +146,7 @@ export function NavBar() {
                   Log in
                 </Link>
                 <Link
-                  className="bg-primary text-primary-foreground hover:bg-primary-strong rounded-full px-3.5 py-2 text-sm font-medium shadow-sm transition sm:px-5"
+                  className="bg-primary text-[.85rem] text-primary-foreground hover:bg-primary-strong rounded-full px-5 py-2.5 text-sm font-medium shadow-sm transition sm:px-5"
                   href="/register"
                 >
                   Get started
@@ -262,8 +262,8 @@ export function NavBar() {
                   </div>
                   <button
                     onClick={() => {
-                      logout();
                       setIsMobileMenuOpen(false);
+                      openSignOutModal();
                     }}
                     className="text-danger hover:bg-surface-subtle flex w-full items-center justify-center gap-2 rounded-xl py-3 font-medium transition-colors"
                   >

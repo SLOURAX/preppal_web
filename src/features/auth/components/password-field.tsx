@@ -1,19 +1,25 @@
 "use client";
 
-import { Eye, EyeOff, LockKeyhole } from "lucide-react";
+import { Eye, EyeOff, LockKeyhole, type LucideIcon } from "lucide-react";
 import { useState } from "react";
 
 import { FormField, type FormFieldProps } from "./form-field";
 
-type PasswordFieldProps = Omit<FormFieldProps, "icon" | "trailing" | "type">;
+type PasswordFieldProps = Omit<FormFieldProps, "icon" | "trailing" | "type"> & {
+  /** Optional leading icon to distinguish password contexts. */
+  icon?: LucideIcon;
+};
 
-export function PasswordField(props: PasswordFieldProps) {
+export function PasswordField({
+  icon: Icon = LockKeyhole,
+  ...props
+}: PasswordFieldProps) {
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   return (
     <FormField
       {...props}
-      icon={LockKeyhole}
+      icon={Icon}
       type={isVisible ? "text" : "password"}
       trailing={
         <button

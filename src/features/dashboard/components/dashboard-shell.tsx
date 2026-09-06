@@ -58,7 +58,7 @@ export function DashboardShell() {
   const userPlan = useAuthStore((s) => s.userPlan);
   const preppalBalance = useAuthStore((s) => s.preppalBalance);
   const experiencePoints = useAuthStore((s) => s.experiencePoints);
-  const logout = useAuthStore((s) => s.logout);
+  const openSignOutModal = useAuthStore((s) => s.openSignOutModal);
 
   return (
     <div className="bg-background flex min-h-dvh flex-col">
@@ -109,7 +109,7 @@ export function DashboardShell() {
             </div>
 
             <button
-              onClick={logout}
+              onClick={openSignOutModal}
               title="Sign out"
               className="text-muted-foreground hover:text-danger hover:bg-surface-subtle rounded-lg p-1.5 transition-colors"
             >

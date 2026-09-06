@@ -68,6 +68,10 @@ const STATS = [
 
 export function OverviewTab() {
   const userName = useAuthStore((s) => s.userName);
+  const weeklyGoal = useAuthStore((s) => s.weeklyGoal);
+  const weeklyActivity = useAuthStore((s) => s.weeklyActivity);
+  
+  const completedDays = weeklyActivity.filter(Boolean).length;
 
   return (
     <div className="space-y-6">
@@ -135,23 +139,26 @@ export function OverviewTab() {
             </p>
           </div>
           <span className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-bold">
-            5 / 7 days
+            {completedDays} / {weeklyGoal} days
           </span>
         </div>
         <div className="flex gap-1.5">
-          {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, i) => (
-            <div
-              key={day}
-              className="flex flex-1 flex-col items-center gap-1.5"
-            >
+          {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, i) => {
+            const isActive = weeklyActivity[i];
+            return (
               <div
-                className={`h-8 w-full rounded-md transition-colors ${
-                  i < 5 ? "bg-primary" : "bg-surface-subtle"
-                }`}
-              />
-              <span className="text-muted-foreground text-[10px]">{day}</span>
-            </div>
-          ))}
+                key={day}
+                className="flex flex-1 flex-col items-center gap-1.5"
+              >
+                <div
+                  className={`h-8 w-full rounded-md transition-colors ${
+                    isActive ? "bg-primary" : "bg-surface-subtle"
+                  }`}
+                />
+                <span className="text-muted-foreground text-[10px]">{day}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
 

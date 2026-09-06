@@ -11,6 +11,7 @@ export interface FormFieldProps extends Omit<
   label: string;
   icon: LucideIcon;
   optional?: boolean;
+  labelClassName?: string;
   trailing?: ReactNode;
 }
 
@@ -19,6 +20,7 @@ export function FormField({
   label,
   icon: Icon,
   optional = false,
+  labelClassName,
   trailing,
   type = "text",
   ...inputProps
@@ -26,7 +28,10 @@ export function FormField({
   return (
     <div className="space-y-1.5">
       <label
-        className="text-foreground flex items-center gap-1 text-sm font-medium"
+        className={cn(
+          "text-foreground flex items-center gap-1 text-sm font-medium",
+          labelClassName,
+        )}
         htmlFor={id}
       >
         {label}

@@ -3,6 +3,7 @@ import { GeistSans } from "geist/font/sans";
 
 import { SiteChrome } from "@/components/layout";
 import { AppProviders } from "@/providers";
+import { SignOutModal } from "@/features/auth";
 
 import "./globals.css";
 
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className={`${GeistSans.className} min-h-full antialiased`}>
         <AppProviders>
           <SiteChrome>{children}</SiteChrome>
+          <SignOutModal />
         </AppProviders>
       </body>
     </html>

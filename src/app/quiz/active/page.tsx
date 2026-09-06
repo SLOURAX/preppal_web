@@ -16,6 +16,7 @@ import { InstructionsModal } from "@/features/quiz/components/active/instruction
 import { SubmitModal } from "@/features/quiz/components/active/submit-modal";
 import { QuestionAudioPlayer } from "@/features/quiz/components/active/question-audio-player";
 import { QuickCalculator } from "@/features/quiz/components/active/quick-calculator";
+import { ConfirmationModal } from "@/components/ui";
 import type { QuestionStatus } from "@/features/quiz/components/active/types";
 import { QUIZ_QUESTIONS } from "@/features/quiz/mock-questions";
 
@@ -105,6 +106,7 @@ function ActiveQuizContent() {
   const [secondsLeft, setSecondsLeft] = useState(TOTAL_SECONDS);
   const [showInstructions, setShowInstructions] = useState(false);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [showExitModal, setShowExitModal] = useState(false);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [aiHints, setAiHints] = useState<Record<number, string>>({});
   const [aiConversation, setAiConversation] = useState<
@@ -222,17 +224,21 @@ function ActiveQuizContent() {
     }));
   };
 
+  const confirmExit = (): void => {
+    router.push(isUntimed ? "/quiz" : "/quiz/preview");
+  };
+
   return (
     <div className="bg-background flex h-screen flex-col overflow-hidden">
       <QuizHeader
         currentIndex={currentIndex}
         total={questions.length}
         secondsLeft={isUntimed ? undefined : secondsLeft}
-        onExit={() => router.push("/quiz/preview")}
+        onExit={() => setShowExitModal(true)}
         isUntimed={isUntimed}
         correctCount={correctCount}
         onSubmit={() =>
-          isUntimed ? router.push("/quiz") : setShowSubmitModal(true)
+          isUntimed ? setShowExitModal(true) : setShowSubmitModal(true)
         }
       />
 
@@ -388,7 +394,7 @@ function ActiveQuizContent() {
           onSelectQuestion={goTo}
           isUntimed={isUntimed}
           onSubmit={() =>
-            isUntimed ? router.push("/quiz") : setShowSubmitModal(true)
+            isUntimed ? setShowExitModal(true) : setShowSubmitModal(true)
           }
         />
       </div>
@@ -411,6 +417,21 @@ function ActiveQuizContent() {
           onSubmit={() => router.push("/quiz/results")}
         />
       )}
+
+      {showExitModal ? (
+        <ConfirmationModal
+          title={isUntimed ? "Exit playground?" : "Leave quiz?"}
+          description={
+            isUntimed
+              ? "Your current playground progress will be cleared if you leave."
+              : "Your quiz progress may be lost if you leave before submitting."
+          }
+          confirmLabel={isUntimed ? "Exit playground" : "Leave quiz"}
+          destructive
+          onCancel={() => setShowExitModal(false)}
+          onConfirm={confirmExit}
+        />
+      ) : null}
 
       <div className="fixed bottom-5 left-4 z-40 sm:bottom-6 sm:left-6">
         {showCalculator ? (
