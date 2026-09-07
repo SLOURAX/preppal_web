@@ -4,10 +4,18 @@ import { useState } from "react";
 import {
   ArrowLeft,
   CheckCircle2,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
   XCircle,
 } from "lucide-react";
+import {
+  SaxDislikeBulk,
+  SaxLikeBulk,
+  SaxMessageQuestionBulk,
+  SaxSend2Bulk,
+} from "@meysam213/iconsax-react";
 import { useRouter } from "next/navigation";
 import { QUIZ_QUESTIONS } from "@/features/quiz/mock-questions";
 import { useAuthStore } from "@/store";
@@ -16,13 +24,25 @@ export default function QuizReviewPage() {
   const router = useRouter();
   const latestAttempt = useAuthStore((state) => state.quizAttempts[0]);
   const [activeIndex, setActiveIndex] = useState<number>(0);
-  const [open, setOpen] = useState<boolean>(true);
+  const [open, setOpen] = useState<boolean>(false);
+  const [feedback, setFeedback] = useState<"helpful" | "unhelpful" | null>(
+    null,
+  );
+  const [followUpOpen, setFollowUpOpen] = useState(false);
+  const [followUp, setFollowUp] = useState("");
+  const [conversation, setConversation] = useState<string[]>([]);
   const reviewQuestions = QUIZ_QUESTIONS.slice(0, latestAttempt?.total ?? 40);
   const activeQuestion = reviewQuestions[activeIndex]!;
   const number = String(activeQuestion.id).padStart(2, "0");
   const { text, options, correctAnswer: correct, explanation } = activeQuestion;
   const selected = latestAttempt?.answers[activeQuestion.id];
   const isCorrect = selected === correct;
+  const submitFollowUp = (): void => {
+    const question = followUp.trim();
+    if (!question) return;
+    setConversation((messages) => [...messages, question]);
+    setFollowUp("");
+  };
 
   return (
     <main className="bg-background min-h-screen">
@@ -76,8 +96,48 @@ export default function QuizReviewPage() {
               {selected ? (isCorrect ? "Correct" : "Wrong") : "Unanswered"}
             </span>
           </div>
-          {open ? (
-            <div className="bg-surface-subtle/50 border-border/50 border-t px-4 pt-4 pb-5 sm:px-16">
+          {!open ? (
+            <div className="border-border/50 bg-surface-subtle/50 border-t px-4 py-5 sm:px-16">
+              <div className="bg-surface mb-4 rounded-xl px-3 py-3 text-left">
+                <p className="text-foreground text-xs leading-5 font-semibold">
+                  {text}
+                </p>
+                <p className="text-muted-foreground mt-1 text-[11px]">
+                  Your response is compared with the verified answer below.
+                </p>
+              </div>
+              <div className="space-y-2 text-left">
+                {options.map((option, optionIndex) => {
+                  const optionIsCorrect = option === correct;
+                  const optionWasSelected = option === selected;
+                  return (
+                    <div
+                      key={option}
+                      className={`flex items-center gap-3 rounded-xl px-3 py-3 text-[.8rem] ${optionIsCorrect ? "bg-emerald-500/10 font-semibold text-emerald-700" : optionWasSelected ? "bg-rose-500/10 font-semibold text-rose-700" : "bg-surface text-muted-foreground"}`}
+                    >
+                      <span className="grid size-6 shrink-0 place-items-center text-xs font-bold">
+                        {String.fromCharCode(65 + optionIndex)}
+                      </span>
+                      <span className="flex-1 text-[.75rem]">{option}</span>
+                      {optionIsCorrect ? (
+                        <CheckCircle2 className="size-4 text-emerald-600" />
+                      ) : optionWasSelected ? (
+                        <XCircle className="size-4 text-rose-600" />
+                      ) : null}
+                    </div>
+                  );
+                })}
+              </div>
+              <button
+                className="text-primary mt-3 inline-flex items-center gap-2 text-xs font-bold"
+                onClick={() => setOpen(true)}
+                type="button"
+              >
+                Show explanation <ChevronDown className="size-4" />
+              </button>
+            </div>
+          ) : (
+            <div className="bg-surface-subtle/50 border-border/50 animate-in fade-in slide-in-from-top-2 border-t px-4 pt-4 pb-5 duration-300 sm:px-16">
               <div className="bg-surface mb-4 rounded-xl px-3 py-3">
                 <p className="text-foreground max-h-16 overflow-y-auto text-xs leading-5 font-semibold">
                   {text}
@@ -114,6 +174,13 @@ export default function QuizReviewPage() {
                   );
                 })}
               </div>
+              <button
+                className="text-primary mt-3 inline-flex items-center gap-2 text-xs font-bold"
+                onClick={() => setOpen(false)}
+                type="button"
+              >
+                Hide explanation <ChevronUp className="size-4" />
+              </button>
               <div className="bg-primary/5 mt-4 rounded-xl px-3 py-3">
                 <p className="text-primary text-[11px] font-bold tracking-wide uppercase">
                   Explanation
@@ -122,8 +189,81 @@ export default function QuizReviewPage() {
                   {explanation}
                 </p>
               </div>
+              <div className="border-border/60 mt-5 border-t pt-4">
+                <p className="text-foreground text-center text-sm font-semibold">
+                  Was this explanation helpful?
+                </p>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    className={`flex flex-1 items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-xs font-semibold transition-all ${feedback === "helpful" ? "border-emerald-500 bg-emerald-500/10 text-emerald-700" : "border-border text-muted-foreground hover:border-emerald-500/50 hover:text-emerald-600"}`}
+                    onClick={() => setFeedback("helpful")}
+                    type="button"
+                  >
+                    <SaxLikeBulk
+                      className={`size-4 ${feedback === "helpful" ? "animate-bounce" : ""}`}
+                    />{" "}
+                    Helpful
+                  </button>
+                  <button
+                    className={`flex flex-1 items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-xs font-semibold transition-all ${feedback === "unhelpful" ? "border-rose-500 bg-rose-500/10 text-rose-600" : "border-border text-muted-foreground hover:border-rose-500/50 hover:text-rose-600"}`}
+                    onClick={() => {
+                      setFeedback("unhelpful");
+                      setFollowUpOpen(true);
+                    }}
+                    type="button"
+                  >
+                    <SaxDislikeBulk className="size-4" /> Not helpful
+                  </button>
+                </div>
+                {followUpOpen ? (
+                  <div className="bg-primary/5 mt-4 rounded-2xl p-3">
+                    <div className="flex items-center gap-2">
+                      <span className="bg-primary/15 text-primary grid size-8 place-items-center rounded-lg">
+                        <SaxMessageQuestionBulk className="size-4" />
+                      </span>
+                      <div>
+                        <p className="text-foreground text-xs font-bold">
+                          Ask a follow-up
+                        </p>
+                        <p className="text-muted-foreground text-[10px]">
+                          Premium preview enabled for this demo.
+                        </p>
+                      </div>
+                    </div>
+                    {conversation.map((message) => (
+                      <p
+                        className="bg-surface text-foreground mt-3 rounded-xl px-3 py-2 text-xs"
+                        key={message}
+                      >
+                        {message}
+                      </p>
+                    ))}
+                    <form
+                      className="bg-surface border-border/60 mt-3 flex items-center gap-2 rounded-xl border p-1.5"
+                      onSubmit={(event) => {
+                        event.preventDefault();
+                        submitFollowUp();
+                      }}
+                    >
+                      <input
+                        className="text-foreground min-w-0 flex-1 bg-transparent px-2 text-xs outline-none"
+                        onChange={(event) => setFollowUp(event.target.value)}
+                        placeholder="Ask about this question…"
+                        value={followUp}
+                      />
+                      <button
+                        aria-label="Send follow-up"
+                        className="bg-primary text-primary-foreground grid size-8 shrink-0 place-items-center rounded-lg"
+                        type="submit"
+                      >
+                        <SaxSend2Bulk className="size-3.5" />
+                      </button>
+                    </form>
+                  </div>
+                ) : null}
+              </div>
             </div>
-          ) : null}
+          )}
         </section>
         <div className="mt-5 flex items-center justify-between gap-3">
           <button
@@ -131,7 +271,7 @@ export default function QuizReviewPage() {
             disabled={activeIndex === 0}
             onClick={() => {
               setActiveIndex((value) => value - 1);
-              setOpen(true);
+              setOpen(false);
             }}
             type="button"
           >
@@ -142,7 +282,7 @@ export default function QuizReviewPage() {
             disabled={activeIndex === reviewQuestions.length - 1}
             onClick={() => {
               setActiveIndex((value) => value + 1);
-              setOpen(true);
+              setOpen(false);
             }}
             type="button"
           >

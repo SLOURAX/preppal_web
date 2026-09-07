@@ -10,7 +10,6 @@ import {
   AuthHeader,
   CheckboxField,
   FormField,
-  getSafeReturnTo,
   MEMBER_BENEFITS,
   PasswordField,
   GoogleAuthButton,
@@ -25,7 +24,7 @@ export default function LoginPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (isAuthenticated) router.replace("/dashboard");
+    if (isAuthenticated) router.replace("/");
   }, [isAuthenticated, router]);
 
   if (isAuthenticated) return null;
@@ -33,12 +32,12 @@ export default function LoginPage() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     login();
-    router.push(getSafeReturnTo(window.location.search));
+    router.push("/");
   };
 
   const handleSocialLogin = () => {
     login();
-    router.push(getSafeReturnTo(window.location.search));
+    router.push("/");
   };
 
   return (

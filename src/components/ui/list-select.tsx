@@ -19,6 +19,7 @@ interface ListSelectProps {
   readonly value: string;
   readonly onChange: (value: string) => void;
   readonly className?: string;
+  readonly showOptionDescriptions?: boolean;
 }
 
 export function ListSelect({
@@ -30,6 +31,7 @@ export function ListSelect({
   value,
   onChange,
   className,
+  showOptionDescriptions = true,
 }: ListSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -97,7 +99,7 @@ export function ListSelect({
 
       {/* Modal / Dropdown */}
       {isOpen && (
-        <div className="animate-in fade-in zoom-in-95 border-border bg-surface absolute top-full left-0 z-50 mt-2 w-full origin-top rounded-2xl border p-2 shadow-2xl backdrop-blur-xl">
+        <div className="animate-in fade-in zoom-in-95 bg-surface absolute top-full left-0 z-50 mt-2 w-full origin-top p-1 shadow-xl backdrop-blur-xl">
           <div className="mb-2 px-3 pt-2">
             <span className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
               {placeholder}
@@ -114,17 +116,17 @@ export function ListSelect({
                     setIsOpen(false);
                   }}
                   className={cn(
-                    "flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-all",
+                    "flex w-full items-center justify-between rounded-none border-b px-3 py-3 text-left transition-all last:border-b-0",
                     isSelected
                       ? "bg-primary text-primary-foreground shadow-md"
-                      : "border border-primary/10 text-foreground hover:bg-surface-subtle hover:shadow-sm",
+                      : "border-border/70 text-foreground hover:border-primary/40 hover:bg-surface-subtle",
                   )}
                 >
                   <div>
                     <p className={cn("text-sm font-semibold")}>
                       {option.label}
                     </p>
-                    {option.description && (
+                    {showOptionDescriptions && option.description && (
                       <p
                         className={cn(
                           "mt-0.5 text-xs",

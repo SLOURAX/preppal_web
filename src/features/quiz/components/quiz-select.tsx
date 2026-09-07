@@ -30,6 +30,7 @@ export function QuizSelect({
       placeholder={placeholder}
       value={value}
       onChange={onChange}
+      showOptionDescriptions={false}
     />
   );
 }

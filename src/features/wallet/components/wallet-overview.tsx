@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowDownLeft,
@@ -9,6 +9,7 @@ import {
   Coins,
   CreditCard,
   History,
+  LoaderCircle,
   Plus,
   Send,
   PiggyBank,
@@ -24,6 +25,16 @@ interface WalletOverviewProps {
   readonly balance: number;
 }
 
+const BANKS = [
+  "Access Bank",
+  "First Bank",
+  "GTBank",
+  "Kuda",
+  "Opay",
+  "UBA",
+  "Zenith Bank",
+] as const;
+
 export function WalletOverview({ balance }: WalletOverviewProps) {
   const [xp, setXp] = useState<string>("500");
   const [pendingAction, setPendingAction] = useState<
@@ -32,10 +43,20 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
   const [isBankLinked, setIsBankLinked] = useState(false);
   const [showBankModal, setShowBankModal] = useState(false);
   const [bankDetails, setBankDetails] = useState({ bank: "", account: "" });
+  const [accountName, setAccountName] = useState("");
+  const [isVerifyingAccount, setIsVerifyingAccount] = useState(false);
   const setBalance = useAuthStore((state) => state.setBalance);
   const depositedFunds = useAuthStore((state) => state.depositedFunds);
   const experiencePoints = useAuthStore((state) => state.experiencePoints);
   const addExperience = useAuthStore((state) => state.addExperience);
+  useEffect(() => {
+    if (!bankDetails.bank || bankDetails.account.length !== 10) return;
+    const verification = window.setTimeout(() => {
+      setAccountName("Solomon Udumizi");
+      setIsVerifyingAccount(false);
+    }, 900);
+    return () => window.clearTimeout(verification);
+  }, [bankDetails.account, bankDetails.bank]);
   const convertedCoins = useMemo(() => Math.floor(Number(xp || 0) / 10), [xp]);
   const actionCopy =
     pendingAction === "convert"
@@ -107,32 +128,21 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
               Withdraw funds
             </button>
           </div>
-          <div className="mt-5 grid gap-2 text-xs sm:grid-cols-3">
+          <div className="mt-5 grid grid-cols-3 gap-2 text-xs">
             <div className="rounded-xl bg-white/10 p-3">
               <p className="text-violet-200">Preppal coins</p>
-              <p className="mt-1 text-[13px] font-bold">
-                {balance.toLocaleString()} P
-              </p>
-              <p className="mt-1 text-[11px] text-violet-200/80">
-                Withdrawable
-              </p>
+              <p className="mt-1 font-bold">{balance.toLocaleString()} P</p>
             </div>
             <div className="rounded-xl bg-white/10 p-3">
               <p className="text-violet-200">Experience points</p>
-              <p className="mt-1 text-[13px] font-bold">
+              <p className="mt-1 font-bold">
                 {experiencePoints.toLocaleString()} XP
-              </p>
-              <p className="mt-1 text-[11px] text-violet-200/80">
-                Convert to coins
               </p>
             </div>
             <div className="rounded-xl bg-white/10 p-3">
               <p className="text-violet-200">Deposited funds</p>
-              <p className="mt-1 text-[13px] font-bold">
+              <p className="mt-1 font-bold">
                 {depositedFunds.toLocaleString()} NGN
-              </p>
-              <p className="mt-1 text-[11px] text-violet-200/80">
-                Not withdrawable
               </p>
             </div>
           </div>
@@ -235,10 +245,15 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             type="button"
           />
           <form
-            className="bg-surface relative z-10 w-full max-w-sm space-y-4 rounded-3xl p-5 shadow-2xl"
+            className="bg-surface relative z-10 w-full max-w-md space-y-5 rounded-3xl p-6 shadow-2xl sm:p-7"
             onSubmit={(event) => {
               event.preventDefault();
-              if (!bankDetails.bank || bankDetails.account.length < 6) return;
+              if (
+                !bankDetails.bank ||
+                bankDetails.account.length !== 10 ||
+                !accountName
+              )
+                return;
               setIsBankLinked(true);
               setShowBankModal(false);
               setPendingAction("withdraw");
@@ -256,40 +271,66 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
               </p>
             </div>
             <label className="text-foreground block text-xs font-semibold">
-              Bank name
-              <input
+              Select bank
+              <select
                 className="border-border bg-surface focus:border-primary mt-1.5 h-10 w-full rounded-xl border px-3 text-[.8rem] outline-none"
-                onChange={(event) =>
+                onChange={(event) => {
+                  setAccountName("");
+                  setIsVerifyingAccount(bankDetails.account.length === 10);
                   setBankDetails((value) => ({
                     ...value,
                     bank: event.target.value,
-                  }))
-                }
-                placeholder="e.g. First bank"
+                  }));
+                }}
                 required
                 value={bankDetails.bank}
-              />
+              >
+                <option value="">Choose your bank</option>
+                {BANKS.map((bank) => (
+                  <option key={bank} value={bank}>
+                    {bank}
+                  </option>
+                ))}
+              </select>
             </label>
             <label className="text-foreground block text-xs font-semibold">
               Account number
               <input
                 className="border-border bg-surface focus:border-primary mt-1.5 h-10 w-full rounded-xl border px-3 text-[.8rem] outline-none"
                 inputMode="numeric"
-                minLength={6}
-                onChange={(event) =>
+                maxLength={10}
+                onChange={(event) => {
+                  setAccountName("");
+                  setIsVerifyingAccount(
+                    event.target.value.replace(/\D/g, "").length === 10 &&
+                      Boolean(bankDetails.bank),
+                  );
                   setBankDetails((value) => ({
                     ...value,
                     account: event.target.value.replace(/\D/g, ""),
-                  }))
-                }
-                placeholder="Enter account number"
+                  }));
+                }}
+                placeholder="Enter 10-digit account number"
                 required
                 value={bankDetails.account}
               />
             </label>
+            {isVerifyingAccount ? (
+              <div className="text-muted-foreground flex items-center gap-2 text-xs">
+                <LoaderCircle className="text-primary size-4 animate-spin" />{" "}
+                Verifying account details…
+              </div>
+            ) : accountName ? (
+              <div className="rounded-xl bg-emerald-500/10 px-3 py-2.5 text-xs">
+                <p className="text-muted-foreground">Account name</p>
+                <p className="text-foreground mt-0.5 font-bold">
+                  {accountName}
+                </p>
+              </div>
+            ) : null}
             <div className="flex gap-2 pt-1">
               <button
-                className="border-border text-muted-foreground flex-1 rounded-xl border px-3 py-2 text-xs font-semibold"
+                className="flex-1 rounded-xl border border-rose-500 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-500/10"
                 onClick={() => setShowBankModal(false)}
                 type="button"
               >
@@ -297,6 +338,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
               </button>
               <button
                 className="bg-primary text-primary-foreground flex-1 rounded-xl px-3 py-2 text-xs font-bold"
+                disabled={!accountName || isVerifyingAccount}
                 type="submit"
               >
                 Link account
@@ -330,6 +372,30 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
           {isBankLinked ? "Update account" : "Link account"}
         </button>
       </section>
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div className="surface-card flex items-center gap-3 rounded-2xl p-4 sm:p-5">
+          <CreditCard className="text-primary size-5" />
+          <div>
+            <p className="text-muted-foreground text-xs">This month</p>
+            <p className="text-foreground text-sm font-bold">+1,240 P earned</p>
+          </div>
+        </div>
+        <div className="surface-card flex items-center gap-3 rounded-2xl p-4 sm:p-5">
+          <ArrowUpRight className="size-5 text-rose-500" />
+          <div>
+            <p className="text-muted-foreground text-xs">Redeemed</p>
+            <p className="text-foreground text-sm font-bold">250 P</p>
+          </div>
+        </div>
+        <div className="surface-card flex items-center gap-3 rounded-2xl p-4 sm:p-5">
+          <Coins className="size-5 text-amber-500" />
+          <div>
+            <p className="text-muted-foreground text-xs">Conversion rate</p>
+            <p className="text-foreground text-sm font-bold">10 XP = 1 P</p>
+          </div>
+        </div>
+      </div>
 
       <section className="surface-card p-5 sm:p-6">
         <div className="mb-4 flex items-center justify-between gap-3">
@@ -388,30 +454,6 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
           })}
         </div>
       </section>
-
-      <div className="grid gap-3 sm:grid-cols-3">
-        <div className="surface-card flex items-center gap-3 p-4">
-          <CreditCard className="text-primary size-5" />
-          <div>
-            <p className="text-muted-foreground text-xs">This month</p>
-            <p className="text-foreground font-bold">+1,240 P earned</p>
-          </div>
-        </div>
-        <div className="surface-card flex items-center gap-3 p-4">
-          <ArrowUpRight className="size-5 text-rose-500" />
-          <div>
-            <p className="text-muted-foreground text-xs">Redeemed</p>
-            <p className="text-foreground font-bold">250 P</p>
-          </div>
-        </div>
-        <div className="surface-card flex items-center gap-3 p-4">
-          <Coins className="size-5 text-amber-500" />
-          <div>
-            <p className="text-muted-foreground text-xs">Conversion rate</p>
-            <p className="text-foreground font-bold">10 XP = 1 P</p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

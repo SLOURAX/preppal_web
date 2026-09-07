@@ -27,9 +27,7 @@ export function SignOutModal() {
               <LogOut className="size-5 text-rose-500" />
             </div>
             <div className="pt-1">
-              <h2 className="text-foreground text-lg font-bold">
-                Sign out?
-              </h2>
+              <h2 className="text-foreground text-lg font-bold">Sign out?</h2>
               <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
                 Are you sure you want to sign out of your account on this
                 device?
@@ -40,13 +38,13 @@ export function SignOutModal() {
           <div className="mt-6 flex gap-2">
             <Button
               onClick={logout}
-              className="w-full bg-rose-500 font-semibold text-white hover:bg-rose-600"
+              className="bg-primary text-primary-foreground hover:bg-primary-strong w-full rounded-xl font-semibold"
             >
               Yes, sign out
             </Button>
             <button
               onClick={closeSignOutModal}
-              className="border-border text-foreground hover:bg-surface-subtle w-full rounded-xl border py-2.5 text-sm font-semibold transition-colors"
+              className="w-full rounded-xl border border-rose-500 py-2.5 text-sm font-semibold text-rose-600 transition-colors hover:bg-rose-500/10"
             >
               Cancel
             </button>

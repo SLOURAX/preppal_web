@@ -19,7 +19,6 @@ import {
   COUNTRIES,
   EXAM_GOALS,
   FormField,
-  getSafeReturnTo,
   LEARNING_LEVELS,
   PasswordField,
   SelectField,
@@ -35,7 +34,7 @@ export default function RegisterPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (isAuthenticated) router.replace("/dashboard");
+    if (isAuthenticated) router.replace("/");
   }, [isAuthenticated, router]);
 
   if (isAuthenticated) return null;
@@ -43,12 +42,12 @@ export default function RegisterPage() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     login();
-    router.push(getSafeReturnTo(window.location.search));
+    router.push("/");
   };
 
   const handleSocialLogin = () => {
     login();
-    router.push(getSafeReturnTo(window.location.search));
+    router.push("/");
   };
 
   return (

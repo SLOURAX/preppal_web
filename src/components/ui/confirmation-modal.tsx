@@ -62,7 +62,7 @@ export function ConfirmationModal({
         </div>
         <div className="mt-5 flex gap-2">
           <button
-            className="border-border text-muted-foreground hover:text-foreground flex-1 rounded-xl border px-3 py-2.5 text-sm font-semibold transition-colors"
+            className="flex-1 rounded-xl border border-rose-500 px-3 py-2.5 text-sm font-semibold text-rose-600 transition-colors hover:bg-rose-500/10"
             onClick={onCancel}
             type="button"
           >

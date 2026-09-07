@@ -230,7 +230,7 @@ export function QuizEntryScreen({
                         "relative rounded-2xl border p-4 text-left transition-all",
                         isSelected
                           ? "border-primary bg-surface-subtle shadow-primary/10 shadow-lg"
-                          : "border-transparent hover:-translate-y-0.5 *:bg-surface",
+                          : "*:bg-surface border-transparent hover:-translate-y-0.5",
                       )}
                       key={value}
                       onClick={() => updatePath(value)}
@@ -273,9 +273,7 @@ export function QuizEntryScreen({
                 onChange={updateSelection}
                 options={choices}
                 placeholder={
-                  quizPath === "exam"
-                    ? "Choose an exam"
-                    : "Choose a subject"
+                  quizPath === "exam" ? "Choose an exam" : "Choose a subject"
                 }
                 value={selectedValue}
               />

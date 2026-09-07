@@ -16,7 +16,7 @@ export default function ForgotPasswordPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
-    if (isAuthenticated) router.replace("/dashboard");
+    if (isAuthenticated) router.replace("/");
   }, [isAuthenticated, router]);
 
   if (isAuthenticated) return null;

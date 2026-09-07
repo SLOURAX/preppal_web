@@ -156,10 +156,10 @@ export function AnalyticsTab() {
     <div className="space-y-6">
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>
-          <h2 className="text-foreground mt-1 text-2xl font-bold tracking-tight">
+          <h2 className="text-foreground text-2xl font-bold tracking-tight">
             Analytics
           </h2>
-          <p className="text-muted-foreground mt-1 text-sm">
+          <p className="text-muted-foreground text-sm">
             A clear view of your progress, habits, and next best steps.
           </p>
         </div>
@@ -203,7 +203,7 @@ export function AnalyticsTab() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <h3 className="text-foreground font-semibold">Score trend</h3>
-              <p className="text-muted-foreground mt-1 text-xs">
+              <p className="text-muted-foreground text-xs">
                 Your average quiz score over time
               </p>
             </div>
@@ -217,7 +217,7 @@ export function AnalyticsTab() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-foreground font-semibold">Readiness score</h3>
-              <p className="text-muted-foreground mt-1 text-xs">
+              <p className="text-muted-foreground text-xs">
                 Based on recent practice
               </p>
             </div>
@@ -253,7 +253,7 @@ export function AnalyticsTab() {
               <h3 className="text-foreground font-semibold">
                 Strengths & focus areas
               </h3>
-              <p className="text-muted-foreground mt-1 text-xs">
+              <p className="text-muted-foreground text-xs">
                 Where your effort is paying off
               </p>
             </div>
@@ -263,13 +263,13 @@ export function AnalyticsTab() {
             {SUBJECTS.map(([name, score, change, color]) => (
               <div key={name}>
                 <div className="mb-1.5 flex items-center justify-between gap-3">
-                  <span className="text-foreground text-[.85rem] font-medium">
+                  <span className="text-foreground text-[.8rem] font-medium">
                     {name}
                   </span>
                   <span
                     className={`text-xs font-bold ${change === "Focus" ? "text-amber-600" : "text-emerald-600"}`}
                   >
-                    {score}% · {change}
+                    {score}%
                   </span>
                 </div>
                 <div className="bg-surface-subtle h-2 overflow-hidden rounded-full">
@@ -285,7 +285,7 @@ export function AnalyticsTab() {
         <section className="surface-card p-5 sm:p-6">
           <div className="mb-5">
             <h3 className="text-foreground font-semibold">Study touchpoints</h3>
-            <p className="text-muted-foreground mt-1 text-xs">
+            <p className="text-muted-foreground text-xs">
               How you’re engaging with Preppal
             </p>
           </div>
@@ -321,7 +321,7 @@ export function AnalyticsTab() {
             <h3 className="text-foreground font-semibold">
               Your next best move
             </h3>
-            <p className="text-muted-foreground mt-1 max-w-xl text-sm leading-5">
+            <p className="text-muted-foreground max-w-xl text-[.75rem] leading-5">
               Take a 10-question Physics practice set today. Improving this
               focus area could move your readiness score into the excellent
               range.
@@ -329,7 +329,7 @@ export function AnalyticsTab() {
           </div>
         </div>
         <a
-          className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex shrink-0 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex shrink-0 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-[.8rem] font-semibold transition-colors"
           href="/quiz"
         >
           Start practice <ArrowUpRight className="size-4" />

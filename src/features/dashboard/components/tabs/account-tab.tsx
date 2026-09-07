@@ -314,7 +314,7 @@ export function AccountTab() {
           </div>
           <button
             onClick={openSignOutModal}
-            className="flex items-center gap-2 rounded-xl bg-rose-500/10 px-4 py-1.5 text-xs font-bold text-rose-600 transition-colors hover:bg-rose-500/20"
+            className="flex items-center gap-2 rounded-xl bg-rose-500/10 px-3 py-1.5 text-xs font-bold text-rose-600 transition-colors hover:bg-rose-500/20"
           >
             <LogOut className="size-3.5" />
             Sign out
@@ -438,7 +438,7 @@ export function AccountTab() {
                 ) : null}
                 <div className="flex gap-2 pt-1">
                   <button
-                    className="border-border text-muted-foreground hover:text-foreground flex-1 rounded-xl border px-3 py-2 text-[.8rem] font-semibold"
+                    className="flex-1 rounded-xl border border-rose-500 px-3 py-2 text-[.8rem] font-semibold text-rose-600 hover:bg-rose-500/10"
                     onClick={() => setShowPasswordModal(false)}
                     type="button"
                   >
