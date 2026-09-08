@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { cn } from "@/lib/utils";
+import { DataState } from "@/components/ui";
 
 import { NEWS_ARTICLES, NEWS_CATEGORIES } from "../news.constants";
 import { formatNewsDate, formatNewsTime } from "../news.utils";
@@ -62,7 +63,7 @@ export function NewsLanding() {
         <h1 className="text-foreground mt-4 text-3xl font-bold tracking-[-0.045em] sm:text-4xl">
           Ideas for better learning.
         </h1>
-        <p className="text-muted-foreground mt-4 text-base leading-7">
+        <p className="text-muted-foreground mt-1 text-base leading-7">
           Practical study guidance, product updates, learner stories, and
           thoughtful perspectives from the Preppal community.
         </p>
@@ -185,11 +186,11 @@ export function NewsLanding() {
             ))}
           </div>
         ) : (
-          <div className="surface-card mt-5 py-16 text-center">
-            <p className="text-foreground font-semibold">No stories found</p>
-            <p className="text-muted-foreground mt-2 text-sm">
-              Try another search or category.
-            </p>
+          <div className="mt-5">
+            <DataState
+              title="No stories found"
+              description="Try another search or category. New exam and study updates will appear here as they are published."
+            />
           </div>
         )}
 

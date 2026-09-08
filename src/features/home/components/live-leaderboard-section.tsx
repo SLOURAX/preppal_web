@@ -18,11 +18,11 @@ interface LeaderboardEntry {
 }
 
 const LEADERBOARD: readonly LeaderboardEntry[] = [
-  { rank: 1, name: "Alex M.", score: "15,240 P", streak: 14 },
-  { rank: 2, name: "Sarah K.", score: "14,800 P", streak: 9 },
-  { rank: 3, name: "David L.", score: "12,950 P", streak: 7 },
-  { rank: 4, name: "Emma R.", score: "11,100 P", streak: 5 },
-  { rank: 5, name: "Michael T.", score: "10,500 P", streak: 3 },
+  { rank: 1, name: "Alex M.", score: "15,240 XP", streak: 14 },
+  { rank: 2, name: "Sarah K.", score: "14,800 XP", streak: 9 },
+  { rank: 3, name: "David L.", score: "12,950 XP", streak: 7 },
+  { rank: 4, name: "Emma R.", score: "11,100 XP", streak: 5 },
+  { rank: 5, name: "Michael T.", score: "10,500 XP", streak: 3 },
 ] as const;
 
 interface RankStyle {

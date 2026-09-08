@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { INITIAL_FINANCE_BALANCES, XP_TO_COIN_RATE } from "@/constants/finance";
 
 export interface QuizAttempt {
   id: string;
@@ -13,9 +14,6 @@ export interface QuizAttempt {
   durationSeconds: number;
   answers: Record<number, string>;
 }
-
-/** Number of experience points required to mint one withdrawable coin. */
-export const XP_TO_COIN_RATE = 10;
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -51,9 +49,7 @@ export const useAuthStore = create<AuthState>()(
   persist<AuthState>(
     (set, get) => ({
       isAuthenticated: false,
-      preppalBalance: 200,
-      depositedFunds: 0,
-      experiencePoints: 1240,
+      ...INITIAL_FINANCE_BALANCES,
       userName: "Solomon Udumizi",
       userPlan: "Level 1",
       weeklyGoal: null,

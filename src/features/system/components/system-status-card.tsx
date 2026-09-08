@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui";
+import { Button, DataState } from "@/components/ui";
 
 import { useSystemStatus } from "../hooks/use-system-status";
 
@@ -20,20 +20,42 @@ export function SystemStatusCard({ audience }: { audience: string }) {
           className={`h-3 w-3 rounded-full ${connected ? "bg-success" : "bg-danger"}`}
         />
       </div>
-      <p className="text-muted-foreground mt-8 text-sm">
-        {query.isPending
-          ? "Checking the Preppal API…"
-          : status
+      {query.isPending ? (
+        <p className="text-muted-foreground mt-8 text-sm">
+          Checking the Preppal API…
+        </p>
+      ) : query.isError ? (
+        <div className="mt-6">
+          <DataState
+            tone="error"
+            title="Connection unavailable"
+            description="We could not reach the backend service. Check your connection and try again."
+            action={
+              <Button
+                disabled={query.isFetching}
+                onClick={() => query.refetch()}
+              >
+                {query.isFetching ? "Checking…" : "Try again"}
+              </Button>
+            }
+          />
+        </div>
+      ) : (
+        <p className="text-muted-foreground mt-8 text-sm">
+          {status
             ? `Reached ${status.service} (${status.database}).`
-            : "API is offline. Start the backend and MongoDB, then retry."}
-      </p>
-      <Button
-        className="mt-5 w-full"
-        disabled={query.isFetching}
-        onClick={() => query.refetch()}
-      >
-        {query.isFetching ? "Checking…" : "Check connection"}
-      </Button>
+            : "No status received yet."}
+        </p>
+      )}
+      {!query.isError && !query.isPending ? (
+        <Button
+          className="mt-5 w-full"
+          disabled={query.isFetching}
+          onClick={() => query.refetch()}
+        >
+          {query.isFetching ? "Checking…" : "Check connection"}
+        </Button>
+      ) : null}
     </aside>
   );
 }

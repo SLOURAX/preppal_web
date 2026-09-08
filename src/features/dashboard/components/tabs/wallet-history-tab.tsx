@@ -2,6 +2,7 @@
 
 import { ArrowDownLeft, ArrowLeft, ArrowUpRight, History } from "lucide-react";
 import Link from "next/link";
+import { DataState } from "@/components/ui";
 
 import { WALLET_TRANSACTIONS } from "@/features/wallet/constants";
 
@@ -26,40 +27,47 @@ export function WalletHistoryTab() {
         </p>
       </header>
       <section className="surface-card overflow-hidden p-5 sm:p-6">
-        <div className="divide-border divide-y">
-          {WALLET_TRANSACTIONS.map((transaction) => {
-            const isCredit = transaction.type === "credit";
-            const Icon = isCredit ? ArrowDownLeft : ArrowUpRight;
-            return (
-              <div
-                className="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0"
-                key={transaction.id}
-              >
-                <div className="flex min-w-0 items-center gap-3">
-                  <span
-                    className={`grid size-9 shrink-0 place-items-center rounded-xl ${isCredit ? "bg-emerald-500/10 text-emerald-600" : "bg-rose-500/10 text-rose-600"}`}
-                  >
-                    <Icon className="size-4" />
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-foreground truncate text-sm font-semibold">
-                      {transaction.label}
-                    </p>
-                    <p className="text-muted-foreground text-xs">
-                      {transaction.date}
-                    </p>
-                  </div>
-                </div>
-                <span
-                  className={`shrink-0 text-sm font-bold ${isCredit ? "text-emerald-600" : "text-rose-600"}`}
+        {WALLET_TRANSACTIONS.length ? (
+          <div className="divide-border divide-y">
+            {WALLET_TRANSACTIONS.map((transaction) => {
+              const isCredit = transaction.type === "credit";
+              const Icon = isCredit ? ArrowDownLeft : ArrowUpRight;
+              return (
+                <div
+                  className="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0"
+                  key={transaction.id}
                 >
-                  {isCredit ? "+" : "−"}
-                  {transaction.amount} P
-                </span>
-              </div>
-            );
-          })}
-        </div>
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span
+                      className={`grid size-9 shrink-0 place-items-center rounded-xl ${isCredit ? "bg-emerald-500/10 text-emerald-600" : "bg-rose-500/10 text-rose-600"}`}
+                    >
+                      <Icon className="size-4" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-foreground truncate text-sm font-semibold">
+                        {transaction.label}
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        {transaction.date}
+                      </p>
+                    </div>
+                  </div>
+                  <span
+                    className={`shrink-0 text-sm font-bold ${isCredit ? "text-emerald-600" : "text-rose-600"}`}
+                  >
+                    {isCredit ? "+" : "−"}
+                    {transaction.amount} P
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <DataState
+            title="No transactions yet"
+            description="Your XP conversions, coin redemptions, deposits, and withdrawals will appear here."
+          />
+        )}
       </section>
     </div>
   );

@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, ChevronRight, Users } from "lucide-react";
+import { ArrowLeft, Users } from "lucide-react";
 
 import { AppShell } from "@/components/layout";
+import { DataState } from "@/components/ui";
 import { REFERRALS } from "@/features/rewards/components/referral-rewards-card";
 
 export default function ReferralHistoryPage() {
@@ -34,32 +35,39 @@ export default function ReferralHistoryPage() {
             </p>
             <p className="text-muted-foreground text-xs">50 XP each</p>
           </div>
-          <div className="divide-border border-border/60 divide-y rounded-xl border px-3">
-            {REFERRALS.map((referral) => (
-              <div
-                className="flex items-center justify-between gap-3 py-3.5"
-                key={referral.name}
-              >
-                <div className="min-w-0">
-                  <p className="text-foreground text-[.8rem] font-semibold">
-                    {referral.name}
-                  </p>
-                  <p className="text-muted-foreground text-xs">
-                    {referral.status}
-                  </p>
-                </div>
-                <span
-                  className={
-                    referral.reward === "+50 XP"
-                      ? "text-success text-xs font-bold"
-                      : "text-muted-foreground text-xs font-medium"
-                  }
+          {REFERRALS.length ? (
+            <div className="divide-border border-border/60 divide-y rounded-xl border px-3">
+              {REFERRALS.map((referral) => (
+                <div
+                  className="flex items-center justify-between gap-3 py-3.5"
+                  key={referral.name}
                 >
-                  {referral.reward}
-                </span>
-              </div>
-            ))}
-          </div>
+                  <div className="min-w-0">
+                    <p className="text-foreground text-[.8rem] font-semibold">
+                      {referral.name}
+                    </p>
+                    <p className="text-muted-foreground text-xs">
+                      {referral.status}
+                    </p>
+                  </div>
+                  <span
+                    className={
+                      referral.reward === "+50 XP"
+                        ? "text-success text-xs font-bold"
+                        : "text-muted-foreground text-xs font-medium"
+                    }
+                  >
+                    {referral.reward}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <DataState
+              title="No referrals yet"
+              description="Share your invite link to bring a friend to Preppal. Your referral activity will appear here once someone joins."
+            />
+          )}
         </section>
       </main>
     </AppShell>

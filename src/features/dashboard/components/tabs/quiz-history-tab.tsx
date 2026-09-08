@@ -4,6 +4,7 @@ import { ArrowLeft, BookOpen, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 import { useAuthStore } from "@/store";
+import { DataState } from "@/components/ui";
 
 const formatLabel = (value: string): string =>
   value.replace(/\b\w/g, (character) => character.toUpperCase());
@@ -42,20 +43,18 @@ export function QuizHistoryTab() {
       </header>
       <section className="surface-card overflow-hidden p-5 sm:p-6">
         {quizAttempts.length === 0 ? (
-          <div className="text-center">
-            <p className="text-foreground text-sm font-semibold">
-              No quizzes yet
-            </p>
-            <p className="text-muted-foreground mt-1 text-xs">
-              Complete a practice session and it will appear here.
-            </p>
-            <Link
-              className="bg-primary text-primary-foreground mt-4 inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold"
-              href="/quiz"
-            >
-              Start a quiz <ChevronRight className="size-4" />
-            </Link>
-          </div>
+          <DataState
+            title="No quizzes yet"
+            description="Complete a practice session and your score, exam, subject, and date will appear here."
+            action={
+              <Link
+                className="bg-primary text-primary-foreground inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold"
+                href="/quiz"
+              >
+                Start a quiz <ChevronRight className="size-4" />
+              </Link>
+            }
+          />
         ) : (
           <div className="divide-border divide-y">
             {quizAttempts.map((attempt) => (

@@ -15,11 +15,12 @@ import {
   PiggyBank,
   Vault,
 } from "lucide-react";
-import { ConfirmationModal } from "@/components/ui";
+import { ConfirmationModal, DataState } from "@/components/ui";
 import { SaxSecuritySafeBulk } from "@meysam213/iconsax-react";
 
 import { WALLET_TRANSACTIONS } from "../constants";
-import { XP_TO_COIN_RATE, useAuthStore } from "@/store";
+import { XP_TO_COIN_RATE } from "@/constants/finance";
+import { useAuthStore } from "@/store";
 
 interface WalletOverviewProps {
   readonly balance: number;
@@ -68,6 +69,19 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
     () => Math.floor(requestedXp / XP_TO_COIN_RATE),
     [requestedXp],
   );
+  const transactionTotals = useMemo(
+    () =>
+      WALLET_TRANSACTIONS.reduce(
+        (totals, transaction) => {
+          if (transaction.type === "credit")
+            totals.earned += transaction.amount;
+          else totals.redeemed += transaction.amount;
+          return totals;
+        },
+        { earned: 0, redeemed: 0 },
+      ),
+    [],
+  );
   const actionCopy =
     pendingAction === "convert"
       ? {
@@ -92,7 +106,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
   return (
     <div className="space-y-5">
       <div className="grid gap-4 lg:grid-cols-[1.25fr_0.75fr]">
-        <section className="relative isolate overflow-hidden rounded-3xl bg-[#21194d] p-6 text-white shadow-[0_20px_50px_rgb(52_31_140/0.2)] sm:p-8">
+        <section className="relative isolate flex h-full flex-col justify-center overflow-hidden rounded-3xl bg-[#21194d] p-5 text-white shadow-[0_20px_50px_rgb(52_31_140/0.2)] sm:p-6">
           <div
             className="pointer-events-none absolute inset-0 -z-10 opacity-20"
             style={{
@@ -102,58 +116,64 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             }}
           />
           <div className="pointer-events-none absolute -right-16 -bottom-20 -z-10 size-64 rounded-full bg-violet-400/25 blur-3xl" />
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-sm font-medium text-violet-200">
-                Withdrawable Preppal Coins
-              </p>
-              <p className="mt-2 text-4xl font-black tracking-tight sm:text-5xl">
-                {balance.toLocaleString()}{" "}
-                <span className="text-xl text-violet-200">coins</span>
-              </p>
+          <div className="relative z-10 mx-auto flex w-full max-w-2xl flex-col justify-center gap-4">
+              <span className="grid size-16 place-items-center rounded-2xl bg-white/10">
+                <Vault className="size-10 text-violet-200" />
+              </span>
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm font-medium text-violet-200">
+                  Withdrawable Preppal Coins
+                </p>
+                <p className="mt-1 text-3xl font-black tracking-tight sm:text-4xl">
+                  {balance.toLocaleString()}{" "}
+                  <span className="text-base text-violet-200 sm:text-lg">
+                    coins
+                  </span>
+                </p>
+              </div>
             </div>
-            <span className="grid size-12 place-items-center rounded-2xl bg-white/10">
-              <Vault className="size-6 text-violet-200" />
-            </span>
-          </div>
-          <div className="mt-7 flex flex-wrap gap-2.5">
-            <button
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-2.5 text-[.8rem] font-semibold text-[#21194d] transition-transform hover:-translate-y-0.5"
-              type="button"
-              onClick={() => setPendingAction("deposit")}
-            >
-              <Plus className="size-4" />
-              Deposit funds
-            </button>
-            <button
-              className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-6 py-2.5 text-[.8rem] font-semibold text-white ring-1 ring-white/15 transition-colors ring-inset hover:bg-white/15"
-              type="button"
-              onClick={() =>
-                isBankLinked
-                  ? setPendingAction("withdraw")
-                  : setShowBankModal(true)
-              }
-            >
-              <Send className="size-4" />
-              Withdraw funds
-            </button>
-          </div>
-          <div className="mt-5 grid grid-cols-3 gap-2 text-xs">
-            <div className="rounded-xl bg-white/10 p-3">
-              <p className="text-violet-200">Preppal coins</p>
-              <p className="mt-1 font-bold">{balance.toLocaleString()} P</p>
+            <div className="flex flex-wrap justify-start gap-2.5">
+              <button
+                className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-2.5 text-[.8rem] font-semibold text-[#21194d] transition-transform hover:-translate-y-0.5"
+                type="button"
+                onClick={() => setPendingAction("deposit")}
+              >
+                <Plus className="size-4" />
+                Deposit funds
+              </button>
+              <button
+                className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-6 py-2.5 text-[.8rem] font-semibold text-white ring-1 ring-white/15 transition-colors ring-inset hover:bg-white/15"
+                type="button"
+                onClick={() =>
+                  isBankLinked
+                    ? setPendingAction("withdraw")
+                    : setShowBankModal(true)
+                }
+              >
+                <Send className="size-4" />
+                Withdraw funds
+              </button>
             </div>
-            <div className="rounded-xl bg-white/10 p-3">
-              <p className="text-violet-200">Experience points</p>
-              <p className="mt-1 font-bold">
-                {experiencePoints.toLocaleString()} XP
-              </p>
-            </div>
-            <div className="rounded-xl bg-white/10 p-3">
-              <p className="text-violet-200">Deposited funds</p>
-              <p className="mt-1 font-bold">
-                {depositedFunds.toLocaleString()} NGN
-              </p>
+            <div className="grid grid-cols-3 gap-2 text-xs">
+              <div className="rounded-xl bg-white/10 p-3">
+                <p className="text-violet-200">Preppal coins</p>
+                <p className="mt-1 font-bold">
+                  {balance.toLocaleString()} coins
+                </p>
+              </div>
+              <div className="rounded-xl bg-white/10 p-3">
+                <p className="text-violet-200">Experience points</p>
+                <p className="mt-1 font-bold">
+                  {experiencePoints.toLocaleString()} XP
+                </p>
+              </div>
+              <div className="rounded-xl bg-white/10 p-3">
+                <p className="text-violet-200">Deposited funds</p>
+                <p className="mt-1 font-bold">
+                  {depositedFunds.toLocaleString()} NGN
+                </p>
+              </div>
             </div>
           </div>
           {/* <div className="mt-7 flex items-center justify-between border-t border-white/10 pt-4 text-xs">
@@ -397,7 +417,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
           <div>
             <p className="text-muted-foreground text-xs">This month</p>
             <p className="text-foreground text-sm font-bold">
-              +1,240 coins earned
+              +{transactionTotals.earned.toLocaleString()} coins earned
             </p>
           </div>
         </div>
@@ -405,7 +425,9 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
           <ArrowUpRight className="size-5 text-rose-500" />
           <div>
             <p className="text-muted-foreground text-xs">Redeemed</p>
-            <p className="text-foreground text-sm font-bold">250 P</p>
+            <p className="text-foreground text-sm font-bold">
+              {transactionTotals.redeemed.toLocaleString()} coins
+            </p>
           </div>
         </div>
         <div className="surface-card flex items-center gap-3 rounded-2xl p-4 sm:p-5">
@@ -439,40 +461,47 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             View all <ChevronRight className="size-3.5" />
           </Link>
         </div>
-        <div className="divide-border divide-y">
-          {WALLET_TRANSACTIONS.map((transaction) => {
-            const isCredit = transaction.type === "credit";
-            const Icon = isCredit ? ArrowDownLeft : ArrowUpRight;
-            return (
-              <div
-                className="flex items-center justify-between gap-4 py-3.5"
-                key={transaction.id}
-              >
-                <div className="flex min-w-0 items-center gap-3">
-                  <span
-                    className={`grid size-9 shrink-0 place-items-center rounded-xl ${isCredit ? "bg-emerald-500/10 text-emerald-600" : "bg-rose-500/10 text-rose-600"}`}
-                  >
-                    <Icon className="size-4" />
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-foreground truncate text-[.8rem] font-semibold">
-                      {transaction.label}
-                    </p>
-                    <p className="text-muted-foreground text-xs">
-                      {transaction.date}
-                    </p>
-                  </div>
-                </div>
-                <span
-                  className={`shrink-0 text-sm font-bold ${isCredit ? "text-emerald-600" : "text-rose-600"}`}
+        {WALLET_TRANSACTIONS.length ? (
+          <div className="divide-border divide-y">
+            {WALLET_TRANSACTIONS.map((transaction) => {
+              const isCredit = transaction.type === "credit";
+              const Icon = isCredit ? ArrowDownLeft : ArrowUpRight;
+              return (
+                <div
+                  className="flex items-center justify-between gap-4 py-3.5"
+                  key={transaction.id}
                 >
-                  {isCredit ? "+" : "−"}
-                  {transaction.amount} P
-                </span>
-              </div>
-            );
-          })}
-        </div>
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span
+                      className={`grid size-9 shrink-0 place-items-center rounded-xl ${isCredit ? "bg-emerald-500/10 text-emerald-600" : "bg-rose-500/10 text-rose-600"}`}
+                    >
+                      <Icon className="size-4" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-foreground truncate text-[.8rem] font-semibold">
+                        {transaction.label}
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        {transaction.date}
+                      </p>
+                    </div>
+                  </div>
+                  <span
+                    className={`shrink-0 text-sm font-bold ${isCredit ? "text-emerald-600" : "text-rose-600"}`}
+                  >
+                    {isCredit ? "+" : "−"}
+                    {transaction.amount} P
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <DataState
+            title="No wallet activity yet"
+            description="Your XP conversions and coin activity will appear here after you start earning."
+          />
+        )}
       </section>
     </div>
   );

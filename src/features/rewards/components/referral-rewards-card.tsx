@@ -12,6 +12,7 @@ import { useState, type ReactNode } from "react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui";
+import { DataState } from "@/components/ui";
 
 import { REFERRAL_CODE, REFERRAL_LINK } from "../rewards.constants";
 
@@ -104,32 +105,39 @@ export function ReferralRewardsCard() {
             </Link>
           </div>
         </div>
-        <div className="divide-border border-border/60 divide-y rounded-xl border px-3">
-          {REFERRALS.slice(0, 3).map((referral) => (
-            <div
-              className="flex items-center justify-between gap-3 py-2.5"
-              key={referral.name}
-            >
-              <div className="min-w-0">
-                <p className="text-foreground truncate text-xs font-semibold">
-                  {referral.name}
-                </p>
-                <p className="text-muted-foreground truncate text-[10px]">
-                  {referral.status}
-                </p>
-              </div>
-              <span
-                className={
-                  referral.reward === "+50 XP"
-                    ? "text-success text-[10px] font-bold"
-                    : "text-muted-foreground text-[10px] font-medium"
-                }
+        {REFERRALS.length ? (
+          <div className="divide-border border-border/60 divide-y rounded-xl border px-3">
+            {REFERRALS.slice(0, 3).map((referral) => (
+              <div
+                className="flex items-center justify-between gap-3 py-2.5"
+                key={referral.name}
               >
-                {referral.reward}
-              </span>
-            </div>
-          ))}
-        </div>
+                <div className="min-w-0">
+                  <p className="text-foreground truncate text-xs font-semibold">
+                    {referral.name}
+                  </p>
+                  <p className="text-muted-foreground truncate text-[10px]">
+                    {referral.status}
+                  </p>
+                </div>
+                <span
+                  className={
+                    referral.reward === "+50 XP"
+                      ? "text-success text-[10px] font-bold"
+                      : "text-muted-foreground text-[10px] font-medium"
+                  }
+                >
+                  {referral.reward}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <DataState
+            title="No invites yet"
+            description="Your invited friends and XP rewards will appear here."
+          />
+        )}
       </div>
 
       <div className="mt-4 space-y-2">

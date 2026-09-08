@@ -7,10 +7,7 @@ import {
   SaxCrown1Bulk,
   SaxFlag2Bulk,
 } from "@meysam213/iconsax-react";
-import { useState } from "react";
-
-import { Button } from "@/components/ui";
-import { useAuthStore } from "@/store";
+import Link from "next/link";
 
 const MOMENTUM_STATS = [
   {
@@ -34,22 +31,13 @@ const MOMENTUM_STATS = [
 ] as const;
 
 export function MomentumSection() {
-  const addExperience = useAuthStore((state) => state.addExperience);
-  const [hasCheckedIn, setHasCheckedIn] = useState<boolean>(false);
-
-  const claimCheckIn = (): void => {
-    if (hasCheckedIn) return;
-    addExperience(2);
-    setHasCheckedIn(true);
-  };
-
   return (
     <section>
       <div className="mx-auto max-w-2xl text-center">
         <h2 className="text-foreground mt-4 text-3xl font-bold tracking-[-0.035em]">
           Small wins. Consistent progress.
         </h2>
-        <p className="text-muted-foreground mt-3 text-sm leading-6">
+        <p className="text-muted-foreground text-sm leading-6">
           Check in, keep your streak alive, and turn consistent practice into
           XP, ranks, and rewards.
         </p>
@@ -61,7 +49,7 @@ export function MomentumSection() {
             <div>
               <p className="text-sm font-medium opacity-80">Today’s check-in</p>
               <h3 className="mt-2 text-2xl font-bold">
-                {hasCheckedIn ? "Reward claimed!" : "Keep your momentum going"}
+                Keep your momentum going
               </h3>
               <p className="mt-2 max-w-sm text-sm leading-6 opacity-80">
                 Come back each day to grow your streak and unlock better bonus
@@ -74,13 +62,12 @@ export function MomentumSection() {
             <div className="flex items-center gap-2 font-bold">
               <SaxAwardBulk className="size-5 text-amber-300" /> +2 XP today
             </div>
-            <Button
-              className="bg-surface text-foreground hover:bg-surface-subtle"
-              disabled={hasCheckedIn}
-              onClick={claimCheckIn}
+            <Link
+              href="/rewards"
+              className="bg-surface text-foreground hover:bg-surface-subtle inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold transition-colors"
             >
-              {hasCheckedIn ? "Checked in" : "Claim check-in"}
-            </Button>
+              View rewards
+            </Link>
           </div>
         </div>
 

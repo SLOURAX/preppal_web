@@ -114,6 +114,11 @@ export function ListSelect({
             </span>
           </div>
           <div className="flex max-h-60 flex-col gap-1 overflow-y-auto">
+            {options.length === 0 ? (
+              <div className="text-muted-foreground px-3 py-6 text-center text-xs">
+                No options available yet.
+              </div>
+            ) : null}
             {options.map((option) => {
               const isSelected = value === option.value;
               return (

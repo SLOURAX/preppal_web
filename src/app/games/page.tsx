@@ -308,8 +308,8 @@ export default function GamesPage() {
         <section className="mt-8">
           <div className="flex items-end justify-between">
             <div>
-              <p className="text-primary text-[10px] font-bold tracking-[0.18em] uppercase">
-                More ways to play
+              <p className="text-primary text-[11px] font-bold tracking-[0.18em] uppercase">
+                More games to play
               </p>
               <h2 className="text-foreground mt-1 text-xl font-bold">
                 Coming soon

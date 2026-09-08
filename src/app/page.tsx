@@ -13,6 +13,7 @@ import {
 } from "@meysam213/iconsax-react";
 import { AppShell } from "@/components/layout";
 import { AppDownloadButtons } from "@/components/ui/app-download-buttons";
+import { FINANCE_PREVIEW } from "@/constants/finance";
 import {
   AiQuizSection,
   MomentumSection,
@@ -55,7 +56,7 @@ const capabilities: readonly Capability[] = [
 const floatingStats = [
   {
     label: "Coins earned",
-    value: "12,450 P",
+    value: `${FINANCE_PREVIEW.coinsEarned.toLocaleString()} coins`,
     icon: <SaxCoinBulk className="h-3.5 w-3.5 text-amber-400" />,
   },
   {
@@ -269,7 +270,9 @@ export default function HomePage() {
                   />
                   <div className="bg-surface border-border relative z-20 -mt-8 flex items-center gap-1 rounded-full border px-3 py-1 shadow-sm sm:-mt-12">
                     <SaxAwardBulk className="h-3.5 w-3.5 text-amber-400" />
-                    <span className="text-xs font-bold">+50 XP earned!</span>
+                    <span className="text-xs font-bold">
+                      +{FINANCE_PREVIEW.activityXp} XP earned!
+                    </span>
                   </div>
                 </div>
               </div>

@@ -2,6 +2,7 @@
 
 import { BadgeCent, Crown, Medal } from "lucide-react";
 import { useState } from "react";
+import { DataState } from "@/components/ui";
 
 import { LEADERBOARD_ENTRIES } from "../constants";
 import {
@@ -58,14 +59,18 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
         selectedMonth={selectedMonth}
         selectedRange={selectedRange}
       />
-      <section className="surface-card from-primary/10 via-surface to-surface overflow-hidden bg-gradient-to-br px-4 pt-6 sm:px-7 sm:pt-7">
+      <section className="surface-card from-primary/10 via-surface to-surface overflow-hidden bg-gradient-to-br px-4 pt-5 sm:px-7 sm:pt-6">
         <div className="text-center">
           <h2 className="text-foreground text-xl font-bold">{championLabel}</h2>
-          <p className="text-muted-foreground mt-1 text-sm">
+          <p className="text-muted-foreground mt-1 text-xs sm:text-sm">
             Top performers earning XP through eligible activities
           </p>
         </div>
-        <div className="mx-auto mt-7 grid max-w-xl grid-cols-3 items-end gap-2 sm:gap-4">
+        <div className="relative mx-auto mt-5 grid max-w-xl grid-cols-3 items-end gap-1 sm:mt-4 sm:gap-3">
+          <div
+            aria-hidden="true"
+            className="border-border/70 pointer-events-none absolute right-0 bottom-0 left-0 border-b"
+          />
           {podium.map((entry) => {
             const isWinner = entry.rank === 1;
             const isSecond = entry.rank === 2;
@@ -95,15 +100,15 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
                     <MedalIcon className="size-4" />
                   </span>
                 </div>
-                <p className="text-foreground mt-3 w-full truncate text-center text-xs font-semibold sm:text-sm">
+                <p className="text-foreground mt-2 w-full truncate text-center text-xs font-semibold sm:text-sm">
                   {entry.name}
                 </p>
-                <p className="text-primary mt-1 flex items-center gap-1 text-xs font-bold">
+                <p className="text-primary mt-0.5 flex items-center gap-1 text-xs font-bold">
                   <BadgeCent className="size-3.5" />
-                  {entry.score.toLocaleString()} P
+                  {entry.score.toLocaleString()} XP
                 </p>
                 <div
-                  className={`mt-4 flex w-full items-start justify-center rounded-t-2xl pt-4 font-bold text-white/90 ${
+                  className={`relative z-10 mt-2 flex w-full items-start justify-center rounded-t-2xl border border-b-0 border-white/25 pt-3 font-bold text-white/90 shadow-inner ${
                     isWinner
                       ? "from-primary to-primary-strong h-28 bg-gradient-to-b sm:h-32"
                       : isSecond
@@ -146,14 +151,15 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
                 </span>
               </div>
               <span className="text-muted-foreground text-sm font-semibold">
-                {entry.score.toLocaleString()} P
+                {entry.score.toLocaleString()} XP
               </span>
             </div>
           ))}
           {visibleEntries.length === 0 ? (
-            <p className="text-muted-foreground py-8 text-center text-sm">
-              No players match “{searchQuery}”.
-            </p>
+            <DataState
+              title="No players found"
+              description={`No leaderboard entries match “${searchQuery}”. Try a different name or change the time range.`}
+            />
           ) : null}
         </div>
       </section>
