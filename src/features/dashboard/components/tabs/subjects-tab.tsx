@@ -1,5 +1,9 @@
+"use client";
+
 import { ArrowRight, BookOpen } from "lucide-react";
+import { useState } from "react";
 import Link from "next/link";
+import { ListSelect } from "@/components/ui/list-select";
 import { useAuthStore } from "@/store";
 
 const SUBJECTS = [
@@ -80,24 +84,50 @@ function ProgressBar({ value }: { value: number }) {
 
 export function SubjectsTab() {
   const attempts = useAuthStore((state) => state.quizAttempts);
+  const [selectedSubject, setSelectedSubject] = useState<string>(
+    SUBJECTS[0].name,
+  );
+  const selectedSubjectDetails =
+    SUBJECTS.find((subject) => subject.name === selectedSubject) ?? SUBJECTS[0];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-foreground text-xl font-bold">Subjects</h2>
-          <p className="text-muted-foreground mt-1 text-sm">
+          <h2 className="text-foreground text-lg font-bold">Subjects</h2>
+          <p className="text-muted-foreground mt-1 text-xs">
             Track your mastery across each subject area.
           </p>
         </div>
         <Link
           href="/quiz"
-          className="bg-primary text-primary-foreground hover:bg-primary/90 hidden items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors sm:flex"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 hidden items-center gap-2 rounded-full px-3.5 py-2 text-xs font-semibold transition-colors sm:flex"
         >
           <BookOpen className="size-4" /> Practice
         </Link>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="space-y-3 sm:hidden">
+        <ListSelect
+          onChange={setSelectedSubject}
+          options={SUBJECTS.map((subject) => ({
+            label: subject.name,
+            value: subject.name,
+          }))}
+          placeholder="Choose a subject"
+          showOptionDescriptions={false}
+          value={selectedSubject}
+        />
+        <Link
+          className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition-colors"
+          href={`/quiz?path=subject&choice=${encodeURIComponent(selectedSubjectDetails.name.toLowerCase().replace(/\s+/g, "-"))}`}
+        >
+          Practice {selectedSubjectDetails.name}{" "}
+          <ArrowRight className="size-4" />
+        </Link>
+      </div>
+
+      <div className="hidden gap-3 sm:grid sm:grid-cols-2 lg:grid-cols-3">
         {SUBJECTS.map((subject) => {
           const subjectAttempts = attempts.filter(
             (attempt) =>
@@ -122,25 +152,25 @@ export function SubjectsTab() {
                 >
                   {subject.icon}
                 </span>
-                <span className="text-muted-foreground text-xs font-medium">
+                <span className="text-muted-foreground text-[11px] font-medium">
                   {subjectAttempts.length || "No"}{" "}
                   {subjectAttempts.length === 1 ? "quiz" : "quizzes"}
                 </span>
               </div>
               <div>
-                <p className="text-foreground text-sm font-semibold">
+                <p className="text-foreground text-xs font-semibold sm:text-sm">
                   {subject.name}
                 </p>
                 <div className="mt-2 flex items-center justify-between gap-2">
                   <ProgressBar value={progress} />
-                  <span className="text-muted-foreground shrink-0 text-xs font-bold">
+                  <span className="text-muted-foreground shrink-0 text-[11px] font-bold">
                     {progress ? `${progress}%` : "Not started"}
                   </span>
                 </div>
               </div>
               <Link
                 href={`/quiz?path=subject&choice=${encodeURIComponent(subject.name.toLowerCase().replace(/\s+/g, "-"))}`}
-                className="text-primary group-hover:text-primary/80 flex items-center gap-1 text-xs font-semibold transition-colors"
+                className="text-primary group-hover:text-primary/80 flex items-center gap-1 text-[11px] font-semibold transition-colors"
               >
                 Practice <ArrowRight className="size-3" />
               </Link>

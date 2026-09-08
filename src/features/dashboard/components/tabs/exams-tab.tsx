@@ -1,5 +1,10 @@
+"use client";
+
 import { ArrowRight, BookOpenCheck, GraduationCap } from "lucide-react";
+import { useState } from "react";
 import Link from "next/link";
+
+import { ListSelect } from "@/components/ui/list-select";
 
 const EXAMS = [
   {
@@ -7,7 +12,6 @@ const EXAMS = [
     name: "JAMB UTME",
     description:
       "Joint Admissions and Matriculation Board. Nigeria's foremost university entrance exam.",
-    subjects: ["Mathematics", "English Language", "Physics", "Chemistry"],
     color: "from-primary/15 to-primary/5 border-primary/20",
     iconColor: "text-primary bg-primary/10",
     badge: "Most popular",
@@ -18,7 +22,6 @@ const EXAMS = [
     name: "WAEC SSCE",
     description:
       "West African Examinations Council. Covering all core secondary school subjects.",
-    subjects: ["Mathematics", "English", "Biology", "Government"],
     color: "from-violet-500/10 to-violet-500/5 border-violet-500/20",
     iconColor: "text-violet-600 bg-violet-500/10",
     badge: "6 subjects",
@@ -29,7 +32,6 @@ const EXAMS = [
     name: "NECO",
     description:
       "National Examinations Council. Widely accepted alternative to WAEC across Nigeria.",
-    subjects: ["Mathematics", "English", "Physics", "Economics"],
     color: "from-violet-500/10 to-violet-500/5 border-violet-500/20",
     iconColor: "text-violet-600 bg-violet-500/10",
     badge: "New content",
@@ -38,6 +40,10 @@ const EXAMS = [
 ] as const;
 
 export function ExamsTab() {
+  const [selectedExam, setSelectedExam] = useState<string>(EXAMS[0].value);
+  const selectedExamDetails =
+    EXAMS.find((exam) => exam.value === selectedExam) ?? EXAMS[0];
+
   return (
     <div className="space-y-6">
       <div>
@@ -49,7 +55,27 @@ export function ExamsTab() {
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="space-y-3 sm:hidden">
+        <ListSelect
+          onChange={setSelectedExam}
+          options={EXAMS.map((exam) => ({
+            value: exam.value,
+            label: exam.name,
+          }))}
+          placeholder="Choose an exam"
+          showOptionDescriptions={false}
+          value={selectedExam}
+        />
+        <Link
+          className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition-colors"
+          href={`/quiz?path=exam&choice=${selectedExamDetails.value}`}
+        >
+          Start {selectedExamDetails.name} practice{" "}
+          <ArrowRight className="size-4" />
+        </Link>
+      </div>
+
+      <div className="hidden gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-3">
         {EXAMS.map((exam) => (
           <div
             key={exam.name}
@@ -73,17 +99,6 @@ export function ExamsTab() {
               <p className="text-muted-foreground mt-1 text-xs leading-5">
                 {exam.description}
               </p>
-            </div>
-
-            <div className="flex flex-wrap gap-1.5">
-              {exam.subjects.map((s) => (
-                <span
-                  key={s}
-                  className="text-muted-foreground bg-surface-subtle rounded-full px-2.5 py-0.5 text-[10px] font-medium"
-                >
-                  {s}
-                </span>
-              ))}
             </div>
 
             <Link
