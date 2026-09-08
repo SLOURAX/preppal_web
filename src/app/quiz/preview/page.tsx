@@ -177,7 +177,7 @@ function QuizPreviewContent() {
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
           <button
             onClick={() => router.push("/quiz")}
-            className="flex items-center justify-center gap-2 rounded-xl border border-rose-500 px-6 py-2.5 text-sm font-medium text-rose-600 transition-colors hover:bg-rose-500/10"
+            className="flex items-center justify-center gap-2 rounded-xl border !border-rose-600 px-6 py-2.5 text-sm font-semibold text-rose-600 transition-colors"
           >
             Cancel
           </button>

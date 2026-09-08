@@ -37,13 +37,13 @@ export function QuestionCard({
     <div>
       <div className="mb-5 flex items-center justify-between gap-2 sm:gap-3">
         <div className="flex shrink-0 items-baseline gap-1.5 whitespace-nowrap">
-          <span className="text-muted-foreground text-[9px] font-medium tracking-widest uppercase sm:text-[.8rem]">
+          <span className="text-muted-foreground text-xs font-medium tracking-widest uppercase sm:text-[.8rem]">
             Question
           </span>
-          <span className="text-foreground text-[9px] font-bold sm:text-base">
+          <span className="text-foreground text-sm font-bold sm:text-base">
             {index + 1}
           </span>
-          <span className="text-muted-foreground text-[9px] sm:text-[.8rem]">
+          <span className="text-muted-foreground text-xs sm:text-[.8rem]">
             of {total}
           </span>
         </div>

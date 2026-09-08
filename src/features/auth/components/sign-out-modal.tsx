@@ -44,7 +44,7 @@ export function SignOutModal() {
             </Button>
             <button
               onClick={closeSignOutModal}
-              className="w-full rounded-xl border border-rose-500 py-2.5 text-sm font-semibold text-rose-600 transition-colors hover:bg-rose-500/10"
+              className="w-full rounded-xl border !border-rose-600 py-2.5 text-sm font-semibold text-rose-600 transition-colors"
             >
               Cancel
             </button>

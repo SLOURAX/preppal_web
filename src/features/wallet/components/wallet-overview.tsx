@@ -330,14 +330,14 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             ) : null}
             <div className="flex gap-2 pt-1">
               <button
-                className="flex-1 rounded-xl border border-rose-500 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-500/10"
+                className="flex-1 rounded-xl border !border-rose-600 px-3 py-2 text-xs font-semibold text-rose-600"
                 onClick={() => setShowBankModal(false)}
                 type="button"
               >
                 Cancel
               </button>
               <button
-                className="bg-primary text-primary-foreground flex-1 rounded-xl px-3 py-2 text-xs font-bold"
+                className="bg-primary text-primary-foreground flex-1 rounded-xl px-3 py-2 text-xs font-semibold"
                 disabled={!accountName || isVerifyingAccount}
                 type="submit"
               >

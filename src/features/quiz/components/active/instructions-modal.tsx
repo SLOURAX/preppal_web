@@ -1,6 +1,6 @@
 "use client";
 
-import { X, BookOpen, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, BookOpen } from "lucide-react";
 
 const INSTRUCTIONS = [
   "Select one answer per question by clicking on it.",
@@ -11,18 +11,10 @@ const INSTRUCTIONS = [
 ] as const;
 
 interface InstructionsModalProps {
-  readonly currentIndex: number;
-  readonly total: number;
   readonly onClose: () => void;
-  readonly onNavigate: (idx: number) => void;
 }
 
-export function InstructionsModal({
-  currentIndex,
-  total,
-  onClose,
-  onNavigate,
-}: InstructionsModalProps) {
+export function InstructionsModal({ onClose }: InstructionsModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
@@ -39,7 +31,7 @@ export function InstructionsModal({
           </div>
           <button
             onClick={onClose}
-            className="text-muted-foreground hover:text-foreground hover:bg-surface-subtle rounded-full p-1.5 transition-colors"
+            className="rounded-full bg-rose-500/10 p-1.5 text-rose-600 transition-colors hover:bg-rose-500/15"
           >
             <X className="size-4" />
           </button>
@@ -59,7 +51,6 @@ export function InstructionsModal({
             ))}
           </ul>
         </div>
-
       </div>
     </div>
   );

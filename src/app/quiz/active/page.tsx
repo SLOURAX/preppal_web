@@ -427,18 +427,11 @@ function ActiveQuizContent() {
       </div>
 
       {showInstructions && (
-        <InstructionsModal
-          currentIndex={currentIndex}
-          total={questions.length}
-          onNavigate={goTo}
-          onClose={() => setShowInstructions(false)}
-        />
+        <InstructionsModal onClose={() => setShowInstructions(false)} />
       )}
 
       {showSubmitModal && !isUntimed && (
         <SubmitModal
-          answeredCount={answeredCount}
-          flaggedCount={flaggedCount}
           unansweredCount={unansweredCount}
           onClose={() => setShowSubmitModal(false)}
           onSubmit={submitQuiz}
@@ -454,7 +447,7 @@ function ActiveQuizContent() {
               : "Your quiz progress may be lost if you leave before submitting."
           }
           confirmLabel={isUntimed ? "View results" : "Leave quiz"}
-          destructive
+          destructive={!isUntimed}
           onCancel={() => setShowExitModal(false)}
           onConfirm={confirmExit}
         />

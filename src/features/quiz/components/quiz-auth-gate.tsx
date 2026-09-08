@@ -40,7 +40,7 @@ export function QuizAuthGate({
       >
         <button
           aria-label="Close sign-in prompt"
-          className="bg-surface-subtle text-muted-foreground hover:text-foreground absolute top-4 right-4 grid size-9 place-items-center rounded-full transition-colors"
+          className="absolute top-4 right-4 grid size-9 place-items-center rounded-full bg-rose-500/10 text-rose-600 transition-colors hover:bg-rose-500/15"
           onClick={onClose}
           type="button"
         >
@@ -76,14 +76,14 @@ export function QuizAuthGate({
             <LogIn className="size-4" /> Log in
           </Link>
           <Link
-            className="bg-surface-subtle text-foreground hover:bg-border inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold transition-colors"
+            className="bg-primary text-primary-foreground hover:bg-primary-strong inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold transition-colors"
             href={`/register?returnTo=${encodeURIComponent(returnTo)}`}
           >
             <UserPlus className="size-4" /> Create account
           </Link>
         </div>
         <button
-          className="text-muted-foreground hover:text-foreground mx-auto mt-4 block text-xs font-medium transition-colors"
+          className="mx-auto mt-4 block rounded-xl border !border-rose-600 px-4 py-2 text-xs font-semibold text-rose-600 transition-colors"
           onClick={onClose}
           type="button"
         >

@@ -78,7 +78,10 @@ export function QuizSidebar({
 
         <div className="mb-4 grid grid-cols-3 gap-2 text-center">
           {stats.map(({ label, value, color, icon: Icon }) => (
-            <div key={label} className="bg-surface-subtle rounded-md p-x2.5 py-3">
+            <div
+              key={label}
+              className="bg-surface-subtle p-x2.5 rounded-md py-3"
+            >
               <Icon className={cn("mx-auto mb-1 size-8", color)} />
               <p className="text-muted-foreground mt-3 text-[11px] leading-tight">
                 {label}
@@ -113,7 +116,7 @@ export function QuizSidebar({
             ) : (
               <Send className="size-4" />
             )}
-            {isUntimed ? "Exit playground" : "Submit Exam"}
+            {isUntimed ? "Finish playground" : "Submit Exam"}
           </Button>
         </div>
       </div>

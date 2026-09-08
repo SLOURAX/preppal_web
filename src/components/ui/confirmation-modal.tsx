@@ -62,14 +62,14 @@ export function ConfirmationModal({
         </div>
         <div className="mt-5 flex gap-2">
           <button
-            className="flex-1 rounded-xl border border-rose-500 px-3 py-2.5 text-sm font-semibold text-rose-600 transition-colors hover:bg-rose-500/10"
+            className="flex-1 rounded-xl border !border-rose-600 px-3 py-2.5 text-sm font-semibold text-rose-600 transition-colors"
             onClick={onCancel}
             type="button"
           >
             Cancel
           </button>
           <button
-            className={`flex-1 rounded-xl px-3 py-2.5 text-sm font-bold transition-colors ${destructive ? "bg-rose-600 text-white hover:bg-rose-700" : "bg-primary text-primary-foreground hover:bg-primary-strong"}`}
+            className={`flex-1 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors ${destructive ? "bg-rose-600 text-white hover:bg-rose-700" : "bg-primary text-primary-foreground hover:bg-primary-strong"}`}
             onClick={onConfirm}
             type="button"
           >

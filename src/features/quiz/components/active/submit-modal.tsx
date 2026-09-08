@@ -4,26 +4,16 @@ import { AlertTriangle, ArrowLeft, Send } from "lucide-react";
 import { Button } from "@/components/ui";
 
 interface SubmitModalProps {
-  readonly answeredCount: number;
-  readonly flaggedCount: number;
   readonly unansweredCount: number;
   readonly onClose: () => void;
   readonly onSubmit: () => void;
 }
 
 export function SubmitModal({
-  answeredCount,
-  flaggedCount,
   unansweredCount,
   onClose,
   onSubmit,
 }: SubmitModalProps) {
-  const stats = [
-    { label: "Answered", value: answeredCount, color: "text-primary" },
-    { label: "Flagged", value: flaggedCount, color: "text-amber-500" },
-    { label: "Unanswered", value: unansweredCount, color: "text-red-500" },
-  ];
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
@@ -66,10 +56,10 @@ export function SubmitModal({
             </div>
           )}
 
-          <div className="flex gap-2 mt-3">
+          <div className="mt-3 flex gap-2">
             <button
               onClick={onClose}
-              className="border-border text-muted-foreground hover:text-foreground flex w-full items-center justify-center gap-2 rounded-full border py-2.5 text-[.8rem] font-medium transition-colors"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border !border-rose-600 px-3 py-2.5 text-[.8rem] font-semibold text-rose-600 transition-colors"
             >
               <ArrowLeft className="size-4" />
               Continue exam

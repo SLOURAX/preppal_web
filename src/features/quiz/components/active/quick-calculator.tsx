@@ -92,7 +92,7 @@ export function QuickCalculator({ onClose }: QuickCalculatorProps) {
         </div>
         <button
           aria-label="Close calculator"
-          className="text-muted-foreground hover:bg-surface-subtle rounded-lg p-1.5"
+          className="rounded-lg bg-rose-500/10 p-1.5 text-rose-600 transition-colors hover:bg-rose-500/15"
           onClick={onClose}
           type="button"
         >
