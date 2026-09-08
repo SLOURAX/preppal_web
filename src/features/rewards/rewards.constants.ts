@@ -19,7 +19,7 @@ export const REDEEMABLE_REWARDS: readonly RedeemableReward[] = [
     id: "gift-card",
     title: "Digital gift cards",
     description:
-      "Exchange your points for selected shopping and app-store gift cards.",
+      "Redeem your withdrawable Preppal Coins for selected shopping and app-store gift cards.",
     cost: 7500,
     type: "gift",
   },

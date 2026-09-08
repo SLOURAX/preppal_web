@@ -41,7 +41,7 @@ const capabilities: readonly Capability[] = [
     icon: <SaxCoinBulk className="h-6 w-6" />,
     title: "Earn coins",
     detail:
-      "Every correct answer earns Preppal coins. Reward yourself for studying.",
+      "Every correct answer earns XP. Convert your XP into withdrawable Preppal Coins.",
     color: "text-[#f28e2b] bg-[#ebd6c8] dark:bg-[#f28e2b]/20",
   },
   {
@@ -269,7 +269,7 @@ export default function HomePage() {
                   />
                   <div className="bg-surface border-border relative z-20 -mt-8 flex items-center gap-1 rounded-full border px-3 py-1 shadow-sm sm:-mt-12">
                     <SaxAwardBulk className="h-3.5 w-3.5 text-amber-400" />
-                    <span className="text-xs font-bold">+50 coins earned!</span>
+                    <span className="text-xs font-bold">+50 XP earned!</span>
                   </div>
                 </div>
               </div>

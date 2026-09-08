@@ -111,7 +111,7 @@ export default function QuizResultsPage() {
     ],
     [
       `+${resultPoints}`,
-      "Points earned",
+      "XP earned",
       SaxAwardBulk,
       "text-amber-600 bg-amber-500/10",
     ],

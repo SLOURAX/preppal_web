@@ -19,17 +19,17 @@ const FAQS: readonly FaqItem[] = [
   {
     question: "Are the prizes and rewards real?",
     answer:
-      "Yes — every coin you earn is redeemable for real-world rewards including Amazon and Google Play gift cards, Apple Store credit, and Preppal Premium subscriptions. Rewards are credited within 24 hours of redemption.",
+      "Yes — you earn XP from eligible learning activities, then convert XP into withdrawable Preppal Coins. Coins can be used for real-world rewards including gift cards and Preppal Premium subscriptions. Rewards are credited within 24 hours of redemption.",
   },
   {
     question: "Is Preppal free to use?",
     answer:
-      "Our core features — daily quizzes, leaderboards, streaks, and coin earning — are completely free. Preppal Premium unlocks unlimited mock exams, advanced AI analytics, and exclusive prize tiers.",
+      "Our core features — daily quizzes, leaderboards, streaks, XP earning, and XP-to-coin conversion — are completely free. Preppal Premium unlocks unlimited mock exams, advanced AI analytics, and exclusive reward tiers.",
   },
   {
     question: "How do daily streaks work?",
     answer:
-      "Log in and complete at least one quiz per day to keep your streak alive. Streaks give you coin multipliers: a 7-day streak earns 1.5×, a 14-day streak earns 2×, and a 30-day streak earns 3× coins on every correct answer.",
+      "Log in and complete at least one quiz per day to keep your streak alive. Streaks can provide XP bonuses on eligible activities, helping you reach your next coin conversion sooner.",
   },
   {
     question: "Which exams and subjects does Preppal cover?",

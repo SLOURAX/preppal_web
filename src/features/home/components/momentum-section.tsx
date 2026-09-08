@@ -34,13 +34,12 @@ const MOMENTUM_STATS = [
 ] as const;
 
 export function MomentumSection() {
-  const balance = useAuthStore((state) => state.preppalBalance);
-  const setBalance = useAuthStore((state) => state.setBalance);
+  const addExperience = useAuthStore((state) => state.addExperience);
   const [hasCheckedIn, setHasCheckedIn] = useState<boolean>(false);
 
   const claimCheckIn = (): void => {
     if (hasCheckedIn) return;
-    setBalance(balance + 10);
+    addExperience(2);
     setHasCheckedIn(true);
   };
 
@@ -52,7 +51,7 @@ export function MomentumSection() {
         </h2>
         <p className="text-muted-foreground mt-3 text-sm leading-6">
           Check in, keep your streak alive, and turn consistent practice into
-          points, ranks, and rewards.
+          XP, ranks, and rewards.
         </p>
       </div>
 
@@ -73,7 +72,7 @@ export function MomentumSection() {
           </div>
           <div className="mt-7 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 font-bold">
-              <SaxAwardBulk className="size-5 text-amber-300" /> +10 P today
+              <SaxAwardBulk className="size-5 text-amber-300" /> +2 XP today
             </div>
             <Button
               className="bg-surface text-foreground hover:bg-surface-subtle"

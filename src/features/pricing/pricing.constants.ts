@@ -44,7 +44,7 @@ export const PRICING_PLANS: readonly PricingPlan[] = [
         included: true,
       },
       { label: "Basic progress tracking", included: true },
-      { label: "Standard points and XP", included: true },
+      { label: "Standard XP earning", included: true },
       { label: "Ad-free learning", included: false },
       { label: "Advanced analytics", included: false },
     ],
@@ -70,7 +70,7 @@ export const PRICING_PLANS: readonly PricingPlan[] = [
       },
       { label: "Completely ad-free", included: true },
       { label: "Advanced learning analytics", included: true },
-      { label: "2× points on eligible activities", included: true },
+      { label: "2× XP on eligible activities", included: true },
       {
         label: "Faster XP accumulation",
         detail: "2× eligible quiz XP",
@@ -99,7 +99,7 @@ export const PRICING_PLANS: readonly PricingPlan[] = [
       },
       { label: "Completely ad-free", included: true },
       { label: "Advanced learning analytics", included: true },
-      { label: "2× points on eligible activities", included: true },
+      { label: "2× XP on eligible activities", included: true },
       {
         label: "Faster XP accumulation",
         detail: "2× eligible quiz XP",
@@ -117,6 +117,6 @@ export const PRICING_ASSURANCES = [
 
 export const PRICING_CAVEATS = [
   "Premium AI support is subject to reasonable fair-use limits and service availability.",
-  "The 2× points and XP benefits apply to eligible completed quizzes and exclude referrals, promotions, refunds, and manual adjustments.",
+  "The 2× XP benefit applies to eligible completed quizzes and excludes referrals, promotions, refunds, and manual adjustments.",
   "Monthly and annual plans renew automatically until cancelled. Annual pricing is charged upfront; taxes or payment-provider fees may apply.",
 ] as const;

@@ -19,7 +19,7 @@ import { ConfirmationModal } from "@/components/ui";
 import { SaxSecuritySafeBulk } from "@meysam213/iconsax-react";
 
 import { WALLET_TRANSACTIONS } from "../constants";
-import { useAuthStore } from "@/store";
+import { XP_TO_COIN_RATE, useAuthStore } from "@/store";
 
 interface WalletOverviewProps {
   readonly balance: number;
@@ -45,10 +45,11 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
   const [bankDetails, setBankDetails] = useState({ bank: "", account: "" });
   const [accountName, setAccountName] = useState("");
   const [isVerifyingAccount, setIsVerifyingAccount] = useState(false);
-  const setBalance = useAuthStore((state) => state.setBalance);
   const depositedFunds = useAuthStore((state) => state.depositedFunds);
   const experiencePoints = useAuthStore((state) => state.experiencePoints);
-  const addExperience = useAuthStore((state) => state.addExperience);
+  const convertExperienceToCoins = useAuthStore(
+    (state) => state.convertExperienceToCoins,
+  );
   useEffect(() => {
     if (!bankDetails.bank || bankDetails.account.length !== 10) return;
     const verification = window.setTimeout(() => {
@@ -57,12 +58,21 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
     }, 900);
     return () => window.clearTimeout(verification);
   }, [bankDetails.account, bankDetails.bank]);
-  const convertedCoins = useMemo(() => Math.floor(Number(xp || 0) / 10), [xp]);
+  const requestedXp = useMemo(() => {
+    const parsed = Number(xp);
+    return Number.isFinite(parsed)
+      ? Math.max(0, Math.floor(parsed / XP_TO_COIN_RATE) * XP_TO_COIN_RATE)
+      : 0;
+  }, [xp]);
+  const convertedCoins = useMemo(
+    () => Math.floor(requestedXp / XP_TO_COIN_RATE),
+    [requestedXp],
+  );
   const actionCopy =
     pendingAction === "convert"
       ? {
           title: "Convert XP to Coins?",
-          description: `This will convert ${Number(xp || 0).toLocaleString()} XP into ${convertedCoins.toLocaleString()} Preppal Coins.`,
+          description: `This will convert ${requestedXp.toLocaleString()} XP into ${convertedCoins.toLocaleString()} Preppal Coins. XP is your learning progress; coins are the withdrawable value.`,
           confirmLabel: "Convert",
         }
       : pendingAction === "withdraw"
@@ -95,11 +105,11 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-sm font-medium text-violet-200">
-                Available balance
+                Withdrawable Preppal Coins
               </p>
               <p className="mt-2 text-4xl font-black tracking-tight sm:text-5xl">
                 {balance.toLocaleString()}{" "}
-                <span className="text-xl text-violet-200">P</span>
+                <span className="text-xl text-violet-200">coins</span>
               </p>
             </div>
             <span className="grid size-12 place-items-center rounded-2xl bg-white/10">
@@ -179,7 +189,8 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
               </span>
             </div>
             <p className="text-muted-foreground mt-3 text-xs leading-5">
-              Exchange your learning XP at a simple 10 XP = 1 P rate.
+              Convert your learning XP into withdrawable coins at a simple 10 XP
+              = 1 coin rate.
             </p>
             <label
               className="text-muted-foreground mt-5 block text-[11px] font-semibold"
@@ -194,7 +205,8 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                   className="text-foreground w-full bg-transparent py-2.5 text-sm font-bold outline-none"
                   id="xp-amount"
                   inputMode="numeric"
-                  min="0"
+                  max={experiencePoints}
+                  min={XP_TO_COIN_RATE}
                   onChange={(event) => setXp(event.target.value)}
                   type="number"
                   value={xp}
@@ -207,11 +219,18 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             <div className="mt-4 flex items-center justify-between">
               <span className="text-muted-foreground text-xs">You receive</span>
               <span className="text-foreground text-lg font-black">
-                {convertedCoins.toLocaleString()} P
+                {convertedCoins.toLocaleString()} coins
               </span>
             </div>
+            <p className="text-muted-foreground mt-2 text-[10px] leading-4">
+              Only complete 10 XP blocks convert. Any remainder stays in your XP
+              balance.
+            </p>
             <button
-              className="bg-primary text-primary-foreground hover:bg-primary/90 mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-bold transition-colors"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-45"
+              disabled={
+                requestedXp < XP_TO_COIN_RATE || requestedXp > experiencePoints
+              }
               type="button"
               onClick={() => setPendingAction("convert")}
             >
@@ -227,8 +246,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             onCancel={() => setPendingAction(null)}
             onConfirm={() => {
               if (pendingAction === "convert") {
-                setBalance(balance + convertedCoins);
-                addExperience(-Number(xp || 0));
+                convertExperienceToCoins(requestedXp);
               }
               setPendingAction(null);
             }}
@@ -378,7 +396,9 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
           <CreditCard className="text-primary size-5" />
           <div>
             <p className="text-muted-foreground text-xs">This month</p>
-            <p className="text-foreground text-sm font-bold">+1,240 P earned</p>
+            <p className="text-foreground text-sm font-bold">
+              +1,240 coins earned
+            </p>
           </div>
         </div>
         <div className="surface-card flex items-center gap-3 rounded-2xl p-4 sm:p-5">
@@ -392,7 +412,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
           <Coins className="size-5 text-amber-500" />
           <div>
             <p className="text-muted-foreground text-xs">Conversion rate</p>
-            <p className="text-foreground text-sm font-bold">10 XP = 1 P</p>
+            <p className="text-foreground text-sm font-bold">10 XP = 1 coin</p>
           </div>
         </div>
       </div>

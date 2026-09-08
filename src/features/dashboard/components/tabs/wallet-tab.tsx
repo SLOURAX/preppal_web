@@ -11,7 +11,8 @@ export function WalletTab() {
       <div>
         <h2 className="text-foreground text-xl font-bold">Wallet</h2>
         <p className="text-muted-foreground mt-1 text-sm">
-          Manage your Preppal coins and track your earnings.
+          Track your XP, convert it into withdrawable Preppal Coins, and manage
+          your wallet.
         </p>
       </div>
       <WalletOverview balance={preppalBalance} />

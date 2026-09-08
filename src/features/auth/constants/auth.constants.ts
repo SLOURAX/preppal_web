@@ -1,6 +1,6 @@
 export const MEMBER_BENEFITS: readonly string[] = [
   "Daily quizzes",
-  "Reward points",
+  "XP and rewards",
   "Real prizes",
   "Fast withdrawals",
 ];

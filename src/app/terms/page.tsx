@@ -30,7 +30,7 @@ const SECTIONS = [
   },
   {
     title: "6. Coins, Rewards & Subscriptions",
-    body: `Preppal coins earned through quizzes and activities have no monetary value outside the Platform and may not be transferred, sold, or exchanged for cash. Preppal reserves the right to modify, suspend, or discontinue the rewards programme at any time. Subscription fees are non-refundable except where required by applicable law.`,
+    body: `Experience Points (XP) are earned through eligible learning activities and can be converted into Preppal Coins at the rate shown in the Platform. Preppal Coins are the withdrawable or redeemable value, subject to eligibility checks, minimum thresholds, identity or bank verification, processing times, and applicable programme rules. Deposited funds are separate from earned Preppal Coins and are not withdrawable as rewards. Preppal reserves the right to modify, suspend, or discontinue the rewards programme at any time. Subscription fees are non-refundable except where required by applicable law.`,
   },
   {
     title: "7. User-Generated Content",

@@ -62,7 +62,7 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
         <div className="text-center">
           <h2 className="text-foreground text-xl font-bold">{championLabel}</h2>
           <p className="text-muted-foreground mt-1 text-sm">
-            Top performers earning Preppal points
+            Top performers earning XP through eligible activities
           </p>
         </div>
         <div className="mx-auto mt-7 grid max-w-xl grid-cols-3 items-end gap-2 sm:gap-4">

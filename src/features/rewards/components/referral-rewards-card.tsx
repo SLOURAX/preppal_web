@@ -50,7 +50,7 @@ export function ReferralRewardsCard() {
       try {
         await navigator.share({
           title: "Join me on Preppal",
-          text: "Learn, practise, and earn Preppal points with me.",
+          text: "Learn, practise, and earn XP with me on Preppal.",
           url: REFERRAL_LINK,
         });
       } catch {

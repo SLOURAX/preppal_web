@@ -60,7 +60,7 @@ export function OverviewTab() {
       "text-emerald-600 bg-emerald-500/10",
     ],
     [
-      "Points earned",
+      "XP earned",
       `${quizAttempts.reduce((sum, attempt) => sum + attempt.correct * 10, 0).toLocaleString()} P`,
       BadgeCent,
       "text-amber-500 bg-amber-500/10",

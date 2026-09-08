@@ -17,13 +17,13 @@ import { useAuthStore } from "@/store";
 const REFERRAL_STEPS = [
   "Share your personal invite link",
   "Your friend joins and completes a quiz",
-  "You both receive Preppal points",
+  "You both receive bonus XP",
 ] as const;
 
 const REFERRAL_MILESTONES = [
-  { friends: 1, reward: "100 P" },
-  { friends: 3, reward: "400 P" },
-  { friends: 5, reward: "800 P" },
+  { friends: 1, reward: "100 XP" },
+  { friends: 3, reward: "400 XP" },
+  { friends: 5, reward: "800 XP" },
 ] as const;
 
 export function ReferralSection() {
@@ -43,7 +43,7 @@ export function ReferralSection() {
     if (navigator.share) {
       await navigator.share({
         title: "Join me on Preppal",
-        text: "Practise smarter, earn points, and learn with me on Preppal.",
+        text: "Practise smarter, earn XP, and learn with me on Preppal.",
         url: referralUrl,
       });
       return;
@@ -60,7 +60,7 @@ export function ReferralSection() {
           </h2>
           <p className="text-muted-foreground mt-3 max-w-lg text-sm leading-6">
             Invite your friends to practise with Preppal. Once they complete
-            their first quiz, you both earn bonus points.
+            their first quiz, you both earn bonus XP.
           </p>
 
           <ol className="mt-6 space-y-3">

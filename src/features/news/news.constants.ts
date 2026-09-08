@@ -76,7 +76,7 @@ export const NEWS_ARTICLES: readonly NewsArticle[] = [
     readTime: "3 min read",
     likes: 321,
     comments: 47,
-    tags: ["Preppal points", "Rewards", "Product update"],
+    tags: ["XP and Coins", "Rewards", "Product update"],
     body: [
       "Progress is easier to sustain when the next milestone is visible. Our updated reward experience makes it clearer how quizzes, daily check-ins, and learning streaks contribute to a learner’s point balance.",
       "The goal is not to reward speed alone. Strong habits, thoughtful practice, and steady improvement all contribute to meaningful recognition across Preppal.",

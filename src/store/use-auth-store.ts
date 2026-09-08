@@ -14,6 +14,9 @@ export interface QuizAttempt {
   answers: Record<number, string>;
 }
 
+/** Number of experience points required to mint one withdrawable coin. */
+export const XP_TO_COIN_RATE = 10;
+
 interface AuthState {
   isAuthenticated: boolean;
   preppalBalance: number;
@@ -34,6 +37,7 @@ interface AuthState {
   setUserName: (userName: string) => void;
   setWeeklyGoal: (goal: number) => void;
   addExperience: (amount: number) => void;
+  convertExperienceToCoins: (amount: number) => boolean;
   completeCheckIn: () => boolean;
   recordQuizAttempt: (attempt: QuizAttempt) => void;
   setNotificationPreference: (label: string, enabled: boolean) => void;
@@ -94,6 +98,22 @@ export const useAuthStore = create<AuthState>()(
         set((state) => ({
           experiencePoints: Math.max(0, state.experiencePoints + amount),
         }));
+      },
+      convertExperienceToCoins: (amount: number): boolean => {
+        const requestedXp = Math.floor(amount);
+        const state = get();
+        if (
+          requestedXp < XP_TO_COIN_RATE ||
+          requestedXp > state.experiencePoints
+        )
+          return false;
+        const coins = Math.floor(requestedXp / XP_TO_COIN_RATE);
+        if (!coins) return false;
+        set({
+          experiencePoints: state.experiencePoints - coins * XP_TO_COIN_RATE,
+          preppalBalance: state.preppalBalance + coins,
+        });
+        return true;
       },
       completeCheckIn: (): boolean => {
         const today = new Date().toISOString().slice(0, 10);

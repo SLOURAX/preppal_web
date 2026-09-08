@@ -34,8 +34,8 @@ export function RewardsHub() {
                 Rewards
               </h1>
               <p className="text-muted-foreground mt-1 max-w-xl text-sm leading-relaxed">
-                Keep learning, maintain your check-in streak, and invite friends
-                to earn Preppal points.
+                Keep learning to earn XP, convert it into Preppal Coins, and
+                redeem your progress for useful rewards.
               </p>
             </div>
           </div>
@@ -86,8 +86,9 @@ export function RewardsHub() {
               Make every quiz count
             </h2>
             <p className="text-muted-foreground mt-2 max-w-xl text-sm leading-relaxed">
-              Create an account to collect points from quizzes, daily check-ins,
-              streaks, leaderboard placements, and referrals.
+              Create an account to collect XP from quizzes, daily check-ins,
+              streaks, leaderboard placements, and referrals, then convert it
+              into Preppal Coins.
             </p>
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
               <Link
