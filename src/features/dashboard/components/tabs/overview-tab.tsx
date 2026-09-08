@@ -1,14 +1,15 @@
 import {
   BadgeCent,
   BookOpen,
-  Flame,
+  Gauge,
   ArrowUpRight,
-  Target,
+  Crosshair,
   ArrowRight,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuthStore } from "@/store";
+import { Mascot } from "@/components/ui";
 
 export function OverviewTab() {
   const userName = useAuthStore((s) => s.userName);
@@ -50,13 +51,13 @@ export function OverviewTab() {
     [
       "Current streak",
       weeklyGoal ? `${completedDays} days` : "—",
-      Flame,
+      Gauge,
       "text-orange-500 bg-orange-500/10",
     ],
     [
       "Average score",
       `${averageScore}%`,
-      Target,
+      Crosshair,
       "text-emerald-600 bg-emerald-500/10",
     ],
     [
@@ -209,25 +210,33 @@ export function OverviewTab() {
             })}
           </div>
         ) : (
-          <div className="border-border/70 bg-surface-subtle/40 rounded-2xl border border-dashed p-4">
-            <p className="text-foreground text-sm font-semibold">
-              Add a new weekly goal
-            </p>
-            <p className="text-muted-foreground mt-1 text-xs">
-              Choose how many days you want to practice each week.
-            </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {[3, 5, 7].map((days) => (
-                <button
-                  className="border-primary/25 text-primary hover:bg-primary/10 rounded-full border px-4 py-1.5 text-xs font-bold transition-colors"
-                  key={days}
-                  onClick={() => setWeeklyGoal(days)}
-                  type="button"
-                >
-                  {days} days
-                </button>
-              ))}
+          <div className="border-border/70 bg-surface-subtle/40 flex items-center justify-between gap-4 rounded-2xl border border-dashed p-4">
+            <div className="min-w-0">
+              <p className="text-foreground text-sm font-semibold">
+                Add a new weekly goal
+              </p>
+              <p className="text-muted-foreground mt-1 text-xs">
+                Choose how many days you want to practice each week.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {[3, 5, 7].map((days) => (
+                  <button
+                    className="border-primary/25 text-primary hover:bg-primary/10 rounded-full border px-4 py-1.5 text-xs font-bold transition-colors"
+                    key={days}
+                    onClick={() => setWeeklyGoal(days)}
+                    type="button"
+                  >
+                    {days} days
+                  </button>
+                ))}
+              </div>
             </div>
+            <Mascot
+              alt="Preppal mascot ready to help you set a goal"
+              className="hidden sm:block"
+              mood="encourage"
+              size="sm"
+            />
           </div>
         )}
       </div>
@@ -250,10 +259,13 @@ export function OverviewTab() {
         </div>
         <div className="divide-border divide-y">
           {quizAttempts.length === 0 ? (
-            <p className="text-muted-foreground py-6 text-center text-xs">
-              No quizzes yet. Start a practice session to see your progress
-              here.
-            </p>
+            <div className="flex items-center justify-center gap-3 py-5 text-center">
+              <Mascot mood="thinking" size="sm" />
+              <p className="text-muted-foreground max-w-xs text-left text-xs">
+                No quizzes yet. Start a practice session to see your progress
+                here.
+              </p>
+            </div>
           ) : (
             quizAttempts.slice(0, 4).map((item) => (
               <div

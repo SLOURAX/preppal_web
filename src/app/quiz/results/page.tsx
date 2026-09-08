@@ -15,6 +15,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store";
 import { QUIZ_QUESTIONS } from "@/features/quiz/mock-questions";
+import { Mascot } from "@/components/ui";
 
 const REVIEW = [
   {
@@ -217,8 +218,15 @@ export default function QuizResultsPage() {
               </div>
             </div>
             <div className="min-w-0 text-center sm:text-left">
-              <div className="bg-primary/10 text-primary mb-2 inline-flex size-10 items-center justify-center rounded-xl">
-                <SaxAwardBulk className="size-5" />
+              <div className="flex items-center justify-center gap-3 sm:justify-start">
+                <div className="bg-primary/10 text-primary inline-flex size-10 items-center justify-center rounded-xl">
+                  <SaxAwardBulk className="size-5" />
+                </div>
+                <Mascot
+                  alt="Preppal mascot celebrating your quiz result"
+                  mood="celebrate"
+                  size="sm"
+                />
               </div>
               <h1 className="text-foreground text-xl font-bold tracking-tight sm:text-2xl">
                 {isPlayground

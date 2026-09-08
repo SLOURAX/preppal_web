@@ -5,7 +5,7 @@ import {
   GraduationCap,
   Mail,
   Phone,
-  Target,
+  Crosshair,
   UserRound,
 } from "lucide-react";
 import Link from "next/link";
@@ -117,7 +117,7 @@ export default function RegisterPage() {
           </SelectField>
           <SelectField
             defaultValue=""
-            icon={Target}
+            icon={Crosshair}
             id="exam-goal"
             label="Primary exam goal"
             required

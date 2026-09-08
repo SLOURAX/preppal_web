@@ -8,7 +8,7 @@ import {
   Clock3,
   Compass,
   Filter,
-  Target,
+  Crosshair,
   Timer,
   TrendingDown,
   TrendingUp,
@@ -444,7 +444,7 @@ export function AnalyticsTab() {
         />
         <MetricCard
           detail="Across selected quizzes"
-          icon={Target}
+          icon={Crosshair}
           label="Average score"
           tone="bg-violet-500/10 text-violet-600"
           value={`${totals.average}%`}
@@ -645,7 +645,7 @@ export function AnalyticsTab() {
               available.
             </p>
           </div>
-          <Target className="text-muted-foreground size-5" />
+          <Crosshair className="text-muted-foreground size-5" />
         </div>
         <p className="text-muted-foreground bg-surface-subtle rounded-2xl p-4 text-xs">
           Difficulty-level insights will populate from tagged questions in your

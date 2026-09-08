@@ -3,42 +3,18 @@
 import { Bell, Check, Info, AlertTriangle, Zap, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { Mascot } from "@/components/ui";
+import { NOTIFICATIONS, type NotificationIconName } from "@/constants/notifications";
 
-const NOTIFICATIONS = [
-  {
-    id: 1,
-    title: "Level Up!",
-    message: "You've reached level 5. Keep going to unlock more rewards.",
-    type: "success",
-    time: "2h ago",
-    read: false,
-    icon: Zap,
-  },
-  {
-    id: 2,
-    title: "New AI Quiz Available",
-    message:
-      "A new biology mock exam is now available based on your weak areas. Try it now!",
-    type: "info",
-    time: "5h ago",
-    read: false,
-    icon: Info,
-  },
-  {
-    id: 3,
-    title: "Streak Warning",
-    message:
-      "You haven't completed a quiz today. Don't lose your 7-day streak!",
-    type: "warning",
-    time: "1d ago",
-    read: true,
-    icon: AlertTriangle,
-  },
-];
+const ICONS: Record<NotificationIconName, typeof Zap> = {
+  zap: Zap,
+  info: Info,
+  warning: AlertTriangle,
+};
 
 export function Notifications() {
   const [isOpen, setIsOpen] = useState(false);
-  const [notifications, setNotifications] = useState(NOTIFICATIONS);
+  const [notifications, setNotifications] = useState([...NOTIFICATIONS]);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
@@ -105,7 +81,7 @@ export function Notifications() {
               {notifications.length > 0 ? (
                 <div className="divide-border divide-y">
                   {notifications.map((notification) => {
-                    const Icon = notification.icon;
+                    const Icon = ICONS[notification.icon];
                     return (
                       <div
                         key={notification.id}
@@ -163,16 +139,24 @@ export function Notifications() {
                   })}
                 </div>
               ) : (
-                <div className="text-muted-foreground p-8 text-center">
-                  <Bell className="mx-auto mb-3 h-8 w-8 opacity-20" />
+                <div className="text-muted-foreground flex flex-col items-center p-6 text-center">
+                  <Mascot mood="wave" size="sm" />
+                  <Bell className="mt-2 mb-2 h-6 w-6 opacity-20" />
                   <p className="text-sm font-medium">No notifications yet</p>
+                  <p className="mt-1 max-w-[14rem] text-xs">
+                    We&apos;ll let you know when there&apos;s something new.
+                  </p>
                 </div>
               )}
             </div>
             <div className="border-border bg-surface-subtle/50 border-t p-3 text-center">
-              <button className="text-foreground hover:text-primary text-sm font-semibold transition-colors">
+              <a
+                className="text-foreground hover:text-primary text-sm font-semibold transition-colors"
+                href="/notifications"
+                onClick={() => setIsOpen(false)}
+              >
                 View all notifications
-              </button>
+              </a>
             </div>
           </div>
         </>

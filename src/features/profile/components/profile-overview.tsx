@@ -1,4 +1,4 @@
-import { BookOpen, ChartNoAxesCombined, Target, UserRound } from "lucide-react";
+import { BookOpen, ChartNoAxesCombined, Crosshair, UserRound } from "lucide-react";
 
 interface ProfileOverviewProps {
   readonly userName: string;
@@ -12,7 +12,7 @@ const PROFILE_STATS = [
     value: "7 days",
     icon: ChartNoAxesCombined,
   },
-  { label: "Average score", value: "78%", icon: Target },
+  { label: "Average score", value: "78%", icon: Crosshair },
 ] as const;
 
 export function ProfileOverview({ userName, userPlan }: ProfileOverviewProps) {

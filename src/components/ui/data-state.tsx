@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { AlertCircle, Inbox } from "lucide-react";
+import { Mascot } from "./mascot";
 
 interface DataStateProps {
   readonly title: string;
@@ -32,6 +33,7 @@ export function DataState({
             <Inbox className="size-5" />
           ))}
       </span>
+      {!isError ? <Mascot mood="encourage" size="sm" className="mt-3" /> : null}
       <p className="text-foreground mt-4 text-sm font-semibold">{title}</p>
       <p className="text-muted-foreground mt-1 max-w-sm text-xs leading-5">
         {description}

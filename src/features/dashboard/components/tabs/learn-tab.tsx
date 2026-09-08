@@ -7,7 +7,7 @@ import {
   GraduationCap,
   Lightbulb,
   RotateCw,
-  Target,
+  Crosshair,
 } from "lucide-react";
 import { SaxLampOnBulk } from "@meysam213/iconsax-react";
 
@@ -78,9 +78,6 @@ function DailyFlashcard() {
           <p className="mt-2 text-xs leading-5 text-violet-200/80">
             One quick fact a day to keep your curiosity in motion.
           </p>
-          <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-violet-100">
-            <Lightbulb className="size-3.5 text-amber-300" /> Changes daily
-          </div>
         </div>
 
         <div className="min-w-0 flex-1 [perspective:1200px]">
@@ -167,7 +164,7 @@ export function LearnTab() {
           </div>
           <div className="bg-surface/80 flex shrink-0 items-center gap-3 rounded-2xl px-4 py-3 backdrop-blur-sm">
             <span className="bg-primary/10 text-primary grid size-9 place-items-center rounded-xl">
-              <Target className="size-4" />
+              <Crosshair className="size-4" />
             </span>
             <div>
               <p className="text-foreground text-sm font-bold">7 day streak</p>
