@@ -227,7 +227,11 @@ function ActiveQuizContent() {
   };
 
   const confirmExit = (): void => {
-    router.push(isUntimed ? "/quiz" : "/quiz/preview");
+    if (isUntimed) {
+      submitQuiz();
+      return;
+    }
+    router.push("/quiz/preview");
   };
 
   const submitQuiz = (): void => {
@@ -443,13 +447,13 @@ function ActiveQuizContent() {
 
       {showExitModal ? (
         <ConfirmationModal
-          title={isUntimed ? "Exit playground?" : "Leave quiz?"}
+          title={isUntimed ? "Finish playground?" : "Leave quiz?"}
           description={
             isUntimed
-              ? "Your current playground progress will be cleared if you leave."
+              ? "You’re ready to see a quick overview of your playground performance."
               : "Your quiz progress may be lost if you leave before submitting."
           }
-          confirmLabel={isUntimed ? "Exit playground" : "Leave quiz"}
+          confirmLabel={isUntimed ? "View results" : "Leave quiz"}
           destructive
           onCancel={() => setShowExitModal(false)}
           onConfirm={confirmExit}

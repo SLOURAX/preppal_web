@@ -84,7 +84,7 @@ export function QuizHeader({
         ) : null}
         <Button
           onClick={onSubmit}
-          aria-label={isUntimed ? "Exit playground" : "Submit quiz"}
+          aria-label={isUntimed ? "Finish playground" : "Submit quiz"}
           className="flex gap-1.5 px-2.5 text-xs sm:px-4"
         >
           {isUntimed ? (
@@ -92,7 +92,7 @@ export function QuizHeader({
           ) : (
             <Send className="size-3.5" />
           )}
-          <span>{isUntimed ? "Exit playground" : "Submit Quiz"}</span>
+          <span>{isUntimed ? "Finish playground" : "Submit Quiz"}</span>
         </Button>
       </div>
     </header>

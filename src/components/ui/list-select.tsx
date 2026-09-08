@@ -99,7 +99,7 @@ export function ListSelect({
 
       {/* Modal / Dropdown */}
       {isOpen && (
-        <div className="animate-in fade-in zoom-in-95 bg-surface absolute top-full left-0 z-50 mt-2 w-full origin-top p-1 shadow-xl backdrop-blur-xl">
+        <div className="animate-in fade-in zoom-in-95 border-border bg-surface absolute top-full left-0 z-50 mt-2 w-full origin-top rounded-2xl border p-2 shadow-2xl backdrop-blur-xl">
           <div className="mb-2 px-3 pt-2">
             <span className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
               {placeholder}

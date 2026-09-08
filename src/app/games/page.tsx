@@ -6,6 +6,7 @@ import {
   SaxChartSuccessBulk,
   SaxFlash1Bulk,
   SaxGameBulk,
+  SaxHome2Bulk,
   SaxLock1Bulk,
   SaxMathBulk,
   SaxMedalStarBulk,
@@ -15,6 +16,7 @@ import {
   SaxWallet3Bulk,
   SaxCoin1Bulk,
 } from "@meysam213/iconsax-react";
+import { useRouter } from "next/navigation";
 
 const QUESTIONS = [
   {
@@ -63,6 +65,7 @@ const COMING_SOON = [
 ] as const;
 
 export default function GamesPage() {
+  const router = useRouter();
   const [started, setStarted] = useState(false);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
@@ -185,22 +188,56 @@ export default function GamesPage() {
               </button>
             </div>
           ) : finished ? (
-            <div className="bg-primary/5 mt-6 rounded-2xl p-6 text-center">
-              <SaxMedalStarBulk className="text-primary mx-auto size-10" />
-              <h3 className="text-foreground mt-3 text-xl font-bold">
-                Sprint complete!
-              </h3>
-              <p className="text-muted-foreground mt-1 text-sm">
-                You earned <strong className="text-primary">{score} XP</strong>{" "}
-                with a {streak}-answer streak.
-              </p>
-              <button
-                className="border-primary text-primary mt-5 inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-bold"
-                onClick={startGame}
-                type="button"
-              >
-                <SaxRefresh2Bulk className="size-4" /> Play again
-              </button>
+            <div className="bg-primary/5 mt-6 rounded-2xl p-5 sm:p-7">
+              <div className="text-center">
+                <SaxMedalStarBulk className="text-primary mx-auto size-10" />
+                <h3 className="text-foreground mt-3 text-xl font-bold">
+                  Challenge complete!
+                </h3>
+                <p className="text-muted-foreground mt-1 text-sm">
+                  Great work — your quick math round is wrapped.
+                </p>
+              </div>
+              <div className="bg-surface mt-5 grid grid-cols-3 divide-x rounded-2xl p-4 text-center">
+                <div>
+                  <p className="text-foreground text-xl font-black">
+                    {score / 10}/{QUESTIONS.length}
+                  </p>
+                  <p className="text-muted-foreground mt-1 text-[10px] uppercase">
+                    Score
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xl font-black text-emerald-600">
+                    {score} XP
+                  </p>
+                  <p className="text-muted-foreground mt-1 text-[10px] uppercase">
+                    XP earned
+                  </p>
+                </div>
+                <div>
+                  <p className="text-primary text-xl font-black">{streak}</p>
+                  <p className="text-muted-foreground mt-1 text-[10px] uppercase">
+                    Best streak
+                  </p>
+                </div>
+              </div>
+              <div className="mt-5 grid gap-2 sm:grid-cols-2">
+                <button
+                  className="border-primary text-primary inline-flex items-center justify-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-bold"
+                  onClick={startGame}
+                  type="button"
+                >
+                  <SaxRefresh2Bulk className="size-4" /> Practice again
+                </button>
+                <button
+                  className="bg-primary text-primary-foreground inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold"
+                  onClick={() => router.push("/dashboard")}
+                  type="button"
+                >
+                  <SaxHome2Bulk className="size-4" /> Back to dashboard
+                </button>
+              </div>
             </div>
           ) : (
             <div className="mt-6">

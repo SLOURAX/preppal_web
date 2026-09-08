@@ -1,4 +1,13 @@
-import { ArrowLeft, BookOpenText, Check, ChevronRight } from "lucide-react";
+"use client";
+
+import {
+  ArrowLeft,
+  BookOpenText,
+  Check,
+  ChevronDown,
+  ChevronRight,
+} from "lucide-react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
@@ -26,6 +35,7 @@ export function SubjectTopicsStep({
   onToggleTopic,
   onContinue,
 }: SubjectTopicsStepProps) {
+  const [isTopicPickerOpen, setIsTopicPickerOpen] = useState(false);
   const allTopicsSelected = selectedTopics.length === topics.length;
 
   return (
@@ -72,7 +82,66 @@ export function SubjectTopicsStep({
         </button>
       </div>
 
-      <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
+      <div className="relative mt-3 sm:hidden">
+        <button
+          aria-expanded={isTopicPickerOpen}
+          className={cn(
+            "border-border bg-surface text-foreground flex h-14 w-full items-center justify-between rounded-2xl border px-4 text-left text-sm font-medium transition-all",
+            isTopicPickerOpen && "border-primary ring-primary/15 ring-4",
+          )}
+          onClick={() => setIsTopicPickerOpen((open) => !open)}
+          type="button"
+        >
+          <span>
+            {selectedTopics.length > 0
+              ? `${selectedTopics.length} topic${selectedTopics.length === 1 ? "" : "s"} selected`
+              : "Choose topics"}
+          </span>
+          <ChevronDown
+            className={cn(
+              "text-muted-foreground size-5 transition-transform",
+              isTopicPickerOpen && "rotate-180",
+            )}
+          />
+        </button>
+
+        {isTopicPickerOpen && (
+          <div className="border-border bg-surface absolute top-full left-0 z-20 mt-2 w-full rounded-2xl border p-2 shadow-2xl">
+            <div className="flex max-h-60 flex-col overflow-y-auto">
+              {topics.map((topic) => {
+                const isSelected = selectedTopics.includes(topic);
+
+                return (
+                  <button
+                    aria-pressed={isSelected}
+                    className={cn(
+                      "flex items-center justify-between border-b px-3 py-3 text-left text-sm last:border-b-0",
+                      isSelected
+                        ? "text-primary"
+                        : "text-foreground hover:bg-surface-subtle",
+                    )}
+                    key={topic}
+                    onClick={() => onToggleTopic(topic)}
+                    type="button"
+                  >
+                    {topic}
+                    {isSelected && <Check className="text-primary size-4" />}
+                  </button>
+                );
+              })}
+            </div>
+            <button
+              className="text-primary mt-2 w-full border-t pt-3 text-xs font-semibold"
+              onClick={() => setIsTopicPickerOpen(false)}
+              type="button"
+            >
+              Done
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-3 hidden gap-2.5 sm:grid sm:grid-cols-2">
         {topics.map((topic) => {
           const isSelected = selectedTopics.includes(topic);
 

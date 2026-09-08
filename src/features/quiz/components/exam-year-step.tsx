@@ -1,12 +1,7 @@
-import {
-  ArrowLeft,
-  ArrowRight,
-  CalendarDays,
-  Check,
-  ChevronRight,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, CalendarDays } from "lucide-react";
 
 import { Button } from "@/components/ui";
+import { ListSelect } from "@/components/ui/list-select";
 import { cn } from "@/lib/utils";
 
 import { EXAM_YEARS } from "../quiz.constants";
@@ -45,7 +40,21 @@ export function ExamYearStep({
         </p>
       </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className="mt-6 sm:hidden">
+        <ListSelect
+          icon={CalendarDays}
+          onChange={(value) => onSelectYear(Number(value))}
+          options={EXAM_YEARS.map((year) => ({
+            label: String(year),
+            value: String(year),
+          }))}
+          placeholder="Choose a year"
+          showOptionDescriptions={false}
+          value={selectedYear ? String(selectedYear) : ""}
+        />
+      </div>
+
+      <div className="mt-6 hidden grid-cols-2 gap-2 sm:grid sm:grid-cols-4">
         {EXAM_YEARS.map((year) => {
           const isSelected = selectedYear === year;
 

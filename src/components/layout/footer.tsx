@@ -1,4 +1,4 @@
-import { ArrowUpRight, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import Link from "next/link";
 import type { IconType } from "react-icons";
 import {
@@ -94,8 +94,8 @@ import { AppDownloadButtons } from "@/components/ui/app-download-buttons";
 export function Footer() {
   return (
     <footer className="bg-surface/80 mt-auto shadow-[0_-12px_45px_rgb(58_34_140/0.05)] backdrop-blur-xl">
-      <div className="mx-auto grid max-w-350 gap-10 px-5 py-10 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr_1.1fr] lg:px-8">
-        <div className="max-w-sm">
+      <div className="mx-auto grid max-w-350 grid-cols-2 gap-x-6 gap-y-10 px-5 py-10 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr_1.1fr] lg:px-8">
+        <div className="col-span-2 max-w-sm md:col-span-1">
           <Link className="inline-flex items-center gap-2.5" href="/">
             <span className="bg-primary text-primary-foreground grid size-10 place-items-center rounded-xl text-base font-black shadow-sm">
               pp

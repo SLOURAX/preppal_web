@@ -65,11 +65,13 @@ const REVIEW = [
     explanation: "Use (n − 2) × 180 = 1260, giving n = 9 sides.",
   },
 ] as const;
+
 export default function QuizResultsPage() {
   const router = useRouter();
   const [shared, setShared] = useState<boolean>(false);
   const [openReview, setOpenReview] = useState<string | null>(null);
   const latestAttempt = useAuthStore((state) => state.quizAttempts[0]);
+
   const reviewItems = latestAttempt
     ? QUIZ_QUESTIONS.slice(0, latestAttempt.total).map((question, index) => ({
         number: String(index + 1).padStart(2, "0"),
@@ -85,6 +87,7 @@ export default function QuizResultsPage() {
   const resultCorrect = latestAttempt?.correct ?? 32;
   const resultTotal = latestAttempt?.total ?? 40;
   const resultPoints = resultCorrect * 10;
+  const isPlayground = latestAttempt?.mode === "untimed";
   const resultStats = [
     [
       String(resultCorrect),
@@ -130,7 +133,7 @@ export default function QuizResultsPage() {
   return (
     <main className="bg-background min-h-screen">
       <header className="bg-surface/90 border-border sticky top-0 z-20 border-b backdrop-blur-xl">
-        <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-5 sm:px-8">
+        <div className="mx-auto flex h-14 max-w-4xl items-center justify-between px-5 sm:px-8">
           <button
             className="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm font-semibold"
             onClick={() => router.push("/quiz")}
@@ -138,19 +141,18 @@ export default function QuizResultsPage() {
           >
             <SaxArrowLeftBulk className="size-4" /> Back to quizzes
           </button>
-          {/* <button
-            className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold shadow-sm"
+          <button
+            className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold shadow-sm sm:hidden"
             onClick={shareResult}
             type="button"
           >
-            <SaxShareBulk className="size-4" />{" "}
-            {shared ? "Copied!" : "Share result"}
-          </button> */}
+            <SaxShareBulk className="size-4" /> {shared ? "Copied!" : "Share"}
+          </button>
         </div>
       </header>
-      <div className="mx-auto w-full max-w-5xl space-y-5 px-5 py-8 sm:px-8 sm:py-10">
+      <div className="mx-auto w-full max-w-4xl space-y-5 px-5 py-8 sm:px-8 sm:py-10">
         <section className="from-primary/15 via-primary/5 to-surface relative overflow-hidden rounded-3xl bg-gradient-to-br p-5 sm:p-7">
-          <div className="pointer-events-none absolute inset-0 [background-image:linear-gradient(135deg,transparent_25%,hsl(var(--primary)/.06)_25%,hsl(var(--primary)/.06)_26%,transparent_26%,transparent_75%,hsl(var(--primary)/.06)_75%,hsl(var(--primary)/.06)_76%,transparent_76%)] [background-size:34px_34px] opacity-40" />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,transparent_25%,hsl(var(--primary)/.06)_25%,hsl(var(--primary)/.06)_26%,transparent_26%,transparent_75%,hsl(var(--primary)/.06)_75%,hsl(var(--primary)/.06)_76%,transparent_76%)] [background-size:34px_34px] opacity-40" />
           <div className="bg-primary/10 pointer-events-none absolute -right-16 -bottom-24 size-72 rounded-full blur-3xl" />
           <div
             aria-hidden="true"
@@ -219,11 +221,14 @@ export default function QuizResultsPage() {
                 <SaxAwardBulk className="size-5" />
               </div>
               <h1 className="text-foreground text-xl font-bold tracking-tight sm:text-2xl">
-                Great work on JAMB Mathematics
+                {isPlayground
+                  ? "Challenge Complete!"
+                  : "Great work on JAMB Mathematics"}
               </h1>
               <p className="text-muted-foreground mt-2 max-w-xl text-sm leading-5">
-                You’re building strong momentum. Review the questions below and
-                turn today’s misses into tomorrow’s strengths.
+                {isPlayground
+                  ? `Great job! You’ve completed all ${resultTotal} questions.`
+                  : "You’re building strong momentum. Review the questions below and turn today’s misses into tomorrow’s strengths."}
               </p>
               <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
                 <span className="bg-surface text-foreground rounded-full px-3 py-1.5 text-xs font-semibold">
@@ -236,7 +241,7 @@ export default function QuizResultsPage() {
               <button
                 onClick={shareResult}
                 type="button"
-                className="bg-primary text-primary-foreground mt-4 inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold shadow-sm transition-transform hover:-translate-y-0.5"
+                className="bg-primary text-primary-foreground mt-4 hidden items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold shadow-sm transition-transform hover:-translate-y-0.5 sm:inline-flex"
               >
                 <SaxShareBulk className="size-4" />{" "}
                 {shared ? "Result copied" : "Share your result"}
@@ -245,16 +250,21 @@ export default function QuizResultsPage() {
           </div>
         </section>
 
-        <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {resultStats.map(([value, label, Icon, color]) => (
-            <div className="surface-card p-4" key={label as string}>
+        <section className="surface-card grid grid-cols-2 overflow-hidden sm:grid-cols-4">
+          {resultStats.map(([value, label, Icon, color], index) => (
+            <div
+              className={`relative flex flex-col items-center justify-center px-3 py-4 text-center sm:px-4 sm:py-5 ${index < resultStats.length - 1 ? "after:absolute after:top-[17.5%] after:right-0 after:h-[65%] after:w-px after:bg-slate-300/60" : ""}`}
+              key={label as string}
+            >
               <span
-                className={`grid size-9 place-items-center rounded-xl ${color}`}
+                className={`grid size-9 place-items-center rounded-full ${color}`}
               >
                 <Icon className="size-4" />
               </span>
-              <p className="text-foreground mt-3 text-xl font-bold">{value}</p>
-              <p className="text-muted-foreground text-xs">{label}</p>
+              <p className="text-muted-foreground mt-2 text-[11px] font-medium sm:text-xs">
+                {label}
+              </p>
+              <p className="text-foreground mt-1 text-xl font-bold">{value}</p>
             </div>
           ))}
         </section>
@@ -300,57 +310,27 @@ export default function QuizResultsPage() {
               ))}
             </div>
           </section>
-          {/* <section className="surface-card via-surface to-surface bg-gradient-to-br from-violet-500/10 p-5 sm:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-foreground font-semibold">
-                  Your next focus
-                </h2>
-                <p className="text-muted-foreground mt-1 text-xs">
-                  A small step for a big gain
-                </p>
-              </div>
-              <SaxAwardBulk className="text-primary size-5" />
-            </div>
-            <div className="mt-5 rounded-2xl bg-amber-500/10 p-4">
-              <p className="text-xs font-bold tracking-wider text-amber-700 uppercase">
-                Needs attention
-              </p>
-              <p className="text-foreground mt-1 text-lg font-bold">
-                Speed & applied maths
-              </p>
-              <p className="text-muted-foreground mt-1 text-xs leading-5">
-                Practise word problems and aim to spend under 2 minutes on each
-                question.
+        </div>
+
+        {latestAttempt?.mode !== "untimed" ? (
+          <section className="surface-card flex flex-col items-start gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+            <div>
+              <h2 className="text-foreground font-semibold">
+                Review your questions
+              </h2>
+              <p className="text-muted-foreground mt-1 text-xs">
+                Open the full walkthrough with answers and explanations.
               </p>
             </div>
             <button
-              className="bg-primary text-primary-foreground mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold"
-              onClick={() => router.push("/quiz")}
+              className="bg-primary text-primary-foreground w-full rounded-xl px-4 py-2.5 text-[.8rem] font-semibold sm:w-auto"
+              onClick={() => router.push("/quiz/review")}
               type="button"
             >
-              Practise this area <ArrowUpRight className="size-4" />
+              Review all questions
             </button>
-          </section> */}
-        </div>
-
-        <section className="surface-card flex flex-col items-start gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
-          <div>
-            <h2 className="text-foreground font-semibold">
-              Review your questions
-            </h2>
-            <p className="text-muted-foreground mt-1 text-xs">
-              Open the full walkthrough with answers and explanations.
-            </p>
-          </div>
-          <button
-            className="bg-primary text-primary-foreground w-full rounded-xl px-4 py-2.5 text-[.8rem] font-semibold sm:w-auto"
-            onClick={() => router.push("/quiz/review")}
-            type="button"
-          >
-            Review all questions
-          </button>
-        </section>
+          </section>
+        ) : null}
 
         <section className="surface-card hidden overflow-hidden">
           <div className="flex items-center justify-between p-5 sm:p-6">

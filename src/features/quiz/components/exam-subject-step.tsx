@@ -2,6 +2,7 @@
 
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui";
+import { ListSelect } from "@/components/ui/list-select";
 import { cn } from "@/lib/utils";
 import { EXAM_SUBJECTS } from "../quiz.constants";
 
@@ -44,7 +45,20 @@ export function ExamSubjectStep({
         </p>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+      <div className="mt-6 sm:hidden">
+        <ListSelect
+          onChange={onSelectSubject}
+          options={subjects.map((subject) => ({
+            label: subject.label,
+            value: subject.value,
+          }))}
+          placeholder="Choose a subject"
+          showOptionDescriptions={false}
+          value={selectedSubject ?? ""}
+        />
+      </div>
+
+      <div className="mt-6 hidden grid-cols-1 gap-3 sm:grid sm:grid-cols-2 md:grid-cols-3">
         {subjects.map((subject) => {
           const isSelected = selectedSubject === subject.value;
 
