@@ -1,6 +1,6 @@
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import {
-  SaxArrowLeftBulk,
   SaxBag2Bulk,
   SaxGiftBulk,
   SaxInfoCircleBulk,
@@ -29,7 +29,7 @@ export default function MarketplacePage() {
           className="text-muted-foreground hover:text-foreground inline-flex items-center gap-2 text-sm font-semibold"
           href="/rewards"
         >
-          <SaxArrowLeftBulk className="size-4" /> Back to rewards
+          <ArrowLeft className="size-4" /> Back to rewards
         </Link>
         <section className="from-primary/15 via-primary/5 to-surface relative mt-6 overflow-hidden rounded-3xl bg-gradient-to-br p-6 sm:p-10">
           <div className="pointer-events-none absolute inset-0 [background-image:linear-gradient(135deg,transparent_25%,color-mix(in_srgb,var(--primary)_8%,transparent)_25%,color-mix(in_srgb,var(--primary)_8%,transparent)_26%,transparent_26%,transparent_75%,color-mix(in_srgb,var(--primary)_8%,transparent)_75%,color-mix(in_srgb,var(--primary)_8%,transparent)_76%,transparent_76%)] [background-size:34px_34px] opacity-40" />

@@ -7,12 +7,15 @@ export interface QuizAttempt {
   subject: string;
   exam: string;
   mode: "timed" | "untimed";
+  path?: "exam" | "subject";
+  year?: string;
   score: number;
   total: number;
   correct: number;
   date: string;
   durationSeconds: number;
   answers: Record<number, string>;
+  seed?: number;
 }
 
 interface AuthState {

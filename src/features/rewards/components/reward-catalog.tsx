@@ -1,9 +1,9 @@
 import {
-  SaxArrowRightBulk,
   SaxAwardBulk,
   SaxCoin1Bulk,
   SaxGiftBulk,
 } from "@meysam213/iconsax-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
@@ -87,7 +87,7 @@ export function RewardCatalog({ balance }: RewardCatalogProps) {
                         href="/marketplace"
                       >
                         Explore marketplace
-                        <SaxArrowRightBulk className="size-4" />
+                        <ArrowRight className="size-4" />
                       </Link>
                     )}
                   </div>

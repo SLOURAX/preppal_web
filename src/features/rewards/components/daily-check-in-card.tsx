@@ -2,12 +2,11 @@
 
 import {
   SaxAddCircleBulk,
-  SaxArrowLeft2Bulk,
-  SaxArrowRight2Bulk,
   SaxCalendarTickBulk,
   SaxChartSuccessBulk,
   SaxTickCircleBulk,
 } from "@meysam213/iconsax-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui";
@@ -71,7 +70,7 @@ export function DailyCheckInCard() {
           onClick={() => moveMonth(-1)}
           type="button"
         >
-          <SaxArrowLeft2Bulk className="size-4" />
+          <ArrowLeft className="size-4" />
         </button>
         <p className="text-sm font-semibold">{monthLabel}</p>
         <button
@@ -80,7 +79,7 @@ export function DailyCheckInCard() {
           onClick={() => moveMonth(1)}
           type="button"
         >
-          <SaxArrowRight2Bulk className="size-4" />
+          <ArrowRight className="size-4" />
         </button>
       </div>
 

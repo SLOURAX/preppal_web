@@ -3,7 +3,6 @@
 import { useState } from "react";
 import {
   SaxArrowDown2Bulk,
-  SaxArrowLeftBulk,
   SaxAwardBulk,
   SaxChartSuccessBulk,
   SaxClockBulk,
@@ -12,9 +11,13 @@ import {
   SaxStar1Bulk,
   SaxTickCircleBulk,
 } from "@meysam213/iconsax-react";
+import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store";
-import { QUIZ_QUESTIONS } from "@/features/quiz/mock-questions";
+import {
+  generateExamSimulation,
+  QUIZ_QUESTIONS,
+} from "@/features/quiz/mock-questions";
 import { Mascot } from "@/components/ui";
 
 const REVIEW = [
@@ -74,7 +77,10 @@ export default function QuizResultsPage() {
   const latestAttempt = useAuthStore((state) => state.quizAttempts[0]);
 
   const reviewItems = latestAttempt
-    ? QUIZ_QUESTIONS.slice(0, latestAttempt.total).map((question, index) => ({
+    ? (latestAttempt.seed
+        ? generateExamSimulation(latestAttempt.seed, latestAttempt.total)
+        : QUIZ_QUESTIONS.slice(0, latestAttempt.total)
+      ).map((question, index) => ({
         number: String(index + 1).padStart(2, "0"),
         title: question.text,
         time: "—",
@@ -140,7 +146,7 @@ export default function QuizResultsPage() {
             onClick={() => router.push("/quiz")}
             type="button"
           >
-            <SaxArrowLeftBulk className="size-4" /> Back to quizzes
+            <ArrowLeft className="size-4" /> Back to quizzes
           </button>
           <button
             className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold shadow-sm sm:hidden"

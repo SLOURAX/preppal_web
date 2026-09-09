@@ -27,7 +27,7 @@ export function QuizHeader({
   const progress = ((currentIndex + 1) / total) * 100;
 
   return (
-    <header className="border-border bg-surface/95 z-30 flex h-14 shrink-0 items-center justify-between border-b px-4 backdrop-blur-md sm:px-6">
+    <header className="border-border bg-surface/95 relative z-30 flex h-14 shrink-0 items-center justify-between border-b px-4 backdrop-blur-md sm:px-6">
       <div className="flex min-w-0 items-center gap-3">
         <button
           onClick={onExit}
@@ -55,6 +55,11 @@ export function QuizHeader({
             <span>{correctCount}</span>
           </div>
         ) : null}
+        {secondsLeft !== undefined ? (
+          <span className="absolute left-4 sm:hidden">
+            <QuizTimer secondsLeft={secondsLeft} />
+          </span>
+        ) : null}
       </div>
 
       <div className="flex items-center gap-3">
@@ -80,7 +85,9 @@ export function QuizHeader({
 
       <div className="flex items-center gap-5">
         {secondsLeft !== undefined ? (
-          <QuizTimer secondsLeft={secondsLeft} />
+          <span className="hidden sm:inline-flex">
+            <QuizTimer secondsLeft={secondsLeft} />
+          </span>
         ) : null}
         <Button
           onClick={onSubmit}

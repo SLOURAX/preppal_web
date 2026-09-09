@@ -130,7 +130,8 @@ export function QuizModeStep({
           disabled={!selectedMode}
           onClick={onStart}
         >
-          <Play className="size-4" fill="currentColor" /> Start practice
+          {/* <Play className="size-4" fill="currentColor" />  */}
+          Start practice
         </Button>
       </div>
     </section>

@@ -338,7 +338,7 @@ export default function HomePage() {
               <h2 className="text-foreground text-base font-semibold mt-2">
                 {capability.title}
               </h2>
-              <p className="text-muted-foreground text-sm leading-5">
+              <p className="text-muted-foreground text-[.8rem] leading-5">
                 {capability.detail}
               </p>
             </article>

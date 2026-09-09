@@ -28,14 +28,14 @@ export function ExamYearStep({
         onClick={onBack}
         type="button"
       >
-        <ArrowLeft className="size-5" />
+        <ArrowLeft className="size-5" /> Back
       </button>
 
       <div className="mt-5">
         <h2 className="text-foreground text-xl font-bold">
           Choose a year for {examLabel}
         </h2>
-        <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
+        <p className="text-muted-foreground mt-1 text-[.8rem] leading-relaxed">
           Select a specific past question year or choose a random mix.
         </p>
       </div>

@@ -77,3 +77,79 @@ export const QUIZ_QUESTIONS: readonly QuizQuestion[] = Array.from(
     return { id: index + 1, text, options, correctAnswer, explanation };
   },
 );
+
+const seededValue = (seed: number, index: number, range: number): number =>
+  ((Math.abs(seed) + index * 9301 + 49297) % 233280) % range;
+
+const shuffleOptions = (options: readonly string[], seed: number): readonly string[] => {
+  const result = [...options];
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const swapIndex = seededValue(seed, index, index + 1);
+    [result[index], result[swapIndex]] = [result[swapIndex]!, result[index]!];
+  }
+  return result;
+};
+
+/** Generates a fresh, deterministic simulation set until the question service is connected. */
+export function generateExamSimulation(
+  seed: number,
+  count = 40,
+): readonly QuizQuestion[] {
+  return Array.from({ length: count }, (_, index) => {
+    const variant = index + 1;
+    const type = index % 5;
+    let text: string;
+    let options: readonly string[];
+    let correctAnswer: string;
+    let explanation: string;
+
+    if (type === 0) {
+      const first = 12 + seededValue(seed, variant, 38);
+      const second = 18 + seededValue(seed, variant + 11, 42);
+      const answer = first + second;
+      correctAnswer = String(answer);
+      options = [String(answer - 4), String(answer), String(answer + 6), String(answer + 10)];
+      text = `What is ${first} + ${second}?`;
+      explanation = `Add the two values: ${first} + ${second} = ${answer}.`;
+    } else if (type === 1) {
+      const first = 4 + seededValue(seed, variant, 9);
+      const second = 3 + seededValue(seed, variant + 7, 8);
+      const answer = first * second;
+      correctAnswer = String(answer);
+      options = [String(answer - first), String(answer + second), String(answer), String(answer + first)];
+      text = `A box contains ${first} rows of ${second} items. How many items are there altogether?`;
+      explanation = `Multiply the rows by the items in each row: ${first} × ${second} = ${answer}.`;
+    } else if (type === 2) {
+      const time = 2 + seededValue(seed, variant, 4);
+      const speed = 40 + seededValue(seed, variant + 3, 7) * 10;
+      const distance = time * speed;
+      correctAnswer = `${speed} km/h`;
+      options = [`${speed - 10} km/h`, `${speed + 20} km/h`, `${speed} km/h`, `${speed + 30} km/h`];
+      text = `A car travels ${distance} km in ${time} hours. What is its average speed?`;
+      explanation = `Average speed is distance ÷ time: ${distance} ÷ ${time} = ${speed} km/h.`;
+    } else if (type === 3) {
+      const base = 2 + seededValue(seed, variant, 3);
+      const exponent = 3 + seededValue(seed, variant + 5, 4);
+      const answer = base ** exponent;
+      correctAnswer = String(answer);
+      options = [String(base ** (exponent - 1)), String(answer), String(answer + base), String(answer * 2)];
+      text = `Evaluate ${base}⁽${exponent}⁾.`;
+      explanation = `${base} multiplied by itself ${exponent} times equals ${answer}.`;
+    } else {
+      const sides = 5 + seededValue(seed, variant, 5);
+      const angleSum = (sides - 2) * 180;
+      correctAnswer = String(sides);
+      options = [String(sides - 2), String(sides - 1), String(sides), String(sides + 2)];
+      text = `A polygon has an interior angle sum of ${angleSum}°. How many sides does it have?`;
+      explanation = `Use (n − 2) × 180 = ${angleSum}; solving gives n = ${sides}.`;
+    }
+
+    return {
+      id: index + 1,
+      text,
+      options: shuffleOptions(options, seed + variant),
+      correctAnswer,
+      explanation,
+    };
+  });
+}

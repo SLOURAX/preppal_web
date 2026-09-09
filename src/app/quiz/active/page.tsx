@@ -16,9 +16,12 @@ import { InstructionsModal } from "@/features/quiz/components/active/instruction
 import { SubmitModal } from "@/features/quiz/components/active/submit-modal";
 import { QuestionAudioPlayer } from "@/features/quiz/components/active/question-audio-player";
 import { QuickCalculator } from "@/features/quiz/components/active/quick-calculator";
-import { ConfirmationModal } from "@/components/ui";
+import { ConfirmationModal, LoadingModal } from "@/components/ui";
 import type { QuestionStatus } from "@/features/quiz/components/active/types";
-import { QUIZ_QUESTIONS } from "@/features/quiz/mock-questions";
+import {
+  generateExamSimulation,
+  QUIZ_QUESTIONS,
+} from "@/features/quiz/mock-questions";
 import { useAuthStore } from "@/store";
 
 const TOTAL_SECONDS = 45 * 60;
@@ -100,7 +103,11 @@ function ActiveQuizContent() {
   const questionCount = isUntimed
     ? Math.max(5, Math.min(30, Number.isFinite(parsedCount) ? parsedCount : 10))
     : 40;
-  const questions = QUIZ_QUESTIONS.slice(0, questionCount);
+  const simulationSeed = Number(searchParams.get("seed") || 0);
+  const questions =
+    !isUntimed && simulationSeed
+      ? generateExamSimulation(simulationSeed, questionCount)
+      : QUIZ_QUESTIONS.slice(0, questionCount);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
@@ -243,6 +250,8 @@ function ActiveQuizContent() {
       subject: searchParams.get("subject") || "Mathematics",
       exam: searchParams.get("exam") || "JAMB",
       mode: isUntimed ? "untimed" : "timed",
+      path: searchParams.get("path") === "subject" ? "subject" : "exam",
+      year: searchParams.get("year") || undefined,
       score: questions.length
         ? Math.round((correct / questions.length) * 100)
         : 0,
@@ -251,6 +260,7 @@ function ActiveQuizContent() {
       date: new Date().toISOString(),
       durationSeconds: TOTAL_SECONDS - secondsLeft,
       answers,
+      seed: simulationSeed || undefined,
     });
     router.push("/quiz/results");
   };
@@ -429,6 +439,12 @@ function ActiveQuizContent() {
       {showInstructions && (
         <InstructionsModal onClose={() => setShowInstructions(false)} />
       )}
+
+      <LoadingModal
+        description="Scanning the question and preparing a useful hint."
+        open={isAiLoading}
+        title="Preppal is thinking"
+      />
 
       {showSubmitModal && !isUntimed && (
         <SubmitModal

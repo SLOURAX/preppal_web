@@ -18,6 +18,7 @@ const AUTH_ROUTES: readonly string[] = [
 const STANDALONE_ROUTES: readonly string[] = [
   "/dashboard",
   "/quiz/active",
+  "/quiz/preview",
   "/quiz/review",
   "/quiz/results",
 ];

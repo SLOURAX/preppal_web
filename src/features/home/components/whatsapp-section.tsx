@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FaWhatsapp } from "react-icons/fa6";
-import { SaxArrowRightBulk, SaxPeopleBulk } from "@meysam213/iconsax-react";
+import { SaxPeopleBulk } from "@meysam213/iconsax-react";
+import { ArrowRight } from "lucide-react";
 
 export function WhatsAppSection() {
   return (
@@ -37,7 +38,7 @@ export function WhatsAppSection() {
           rel="noreferrer"
           className="whatsapp-community-cta inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[#168b46] px-5 py-3 text-sm font-bold text-white shadow-sm transition-transform hover:-translate-y-0.5"
         >
-          Join WhatsApp <SaxArrowRightBulk className="size-4" />
+          Join WhatsApp <ArrowRight className="size-4" />
         </Link>
       </div>
     </section>

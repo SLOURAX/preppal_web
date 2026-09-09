@@ -147,7 +147,7 @@ function QuizPreviewContent() {
                 <span className="bg-primary/10 text-primary mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">
                   {i + 1}
                 </span>
-                <p className="text-muted-foreground text-sm leading-relaxed">
+                <p className="text-muted-foreground text-[.8rem] leading-relaxed">
                   {text}
                 </p>
               </li>
@@ -174,10 +174,10 @@ function QuizPreviewContent() {
           </div>
         )}
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
+        <div className="mt-8 flex flex-row gap-2 sm:justify-end sm:gap-3">
           <button
             onClick={() => router.push("/quiz")}
-            className="flex items-center justify-center gap-2 rounded-xl border !border-rose-600 px-6 py-2.5 text-sm font-semibold text-rose-600 transition-colors"
+            className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl border !border-rose-600 px-3 py-2.5 text-xs font-semibold text-rose-600 transition-colors sm:flex-none sm:px-6 sm:text-sm"
           >
             Cancel
           </button>
@@ -187,9 +187,9 @@ function QuizPreviewContent() {
               if (isUntimed) params.set("count", String(questionCount));
               router.push(`/quiz/active?${params.toString()}`);
             }}
-            className="flex items-center gap-2 px-8 text-sm font-semibold"
+            className="min-w-0 flex-1 gap-2 rounded-xl px-3 text-xs font-semibold sm:flex-none sm:px-8 sm:text-sm"
           >
-            <SaxPlayCircleBulk className="size-5" />
+            {/* <SaxPlayCircleBulk className="size-5" /> */}
             Start {isUntimed ? "Practice" : "Exam"}
           </Button>
         </div>

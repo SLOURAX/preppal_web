@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, DataState } from "@/components/ui";
+import { Button, DataState, LoadingState } from "@/components/ui";
 
 import { useSystemStatus } from "../hooks/use-system-status";
 
@@ -21,9 +21,12 @@ export function SystemStatusCard({ audience }: { audience: string }) {
         />
       </div>
       {query.isPending ? (
-        <p className="text-muted-foreground mt-8 text-sm">
-          Checking the Preppal API…
-        </p>
+        <div className="mt-8">
+          <LoadingState
+            title="Checking the Preppal API"
+            description="Connecting securely…"
+          />
+        </div>
       ) : query.isError ? (
         <div className="mt-6">
           <DataState

@@ -7,6 +7,7 @@ interface ConfirmationModalProps {
   readonly title: string;
   readonly description: string;
   readonly confirmLabel?: string;
+  readonly cancelLabel?: string;
   readonly destructive?: boolean;
   readonly onCancel: () => void;
   readonly onConfirm: () => void;
@@ -16,6 +17,7 @@ export function ConfirmationModal({
   title,
   description,
   confirmLabel = "Continue",
+  cancelLabel = "Cancel",
   destructive = false,
   onCancel,
   onConfirm,
@@ -42,7 +44,7 @@ export function ConfirmationModal({
         className="bg-surface relative z-10 w-full max-w-sm rounded-2xl p-5 shadow-2xl"
         role="dialog"
       >
-        <div className="flex items-start gap-3">
+        <div className="flex flex-col items-start justify-center gap-3">
           <span
             className={`grid size-10 shrink-0 place-items-center rounded-xl ${destructive ? "bg-rose-500/10 text-rose-600" : "bg-amber-500/10 text-amber-600"}`}
           >
@@ -55,21 +57,21 @@ export function ConfirmationModal({
             >
               {title}
             </h2>
-            <p className="text-muted-foreground mt-1 text-sm leading-5">
+            <p className="text-muted-foreground mt-1 text-[.75rem] leading-5">
               {description}
             </p>
           </div>
         </div>
         <div className="mt-5 flex gap-2">
           <button
-            className="flex-1 rounded-xl border !border-rose-600 px-3 py-2.5 text-sm font-semibold text-rose-600 transition-colors"
+            className="flex-1 rounded-xl border !border-rose-600 px-3 py-2.5 text-[.8rem] font-semibold text-rose-600 transition-colors"
             onClick={onCancel}
             type="button"
           >
-            Cancel
+            {cancelLabel}
           </button>
           <button
-            className={`flex-1 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors ${destructive ? "bg-rose-600 text-white hover:bg-rose-700" : "bg-primary text-primary-foreground hover:bg-primary-strong"}`}
+            className={`flex-1 rounded-xl px-3 py-2.5 text-[.8rem] font-semibold transition-colors ${destructive ? "bg-rose-600 text-white hover:bg-rose-700" : "bg-primary text-primary-foreground hover:bg-primary-strong"}`}
             onClick={onConfirm}
             type="button"
           >

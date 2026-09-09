@@ -191,7 +191,7 @@ export function DashboardShell() {
 
         <nav
           aria-label="Dashboard navigation"
-          className="bg-surface/95 border-border fixed right-0 bottom-0 left-0 z-40 border-t px-2 py-2 shadow-[0_-8px_24px_rgb(39_24_93/0.08)] backdrop-blur-xl md:hidden"
+          className="border-border bg-surface/95 fixed right-0 bottom-0 left-0 z-50 border-t px-2 pt-1.5 pb-[calc(env(safe-area-inset-bottom)+0.45rem)] text-muted-foreground shadow-[0_-8px_24px_rgb(39_24_93/0.08)] backdrop-blur-xl md:hidden"
         >
           <div className="mx-auto grid max-w-lg grid-cols-5 gap-1">
             {TABS.map(({ id, label, icon: Icon }) => {
@@ -201,20 +201,33 @@ export function DashboardShell() {
                   key={id}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "mx-auto flex w-[60%] min-w-0 flex-col items-center gap-1 rounded-full px-1 py-1.5 text-[10px] font-semibold transition-colors",
+                    "mx-auto flex min-w-0 flex-col items-center gap-0.5 rounded-xl px-1 py-0.5 text-[9px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70",
                     isActive
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground",
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                   onClick={() => setSelectedTab(id)}
                   type="button"
                 >
-                  <Icon className="size-4" />
+                  <span
+                    className={cn(
+                      "grid size-10 place-items-center rounded-xl transition-all duration-200",
+                      isActive
+                        ? "bg-primary/10 text-primary shadow-sm"
+                        : "bg-transparent",
+                    )}
+                  >
+                    <Icon className="size-5" strokeWidth={1.9} />
+                  </span>
                   <span>{label}</span>
                 </button>
               );
             })}
           </div>
+          <span
+            className="mx-auto mt-1.5 block h-0.5 w-24 rounded-full bg-primary/25"
+            aria-hidden="true"
+          />
         </nav>
 
         <main className="mx-auto w-full flex-1 px-4 py-8 pb-24 sm:px-6 md:pb-8 lg:w-[60vw]">

@@ -178,6 +178,7 @@ export function QuizEntryScreen({
     if (selectedExamSubject) params.set("subject", selectedExamSubject);
     if (selectedSubject) params.set("subject", selectedSubject);
     if (selectedYear) params.set("year", selectedYear.toString());
+    if (selectedMode === "timed") params.set("seed", String(Date.now()));
 
     router.push(`/quiz/preview?${params.toString()}`);
   };

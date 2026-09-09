@@ -1,6 +1,6 @@
 "use client";
 
-import { SaxClockBulk } from "@meysam213/iconsax-react";
+import { Clock3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 function formatTime(seconds: number): string {
@@ -22,19 +22,19 @@ export function QuizTimer({ secondsLeft }: QuizTimerProps) {
   return (
     <div
       className={cn(
-        "flex items-center gap-2 rounded-xl border px-2.5 py-1.5 tabular-nums shadow-sm transition-colors sm:px-3",
+        "flex items-center gap-2 rounded-xl border bg-white px-3 py-1.5 tabular-nums shadow-sm transition-colors sm:px-3",
         isDanger
-          ? "animate-pulse border-red-500/30 bg-red-500/10 text-red-600"
+          ? "animate-pulse border-red-500/30 text-red-600"
           : isWarning
-            ? "border-amber-500/30 bg-amber-500/10 text-amber-600"
-            : "border-border bg-surface-subtle text-foreground",
+            ? "border-amber-500/30 text-amber-600"
+            : "border-border text-foreground",
       )}
     >
-      <SaxClockBulk className="size-4 shrink-0" />
+      <Clock3 className="size-4 shrink-0" strokeWidth={2.1} />
       <span className="hidden text-[10px] font-semibold tracking-wide uppercase opacity-70 sm:inline">
         Time left
       </span>
-      <span className="font-mono text-[.8rem] font-bold">
+      <span className="font-mono text-[.95rem] font-bold tracking-tight">
         {formatTime(secondsLeft)}
       </span>
     </div>

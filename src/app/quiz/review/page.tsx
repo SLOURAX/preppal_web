@@ -8,6 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronUp,
+  RefreshCw,
   XCircle,
 } from "lucide-react";
 import {
@@ -17,7 +18,11 @@ import {
   SaxSend2Bulk,
 } from "@meysam213/iconsax-react";
 import { useRouter } from "next/navigation";
-import { QUIZ_QUESTIONS } from "@/features/quiz/mock-questions";
+import {
+  generateExamSimulation,
+  QUIZ_QUESTIONS,
+} from "@/features/quiz/mock-questions";
+import { ConfirmationModal } from "@/components/ui";
 import { useAuthStore } from "@/store";
 
 export default function QuizReviewPage() {
@@ -31,7 +36,10 @@ export default function QuizReviewPage() {
   const [followUpOpen, setFollowUpOpen] = useState(false);
   const [followUp, setFollowUp] = useState("");
   const [conversation, setConversation] = useState<string[]>([]);
-  const reviewQuestions = QUIZ_QUESTIONS.slice(0, latestAttempt?.total ?? 40);
+  const [showSimulationModal, setShowSimulationModal] = useState(false);
+  const reviewQuestions = latestAttempt?.seed
+    ? generateExamSimulation(latestAttempt.seed, latestAttempt.total)
+    : QUIZ_QUESTIONS.slice(0, latestAttempt?.total ?? 40);
   const activeQuestion = reviewQuestions[activeIndex]!;
   const number = String(activeQuestion.id).padStart(2, "0");
   const { text, options, correctAnswer: correct, explanation } = activeQuestion;
@@ -42,6 +50,19 @@ export default function QuizReviewPage() {
     if (!question) return;
     setConversation((messages) => [...messages, question]);
     setFollowUp("");
+  };
+
+  const generateFreshSimulation = (): void => {
+    if (!latestAttempt) return;
+    const params = new URLSearchParams({
+      mode: "timed",
+      path: latestAttempt.path ?? "exam",
+      exam: latestAttempt.exam,
+      subject: latestAttempt.subject,
+      seed: String(Date.now()),
+    });
+    if (latestAttempt.year) params.set("year", latestAttempt.year);
+    router.push(`/quiz/preview?${params.toString()}`);
   };
 
   return (
@@ -60,6 +81,15 @@ export default function QuizReviewPage() {
               ? `${latestAttempt.exam} ${latestAttempt.subject}`
               : "Quiz review"}
           </span>
+          {latestAttempt ? (
+            <button
+              className="border-primary text-primary hover:bg-primary/10 inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors"
+              onClick={() => setShowSimulationModal(true)}
+              type="button"
+            >
+              <RefreshCw className="size-3.5" /> New simulation
+            </button>
+          ) : null}
         </div>
       </header>
       <div className="mx-auto w-full max-w-4xl px-5 py-8 sm:px-8 sm:py-10">
@@ -202,7 +232,7 @@ export default function QuizReviewPage() {
                     <SaxLikeBulk
                       className={`size-4 ${feedback === "helpful" ? "animate-bounce" : ""}`}
                     />{" "}
-                    Helpful
+                    Yes, it was
                   </button>
                   <button
                     className={`flex flex-1 items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-xs font-semibold transition-all ${feedback === "unhelpful" ? "border-rose-500 bg-rose-500/10 text-rose-600" : "border-border text-muted-foreground hover:border-rose-500/50 hover:text-rose-600"}`}
@@ -212,7 +242,7 @@ export default function QuizReviewPage() {
                     }}
                     type="button"
                   >
-                    <SaxDislikeBulk className="size-4" /> Not helpful
+                    <SaxDislikeBulk className="size-4" /> No, it wasn't
                   </button>
                 </div>
                 {followUpOpen ? (
@@ -290,6 +320,16 @@ export default function QuizReviewPage() {
           </button>
         </div>
       </div>
+      {showSimulationModal ? (
+        <ConfirmationModal
+          cancelLabel="Cancel"
+          confirmLabel="Continue"
+          description="A fresh set of questions will follow the same exam pattern, subject, and difficulty so you can practise the areas you just reviewed."
+          onCancel={() => router.push("/quiz/results")}
+          onConfirm={generateFreshSimulation}
+          title="Ready for another simulation?"
+        />
+      ) : null}
     </main>
   );
 }
