@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, CalendarDays } from "lucide-react";
+import { ArrowLeft, ArrowRight, CalendarDays, Check } from "lucide-react";
 
 import { Button } from "@/components/ui";
 import { ListSelect } from "@/components/ui/list-select";
@@ -62,9 +62,9 @@ export function ExamYearStep({
             <button
               aria-pressed={isSelected}
               className={cn(
-                "rounded-xl py-3 text-center text-[.8rem] font-semibold transition-colors",
+                "relative rounded-xl py-3 text-center text-[.8rem] font-semibold transition-colors",
                 isSelected
-                  ? "bg-primary text-primary-foreground shadow-primary/20 shadow-lg"
+                  ? "border border-primary text-primary bg-surface"
                   : "bg-surface text-foreground hover:bg-primary/5 border",
               )}
               key={year}
@@ -72,6 +72,11 @@ export function ExamYearStep({
               type="button"
             >
               {year}
+              {isSelected ? (
+                <span className="bg-primary text-primary-foreground absolute top-3 right-3 grid size-4 place-items-center rounded-full">
+                  <Check className="size-2.5" strokeWidth={3} />
+                </span>
+              ) : null}
             </button>
           );
         })}

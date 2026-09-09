@@ -35,20 +35,21 @@ const capabilities: readonly Capability[] = [
     icon: <SaxCpuChargeBulk className="h-6 w-6" />,
     title: "Learn smarter",
     detail:
-      "Master topics with AI-generated practice exams, instant deep-dive explanations, and smart insights.",
+      "Build mastery with professionally authored and AI-powered questions, instant explanations, and smart insights.",
     color: "text-[#8659d3] bg-[#e6e2f8] dark:bg-[#8659d3]/20",
   },
   {
     icon: <SaxCoinBulk className="h-6 w-6" />,
-    title: "Earn coins",
+    title: "Earn & withdraw",
     detail:
-      "Every correct answer earns XP. Convert your XP into withdrawable Preppal Coins.",
+      "Complete quizzes and learning activities to earn XP. Convert your XP into withdrawable Preppal Coins.",
     color: "text-[#f28e2b] bg-[#ebd6c8] dark:bg-[#f28e2b]/20",
   },
   {
     icon: <SaxGiftBulk className="h-6 w-6" />,
-    title: "Redeem prizes",
-    detail: "Swap coins for gift cards, premium plans, and exclusive prizes.",
+    title: "Redeem rewards",
+    detail:
+      "Use your Preppal Coins for gift cards, premium plans, and exclusive prizes.",
     color: "text-[#1ba472] bg-[#d0e5d9] dark:bg-[#1ba472]/20",
   },
 ];
@@ -334,7 +335,7 @@ export default function HomePage() {
               >
                 {capability.icon}
               </div>
-              <h2 className="text-foreground text-base font-semibold">
+              <h2 className="text-foreground text-base font-semibold mt-2">
                 {capability.title}
               </h2>
               <p className="text-muted-foreground text-sm leading-5">

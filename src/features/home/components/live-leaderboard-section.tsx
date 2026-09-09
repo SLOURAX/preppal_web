@@ -307,23 +307,44 @@ export function LiveLeaderboardSection() {
               `}</style>
             </svg>
 
-            <div className="absolute top-12 -left-4 z-20 rounded-2xl border border-white/10 bg-white/8 p-3.5 shadow-[0_0_30px_rgba(124,58,237,0.35)] backdrop-blur-xl sm:-left-8 sm:p-4">
+            <div
+              aria-label="Leaderboard and achievement"
+              className="absolute top-12 -left-4 z-20 rounded-2xl border border-white/10 bg-white/8 p-3.5 shadow-[0_0_30px_rgba(124,58,237,0.35)] backdrop-blur-xl sm:-left-8 sm:p-4"
+              title="Climb the leaderboard"
+            >
               <SaxCrown1Bulk className="size-6 text-violet-300 sm:size-8" />
             </div>
 
             {/* Progress accent — top-right */}
-            <div className="absolute top-1/4 -right-4 z-20 rounded-xl border border-white/10 bg-white/8 p-2.5 shadow-[0_0_28px_rgba(99,102,241,0.3)] backdrop-blur-xl sm:-right-8 sm:p-3">
+            <div
+              aria-label="Progress tracking"
+              className="absolute top-1/4 -right-4 z-20 rounded-xl border border-white/10 bg-white/8 p-2.5 shadow-[0_0_28px_rgba(99,102,241,0.3)] backdrop-blur-xl sm:-right-8 sm:p-3"
+              title="Track your progress"
+            >
               <SaxChartSuccessBulk className="size-5 text-indigo-300 sm:size-6" />
             </div>
 
             {/* Achievement accent — bottom-right */}
-            <div className="absolute -right-2 bottom-1/4 z-20 rounded-2xl border border-white/10 bg-white/8 p-2.5 shadow-[0_0_24px_rgba(167,139,250,0.25)] backdrop-blur-xl sm:-right-6 sm:p-3">
+            <div
+              aria-label="Achievement rewards"
+              className="absolute -right-2 bottom-1/4 z-20 rounded-2xl border border-white/10 bg-white/8 p-2.5 shadow-[0_0_24px_rgba(167,139,250,0.25)] backdrop-blur-xl sm:-right-6 sm:p-3"
+              title="Unlock achievements"
+            >
               <SaxAwardBulk className="size-5 text-violet-400 sm:size-6" />
             </div>
 
             {/* Medal accent — bottom-center */}
-            <div className="absolute -bottom-2 left-1/4 z-20 rounded-full border border-white/10 bg-white/8 p-3 shadow-[0_0_36px_rgba(124,58,237,0.3)] backdrop-blur-xl sm:-bottom-6 sm:p-4">
+            <div
+              aria-label="Leaderboard medals"
+              className="absolute -bottom-2 left-1/4 z-20 rounded-full border border-white/10 bg-white/8 p-3 shadow-[0_0_36px_rgba(124,58,237,0.3)] backdrop-blur-xl sm:-bottom-6 sm:p-4"
+              title="Earn medals"
+            >
               <SaxMedalStarBulk className="size-6 text-violet-300 sm:size-8" />
+            </div>
+
+            <div className="absolute bottom-7 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/10 bg-black/25 px-3 py-1.5 text-[10px] font-semibold tracking-wide text-violet-100 shadow-lg backdrop-blur-md sm:bottom-9 sm:px-4 sm:py-2 sm:text-xs">
+              Practice <span className="mx-1 text-violet-300">→</span> Earn XP
+              <span className="mx-1 text-violet-300">→</span> Climb
             </div>
 
             <Image

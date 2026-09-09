@@ -150,9 +150,9 @@ export function SubjectTopicsStep({
               aria-pressed={isSelected}
               className={cn(
                 "flex min-h-12 items-center gap-3 rounded-xl px-4 text-left text-sm font-medium transition-colors",
-                isSelected
-                  ? "bg-primary/10 text-primary"
-                  : "bg-surface text-foreground hover:bg-primary/5 border",
+                        isSelected
+                          ? "bg-primary/10 text-primary"
+                          : "bg-surface text-foreground hover:bg-primary/5 border",
               )}
               key={topic}
               onClick={() => onToggleTopic(topic)}
@@ -160,10 +160,10 @@ export function SubjectTopicsStep({
             >
               <span
                 className={cn(
-                  "grid size-5 shrink-0 place-items-center rounded-md",
-                  isSelected
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-surface-subtle text-muted-foreground",
+                    "grid size-5 shrink-0 place-items-center rounded-md",
+                    isSelected
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-surface-subtle text-muted-foreground",
                 )}
               >
                 {isSelected ? <Check className="size-3.5" /> : null}

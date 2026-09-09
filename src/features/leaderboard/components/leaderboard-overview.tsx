@@ -1,6 +1,6 @@
 "use client";
 
-import { BadgeCent, Crown, Medal } from "lucide-react";
+import { BadgeCent, ChevronLeft, ChevronRight, Crown, Medal } from "lucide-react";
 import { useState } from "react";
 import { DataState } from "@/components/ui";
 
@@ -21,10 +21,13 @@ const RANGE_LABELS: Readonly<Record<LeaderboardRange, string>> = {
   all: "All-time",
 };
 
+const PAGE_SIZE = 10;
+
 export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
   const [selectedRange, setSelectedRange] = useState<LeaderboardRange>("week");
   const [selectedMonth, setSelectedMonth] = useState<string>("2026-09");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const podium = [
     LEADERBOARD_ENTRIES[1],
     LEADERBOARD_ENTRIES[0],
@@ -32,11 +35,17 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
   ] as const;
   const remaining = LEADERBOARD_ENTRIES.slice(3);
   const normalizedQuery = searchQuery.trim().toLowerCase();
-  const visibleEntries = normalizedQuery
-    ? LEADERBOARD_ENTRIES.filter((entry) =>
+  const filteredEntries = normalizedQuery
+    ? remaining.filter((entry) =>
         entry.name.toLowerCase().includes(normalizedQuery),
       )
     : remaining;
+  const pageCount = Math.max(1, Math.ceil(filteredEntries.length / PAGE_SIZE));
+  const safePage = Math.min(currentPage, pageCount);
+  const visibleEntries = filteredEntries.slice(
+    (safePage - 1) * PAGE_SIZE,
+    safePage * PAGE_SIZE,
+  );
   const userEntry = LEADERBOARD_ENTRIES.find(
     (entry) => entry.name === userName,
   );
@@ -52,9 +61,18 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
   return (
     <div className="space-y-5">
       <LeaderboardFilters
-        onMonthChange={setSelectedMonth}
-        onRangeChange={setSelectedRange}
-        onSearchChange={setSearchQuery}
+        onMonthChange={(month) => {
+          setSelectedMonth(month);
+          setCurrentPage(1);
+        }}
+        onRangeChange={(range) => {
+          setSelectedRange(range);
+          setCurrentPage(1);
+        }}
+        onSearchChange={(query) => {
+          setSearchQuery(query);
+          setCurrentPage(1);
+        }}
         searchQuery={searchQuery}
         selectedMonth={selectedMonth}
         selectedRange={selectedRange}
@@ -66,7 +84,7 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
             Top performers earning XP through eligible activities
           </p>
         </div>
-        <div className="relative mx-auto mt-5 grid max-w-xl grid-cols-3 items-end gap-1 sm:mt-4 sm:gap-3">
+        <div className="relative mx-auto mt-5 grid max-w-[360px] grid-cols-3 items-end gap-2 sm:mt-4 sm:max-w-[400px] sm:gap-3">
           <div
             aria-hidden="true"
             className="border-border/70 pointer-events-none absolute right-0 bottom-0 left-0 border-b"
@@ -125,12 +143,12 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
       </section>
       <section className="surface-card p-5 sm:p-6">
         <div className="mb-2 flex items-center justify-between gap-3">
-          <h3 className="text-sm font-semibold">
-            {normalizedQuery ? "Search results" : "More top learners"}
+          <h3 className="text-[.9rem] font-semibold">
+            {normalizedQuery ? "Search results" : "Leaderboard rankings"}
           </h3>
           <span className="text-muted-foreground text-xs">
-            {visibleEntries.length} player
-            {visibleEntries.length === 1 ? "" : "s"}
+            {filteredEntries.length} player
+            {filteredEntries.length === 1 ? "" : "s"}
           </span>
         </div>
         <div className="divide-border divide-y">
@@ -140,17 +158,17 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
               key={entry.rank}
             >
               <div className="flex min-w-0 items-center gap-3">
-                <span className="text-muted-foreground w-5 text-sm font-bold">
+                <span className="text-muted-foreground w-5 text-[.85rem] font-bold">
                   {entry.rank}
                 </span>
                 <span className="bg-primary/10 text-primary grid size-8 place-items-center rounded-full text-xs font-bold">
                   {entry.name.slice(0, 1)}
                 </span>
-                <span className="truncate text-sm font-medium">
+                <span className="truncate text-[.8rem] font-medium">
                   {entry.name}
                 </span>
               </div>
-              <span className="text-muted-foreground text-sm font-semibold">
+              <span className="text-muted-foreground text-[.8rem] font-semibold">
                 {entry.score.toLocaleString()} XP
               </span>
             </div>
@@ -162,13 +180,53 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
             />
           ) : null}
         </div>
+        {filteredEntries.length > PAGE_SIZE ? (
+          <div className="border-border mt-4 flex items-center justify-between border-t pt-4">
+            <button
+              aria-label="Previous leaderboard page"
+              className="text-muted-foreground hover:bg-surface-subtle hover:text-foreground inline-flex items-center gap-1 rounded-lg px-2.5 py-2 text-xs font-semibold transition-colors disabled:pointer-events-none disabled:opacity-40"
+              disabled={safePage === 1}
+              onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+              type="button"
+            >
+              <ChevronLeft className="size-4" /> Previous
+            </button>
+            <div className="flex items-center gap-1" aria-label="Leaderboard pages">
+              {Array.from({ length: pageCount }, (_, index) => index + 1).map(
+                (page) => (
+                  <button
+                    aria-label={`Go to leaderboard page ${page}`}
+                    aria-current={safePage === page ? "page" : undefined}
+                    className={`grid size-8 place-items-center rounded-lg text-xs font-semibold transition-colors ${safePage === page ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-surface-subtle"}`}
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    type="button"
+                  >
+                    {page}
+                  </button>
+                ),
+              )}
+            </div>
+            <button
+              aria-label="Next leaderboard page"
+              className="text-muted-foreground hover:bg-surface-subtle hover:text-foreground inline-flex items-center gap-1 rounded-lg px-2.5 py-2 text-xs font-semibold transition-colors disabled:pointer-events-none disabled:opacity-40"
+              disabled={safePage === pageCount}
+              onClick={() =>
+                setCurrentPage((page) => Math.min(pageCount, page + 1))
+              }
+              type="button"
+            >
+              Next <ChevronRight className="size-4" />
+            </button>
+          </div>
+        ) : null}
       </section>
       <section className="bg-primary text-primary-foreground flex items-center justify-between gap-4 rounded-2xl p-5 shadow-sm">
         <div>
           <p className="text-sm opacity-80">Your current rank</p>
           <p className="text-2xl font-bold">#{userEntry?.rank ?? "—"}</p>
         </div>
-        <p className="text-right text-sm font-medium opacity-90">
+        <p className="text-right text-[.8rem] font-medium opacity-90">
           Keep completing quizzes
           <br />
           to climb the board.
