@@ -1,6 +1,15 @@
 "use client";
 
-import { AlertTriangle, ArrowLeft, Bell, Check, Info, Zap } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowLeft,
+  Bell,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Info,
+  Zap,
+} from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
@@ -25,6 +34,8 @@ export default function NotificationsPage() {
     ...NOTIFICATIONS,
   ]);
   const [filter, setFilter] = useState<"all" | "unread">("all");
+  const [page, setPage] = useState(1);
+  const pageSize = 5;
   const unreadCount = notifications.filter((item) => !item.read).length;
   const visibleNotifications = useMemo(
     () =>
@@ -32,6 +43,15 @@ export default function NotificationsPage() {
         ? notifications.filter((item) => !item.read)
         : notifications,
     [filter, notifications],
+  );
+  const totalPages = Math.max(
+    1,
+    Math.ceil(visibleNotifications.length / pageSize),
+  );
+  const currentPage = Math.min(page, totalPages);
+  const pageNotifications = visibleNotifications.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
   );
 
   const markAllAsRead = (): void => {
@@ -89,7 +109,10 @@ export default function NotificationsPage() {
                 : "text-muted-foreground hover:bg-surface-subtle hover:text-foreground",
             )}
             key={value}
-            onClick={() => setFilter(value)}
+            onClick={() => {
+              setFilter(value);
+              setPage(1);
+            }}
             type="button"
           >
             {value === "all" ? "All notifications" : `Unread (${unreadCount})`}
@@ -100,7 +123,7 @@ export default function NotificationsPage() {
       <section className="surface-card mt-4 overflow-hidden" aria-live="polite">
         {visibleNotifications.length > 0 ? (
           <div className="divide-border divide-y">
-            {visibleNotifications.map((notification) => {
+            {pageNotifications.map((notification) => {
               const Icon = ICONS[notification.icon];
               return (
                 <button
@@ -146,6 +169,31 @@ export default function NotificationsPage() {
                 </button>
               );
             })}
+            {totalPages > 1 ? (
+              <div className="border-border flex items-center justify-between gap-3 border-t p-4">
+                <button
+                  className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-semibold disabled:pointer-events-none disabled:opacity-40"
+                  disabled={currentPage === 1}
+                  onClick={() => setPage((value) => Math.max(1, value - 1))}
+                  type="button"
+                >
+                  <ChevronLeft className="size-3.5" /> Previous
+                </button>
+                <span className="text-muted-foreground text-xs font-medium">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  className="text-primary hover:text-primary-strong inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-semibold disabled:pointer-events-none disabled:opacity-40"
+                  disabled={currentPage === totalPages}
+                  onClick={() =>
+                    setPage((value) => Math.min(totalPages, value + 1))
+                  }
+                  type="button"
+                >
+                  Next <ChevronRight className="size-3.5" />
+                </button>
+              </div>
+            ) : null}
           </div>
         ) : (
           <div className="p-6">

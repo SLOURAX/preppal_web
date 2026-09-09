@@ -4,6 +4,7 @@ import {
   BadgeCent,
   BarChart3,
   BookOpen,
+  ChevronDown,
   Home,
   LayoutDashboard,
   LogOut,
@@ -78,6 +79,7 @@ export function DashboardShell() {
       ? requestedTab
       : null;
   const [selectedTab, setSelectedTab] = useState<TabId>("home");
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const activeTab: TabId =
     requestedView === "quiz-history" || requestedView === "wallet-history"
       ? requestedView
@@ -87,6 +89,13 @@ export function DashboardShell() {
   const preppalBalance = useAuthStore((s) => s.preppalBalance);
   const experiencePoints = useAuthStore((s) => s.experiencePoints);
   const openSignOutModal = useAuthStore((s) => s.openSignOutModal);
+  const userInitials = userName
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("") || "U";
 
   return (
     <div
@@ -132,13 +141,15 @@ export function DashboardShell() {
                 </span>
               </div>
 
-              <ThemeToggle />
+              <div className="hidden sm:block">
+                <ThemeToggle />
+              </div>
 
-              <div className="flex items-center gap-2">
+              <div className="hidden items-center gap-2 sm:flex">
                 <div className="bg-primary text-primary-foreground grid size-8 place-items-center rounded-full text-xs font-bold">
-                  {userName.slice(0, 1).toUpperCase()}
+                  {userInitials}
                 </div>
-                <div className="hidden flex-col sm:flex">
+                <div className="flex flex-col">
                   <span className="text-foreground text-xs leading-tight font-bold">
                     {userName}
                   </span>
@@ -151,10 +162,59 @@ export function DashboardShell() {
               <button
                 onClick={openSignOutModal}
                 title="Sign out"
-                className="text-muted-foreground hover:text-danger hover:bg-surface-subtle rounded-lg p-1.5 transition-colors"
+                className="text-muted-foreground hover:text-danger hover:bg-surface-subtle hidden rounded-lg p-1.5 transition-colors sm:flex"
               >
                 <LogOut className="size-4" />
               </button>
+
+              <div className="relative sm:hidden">
+                <button
+                  type="button"
+                  aria-label="Open account menu"
+                  aria-expanded={isProfileOpen}
+                  onClick={() => setIsProfileOpen((open) => !open)}
+                  className="text-foreground flex items-center gap-1.5 rounded-xl p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                >
+                  <span className="bg-primary text-primary-foreground grid size-8 place-items-center rounded-full text-xs font-bold">
+                    {userInitials}
+                  </span>
+                  <ChevronDown
+                    className={cn(
+                      "text-muted-foreground size-4 transition-transform",
+                      isProfileOpen && "rotate-180",
+                    )}
+                  />
+                </button>
+                {isProfileOpen ? (
+                  <div className="border-border bg-surface absolute top-full right-0 mt-2 w-48 rounded-xl border p-2 shadow-lg">
+                    <div className="border-border mb-1 border-b px-3 py-2">
+                      <p className="text-foreground truncate text-xs font-semibold">
+                        {userName}
+                      </p>
+                      <p className="text-muted-foreground text-[10px]">
+                        {userPlan}
+                      </p>
+                    </div>
+                    <div className="border-border flex items-center justify-between border-b px-3 py-2">
+                      <span className="text-muted-foreground text-xs font-semibold">
+                        Theme
+                      </span>
+                      <ThemeToggle />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsProfileOpen(false);
+                        openSignOutModal();
+                      }}
+                      className="text-danger hover:bg-danger/5 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold"
+                    >
+                      <LogOut className="size-3.5" />
+                      Log out
+                    </button>
+                  </div>
+                ) : null}
+              </div>
             </div>
           </div>
 

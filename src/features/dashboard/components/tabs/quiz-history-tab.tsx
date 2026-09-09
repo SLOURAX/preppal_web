@@ -1,7 +1,13 @@
 "use client";
 
-import { ArrowLeft, BookOpen, ChevronRight } from "lucide-react";
+import {
+  ArrowLeft,
+  BookOpen,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 import { useAuthStore } from "@/store";
 import { DataState } from "@/components/ui";
@@ -21,6 +27,14 @@ const formatDate = (value: string): string => {
 
 export function QuizHistoryTab() {
   const quizAttempts = useAuthStore((state) => state.quizAttempts);
+  const [page, setPage] = useState(1);
+  const pageSize = 5;
+  const totalPages = Math.max(1, Math.ceil(quizAttempts.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const pageItems = quizAttempts.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
 
   return (
     <div className="space-y-6">
@@ -57,7 +71,7 @@ export function QuizHistoryTab() {
           />
         ) : (
           <div className="divide-border divide-y">
-            {quizAttempts.map((attempt) => (
+            {pageItems.map((attempt) => (
               <div
                 className="flex flex-wrap items-center justify-between gap-4 py-4 first:pt-0 last:pb-0"
                 key={attempt.id}
@@ -78,6 +92,31 @@ export function QuizHistoryTab() {
                 </span>
               </div>
             ))}
+            {totalPages > 1 ? (
+              <div className="border-border flex items-center justify-between gap-3 border-t pt-4">
+                <button
+                  className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-semibold disabled:pointer-events-none disabled:opacity-40"
+                  disabled={currentPage === 1}
+                  onClick={() => setPage((value) => Math.max(1, value - 1))}
+                  type="button"
+                >
+                  <ChevronLeft className="size-3.5" /> Previous
+                </button>
+                <span className="text-muted-foreground text-xs font-medium">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  className="text-primary hover:text-primary-strong inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-semibold disabled:pointer-events-none disabled:opacity-40"
+                  disabled={currentPage === totalPages}
+                  onClick={() =>
+                    setPage((value) => Math.min(totalPages, value + 1))
+                  }
+                  type="button"
+                >
+                  Next <ChevronRight className="size-3.5" />
+                </button>
+              </div>
+            ) : null}
           </div>
         )}
       </section>
