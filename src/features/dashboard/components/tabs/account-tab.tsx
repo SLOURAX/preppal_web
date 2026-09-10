@@ -83,7 +83,7 @@ export function AccountTab() {
     <div className="mx-auto max-w-2xl space-y-6 pb-20 md:pb-0">
       {/* Profile card */}
       <div className="surface-card flex items-center gap-5 rounded-3xl p-6 shadow-sm">
-        <div className="bg-primary text-primary-foreground relative grid size-16 shrink-0 place-items-center rounded-2xl text-2xl font-black shadow-md sm:size-20">
+        <div className="bg-primary text-primary-foreground relative grid size-14 shrink-0 place-items-center rounded-2xl text-xl font-black shadow-md sm:size-20 sm:text-2xl">
           {userName.slice(0, 1).toUpperCase()}
           <button
             className="bg-surface hover:bg-surface-subtle absolute -right-2 -bottom-2 grid size-7 place-items-center rounded-full border shadow-sm transition-colors"

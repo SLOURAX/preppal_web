@@ -35,7 +35,7 @@ export function AiQuizSection() {
   };
 
   return (
-    <section className="grid items-center gap-8 lg:grid-cols-[0.85fr_1.15fr]">
+    <section className="grid items-center gap-8 lg:grid-cols-[0.85fr_1.15fr] mt-5">
       <div>
         <h2 className="text-foreground mt-4 text-3xl font-bold tracking-[-0.035em]">
           Get help at the moment <br />

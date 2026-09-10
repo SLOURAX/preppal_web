@@ -45,13 +45,10 @@ export function QuizHistoryTab() {
         <ArrowLeft className="size-4" /> Back to overview
       </Link>
       <header>
-        <div className="bg-primary/10 text-primary mb-4 grid size-12 place-items-center rounded-2xl">
-          <BookOpen className="size-6" />
-        </div>
-        <h1 className="text-foreground text-2xl font-bold tracking-tight sm:text-3xl">
+        <h1 className="text-foreground text-[1.2rem] font-bold tracking-tight sm:text-2xl">
           Quiz history
         </h1>
-        <p className="text-muted-foreground mt-2 text-sm">
+        <p className="text-muted-foreground text-[.8rem]">
           Review every practice session you have completed.
         </p>
       </header>

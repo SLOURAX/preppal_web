@@ -21,6 +21,7 @@ import {
   LiveLeaderboardSection,
   FaqSection,
   WhatsAppSection,
+  ExamPathwaysMarquee,
 } from "@/features/home";
 
 interface Capability {
@@ -84,7 +85,7 @@ export default function HomePage() {
               <span className="text-primary">Go further.</span>
             </h1>
 
-            <p className="text-muted-foreground max-w-lg text-base leading-7">
+            <p className="text-muted-foreground max-w-lg text-base text-[.85rem] leading-6 md:text-[1rem] lg:text-[.95rem]">
               Preppal is your AI-powered study companion that turns exam prep
               into a rewards. Take quizzes with instant explanations, climb the
               leaderboard, and convert your hard work into real-world rewards.
@@ -323,11 +324,11 @@ export default function HomePage() {
 
         <section
           aria-label="Platform capabilities"
-          className="bg-grid-pattern grid gap-4 rounded-[2rem] p-4 sm:p-6 md:grid-cols-3"
+          className="grid gap-4 rounded-[2rem] p-4 sm:p-6 md:grid-cols-3"
         >
           {capabilities.map((capability) => (
             <article
-              className="surface-card group flex flex-col gap-2 p-6 transition-transform duration-200 hover:-translate-y-1"
+              className="surface-card bg-grid-card group flex flex-col gap-2 p-6 transition-transform duration-200 hover:-translate-y-1"
               key={capability.title}
             >
               <div
@@ -335,7 +336,7 @@ export default function HomePage() {
               >
                 {capability.icon}
               </div>
-              <h2 className="text-foreground text-base font-semibold mt-2">
+              <h2 className="text-foreground mt-2 text-base font-semibold">
                 {capability.title}
               </h2>
               <p className="text-muted-foreground text-[.8rem] leading-5">
@@ -347,6 +348,7 @@ export default function HomePage() {
 
         <AiQuizSection />
         <MomentumSection />
+        <ExamPathwaysMarquee />
         <LiveLeaderboardSection />
         <ReferralSection />
         <WhatsAppSection />

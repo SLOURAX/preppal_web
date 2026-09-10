@@ -95,7 +95,7 @@ function ReadinessCard({ score }: { readonly score: number }) {
           <p className="text-primary text-[11px] font-bold tracking-[0.16em] uppercase">
             Exam readiness
           </p>
-          <h3 className="text-foreground mt-1 text-lg font-semibold">
+          <h3 className="text-foreground mt-1 text-base font-semibold sm:text-lg">
             Your current readiness
           </h3>
           <p className="text-muted-foreground mt-1 max-w-md text-xs leading-5">
@@ -134,7 +134,7 @@ function ReadinessCard({ score }: { readonly score: number }) {
           </svg>
           <div className="bg-surface absolute grid size-24 place-items-center rounded-full">
             <div className="text-center">
-              <p className="text-foreground text-2xl font-black">{score}%</p>
+              <p className="text-foreground text-xl font-black sm:text-2xl">{score}%</p>
               <p className="text-muted-foreground text-[10px] font-semibold uppercase">
                 ready
               </p>
@@ -376,7 +376,7 @@ export function AnalyticsTab() {
     <div className="space-y-6">
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>
-          <h2 className="text-foreground text-2xl font-bold tracking-tight">
+          <h2 className="text-foreground text-xl font-bold tracking-tight sm:text-2xl">
             Analytics
           </h2>
           <p className="text-muted-foreground text-sm">
@@ -542,7 +542,7 @@ export function AnalyticsTab() {
               ].map(([label, value]) => (
                 <div className="bg-surface-subtle rounded-2xl p-4" key={label}>
                   <p className="text-muted-foreground text-xs">{label}</p>
-                  <p className="text-foreground mt-1 text-2xl font-bold">
+                  <p className="text-foreground mt-1 text-xl font-bold sm:text-2xl">
                     {value}%
                   </p>
                   <p className="text-muted-foreground mt-1 text-[11px]">

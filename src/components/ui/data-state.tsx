@@ -20,10 +20,10 @@ export function DataState({
   const isError = tone === "error";
   return (
     <div
-      className="bg-surface-subtle/55 border-border/70 flex flex-col items-center rounded-2xl border border-dashed px-5 py-10 text-center"
+      className="bg-surface-subtle/55 border-border/70 flex flex-col items-center rounded-2xl border border-dashed px-5 py-5 text-center"
       role={isError ? "alert" : undefined}
     >
-      <span
+      {/* <span
         className={`grid size-11 place-items-center rounded-2xl ${isError ? "bg-danger/10 text-danger" : "bg-primary/10 text-primary"}`}
       >
         {icon ??
@@ -32,9 +32,9 @@ export function DataState({
           ) : (
             <Inbox className="size-5" />
           ))}
-      </span>
-      {!isError ? <Mascot mood="encourage" size="sm" className="mt-3" /> : null}
-      <p className="text-foreground mt-4 text-sm font-semibold">{title}</p>
+      </span> */}
+      {!isError ? <Mascot mood="encourage" size="lg" className="mt-3" /> : null}
+      <p className="text-foreground mt-1 text-[.9rem] font-semibold">{title}</p>
       <p className="text-muted-foreground mt-1 max-w-sm text-xs leading-5">
         {description}
       </p>

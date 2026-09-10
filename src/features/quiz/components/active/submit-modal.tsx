@@ -21,13 +21,13 @@ export function SubmitModal({
         onClick={onClose}
       />
       <div className="bg-surface relative z-10 w-full max-w-sm overflow-hidden rounded-2xl shadow-2xl">
-        <div className="px-6 py-6">
-          <div className="mb-5 flex items-start gap-3">
+        <div className="px-4 py-5 sm:px-6 sm:py-6">
+          <div className="mb-4 flex items-start gap-3 sm:mb-5">
             {/* <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-amber-500/10">
               <AlertTriangle className="size-5 text-amber-500" />
             </div> */}
             <div>
-              <h2 className="text-foreground font-bold">Submit Exam?</h2>
+              <h2 className="text-foreground text-sm font-bold sm:text-base">Submit Exam?</h2>
               <p className="text-muted-foreground text-[.75rem] leading-relaxed">
                 Once submitted, you cannot change your answers.
               </p>

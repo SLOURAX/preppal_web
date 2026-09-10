@@ -1,3 +1,5 @@
+"use client";
+
 import {
   BookOpenCheck,
   Check,
@@ -9,6 +11,7 @@ import {
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/store";
 
 import type { PlanId, PricingPlan } from "../pricing.constants";
 
@@ -24,6 +27,17 @@ const PLAN_ICONS: Readonly<Record<PlanId, LucideIcon>> = {
 
 export function PricingCard({ plan }: PricingCardProps) {
   const PlanIcon = PLAN_ICONS[plan.id];
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const ctaHref = isAuthenticated
+    ? plan.id === "free"
+      ? "/dashboard"
+      : `/dashboard?tab=account&upgrade=${plan.id}`
+    : plan.ctaHref;
+  const ctaLabel = isAuthenticated
+    ? plan.id === "free"
+      ? "Go to dashboard"
+      : "Upgrade plan"
+    : plan.ctaLabel;
 
   return (
     <article
@@ -118,9 +132,9 @@ export function PricingCard({ plan }: PricingCardProps) {
                 ? "bg-surface-subtle text-foreground hover:bg-border"
                 : "bg-primary text-primary-foreground hover:bg-primary-strong",
           )}
-          href={plan.ctaHref}
+          href={ctaHref}
         >
-          {plan.ctaLabel}
+          {ctaLabel}
         </Link>
 
         <div

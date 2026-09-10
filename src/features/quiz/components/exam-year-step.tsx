@@ -32,7 +32,7 @@ export function ExamYearStep({
       </button>
 
       <div className="mt-5">
-        <h2 className="text-foreground text-xl font-bold">
+        <h2 className="text-foreground text-lg font-bold sm:text-xl">
           Choose a year for {examLabel}
         </h2>
         <p className="text-muted-foreground mt-1 text-[.8rem] leading-relaxed">

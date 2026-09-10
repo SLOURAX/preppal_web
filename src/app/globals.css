@@ -1,18 +1,49 @@
 @import "tailwindcss";
 
 @keyframes mascot-float {
-  0%, 100% { transform: translateY(0) rotate(-1deg); }
-  50% { transform: translateY(-4px) rotate(1deg); }
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(1deg);
+  }
 }
 
 @keyframes mascot-bounce {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-5px) scale(1.03); }
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.03);
+  }
 }
 
 @keyframes loading-stage {
-  0%, 100% { opacity: 0.35; transform: translateY(0); }
-  35% { opacity: 1; color: var(--primary); transform: translateY(-2px); }
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  35% {
+    opacity: 1;
+    color: var(--primary);
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes pathways-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-pathways-marquee {
+  animation: pathways-marquee 18s linear infinite;
 }
 
 :root {
@@ -266,5 +297,52 @@ a {
         transparent 1px
       );
     background-size: 24px 24px;
+  }
+  .bg-grid-pattern-strong {
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in srgb, var(--primary) 6%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--primary) 6%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 24px 24px;
+  }
+  .bg-grid-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background-color: color-mix(in srgb, var(--surface) 94%, transparent);
+  }
+  .bg-grid-card::before {
+    position: absolute;
+    inset: 0 0 50%;
+    z-index: 0;
+    content: "";
+    background-image:
+      repeating-linear-gradient(
+        135deg,
+        transparent 0,
+        transparent 15px,
+        color-mix(in srgb, var(--primary) 8%, transparent) 15px,
+        color-mix(in srgb, var(--primary) 8%, transparent) 16px
+      ),
+      repeating-linear-gradient(
+        45deg,
+        transparent 0,
+        transparent 15px,
+        color-mix(in srgb, var(--primary) 8%, transparent) 15px,
+        color-mix(in srgb, var(--primary) 8%, transparent) 16px
+      );
+    background-size: 30px 30px;
+    mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+  }
+  .bg-grid-card > * {
+    position: relative;
+    z-index: 1;
   }
 }

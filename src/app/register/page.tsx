@@ -9,7 +9,7 @@ import {
   UserRound,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, type FormEvent } from "react";
 
 import { Button } from "@/components/ui";
@@ -32,22 +32,27 @@ export default function RegisterPage() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const login = useAuthStore((state) => state.login);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const requestedReturnTo = searchParams.get("returnTo");
+  const returnTo = requestedReturnTo?.startsWith("/")
+    ? requestedReturnTo
+    : "/";
 
   useEffect(() => {
-    if (isAuthenticated) router.replace("/");
-  }, [isAuthenticated, router]);
+    if (isAuthenticated) router.replace(returnTo);
+  }, [isAuthenticated, returnTo, router]);
 
   if (isAuthenticated) return null;
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     login();
-    router.push("/");
+    router.push(returnTo);
   };
 
   const handleSocialLogin = () => {
     login();
-    router.push("/");
+    router.push(returnTo);
   };
 
   return (

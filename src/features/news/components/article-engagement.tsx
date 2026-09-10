@@ -9,9 +9,12 @@ import {
   Share2,
 } from "lucide-react";
 import { type FormEvent, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/store";
 
 interface ReaderComment {
   readonly id: string;
@@ -47,12 +50,19 @@ export function ArticleEngagement({
   initialLikes,
   initialCommentCount,
 }: ArticleEngagementProps) {
+  const router = useRouter();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
   const [hasShared, setHasShared] = useState<boolean>(false);
   const [commentText, setCommentText] = useState<string>("");
   const [comments, setComments] =
     useState<readonly ReaderComment[]>(INITIAL_COMMENTS);
+
+  const requireAuth = (): void => {
+    if (isAuthenticated) return;
+    router.push(`/login?returnTo=${encodeURIComponent(window.location.pathname)}`);
+  };
 
   const shareArticle = async (): Promise<void> => {
     const shareUrl = window.location.href;
@@ -89,7 +99,10 @@ export function ArticleEngagement({
               "hover:bg-surface-subtle flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium",
               isLiked && "bg-red-500/10 text-red-500",
             )}
-            onClick={() => setIsLiked((current) => !current)}
+            onClick={() => {
+              if (!isAuthenticated) return requireAuth();
+              setIsLiked((current) => !current);
+            }}
             type="button"
           >
             <Heart className={cn("size-4", isLiked && "fill-current")} />{" "}
@@ -108,7 +121,10 @@ export function ArticleEngagement({
               "hover:bg-surface-subtle grid size-9 place-items-center rounded-full",
               isBookmarked && "bg-primary/10 text-primary",
             )}
-            onClick={() => setIsBookmarked((current) => !current)}
+            onClick={() => {
+              if (!isAuthenticated) return requireAuth();
+              setIsBookmarked((current) => !current);
+            }}
             type="button"
           >
             <Bookmark
@@ -140,31 +156,45 @@ export function ArticleEngagement({
         <p className="text-muted-foreground mt-1 text-sm">
           Share a thoughtful response with other learners.
         </p>
-        <form className="surface-card mt-5 p-4" onSubmit={submitComment}>
-          <label className="sr-only" htmlFor="article-comment">
-            Write a comment
-          </label>
-          <textarea
-            className="bg-surface-subtle placeholder:text-muted-foreground focus:ring-primary/30 min-h-24 w-full resize-y rounded-2xl p-4 text-sm outline-none focus:ring-2"
-            id="article-comment"
-            maxLength={500}
-            onChange={(event) => setCommentText(event.target.value)}
-            placeholder="Add to the conversation…"
-            value={commentText}
-          />
-          <div className="mt-3 flex items-center justify-between gap-3">
-            <span className="text-muted-foreground text-xs">
-              {commentText.length}/500
-            </span>
-            <Button
-              className="gap-2"
-              disabled={!commentText.trim()}
-              type="submit"
+        {isAuthenticated ? (
+          <form className="surface-card mt-5 p-4" onSubmit={submitComment}>
+            <label className="sr-only" htmlFor="article-comment">
+              Write a comment
+            </label>
+            <textarea
+              className="bg-surface-subtle placeholder:text-muted-foreground focus:ring-primary/30 min-h-24 w-full resize-y rounded-2xl p-4 text-sm outline-none focus:ring-2"
+              id="article-comment"
+              maxLength={500}
+              onChange={(event) => setCommentText(event.target.value)}
+              placeholder="Add to the conversation…"
+              value={commentText}
+            />
+            <div className="mt-3 flex items-center justify-between gap-3">
+              <span className="text-muted-foreground text-xs">
+                {commentText.length}/500
+              </span>
+              <Button
+                className="gap-2"
+                disabled={!commentText.trim()}
+                type="submit"
+              >
+                <Send className="size-4" /> Post comment
+              </Button>
+            </div>
+          </form>
+        ) : (
+          <div className="surface-card mt-5 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-muted-foreground text-sm">
+              Sign in to join the conversation with other learners.
+            </p>
+            <Link
+              className="bg-primary text-primary-foreground inline-flex shrink-0 items-center justify-center rounded-xl px-4 py-2.5 text-xs font-semibold"
+              href={`/login?returnTo=${encodeURIComponent(typeof window === "undefined" ? "/news" : window.location.pathname)}`}
             >
-              <Send className="size-4" /> Post comment
-            </Button>
+              Sign in to comment
+            </Link>
           </div>
-        </form>
+        )}
 
         <div className="divide-border mt-5 divide-y">
           {comments.map((comment) => (

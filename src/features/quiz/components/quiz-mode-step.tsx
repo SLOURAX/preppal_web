@@ -65,7 +65,7 @@ export function QuizModeStep({
       </div>
 
       <div className="mt-5">
-        <h2 className="text-foreground text-xl font-bold">
+        <h2 className="text-foreground text-lg font-bold sm:text-xl">
           How would you like to practice?
         </h2>
         <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
@@ -113,7 +113,7 @@ export function QuizModeStep({
                   </span>
                 )}
               </div>
-              <span className="text-foreground mt-5 block text-lg font-bold">
+              <span className="text-foreground mt-5 block text-base font-bold sm:text-lg">
                 {mode.label}
               </span>
               <span className="text-muted-foreground mt-2 block text-sm leading-relaxed">

@@ -130,13 +130,19 @@ export function ListSelect({
                   }}
                   className={cn(
                     "flex w-full items-center justify-between rounded-none border-b px-3 py-3 text-left transition-all last:border-b-0",
+                    compact && "py-2.5",
                     isSelected
                       ? "bg-primary text-primary-foreground shadow-md"
                       : "border-border/70 text-foreground hover:border-primary/40 hover:bg-surface-subtle",
                   )}
                 >
                   <div>
-                    <p className={cn("text-sm font-semibold")}>
+                    <p
+                      className={cn(
+                        compact ? "text-xs" : "text-sm",
+                        "font-semibold",
+                      )}
+                    >
                       {option.label}
                     </p>
                     {showOptionDescriptions && option.description && (

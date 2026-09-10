@@ -90,7 +90,7 @@ export function OverviewTab() {
             <p className="text-muted-foreground text-xs sm:text-sm">
               Welcome back
             </p>
-            <h2 className="text-foreground mt-0.5 max-w-[11rem] text-lg leading-tight font-bold sm:max-w-none sm:text-2xl">
+            <h2 className="text-foreground mt-0.5 max-w-[11rem] text-base leading-tight font-bold sm:max-w-none sm:text-2xl">
               {userName}
             </h2>
             <p className="text-muted-foreground mt-1 text-[11px] sm:text-xs">
@@ -119,7 +119,7 @@ export function OverviewTab() {
             <p className="text-primary-foreground/70 text-[10px] font-bold tracking-widest uppercase">
               {quizAttempts[0] ? "Keep your momentum" : "Your next best move"}
             </p>
-            <h3 className="mt-1 text-lg font-bold">
+            <h3 className="mt-1 text-base font-bold sm:text-lg">
               {quizAttempts[0]
                 ? `Review your ${formatLabel(quizAttempts[0].subject)} attempt`
                 : "Start your first practice quiz"}
@@ -156,7 +156,7 @@ export function OverviewTab() {
             >
               <Icon className="size-5" />
             </span>
-            <p className="text-foreground mt-4 text-lg font-bold sm:text-xl">
+        <p className="text-foreground mt-4 text-base font-bold sm:text-xl">
               {value}
             </p>
             <div className="mt-0.5 flex items-center justify-between gap-2">
@@ -183,7 +183,7 @@ export function OverviewTab() {
               {completedDays} / {weeklyGoal} days
             </span>
           ) : (
-            <span className="rounded-full bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-600">
+            <span className="rounded-full bg-amber-500/10 px-3 py-2 text-[.7rem] font-bold text-amber-600">
               Goal not set
             </span>
           )}
@@ -235,7 +235,7 @@ export function OverviewTab() {
               alt="Preppal mascot ready to help you set a goal"
               className="hidden sm:block"
               mood="encourage"
-              size="sm"
+              size="md"
             />
           </div>
         )}

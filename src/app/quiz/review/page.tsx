@@ -8,15 +8,13 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronUp,
+  MessageCircleQuestion,
   RefreshCw,
+  Send,
+  ThumbsDown,
+  ThumbsUp,
   XCircle,
 } from "lucide-react";
-import {
-  SaxDislikeBulk,
-  SaxLikeBulk,
-  SaxMessageQuestionBulk,
-  SaxSend2Bulk,
-} from "@meysam213/iconsax-react";
 import { useRouter } from "next/navigation";
 import {
   generateExamSimulation,
@@ -229,7 +227,7 @@ export default function QuizReviewPage() {
                     onClick={() => setFeedback("helpful")}
                     type="button"
                   >
-                    <SaxLikeBulk
+                    <ThumbsUp
                       className={`size-4 ${feedback === "helpful" ? "animate-bounce" : ""}`}
                     />{" "}
                     Yes, it was
@@ -242,14 +240,14 @@ export default function QuizReviewPage() {
                     }}
                     type="button"
                   >
-                    <SaxDislikeBulk className="size-4" /> No, it wasn't
+                    <ThumbsDown className="size-4" /> No, it wasn't
                   </button>
                 </div>
                 {followUpOpen ? (
                   <div className="bg-primary/5 mt-4 rounded-2xl p-3">
                     <div className="flex items-center gap-2">
                       <span className="bg-primary/15 text-primary grid size-8 place-items-center rounded-lg">
-                        <SaxMessageQuestionBulk className="size-4" />
+                        <MessageCircleQuestion className="size-4" />
                       </span>
                       <div>
                         <p className="text-foreground text-xs font-bold">
@@ -286,7 +284,7 @@ export default function QuizReviewPage() {
                         className="bg-primary text-primary-foreground grid size-8 shrink-0 place-items-center rounded-lg"
                         type="submit"
                       >
-                        <SaxSend2Bulk className="size-3.5" />
+                        <Send className="size-3.5" />
                       </button>
                     </form>
                   </div>

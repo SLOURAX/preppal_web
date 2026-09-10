@@ -47,7 +47,7 @@ export function FormField({
         <input
           {...inputProps}
           className={cn(
-            "border-border bg-surface/90 text-foreground placeholder:text-muted-foreground/70 hover:border-primary/35 focus:border-primary focus:ring-primary/10 h-11 w-full rounded-xl border pr-4 pl-10 text-sm transition-[border-color,box-shadow,background-color] outline-none focus:ring-4",
+            "border-border bg-surface/90 text-foreground hover:border-primary/35 focus:border-primary focus:ring-primary/10 h-11 w-full rounded-xl border pr-4 pl-10 text-[13px] transition-[border-color,box-shadow,background-color] outline-none placeholder:text-slate-600 placeholder:opacity-100 focus:ring-4 sm:text-sm dark:placeholder:text-slate-400",
             trailing && "pr-11",
           )}
           id={id}

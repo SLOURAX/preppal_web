@@ -33,7 +33,7 @@ const MOMENTUM_STATS = [
 export function MomentumSection() {
   return (
     <section>
-      <div className="mx-auto max-w-2xl text-center">
+      <div className="mx-auto max-w-2xl text-center mt-10">
         <h2 className="text-foreground mt-4 text-3xl font-bold tracking-[-0.035em]">
           Small wins. Consistent progress.
         </h2>
@@ -60,11 +60,11 @@ export function MomentumSection() {
           </div>
           <div className="mt-7 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 font-bold">
-              <SaxAwardBulk className="size-5 text-amber-300" /> +2 XP today
+              <SaxAwardBulk className="size-5 text-amber-300 text-[.8rem]" /> +2 XP today
             </div>
             <Link
               href="/rewards"
-              className="bg-surface text-foreground hover:bg-surface-subtle inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold transition-colors"
+              className="bg-surface text-foreground hover:bg-surface-subtle inline-flex items-center justify-center rounded-full px-5 py-2.5 text-[.8rem] font-semibold transition-colors"
             >
               View rewards
             </Link>

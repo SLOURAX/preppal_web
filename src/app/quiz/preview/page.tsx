@@ -3,15 +3,14 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import {
-  SaxBook1Bulk,
-  SaxClockBulk,
-  SaxDangerBulk,
-  SaxDocumentTextBulk,
-  SaxFlashCircle1Bulk,
-  SaxMagicStarBulk,
-  SaxPlayCircleBulk,
-  SaxShieldTickBulk,
-} from "@meysam213/iconsax-react";
+  BookOpen,
+  Clock3,
+  FileText,
+  Lightbulb,
+  ShieldCheck,
+  TriangleAlert,
+  Zap,
+} from "lucide-react";
 import { Button } from "@/components/ui";
 
 function QuizPreviewContent() {
@@ -27,24 +26,24 @@ function QuizPreviewContent() {
   const [questionCount, setQuestionCount] = useState<number>(10);
 
   const EXAM_STATS = [
-    { icon: SaxBook1Bulk, label: "Exam", value: exam },
+    { icon: BookOpen, label: "Exam", value: exam },
     {
-      icon: SaxDocumentTextBulk,
+      icon: FileText,
       label: "Questions",
       value: isUntimed ? String(questionCount) : "40",
     },
     {
-      icon: SaxFlashCircle1Bulk,
+      icon: Zap,
       label: "Mode",
       value: isUntimed ? "Practice Playground" : "Timed Simulation",
     },
     {
-      icon: SaxClockBulk,
+      icon: Clock3,
       label: "Time Limit",
       value: isUntimed ? "None" : "45 mins",
     },
-    { icon: SaxBook1Bulk, label: "Year", value: year },
-    { icon: SaxShieldTickBulk, label: "Subject", value: subject },
+    { icon: BookOpen, label: "Year", value: year },
+    { icon: ShieldCheck, label: "Subject", value: subject },
   ];
 
   const INSTRUCTIONS = isUntimed
@@ -68,7 +67,7 @@ function QuizPreviewContent() {
     <div className="bg-background flex min-h-screen flex-col">
       <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-6 sm:px-8 sm:py-8">
         <div className="mb-5 text-center">
-          <h1 className="text-foreground mt-2 text-2xl font-bold tracking-tight capitalize sm:text-3xl">
+          <h1 className="text-foreground mt-2 text-xl font-bold tracking-tight capitalize sm:text-3xl">
             Exam Preview
           </h1>
         </div>
@@ -138,7 +137,7 @@ function QuizPreviewContent() {
 
         <div className="surface-card mt-5 rounded-3xl p-5 sm:p-6">
           <div className="mb-4 flex items-center gap-2">
-            <SaxShieldTickBulk className="text-primary size-6" />
+            <ShieldCheck className="text-primary size-6" />
             <h2 className="text-foreground font-semibold">Before you begin</h2>
           </div>
           <ul className="space-y-3">
@@ -157,7 +156,7 @@ function QuizPreviewContent() {
 
         {isUntimed ? (
           <div className="border-primary/20 bg-primary/5 mt-4 flex items-start gap-3 rounded-2xl border p-4">
-            <SaxMagicStarBulk className="text-primary mt-0.5 size-5 shrink-0" />
+            <Lightbulb className="text-primary mt-0.5 size-5 shrink-0" />
             <p className="text-muted-foreground text-xs leading-relaxed">
               AI Assistance is enabled. If you get stuck, you can ask for hints
               or explanations directly on the question card to enhance your
@@ -166,7 +165,7 @@ function QuizPreviewContent() {
           </div>
         ) : (
           <div className="mt-4 flex items-start gap-3 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4">
-            <SaxDangerBulk className="mt-0.5 size-5 shrink-0 text-amber-500" />
+            <TriangleAlert className="mt-0.5 size-5 shrink-0 text-amber-500" />
             <p className="text-muted-foreground text-xs leading-relaxed">
               Once the exam starts, the timer cannot be paused. Ensure you are
               in a quiet environment with a stable internet connection.
@@ -189,7 +188,6 @@ function QuizPreviewContent() {
             }}
             className="min-w-0 flex-1 gap-2 rounded-xl px-3 text-xs font-semibold sm:flex-none sm:px-8 sm:text-sm"
           >
-            {/* <SaxPlayCircleBulk className="size-5" /> */}
             Start {isUntimed ? "Practice" : "Exam"}
           </Button>
         </div>

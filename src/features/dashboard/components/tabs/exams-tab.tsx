@@ -45,12 +45,12 @@ export function ExamsTab() {
     EXAMS.find((exam) => exam.value === selectedExam) ?? EXAMS[0];
 
   return (
-    <div className="space-y-6">
+    <div className="mt-6 space-y-6">
       <div>
-        <h2 className="text-foreground text-xl font-bold">
+        <h2 className="text-foreground mt-5 text-base font-bold sm:text-[1.05rem]">
           Prepare for an Exam
         </h2>
-        <p className="text-muted-foreground mt-1 text-sm">
+        <p className="text-muted-foreground text-xs leading-5 sm:text-[.8rem]">
           Choose an exam to practice within its official structure and syllabus.
         </p>
       </div>
@@ -64,10 +64,11 @@ export function ExamsTab() {
           }))}
           placeholder="Choose an exam"
           showOptionDescriptions={false}
+          compact
           value={selectedExam}
         />
         <Link
-          className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition-colors"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-colors sm:text-sm"
           href={`/quiz?path=exam&choice=${selectedExamDetails.value}`}
         >
           Start {selectedExamDetails.name} practice{" "}

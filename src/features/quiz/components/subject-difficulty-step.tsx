@@ -50,7 +50,7 @@ export function SubjectDifficultyStep({
         </span>
         <div>
           <p className="text-primary text-xs font-semibold">{subjectLabel}</p>
-          <h2 className="text-foreground mt-1 text-xl font-bold">
+          <h2 className="text-foreground mt-1 text-lg font-bold sm:text-xl">
             Choose your difficulty
           </h2>
           <p className="text-muted-foreground mt-1 text-sm leading-relaxed">

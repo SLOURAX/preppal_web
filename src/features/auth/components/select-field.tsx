@@ -34,7 +34,7 @@ export function SelectField({
         <select
           {...selectProps}
           className={cn(
-            "border-border bg-surface/90 text-foreground hover:border-primary/35 focus:border-primary focus:ring-primary/10 h-11 w-full appearance-none rounded-xl border px-3 pr-10 text-sm transition-[border-color,box-shadow] outline-none focus:ring-4",
+            "border-border bg-surface/90 text-foreground hover:border-primary/35 focus:border-primary focus:ring-primary/10 h-11 w-full appearance-none rounded-xl border px-3 pr-10 text-[13px] transition-[border-color,box-shadow] outline-none focus:ring-4 sm:text-sm",
             Icon && "pl-10",
           )}
           id={id}

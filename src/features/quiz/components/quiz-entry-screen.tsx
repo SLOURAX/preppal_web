@@ -192,7 +192,7 @@ export function QuizEntryScreen({
   return (
     <main className="mx-auto w-full max-w-5xl px-5 py-10 sm:px-8">
       <header className="mx-auto max-w-2xl text-center">
-        <h1 className="text-foreground text-3xl font-bold tracking-[-0.04em] sm:text-4xl">
+        <h1 className="text-foreground text-2xl font-bold tracking-[-0.04em] sm:text-4xl">
           {setupStep === "entry"
             ? "What would you like to practice?"
             : "Build your practice session"}

@@ -1,6 +1,6 @@
 "use client";
 
-import { LockKeyhole, LogIn, UserPlus, X } from "lucide-react";
+import { LockKeyhole, UserPlus, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
 
@@ -70,10 +70,10 @@ export function QuizAuthGate({
 
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
           <Link
-            className="bg-primary text-primary-foreground hover:bg-primary-strong inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold transition-colors"
+          className="border-rose-600 text-rose-600 hover:bg-rose-500/5 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-5 text-sm font-semibold transition-colors"
             href={`/login?returnTo=${encodeURIComponent(returnTo)}`}
           >
-            <LogIn className="size-4" /> Log in
+            <X className="size-4" /> Cancel
           </Link>
           <Link
             className="bg-primary text-primary-foreground hover:bg-primary-strong inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold transition-colors"
@@ -82,13 +82,6 @@ export function QuizAuthGate({
             <UserPlus className="size-4" /> Create account
           </Link>
         </div>
-        <button
-          className="mx-auto mt-4 block rounded-xl border !border-rose-600 px-4 py-2 text-xs font-semibold text-rose-600 transition-colors"
-          onClick={onClose}
-          type="button"
-        >
-          Keep exploring
-        </button>
       </section>
     </div>
   );

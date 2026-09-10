@@ -59,7 +59,7 @@ export function SubjectTopicsStep({
               {difficulty}
             </span>
           </div>
-          <h2 className="text-foreground mt-1 text-xl font-bold">
+          <h2 className="text-foreground mt-1 text-lg font-bold sm:text-xl">
             Pick your topics
           </h2>
           <p className="text-muted-foreground mt-1 text-sm leading-relaxed">

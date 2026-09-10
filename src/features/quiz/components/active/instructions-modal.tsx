@@ -22,7 +22,7 @@ export function InstructionsModal({ onClose }: InstructionsModalProps) {
         onClick={onClose}
       />
       <div className="bg-surface relative z-10 w-full max-w-md overflow-hidden rounded-2xl shadow-2xl">
-        <div className="border-border flex items-center justify-between border-b px-6 py-5">
+        <div className="border-border flex items-center justify-between border-b px-4 py-4 sm:px-6 sm:py-5">
           <div className="flex items-center gap-2.5">
             <div className="bg-primary/10 grid size-8 place-items-center rounded-lg">
               <BookOpen className="text-primary size-4" />
@@ -37,14 +37,14 @@ export function InstructionsModal({ onClose }: InstructionsModalProps) {
           </button>
         </div>
 
-        <div className="px-6 py-6">
-          <ul className="space-y-5">
+        <div className="px-4 py-5 sm:px-6 sm:py-6">
+          <ul className="space-y-4 sm:space-y-5">
             {INSTRUCTIONS.map((text, i) => (
               <li key={i} className="flex items-start gap-3.5">
                 <span className="bg-primary/10 text-primary mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold">
                   {i + 1}
                 </span>
-                <p className="text-muted-foreground text-sm leading-relaxed">
+                <p className="text-muted-foreground text-xs leading-relaxed sm:text-sm">
                   {text}
                 </p>
               </li>
