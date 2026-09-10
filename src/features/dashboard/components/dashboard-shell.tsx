@@ -89,13 +89,14 @@ export function DashboardShell() {
   const preppalBalance = useAuthStore((s) => s.preppalBalance);
   const experiencePoints = useAuthStore((s) => s.experiencePoints);
   const openSignOutModal = useAuthStore((s) => s.openSignOutModal);
-  const userInitials = userName
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("") || "U";
+  const userInitials =
+    userName
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join("") || "U";
 
   return (
     <div
@@ -173,7 +174,7 @@ export function DashboardShell() {
                   aria-label="Open account menu"
                   aria-expanded={isProfileOpen}
                   onClick={() => setIsProfileOpen((open) => !open)}
-                  className="text-foreground flex items-center gap-1.5 rounded-xl p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                  className="text-foreground focus-visible:ring-primary/40 flex items-center gap-1.5 rounded-xl p-1 focus-visible:ring-2 focus-visible:outline-none"
                 >
                   <span className="bg-primary text-primary-foreground grid size-8 place-items-center rounded-full text-xs font-bold">
                     {userInitials}
@@ -251,7 +252,7 @@ export function DashboardShell() {
 
         <nav
           aria-label="Dashboard navigation"
-          className="border-border bg-surface/95 fixed right-0 bottom-0 left-0 z-50 border-t px-2 pt-1.5 pb-[calc(env(safe-area-inset-bottom)+0.45rem)] text-muted-foreground shadow-[0_-8px_24px_rgb(39_24_93/0.08)] backdrop-blur-xl md:hidden"
+          className="border-border bg-surface/95 text-muted-foreground fixed right-0 bottom-0 left-0 z-50 border-t px-2 pt-1.5 pb-[calc(env(safe-area-inset-bottom)+0.45rem)] shadow-[0_-8px_24px_rgb(39_24_93/0.08)] backdrop-blur-xl md:hidden"
         >
           <div className="mx-auto grid max-w-lg grid-cols-5 gap-1">
             {TABS.map(({ id, label, icon: Icon }) => {
@@ -261,7 +262,7 @@ export function DashboardShell() {
                   key={id}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "mx-auto flex min-w-0 flex-col items-center gap-0.5 rounded-xl px-1 py-0.5 text-[9px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70",
+                    "mx-auto flex min-w-0 flex-col items-center gap-0.5 rounded-xl px-1 py-0.5 text-[9px] font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none",
                     isActive
                       ? "text-primary"
                       : "text-muted-foreground hover:text-foreground",
@@ -285,7 +286,7 @@ export function DashboardShell() {
             })}
           </div>
           <span
-            className="mx-auto mt-1.5 block h-0.5 w-24 rounded-full bg-primary/25"
+            className="bg-primary/25 mx-auto mt-1.5 block h-0.5 w-24 rounded-full"
             aria-hidden="true"
           />
         </nav>

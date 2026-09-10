@@ -82,7 +82,7 @@ const RANK_CONFIG: Record<1 | 2 | 3 | 4 | 5, RankStyle> = {
 
 export function LiveLeaderboardSection() {
   return (
-    <section className="relative right-[50%] left-[50%] my-12 -mr-[50vw] -ml-[50vw] w-[100vw] overflow-hidden border-y border-white/5 bg-[#0A0A0C] py-12 sm:py-12 lg:py-12">
+    <section className="relative right-[50%] left-[50%] my-10 -mr-[50vw] -ml-[50vw] w-[100vw] overflow-hidden border-y border-white/5 bg-[#0A0A0C] py-10 sm:py-10 lg:py-10">
       <div
         className="pointer-events-none absolute inset-0 opacity-40"
         style={{
@@ -97,17 +97,8 @@ export function LiveLeaderboardSection() {
             "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E\")",
         }}
       />
-      {/* Section-wide Grid Lines */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage: `linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)`,
-          backgroundSize: "32px 32px",
-        }}
-      />
-
-      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-12 px-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <div className="flex flex-col gap-8">
+      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-8 px-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="flex flex-col gap-6">
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl lg:text-4xl">
               Top scholars <span className="text-violet-400">this week</span>
@@ -118,17 +109,9 @@ export function LiveLeaderboardSection() {
             </p>
           </div>
 
-          <div className="relative w-full max-w-[500px] overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-2xl backdrop-blur-md">
-            <div
-              className="pointer-events-none absolute inset-0 opacity-[0.03]"
-              style={{
-                backgroundImage: `linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)`,
-                backgroundSize: "24px 24px",
-              }}
-            />
-
-            <div className="relative z-10 flex items-center gap-4 border-b border-white/10 bg-white/5 px-5 py-3">
-              <span className="w-8 text-center text-[10px] font-semibold tracking-widest text-slate-400 uppercase">
+          <div className="relative w-full max-w-[460px] overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] shadow-2xl backdrop-blur-md">
+            <div className="relative z-10 flex items-center gap-3 border-b border-white/10 bg-white/5 px-4 py-2.5">
+              <span className="w-7 text-center text-[10px] font-semibold tracking-widest text-slate-400 uppercase">
                 #
               </span>
               <span className="flex-1 text-[10px] font-semibold tracking-widest text-slate-400 uppercase">
@@ -155,11 +138,11 @@ export function LiveLeaderboardSection() {
                 return (
                   <li
                     key={entry.rank}
-                    className="flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-white/5"
+                    className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-white/5"
                   >
                     <div
                       className={cn(
-                        "w-8 text-center text-sm",
+                        "w-7 text-center text-sm",
                         config.rankClass,
                       )}
                     >
@@ -213,7 +196,7 @@ export function LiveLeaderboardSection() {
               })}
             </ul>
 
-            <div className="flex items-center justify-between border-t border-white/10 bg-white/5 px-5 py-3.5">
+            <div className="flex items-center justify-between border-t border-white/10 bg-white/5 px-4 py-3">
               <p className="text-xs text-slate-400">
                 Updated weekly · Join to claim your spot
               </p>
@@ -230,7 +213,7 @@ export function LiveLeaderboardSection() {
         <div className="relative flex items-center justify-center lg:justify-end">
           <div className="pointer-events-none absolute top-1/2 left-1/2 size-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-500/20 blur-[100px]" />
 
-          <div className="relative aspect-square w-full max-w-sm lg:max-w-md xl:max-w-lg">
+          <div className="relative aspect-square w-[90%] max-w-xs sm:w-[92%] sm:max-w-sm lg:max-w-md xl:max-w-lg">
             <svg
               className="pointer-events-none absolute inset-0 z-10 overflow-visible"
               viewBox="0 0 400 400"
@@ -342,7 +325,7 @@ export function LiveLeaderboardSection() {
               <SaxMedalStarBulk className="size-6 text-violet-300 sm:size-8" />
             </div>
 
-            <div className="absolute bottom-7 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/10 bg-black/25 px-3 py-1.5 text-[10px] font-semibold tracking-wide text-violet-100 shadow-lg backdrop-blur-md sm:bottom-9 sm:px-4 sm:py-2 sm:text-xs">
+            <div className="absolute bottom-7 left-1/2 z-20 -translate-x-1/2 rounded-full border border-white/10 bg-black/25 px-3 py-1.5 text-[10px] font-semibold tracking-wide whitespace-nowrap text-violet-100 shadow-lg backdrop-blur-md sm:bottom-9 sm:px-4 sm:py-2 sm:text-xs">
               Practice <span className="mx-1 text-violet-300">→</span> Earn XP
               <span className="mx-1 text-violet-300">→</span> Climb
             </div>
