@@ -82,7 +82,7 @@ const RANK_CONFIG: Record<1 | 2 | 3 | 4 | 5, RankStyle> = {
 
 export function LiveLeaderboardSection() {
   return (
-    <section className="relative right-[50%] left-[50%] my-10 -mr-[50vw] -ml-[50vw] w-[100vw] overflow-hidden border-y border-white/5 bg-[#0A0A0C] py-10 sm:py-10 lg:py-10">
+    <section className="relative right-[50%] left-[50%] my-10 -mr-[50vw] -ml-[50vw] w-[100vw] overflow-hidden border-y border-white/5 bg-[#0A0A0C] py-10 sm:py-10 lg:py-20">
       <div
         className="pointer-events-none absolute inset-0 opacity-40"
         style={{

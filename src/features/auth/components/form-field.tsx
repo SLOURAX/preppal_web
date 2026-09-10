@@ -42,7 +42,7 @@ export function FormField({
       <div className="group relative">
         <Icon
           aria-hidden="true"
-          className="text-muted-foreground group-focus-within:text-primary pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 transition-colors"
+          className="text-muted-foreground/65 group-focus-within:text-primary pointer-events-none absolute top-1/2 left-3.5 size-3.5 -translate-y-1/2 transition-colors"
         />
         <input
           {...inputProps}

@@ -10,9 +10,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui";
+import { ListSelect } from "@/components/ui/list-select";
 import {
   AuthHeader,
   CheckboxField,
@@ -21,7 +22,6 @@ import {
   FormField,
   LEARNING_LEVELS,
   PasswordField,
-  SelectField,
   GoogleAuthButton,
   AppleAuthButton,
   AuthDivider,
@@ -34,9 +34,10 @@ export default function RegisterPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestedReturnTo = searchParams.get("returnTo");
-  const returnTo = requestedReturnTo?.startsWith("/")
-    ? requestedReturnTo
-    : "/";
+  const returnTo = requestedReturnTo?.startsWith("/") ? requestedReturnTo : "/";
+  const [country, setCountry] = useState("Nigeria");
+  const [learningLevel, setLearningLevel] = useState("");
+  const [examGoal, setExamGoal] = useState("");
 
   useEffect(() => {
     if (isAuthenticated) router.replace(returnTo);
@@ -46,6 +47,7 @@ export default function RegisterPage() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
+    if (!learningLevel || !examGoal) return;
     login();
     router.push(returnTo);
   };
@@ -72,11 +74,19 @@ export default function RegisterPage() {
       <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
         <div className="grid gap-3.5 sm:grid-cols-2">
           <FormField
-            autoComplete="name"
+            autoComplete="given-name"
             icon={UserRound}
-            id="full-name"
-            label="Full name"
-            placeholder="Your full name"
+            id="first-name"
+            label="First name"
+            placeholder="Your first name"
+            required
+          />
+          <FormField
+            autoComplete="family-name"
+            icon={UserRound}
+            id="surname"
+            label="Surname"
+            placeholder="Your surname"
             required
           />
           <FormField
@@ -96,44 +106,45 @@ export default function RegisterPage() {
             placeholder="0801 234 5678"
             type="tel"
           />
-          <SelectField
-            defaultValue="Nigeria"
+          <ListSelect
             icon={Globe2}
             id="country"
             label="Country"
-          >
-            {COUNTRIES.map((country: string) => (
-              <option key={country}>{country}</option>
-            ))}
-          </SelectField>
-          <SelectField
-            defaultValue=""
+            onChange={setCountry}
+            options={COUNTRIES.map((option) => ({
+              value: option,
+              label: option,
+            }))}
+            placeholder="Choose your country"
+            compact
+            value={country}
+          />
+          <ListSelect
             icon={GraduationCap}
             id="learning-level"
             label="Learning level"
-            required
-          >
-            <option disabled value="">
-              Choose your level
-            </option>
-            {LEARNING_LEVELS.map((level: string) => (
-              <option key={level}>{level}</option>
-            ))}
-          </SelectField>
-          <SelectField
-            defaultValue=""
+            onChange={setLearningLevel}
+            options={LEARNING_LEVELS.map((option) => ({
+              value: option,
+              label: option,
+            }))}
+            placeholder="Choose your level"
+            compact
+            value={learningLevel}
+          />
+          <ListSelect
             icon={Crosshair}
             id="exam-goal"
             label="Primary exam goal"
-            required
-          >
-            <option disabled value="">
-              Choose an exam
-            </option>
-            {EXAM_GOALS.map((goal: string) => (
-              <option key={goal}>{goal}</option>
-            ))}
-          </SelectField>
+            onChange={setExamGoal}
+            options={EXAM_GOALS.map((option) => ({
+              value: option,
+              label: option,
+            }))}
+            placeholder="Choose an exam"
+            compact
+            value={examGoal}
+          />
           <PasswordField
             autoComplete="new-password"
             id="new-password"

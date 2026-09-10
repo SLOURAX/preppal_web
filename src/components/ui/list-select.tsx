@@ -60,7 +60,7 @@ export function ListSelect({
         <label
           className={cn(
             "text-foreground block font-semibold",
-            compact ? "mb-1 text-[11px]" : "mb-2 text-sm",
+            compact ? "mb-1 text-sm" : "mb-2 text-sm",
           )}
           htmlFor={id}
         >
@@ -75,7 +75,7 @@ export function ListSelect({
         className={cn(
           "border-border bg-surface text-foreground hover:border-primary/50 focus:ring-primary/15 relative flex w-full items-center justify-between border text-left font-medium transition-all focus:ring-4 focus:outline-none",
           compact
-            ? "h-10 rounded-xl px-3 text-xs"
+            ? "h-11 rounded-xl px-3 text-xs"
             : "h-14 rounded-2xl px-4 text-sm",
           isOpen && "border-primary ring-primary/15 ring-4",
         )}
@@ -84,7 +84,8 @@ export function ListSelect({
           {Icon && (
             <Icon
               className={cn(
-                "size-5 shrink-0 transition-colors",
+                "shrink-0 transition-colors",
+                compact ? "size-4" : "size-5",
                 value ? "text-primary" : "text-muted-foreground",
               )}
             />
@@ -99,7 +100,8 @@ export function ListSelect({
         </div>
         <ChevronDown
           className={cn(
-            "text-muted-foreground size-5 shrink-0 transition-transform duration-300",
+            "text-muted-foreground/65 shrink-0 transition-transform duration-300",
+            compact ? "size-4" : "size-5",
             isOpen && "rotate-180",
           )}
         />

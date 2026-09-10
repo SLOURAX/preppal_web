@@ -28,7 +28,7 @@ export function SelectField({
         {Icon ? (
           <Icon
             aria-hidden="true"
-            className="text-muted-foreground pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2"
+            className="text-muted-foreground/65 pointer-events-none absolute top-1/2 left-3.5 size-3.5 -translate-y-1/2"
           />
         ) : null}
         <select
@@ -43,7 +43,7 @@ export function SelectField({
         </select>
         <ChevronDown
           aria-hidden="true"
-          className="text-muted-foreground pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2"
+          className="text-muted-foreground/65 pointer-events-none absolute top-1/2 right-3.5 size-3.5 -translate-y-1/2"
         />
       </div>
     </div>
