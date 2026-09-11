@@ -3,7 +3,7 @@
 import { Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, type FormEvent } from "react";
+import { Suspense, useEffect, type FormEvent } from "react";
 import { Button } from "@/components/ui";
 import {
   AuthBenefits,
@@ -18,15 +18,13 @@ import {
 } from "@/features/auth";
 import { useAuthStore } from "@/store";
 
-export default function LoginPage() {
+function LoginContent() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const login = useAuthStore((state) => state.login);
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestedReturnTo = searchParams.get("returnTo");
-  const returnTo = requestedReturnTo?.startsWith("/")
-    ? requestedReturnTo
-    : "/";
+  const returnTo = requestedReturnTo?.startsWith("/") ? requestedReturnTo : "/";
 
   useEffect(() => {
     if (isAuthenticated) router.replace(returnTo);
@@ -92,5 +90,13 @@ export default function LoginPage() {
 
       <AuthBenefits items={MEMBER_BENEFITS} />
     </>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginContent />
+    </Suspense>
   );
 }

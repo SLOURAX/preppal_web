@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, type FormEvent } from "react";
+import { Suspense, useEffect, useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui";
 import { ListSelect } from "@/components/ui/list-select";
@@ -28,7 +28,7 @@ import {
 } from "@/features/auth";
 import { useAuthStore } from "@/store";
 
-export default function RegisterPage() {
+function RegisterContent() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const login = useAuthStore((state) => state.login);
   const router = useRouter();
@@ -191,5 +191,13 @@ export default function RegisterPage() {
         </Button>
       </form>
     </>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterContent />
+    </Suspense>
   );
 }
