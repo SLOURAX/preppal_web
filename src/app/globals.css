@@ -345,4 +345,35 @@ a {
     position: relative;
     z-index: 1;
   }
+  .podium-grid {
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .podium-grid::before {
+    position: absolute;
+    inset: 0 0 42%;
+    z-index: 0;
+    content: "";
+    background-image:
+      repeating-linear-gradient(
+        135deg,
+        transparent 0,
+        transparent 15px,
+        rgb(255 255 255 / 0.12) 15px,
+        rgb(255 255 255 / 0.12) 16px
+      ),
+      repeating-linear-gradient(
+        45deg,
+        transparent 0,
+        transparent 15px,
+        rgb(255 255 255 / 0.1) 15px,
+        rgb(255 255 255 / 0.1) 16px
+      );
+    background-size: 22px 22px;
+    mask-image: linear-gradient(to bottom, black 45%, transparent 100%);
+  }
+  .podium-grid > span {
+    position: relative;
+    z-index: 1;
+  }
 }

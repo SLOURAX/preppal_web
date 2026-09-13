@@ -262,7 +262,7 @@ export function DashboardShell() {
                   key={id}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "mx-auto flex min-w-0 flex-col items-center gap-0.5 rounded-xl px-1 py-0.5 text-[9px] font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none",
+                    "mx-auto flex min-w-0 flex-col items-center gap-0.5 rounded-xl px-1 py-0.5 text-[11px] font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none",
                     isActive
                       ? "text-primary"
                       : "text-muted-foreground hover:text-foreground",

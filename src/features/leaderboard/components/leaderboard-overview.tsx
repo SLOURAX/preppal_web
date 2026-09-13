@@ -1,6 +1,12 @@
 "use client";
 
-import { BadgeCent, ChevronLeft, ChevronRight, Crown, Medal } from "lucide-react";
+import {
+  BadgeCent,
+  ChevronLeft,
+  ChevronRight,
+  Crown,
+  Medal,
+} from "lucide-react";
 import { useState } from "react";
 import { DataState } from "@/components/ui";
 
@@ -84,11 +90,7 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
             Top performers earning XP through eligible activities
           </p>
         </div>
-        <div className="relative mx-auto mt-5 grid max-w-[360px] grid-cols-3 items-end gap-2 sm:mt-4 sm:max-w-[400px] sm:gap-3">
-          <div
-            aria-hidden="true"
-            className="border-border/70 pointer-events-none absolute right-0 bottom-0 left-0 border-b"
-          />
+        <div className="relative mx-auto mt-5 grid max-w-[400px] grid-cols-3 items-end gap-5 sm:mt-4 sm:gap-7">
           {podium.map((entry) => {
             const isWinner = entry.rank === 1;
             const isSecond = entry.rank === 2;
@@ -96,7 +98,7 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
             return (
               <div
                 className={`flex min-w-0 flex-col items-center justify-self-center ${
-                  isWinner ? "w-full max-w-36" : "w-full max-w-32"
+                  isWinner ? "w-full max-w-28" : "w-full max-w-24"
                 }`}
                 key={entry.rank}
               >
@@ -126,15 +128,21 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
                   {entry.score.toLocaleString()} XP
                 </p>
                 <div
-                  className={`relative z-10 mt-2 flex w-full items-start justify-center rounded-t-2xl border border-b-0 border-white/25 pt-3 font-bold text-white/90 shadow-inner ${
+                  className={`podium-grid relative z-10 mt-2 flex w-full items-start justify-center rounded-2xl border border-white/25 pt-3 font-bold text-white/90 shadow-inner ${
                     isWinner
-                      ? "from-primary to-primary-strong h-28 bg-gradient-to-b sm:h-32"
+                      ? "from-primary to-primary-strong h-24 bg-gradient-to-b sm:h-28"
                       : isSecond
-                        ? "h-20 bg-gradient-to-b from-slate-400 to-slate-500 sm:h-24"
-                        : "h-16 bg-gradient-to-b from-orange-400 to-orange-600 sm:h-20"
+                        ? "h-[4.5rem] bg-gradient-to-b from-slate-400 to-slate-500 sm:h-20"
+                        : "h-14 bg-gradient-to-b from-orange-400 to-orange-600 sm:h-16"
                   }`}
                 >
-                  {entry.rank === 1 ? "1st" : entry.rank === 2 ? "2nd" : "3rd"}
+                  <span>
+                    {entry.rank === 1
+                      ? "1st"
+                      : entry.rank === 2
+                        ? "2nd"
+                        : "3rd"}
+                  </span>
                 </div>
               </div>
             );
@@ -191,7 +199,10 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
             >
               <ChevronLeft className="size-4" /> Previous
             </button>
-            <div className="flex items-center gap-1" aria-label="Leaderboard pages">
+            <div
+              className="flex items-center gap-1"
+              aria-label="Leaderboard pages"
+            >
               {Array.from({ length: pageCount }, (_, index) => index + 1).map(
                 (page) => (
                   <button

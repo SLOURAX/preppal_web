@@ -13,7 +13,6 @@ import {
   Plus,
   Send,
   PiggyBank,
-  Vault,
 } from "lucide-react";
 import { ConfirmationModal, DataState } from "@/components/ui";
 import { SaxSecuritySafeBulk } from "@meysam213/iconsax-react";
@@ -38,6 +37,7 @@ const BANKS = [
 
 export function WalletOverview({ balance }: WalletOverviewProps) {
   const [xp, setXp] = useState<string>("500");
+  const [coinAmount, setCoinAmount] = useState<string>("1");
   const [pendingAction, setPendingAction] = useState<
     "deposit" | "withdraw" | "convert" | null
   >(null);
@@ -105,34 +105,42 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
 
   return (
     <div className="space-y-5">
-      <div className="grid gap-4 lg:grid-cols-[1.25fr_0.75fr]">
-        <section className="relative isolate flex h-full flex-col justify-center overflow-hidden rounded-3xl bg-[#21194d] p-5 text-white shadow-[0_20px_50px_rgb(52_31_140/0.2)] sm:p-6">
+      <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+        <section className="relative isolate flex h-full flex-col overflow-hidden rounded-3xl bg-[#21194d] p-5 text-white shadow-[0_20px_50px_rgb(52_31_140/0.2)] sm:p-6">
           <div
-            className="pointer-events-none absolute inset-0 -z-10 opacity-20"
+            className="pointer-events-none absolute inset-0 -z-10 opacity-10"
             style={{
               backgroundImage:
-                "linear-gradient(135deg, transparent 0 46%, rgba(255,255,255,.55) 47% 48%, transparent 49% 100%), linear-gradient(45deg, transparent 0 46%, rgba(255,255,255,.35) 47% 48%, transparent 49% 100%)",
+                "linear-gradient(135deg, transparent 0 46%, rgba(255,255,255,.38) 47% 48%, transparent 49% 100%), linear-gradient(45deg, transparent 0 46%, rgba(255,255,255,.24) 47% 48%, transparent 49% 100%)",
               backgroundSize: "34px 34px",
             }}
           />
           <div className="pointer-events-none absolute -right-16 -bottom-20 -z-10 size-64 rounded-full bg-violet-400/25 blur-3xl" />
-          <div className="relative z-10 mx-auto flex w-full max-w-2xl flex-col justify-center gap-4">
-              <span className="grid size-16 place-items-center rounded-2xl bg-white/10">
-                <Vault className="size-10 text-violet-200" />
-              </span>
+          <div className="relative z-10 flex w-full flex-col gap-4">
             <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-sm font-medium text-violet-200">
-                  Withdrawable Preppal Coins
-                </p>
-                <p className="mt-1 text-3xl font-black tracking-tight sm:text-4xl">
-                  {balance.toLocaleString()}{" "}
-                  <span className="text-base text-violet-200 sm:text-lg">
-                    coins
-                  </span>
-                </p>
+              <div className="flex items-start gap-3">
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-white/10 text-violet-100">
+                  <Coins className="size-5" />
+                </span>
+                <div>
+                  <p className="text-sm font-medium text-violet-200">
+                    Withdrawable Preppal Coins
+                  </p>
+                  <p className="mt-1 text-3xl font-black tracking-tight sm:text-4xl">
+                    {balance.toLocaleString()}{" "}
+                    <span className="text-base text-violet-200 sm:text-lg">
+                      coins
+                    </span>
+                  </p>
+                </div>
               </div>
             </div>
+
+            <p className="max-w-xl text-xs leading-5 text-violet-200/85">
+              Only Preppal Coins can be withdrawn. Deposited funds stay in your
+              wallet for premium plans and other eligible in-app purchases.
+            </p>
+
             <div className="flex flex-wrap justify-start gap-2.5">
               <button
                 className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-2.5 text-[.8rem] font-semibold text-[#21194d] transition-transform hover:-translate-y-0.5"
@@ -152,16 +160,10 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 }
               >
                 <Send className="size-4" />
-                Withdraw funds
+                Withdraw coins
               </button>
             </div>
-            <div className="grid grid-cols-3 gap-2 text-xs">
-              <div className="rounded-xl bg-white/10 p-3">
-                <p className="text-violet-200">Preppal coins</p>
-                <p className="mt-1 font-bold">
-                  {balance.toLocaleString()} coins
-                </p>
-              </div>
+            <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="rounded-xl bg-white/10 p-3">
                 <p className="text-violet-200">Experience points</p>
                 <p className="mt-1 font-bold">
@@ -169,20 +171,36 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 </p>
               </div>
               <div className="rounded-xl bg-white/10 p-3">
-                <p className="text-violet-200">Deposited funds</p>
+                <p className="text-violet-200">Spend-only deposits</p>
                 <p className="mt-1 font-bold">
                   {depositedFunds.toLocaleString()} NGN
                 </p>
               </div>
             </div>
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white/10 p-3 text-xs">
+              <div>
+                <p className="text-violet-200">Coin calculator</p>
+                <p className="mt-0.5 text-violet-200/75">
+                  Estimate your withdrawable value (₦1,300 / coin)
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  aria-label="Coins to calculate"
+                  className="w-20 rounded-lg border border-white/15 bg-white/10 px-2.5 py-1.5 text-right font-bold text-white outline-none placeholder:text-violet-200/60 focus:border-violet-200/60"
+                  inputMode="decimal"
+                  min="0"
+                  onChange={(event) => setCoinAmount(event.target.value)}
+                  type="number"
+                  value={coinAmount}
+                />
+                <span className="text-violet-200">coins =</span>
+                <span className="min-w-20 text-right font-bold text-white">
+                  ₦{((Number(coinAmount) || 0) * 1300).toLocaleString()}
+                </span>
+              </div>
+            </div>
           </div>
-          {/* <div className="mt-7 flex items-center justify-between border-t border-white/10 pt-4 text-xs">
-            <span className="text-violet-200">Wallet status</span>
-            <span className="inline-flex items-center gap-1.5 font-semibold text-emerald-300">
-              <span className="size-1.5 rounded-full bg-emerald-300" />
-              Active & secure
-            </span>
-          </div> */}
         </section>
 
         <section className="surface-card relative overflow-hidden p-5 sm:p-6">
@@ -258,6 +276,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             </button>
           </div>
         </section>
+
         {pendingAction ? (
           <ConfirmationModal
             title={actionCopy.title}
