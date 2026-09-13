@@ -244,7 +244,7 @@ export function LiveLeaderboardSection() {
                 strokeWidth="1.5"
               />
 
-              {/* Animated dashed stream */}
+              {/* Static achievement path — kept still to avoid unnecessary work on the homepage. */}
               <path
                 d="M10,74 C150,20 280,40 396,120 C430,170 430,240 388,280 C320,360 220,420 124,384 C60,380 -40,200 10,74"
                 fill="none"
@@ -252,42 +252,12 @@ export function LiveLeaderboardSection() {
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 filter="url(#glow-line)"
-                style={{
-                  strokeDasharray: "10 22",
-                  animation: "circuit-flow 3s linear infinite",
-                }}
+                strokeDasharray="10 22"
               />
 
-              <circle
-                r="5"
-                fill="rgba(196,181,253,0.95)"
-                filter="url(#glow-dot)"
-              >
-                <animateMotion
-                  dur="6s"
-                  repeatCount="indefinite"
-                  path="M10,74 C150,20 280,40 396,120 C430,170 430,240 388,280 C320,360 220,420 124,384 C60,380 -40,200 10,74"
-                />
-              </circle>
+              <circle cx="138" cy="402" r="5" fill="rgba(196,181,253,0.95)" filter="url(#glow-dot)" />
 
-              <circle
-                r="3"
-                fill="rgba(251,191,36,0.80)"
-                filter="url(#glow-dot)"
-              >
-                <animateMotion
-                  dur="6s"
-                  begin="-1.5s"
-                  repeatCount="indefinite"
-                  path="M10,74 C150,20 280,40 396,120 C430,170 430,240 388,280 C320,360 220,420 124,384 C60,380 -40,200 10,74"
-                />
-              </circle>
-
-              <style>{`
-                @keyframes circuit-flow {
-                  to { stroke-dashoffset: -128; }
-                }
-              `}</style>
+              <circle cx="386" cy="118" r="3" fill="rgba(251,191,36,0.80)" filter="url(#glow-dot)" />
             </svg>
 
             <div
@@ -334,7 +304,7 @@ export function LiveLeaderboardSection() {
               src="/mascot-leaderboard.png"
               alt="Preppal Mascot"
               fill
-              className="scale-[0.75] animate-[pulse_4s_ease-in-out_infinite] object-contain drop-shadow-2xl"
+              className="scale-[0.75] object-contain drop-shadow-2xl"
             />
           </div>
         </div>
