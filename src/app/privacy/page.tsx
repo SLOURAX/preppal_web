@@ -61,16 +61,16 @@ const SECTIONS = [
 export default function PrivacyPage() {
   return (
     <AppShell>
-      <main className="mx-auto w-full max-w-3xl px-5 py-14 sm:px-6">
+      <main className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-14">
         {/* Header */}
-        <div className="mb-12">
+        <div className="mb-8 sm:mb-12">
           <div className="bg-primary/10 mb-5 inline-grid size-12 place-items-center rounded-2xl">
             <ShieldCheck className="text-primary size-6" />
           </div>
-          <h1 className="text-foreground text-4xl font-bold tracking-tight">
+          <h1 className="text-foreground text-2xl font-bold sm:text-4xl tracking-tight">
             Privacy Policy
           </h1>
-          <p className="text-muted-foreground mt-3 text-base leading-7">
+          <p className="text-muted-foreground mt-3 text-sm leading-6 sm:text-base sm:leading-7">
             Your privacy matters to us. This policy explains exactly what data
             we collect, why we collect it, and how you can control it.
           </p>
@@ -80,13 +80,13 @@ export default function PrivacyPage() {
         </div>
 
         {/* Sections */}
-        <div className="space-y-10">
+        <div className="space-y-7 sm:space-y-10">
           {SECTIONS.map((section) => (
             <section key={section.title}>
-              <h2 className="text-foreground mb-3 text-lg font-semibold">
+              <h2 className="text-foreground mb-2 text-base font-semibold sm:mb-3 sm:text-lg">
                 {section.title}
               </h2>
-              <p className="text-muted-foreground text-[.95rem] leading-7 whitespace-pre-line">
+              <p className="text-muted-foreground text-sm leading-6 sm:text-[.95rem] sm:leading-7 whitespace-pre-line">
                 {section.body}
               </p>
             </section>
