@@ -65,11 +65,11 @@ export function ReferralSection() {
 
           <ol className="mt-6 space-y-3">
             {REFERRAL_STEPS.map((step, index) => (
-              <li className="flex items-center gap-3 text-sm" key={step}>
+              <li className="flex items-center gap-2" key={step}>
                 <span className="bg-primary/10 text-primary grid size-7 shrink-0 place-items-center rounded-full text-xs font-bold">
                   {index + 1}
                 </span>
-                <span className="text-muted-foreground">{step}</span>
+                <span className="text-primary text-[.8rem] font-semibold">{step}</span>
               </li>
             ))}
           </ol>
@@ -134,18 +134,18 @@ export function ReferralSection() {
                 className="flex items-center justify-between gap-4 py-3"
                 key={milestone.friends}
               >
-                <span className="text-muted-foreground text-sm">
+                <span className="text-muted-foreground text-[.8rem]">
                   Invite {milestone.friends} friend
                   {milestone.friends === 1 ? "" : "s"}
                 </span>
-                <span className="text-foreground flex items-center gap-1.5 text-sm font-semibold">
-                  <SaxGiftBulk className="text-primary size-4" />{" "}
+                <span className="text-foreground flex items-center gap-1.5 text-[.85rem] font-semibold">
+                  {/* <SaxGiftBulk className="text-primary size-4 text-[.85rem]" />{" "} */}
                   {milestone.reward}
                 </span>
               </li>
             ))}
           </ul>
-          <p className="text-muted-foreground mt-4 text-xs">
+          <p className="mt-4 text-xs font-medium text-primary">
             Reward values are examples and can be configured before launch.
           </p>
         </div>

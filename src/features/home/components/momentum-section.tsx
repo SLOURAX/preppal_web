@@ -49,22 +49,33 @@ export function MomentumSection() {
           <div className="pointer-events-none absolute -right-8 -bottom-12 z-0 size-40 rounded-full border border-white/10" />
           <div className="relative z-10 flex items-start justify-between gap-4">
             <div>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-bold tracking-wide uppercase"><span className="size-1.5 rounded-full bg-emerald-300" /> Today’s check-in</span>
-              <h3 className="mt-2 text-2xl font-bold">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-bold tracking-wide uppercase">
+                <span className="size-1.5 rounded-full bg-emerald-300" />{" "}
+                Today’s check-in
+              </span>
+              <h3 className="mt-4 text-[1.4rem] font-bold sm:text-2xl">
                 Keep your momentum going
               </h3>
-              <p className="mt-2 max-w-sm text-sm leading-6 opacity-80">
+              <p className="max-w-sm text-sm leading-6 opacity-80">
                 Come back each day to grow your streak and unlock better bonus
                 rewards.
               </p>
             </div>
-            <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-white/15"><SaxCalendarTickBulk className="size-6" /></span>
+            <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-white/15">
+              <SaxCalendarTickBulk className="size-6" />
+            </span>
           </div>
           <div className="relative z-10 mt-7 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <div className="flex items-center gap-2 font-bold"><SaxAwardBulk className="size-5 text-amber-300" /> +2 XP today</div>
-              <div className="mt-3 h-1.5 w-44 overflow-hidden rounded-full bg-white/20"><div className="h-full w-4/5 rounded-full bg-amber-300" /></div>
-              <p className="mt-1.5 text-[10px] opacity-70">One check-in away from your next bonus</p>
+              <div className="flex items-center gap-2 font-bold">
+                <SaxAwardBulk className="size-5 text-amber-300" /> +2 XP today
+              </div>
+              <div className="mt-3 h-1.5 w-44 overflow-hidden rounded-full bg-white/20">
+                <div className="h-full w-4/5 rounded-full bg-amber-300" />
+              </div>
+              <p className="mt-1.5 text-[10px] opacity-70">
+                One check-in away from your next bonus
+              </p>
             </div>
             <Link
               href="/rewards"
@@ -87,7 +98,9 @@ export function MomentumSection() {
                 <Icon className="size-5" />
               </span>
               <div>
-                <p className="text-foreground text-lg leading-none font-bold">{value}</p>
+                <p className="text-foreground text-[1rem] leading-none font-bold">
+                  {value}
+                </p>
                 <p className="text-muted-foreground mt-1 text-xs">{label}</p>
               </div>
             </div>
