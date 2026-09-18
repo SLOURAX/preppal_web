@@ -6,6 +6,7 @@ import {
   Mail,
   Phone,
   Crosshair,
+  Megaphone,
   UserRound,
 } from "lucide-react";
 import Link from "next/link";
@@ -38,6 +39,7 @@ function RegisterContent() {
   const [country, setCountry] = useState("Nigeria");
   const [learningLevel, setLearningLevel] = useState("");
   const [examGoal, setExamGoal] = useState("");
+  const [referralSource, setReferralSource] = useState("");
   const [formError, setFormError] = useState("");
   const [verificationEmail, setVerificationEmail] = useState("");
 
@@ -189,6 +191,23 @@ function RegisterContent() {
             placeholder="Choose an exam"
             compact
             value={examGoal}
+          />
+          <ListSelect
+            icon={Megaphone}
+            id="referral-source"
+            label="Where did you hear about us?"
+            onChange={setReferralSource}
+            options={[
+              "A friend or family member",
+              "Social media",
+              "Google search",
+              "School or community",
+              "Online advert",
+              "Other",
+            ].map((option) => ({ value: option, label: option }))}
+            placeholder="Choose an option"
+            compact
+            value={referralSource}
           />
           <PasswordField
             autoComplete="new-password"
