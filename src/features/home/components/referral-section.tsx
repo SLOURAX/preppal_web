@@ -69,7 +69,9 @@ export function ReferralSection() {
                 <span className="bg-primary/10 text-primary grid size-7 shrink-0 place-items-center rounded-full text-xs font-bold">
                   {index + 1}
                 </span>
-                <span className="text-primary text-[.8rem] font-semibold">{step}</span>
+                <span className="text-primary text-[.8rem] font-semibold">
+                  {step}
+                </span>
               </li>
             ))}
           </ol>
@@ -104,7 +106,7 @@ export function ReferralSection() {
             </div>
           ) : (
             <Link
-              className="bg-primary text-primary-foreground hover:bg-primary-strong mt-7 inline-flex min-h-10 items-center gap-2 rounded-full px-5 text-sm font-semibold transition-colors"
+              className="bg-primary text-primary-foreground hover:bg-primary-strong mt-7 inline-flex min-h-11 items-center gap-2 rounded-[10px] px-8 text-[.85rem] font-semibold transition-colors"
               href="/register"
             >
               <SaxProfileAddBulk className="size-4" /> Create an account to
@@ -113,22 +115,23 @@ export function ReferralSection() {
           )}
         </div>
 
-        <div className="from-primary/15 via-primary/5 to-surface flex flex-col justify-center bg-gradient-to-br p-6 sm:p-8 lg:p-10">
-          <div className="flex items-center justify-between gap-4">
+        <div className="from-primary/15 via-primary/5 to-surface relative flex flex-col justify-center overflow-hidden bg-gradient-to-br p-6 sm:p-8 lg:p-10">
+          <div className="bg-grid-pattern pointer-events-none absolute inset-0 opacity-60" />
+          <div className="relative z-10 flex items-center justify-between gap-4">
             <div>
               <p className="text-muted-foreground text-sm">Referral progress</p>
               <p className="text-foreground mt-1 text-2xl font-bold">
                 2 of 5 friends
               </p>
             </div>
-            <span className="bg-primary text-primary-foreground grid size-12 place-items-center rounded-2xl">
+            <span className="bg-primary text-primary-foreground relative z-10 grid size-12 place-items-center rounded-2xl shadow-[0_8px_24px_rgba(124,58,237,0.2)]">
               <SaxPeopleBulk className="size-6" />
             </span>
           </div>
-          <div className="bg-surface-subtle mt-5 h-2 overflow-hidden rounded-full">
+          <div className="bg-surface-subtle relative z-10 mt-5 h-2 overflow-hidden rounded-full">
             <div className="bg-primary h-full w-2/5 rounded-full" />
           </div>
-          <ul className="divide-border mt-6 divide-y">
+          <ul className="divide-border relative z-10 mt-6 divide-y">
             {REFERRAL_MILESTONES.map((milestone) => (
               <li
                 className="flex items-center justify-between gap-4 py-3"
@@ -139,13 +142,12 @@ export function ReferralSection() {
                   {milestone.friends === 1 ? "" : "s"}
                 </span>
                 <span className="text-foreground flex items-center gap-1.5 text-[.85rem] font-semibold">
-                  {/* <SaxGiftBulk className="text-primary size-4 text-[.85rem]" />{" "} */}
                   {milestone.reward}
                 </span>
               </li>
             ))}
           </ul>
-          <p className="mt-4 text-xs font-medium text-primary">
+          <p className="text-primary relative z-10 mt-4 text-xs font-medium">
             Reward values are examples and can be configured before launch.
           </p>
         </div>

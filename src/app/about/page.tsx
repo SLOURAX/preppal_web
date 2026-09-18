@@ -31,9 +31,9 @@ export default function AboutPage() {
       <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-14">
         <section className="overflow-hidden rounded-3xl p-1 sm:p-12">
           <div className="max-w-2xl">
-            <h1 className="text-foreground mt-5 text-[2.2rem] leading-[1.08] font-bold tracking-[-0.04em] sm:text-6xl">
+            <h1 className="text-foreground mt-5 text-[2.1rem] leading-[1.08] font-bold tracking-[-0.04em] sm:text-6xl">
               <span className="whitespace-nowrap">Prepare with confidence.</span>{" "}
-              <span className="text-primary block text-[1.08em] sm:inline sm:text-inherit">Go further.</span>
+              <span className="text-primary block text-[1em] sm:inline sm:text-inherit">Go further.</span>
             </h1>
             <p className="text-muted-foreground mt-4 max-w-xl text-sm leading-6 sm:text-base sm:leading-7">
               Preppal is a focused learning companion for students who want

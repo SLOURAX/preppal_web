@@ -2,13 +2,13 @@
 
 import {
   SaxCpuChargeBulk,
-  SaxRefreshCircleBulk,
   SaxTickCircleBulk,
 } from "@meysam213/iconsax-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
+import { RefreshCw } from "lucide-react";
 
 interface QuizOption {
   readonly id: string;
@@ -35,7 +35,7 @@ export function AiQuizSection() {
   };
 
   return (
-    <section className="grid items-center gap-8 lg:grid-cols-[0.85fr_1.15fr] mt-5 px-4">
+    <section className="mt-5 grid items-center gap-8 px-4 lg:grid-cols-[0.85fr_1.15fr]">
       <div>
         <h2 className="text-foreground mt-4 text-3xl font-bold tracking-[-0.035em]">
           Get help at the moment <br />
@@ -59,8 +59,7 @@ export function AiQuizSection() {
         </ul>
       </div>
 
-      <div className="surface-card relative overflow-hidden border-primary/20 bg-gradient-to-br from-surface via-surface to-primary/5 p-5 sm:p-7">
-        <div className="bg-primary/10 text-primary absolute top-4 right-4 rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wide uppercase">AI challenge · +10 XP</div>
+      <div className="surface-card border-primary/20 from-surface via-surface to-primary/5 relative overflow-hidden bg-gradient-to-br p-5 sm:p-7">
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="text-primary text-xs font-semibold">
@@ -70,7 +69,6 @@ export function AiQuizSection() {
               Which organelle is known as the powerhouse of the cell?
             </h3>
           </div>
-          <SaxCpuChargeBulk className="text-primary size-6 shrink-0" />
         </div>
 
         <div className="mt-5 grid gap-2 sm:grid-cols-2">
@@ -120,7 +118,7 @@ export function AiQuizSection() {
             className="bg-surface-subtle text-foreground hover:bg-border gap-2"
             onClick={resetQuestion}
           >
-            <SaxRefreshCircleBulk className="size-4" /> Reset
+            <RefreshCw className="size-3" /> Reset
           </Button>
         </div>
       </div>
