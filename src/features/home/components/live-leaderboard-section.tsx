@@ -120,9 +120,9 @@ export function LiveLeaderboardSection() {
               <span className="text-[10px] font-semibold tracking-widest text-slate-400 uppercase">
                 Streak
               </span>
-              <span className="w-20 text-right text-[10px] font-semibold tracking-widest text-slate-400 uppercase">
+              {/* <span className="w-20 text-right text-[10px] font-semibold tracking-widest text-slate-400 uppercase">
                 Coins
-              </span>
+              </span> */}
             </div>
 
             <ul className="relative z-10 divide-y divide-white/5">
@@ -181,7 +181,7 @@ export function LiveLeaderboardSection() {
                       </span>
                     </div>
 
-                    <div className="w-20 text-right">
+                    {/* <div className="w-20 text-right">
                       <span
                         className={cn(
                           "text-[.8rem] font-bold",
@@ -190,7 +190,7 @@ export function LiveLeaderboardSection() {
                       >
                         {entry.score}
                       </span>
-                    </div>
+                    </div> */}
                   </li>
                 );
               })}

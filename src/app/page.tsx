@@ -80,7 +80,7 @@ export default function HomePage() {
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-16 px-3 py-10 sm:px-5 lg:gap-20 lg:py-14">
         <section className="grid items-center gap-12 lg:grid-cols-2">
           <div className="flex flex-col gap-6">
-            <h1 className="text-foreground text-4xl leading-[1.1] font-bold tracking-[-0.04em] sm:text-4xl lg:text-[3.2rem]">
+            <h1 className="text-foreground text-4xl leading-[1.3] font-bold tracking-[-0.04em] sm:text-4xl lg:text-[3.2rem]">
               Prep smarter with AI. <br />{" "}
               <span className="relative isolate inline-block px-[0.12em] text-amber-500">
                 <span className="absolute inset-[-0.08em_-0.14em] -z-10 rounded-[46%] border-2 border-violet-500/80" />
