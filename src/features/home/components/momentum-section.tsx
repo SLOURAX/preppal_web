@@ -44,7 +44,7 @@ export function MomentumSection() {
       </div>
 
       <div className="mt-8 grid gap-5 lg:grid-cols-[1.15fr_1fr]">
-        <div className="surface-card from-primary to-primary-strong text-primary-foreground relative overflow-hidden bg-gradient-to-br p-6 sm:p-7">
+        <div className="surface-card from-primary to-primary-strong text-primary-foreground relative overflow-hidden bg-linear-to-br p-6 sm:p-7">
           <div className="pointer-events-none absolute -right-16 -bottom-20 z-0 size-56 rounded-full border border-white/10" />
           <div className="pointer-events-none absolute -right-8 -bottom-12 z-0 size-40 rounded-full border border-white/10" />
           <div className="relative z-10 flex items-start justify-between gap-4">
