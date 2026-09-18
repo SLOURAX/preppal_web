@@ -38,6 +38,8 @@ function RegisterContent() {
   const [country, setCountry] = useState("Nigeria");
   const [learningLevel, setLearningLevel] = useState("");
   const [examGoal, setExamGoal] = useState("");
+  const [formError, setFormError] = useState("");
+  const [verificationEmail, setVerificationEmail] = useState("");
 
   useEffect(() => {
     if (isAuthenticated) router.replace(returnTo);
@@ -47,10 +49,45 @@ function RegisterContent() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
-    if (!learningLevel || !examGoal) return;
-    login();
-    router.push(returnTo);
+    const form = event.currentTarget;
+    const value = (id: string) =>
+      String(
+        form.querySelector<HTMLInputElement>(`#${id}`)?.value ?? "",
+      ).trim();
+    const firstName = value("first-name");
+    const surname = value("surname");
+    const email = value("register-email");
+    const password = value("new-password");
+    const confirmPassword = value("confirm-password");
+    if (!firstName || !surname)
+      return setFormError("Enter your first name and surname.");
+    if (!/^\S+@\S+\.\S+$/.test(email))
+      return setFormError("Enter a valid email address.");
+    if (password.length < 8)
+      return setFormError("Your password must be at least 8 characters.");
+    if (password !== confirmPassword)
+      return setFormError("Your passwords do not match.");
+    if (!learningLevel || !examGoal)
+      return setFormError("Choose your learning level and exam goal.");
+    if (!form.querySelector<HTMLInputElement>("#terms")?.checked)
+      return setFormError(
+        "Accept the Terms of Service and Privacy Policy to continue.",
+      );
+    setFormError("");
+    setVerificationEmail(email);
   };
+
+  if (verificationEmail)
+    return (
+      <VerificationStep
+        email={verificationEmail}
+        onVerified={() => {
+          login();
+          router.push(returnTo);
+        }}
+        onBack={() => setVerificationEmail("")}
+      />
+    );
 
   const handleSocialLogin = () => {
     login();
@@ -72,6 +109,14 @@ function RegisterContent() {
       <AuthDivider />
 
       <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+        {formError && (
+          <p
+            className="bg-danger/10 text-danger rounded-xl px-3 py-2 text-xs font-medium"
+            role="alert"
+          >
+            {formError}
+          </p>
+        )}
         <div className="grid gap-3.5 sm:grid-cols-2">
           <FormField
             autoComplete="given-name"
@@ -164,6 +209,7 @@ function RegisterContent() {
         </div>
         <CheckboxField
           id="terms"
+          name="terms"
           required
           variant="panel"
           label={
@@ -191,6 +237,103 @@ function RegisterContent() {
         </Button>
       </form>
     </>
+  );
+}
+
+function VerificationStep({
+  email,
+  onVerified,
+  onBack,
+}: {
+  email: string;
+  onVerified: () => void;
+  onBack: () => void;
+}) {
+  const [code, setCode] = useState("");
+  const [error, setError] = useState("");
+  const updateCode = (value: string, index: number) => {
+    const digits = value.replace(/\D/g, "").slice(0, 6);
+    if (digits.length > 1) setCode(digits);
+    else
+      setCode(
+        (current) =>
+          `${current.slice(0, index)}${digits}${current.slice(index + 1)}`,
+      );
+    setError("");
+  };
+  const verify = (event: FormEvent) => {
+    event.preventDefault();
+    if (!/^\d{6}$/.test(code))
+      return setError("Enter the six-digit code from your email.");
+    onVerified();
+  };
+  return (
+    <div className="space-y-6">
+      <AuthHeader
+        description={`We sent a six-digit verification code to ${email}.`}
+        title="Verify your email"
+      />
+      <form className="space-y-4" onSubmit={verify}>
+        <fieldset>
+          <legend className="text-foreground text-sm font-medium">
+            Verification code
+          </legend>
+          <div
+            className="mt-2 grid w-full grid-cols-6 gap-2 sm:gap-3"
+            onPaste={(event) => {
+              event.preventDefault();
+              updateCode(event.clipboardData.getData("text"), 0);
+            }}
+            onChange={(event) => {
+              const target = event.target as HTMLInputElement;
+              if (
+                target.value &&
+                target.nextElementSibling instanceof HTMLInputElement
+              )
+                target.nextElementSibling.focus();
+            }}
+            onKeyDown={(event) => {
+              const target = event.target as HTMLInputElement;
+              if (
+                event.key === "Backspace" &&
+                !target.value &&
+                target.previousElementSibling instanceof HTMLInputElement
+              )
+                target.previousElementSibling.focus();
+            }}
+          >
+            {Array.from({ length: 6 }, (_, index) => (
+              <input
+                aria-label={`Verification digit ${index + 1}`}
+                autoFocus={index === 0}
+                className="border-border bg-surface focus:border-primary focus:ring-primary/15 h-14 min-w-0 flex-1 rounded-xl border text-center text-lg font-semibold shadow-sm outline-none focus:ring-4 sm:h-16 sm:text-xl"
+                inputMode="numeric"
+                key={index}
+                maxLength={1}
+                onChange={(event) => updateCode(event.target.value, index)}
+                type="text"
+                value={code[index] ?? ""}
+              />
+            ))}
+          </div>
+        </fieldset>
+        {error && (
+          <p className="text-danger text-xs" role="alert">
+            {error}
+          </p>
+        )}
+        <Button className="h-11 w-full rounded-xl" type="submit">
+          Verify email
+        </Button>
+        <button
+          className="text-muted-foreground hover:text-primary mx-auto flex items-center gap-1 border-b border-transparent py-1 text-sm font-medium transition-colors hover:border-current"
+          onClick={onBack}
+          type="button"
+        >
+          <span aria-hidden="true">←</span> Use a different email
+        </button>
+      </form>
+    </div>
   );
 }
 

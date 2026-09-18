@@ -4,6 +4,7 @@ import { ThemeProvider } from "next-themes";
 import type { PropsWithChildren } from "react";
 
 import { QueryProvider } from "./query-provider";
+import { ToastProvider } from "@/components/ui";
 
 export function AppProviders({ children }: PropsWithChildren) {
   return (
@@ -13,7 +14,7 @@ export function AppProviders({ children }: PropsWithChildren) {
       enableSystem
       disableTransitionOnChange
     >
-      <QueryProvider>{children}</QueryProvider>
+      <QueryProvider><ToastProvider>{children}</ToastProvider></QueryProvider>
     </ThemeProvider>
   );
 }

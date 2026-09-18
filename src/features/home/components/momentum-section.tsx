@@ -33,8 +33,8 @@ const MOMENTUM_STATS = [
 export function MomentumSection() {
   return (
     <section>
-      <div className="mx-auto max-w-2xl text-center mt-10">
-        <h2 className="text-foreground mt-4 text-3xl font-bold tracking-[-0.035em]">
+      <div className="mx-auto mt-10 max-w-2xl text-center">
+        <h2 className="text-foreground mt-4 text-3xl font-bold tracking-[-0.035em] sm:text-[2rem]">
           Small wins. Consistent progress.
         </h2>
         <p className="text-muted-foreground text-sm leading-6">
@@ -43,11 +43,13 @@ export function MomentumSection() {
         </p>
       </div>
 
-      <div className="mt-7 grid gap-4 lg:grid-cols-[1.15fr_1fr]">
-        <div className="surface-card from-primary to-primary-strong text-primary-foreground bg-gradient-to-br p-6">
-          <div className="flex items-start justify-between gap-4">
+      <div className="mt-8 grid gap-5 lg:grid-cols-[1.15fr_1fr]">
+        <div className="surface-card from-primary to-primary-strong text-primary-foreground relative overflow-hidden bg-gradient-to-br p-6 sm:p-7">
+          <div className="pointer-events-none absolute -right-16 -bottom-20 z-0 size-56 rounded-full border border-white/10" />
+          <div className="pointer-events-none absolute -right-8 -bottom-12 z-0 size-40 rounded-full border border-white/10" />
+          <div className="relative z-10 flex items-start justify-between gap-4">
             <div>
-              <p className="text-sm font-medium opacity-80">Today’s check-in</p>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-bold tracking-wide uppercase"><span className="size-1.5 rounded-full bg-emerald-300" /> Today’s check-in</span>
               <h3 className="mt-2 text-2xl font-bold">
                 Keep your momentum going
               </h3>
@@ -56,15 +58,17 @@ export function MomentumSection() {
                 rewards.
               </p>
             </div>
-            <SaxCalendarTickBulk className="size-8 shrink-0" />
+            <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-white/15"><SaxCalendarTickBulk className="size-6" /></span>
           </div>
-          <div className="mt-7 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2 font-bold">
-              <SaxAwardBulk className="size-5 text-amber-300 text-[.8rem]" /> +2 XP today
+          <div className="relative z-10 mt-7 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 font-bold"><SaxAwardBulk className="size-5 text-amber-300" /> +2 XP today</div>
+              <div className="mt-3 h-1.5 w-44 overflow-hidden rounded-full bg-white/20"><div className="h-full w-4/5 rounded-full bg-amber-300" /></div>
+              <p className="mt-1.5 text-[10px] opacity-70">One check-in away from your next bonus</p>
             </div>
             <Link
               href="/rewards"
-              className="bg-surface text-foreground hover:bg-surface-subtle inline-flex items-center justify-center rounded-full px-5 py-2.5 text-[.8rem] font-semibold transition-colors"
+              className="bg-surface text-foreground hover:bg-surface-subtle relative z-20 inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-[.8rem] font-semibold shadow-sm transition-colors"
             >
               View rewards
             </Link>
@@ -74,17 +78,17 @@ export function MomentumSection() {
         <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
           {MOMENTUM_STATS.map(({ label, value, icon: Icon, color }) => (
             <div
-              className="surface-card flex items-center gap-4 p-4"
+              className="surface-card flex items-center gap-4 p-4 transition-transform hover:-translate-y-0.5"
               key={label}
             >
               <span
-                className={`grid size-10 shrink-0 place-items-center rounded-xl ${color}`}
+                className={`grid size-11 shrink-0 place-items-center rounded-2xl ${color}`}
               >
                 <Icon className="size-5" />
               </span>
               <div>
-                <p className="text-foreground font-semibold">{value}</p>
-                <p className="text-muted-foreground text-xs">{label}</p>
+                <p className="text-foreground text-lg leading-none font-bold">{value}</p>
+                <p className="text-muted-foreground mt-1 text-xs">{label}</p>
               </div>
             </div>
           ))}

@@ -3,7 +3,7 @@
 import { Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, type FormEvent } from "react";
+import { Suspense, useEffect, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui";
 import {
   AuthBenefits,
@@ -25,6 +25,7 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const requestedReturnTo = searchParams.get("returnTo");
   const returnTo = requestedReturnTo?.startsWith("/") ? requestedReturnTo : "/";
+  const [formError, setFormError] = useState("");
 
   useEffect(() => {
     if (isAuthenticated) router.replace(returnTo);
@@ -34,6 +35,12 @@ function LoginContent() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
+    const form = event.currentTarget;
+    const email = String(form.querySelector<HTMLInputElement>("#email")?.value ?? "").trim();
+    const password = String(form.querySelector<HTMLInputElement>("#password")?.value ?? "");
+    if (!/^\S+@\S+\.\S+$/.test(email)) return setFormError("Enter a valid email address.");
+    if (!password) return setFormError("Enter your password.");
+    setFormError("");
     login();
     router.push(returnTo);
   };
@@ -58,6 +65,7 @@ function LoginContent() {
       <AuthDivider />
 
       <form className="space-y-4" onSubmit={handleSubmit}>
+        {formError && <p className="bg-danger/10 text-danger rounded-xl px-3 py-2 text-xs font-medium" role="alert">{formError}</p>}
         <FormField
           autoComplete="email"
           icon={Mail}

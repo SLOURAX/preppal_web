@@ -5,3 +5,4 @@ export * from "./live-leaderboard-section";
 export * from "./faq-section";
 export * from "./whatsapp-section";
 export * from "./exam-pathways-marquee";
+export * from "./trust-section";

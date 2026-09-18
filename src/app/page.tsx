@@ -22,6 +22,7 @@ import {
   FaqSection,
   WhatsAppSection,
   ExamPathwaysMarquee,
+  TrustSection,
 } from "@/features/home";
 
 interface Capability {
@@ -76,11 +77,17 @@ const floatingStats = [
 export default function HomePage() {
   return (
     <AppShell>
-      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-12 px-3 py-10 sm:px-5 lg:py-10">
-        <section className="grid items-center gap-10 lg:grid-cols-2">
+      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-16 px-3 py-10 sm:px-5 lg:gap-20 lg:py-14">
+        <section className="grid items-center gap-12 lg:grid-cols-2">
           <div className="flex flex-col gap-6">
             <h1 className="text-foreground text-4xl leading-[1.1] font-bold tracking-[-0.04em] sm:text-4xl lg:text-[3.2rem]">
-              Prep smarter with AI. <br /> Get rewarded.
+              Prep smarter with AI. <br />{" "}
+              <span className="relative isolate inline-block px-[0.12em] text-amber-500">
+                <span className="absolute inset-[-0.08em_-0.14em] -z-10 rounded-[46%] border-2 border-violet-500/80" />
+                <span className="absolute inset-[-0.17em_-0.22em] -z-10 rotate-[-3deg] rounded-[48%] border border-dashed border-violet-400/70" />
+                <span className="absolute inset-[-0.2em_-0.18em] -z-10 rotate-[4deg] rounded-[45%] border border-dotted border-violet-300/60" />
+                Get rewarded.
+              </span>
               <br />
               <span className="text-primary">Go further.</span>
             </h1>
@@ -346,6 +353,7 @@ export default function HomePage() {
           ))}
         </section>
 
+        <TrustSection />
         <AiQuizSection />
         <MomentumSection />
         <ExamPathwaysMarquee />

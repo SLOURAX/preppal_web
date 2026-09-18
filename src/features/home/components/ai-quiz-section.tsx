@@ -59,7 +59,8 @@ export function AiQuizSection() {
         </ul>
       </div>
 
-      <div className="surface-card p-5 sm:p-7">
+      <div className="surface-card relative overflow-hidden border-primary/20 bg-gradient-to-br from-surface via-surface to-primary/5 p-5 sm:p-7">
+        <div className="bg-primary/10 text-primary absolute top-4 right-4 rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wide uppercase">AI challenge · +10 XP</div>
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="text-primary text-xs font-semibold">
@@ -113,7 +114,7 @@ export function AiQuizSection() {
             disabled={!selectedAnswer}
             onClick={() => setShowExplanation(true)}
           >
-            Ask Preppal AI
+            <SaxCpuChargeBulk className="size-4" /> Ask Preppal AI
           </Button>
           <Button
             className="bg-surface-subtle text-foreground hover:bg-border gap-2"
