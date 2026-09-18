@@ -31,9 +31,9 @@ export default function AboutPage() {
       <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-14">
         <section className="overflow-hidden rounded-3xl p-1 sm:p-12">
           <div className="max-w-2xl">
-            <h1 className="text-foreground mt-5 text-3xl leading-[1.08] font-bold tracking-[-0.04em] sm:text-6xl">
-              Prepare with confidence.{" "}
-              <span className="text-primary">Go further.</span>
+            <h1 className="text-foreground mt-5 text-[2.2rem] leading-[1.08] font-bold tracking-[-0.04em] sm:text-6xl">
+              <span className="whitespace-nowrap">Prepare with confidence.</span>{" "}
+              <span className="text-primary block text-[1.08em] sm:inline sm:text-inherit">Go further.</span>
             </h1>
             <p className="text-muted-foreground mt-4 max-w-xl text-sm leading-6 sm:text-base sm:leading-7">
               Preppal is a focused learning companion for students who want
@@ -59,13 +59,13 @@ export default function AboutPage() {
         <section className="mt-8 grid gap-3 sm:mt-14 sm:grid-cols-3 sm:gap-4">
           {PRINCIPLES.map(({ icon: Icon, title, text }) => (
             <article className="surface-card flex items-start gap-4 p-4 sm:block sm:p-6" key={title}>
-              <span className="bg-primary/10 text-primary grid size-11 place-items-center rounded-2xl">
+              <span className="bg-primary/10 text-primary grid size-11 shrink-0 aspect-square place-items-center rounded-2xl">
                 <Icon className="size-5" />
               </span>
               <div className="min-w-0"><h2 className="text-foreground text-base font-bold sm:mt-5">
                 {title}
               </h2>
-              <p className="text-muted-foreground mt-1 text-sm leading-6 sm:mt-2">
+              <p className="text-muted-foreground mt-1 text-[.78rem] leading-5 sm:mt-2 sm:text-sm sm:leading-6">
                 {text}
               </p>
               </div>
