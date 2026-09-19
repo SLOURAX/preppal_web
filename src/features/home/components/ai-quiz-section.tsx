@@ -115,7 +115,7 @@ export function AiQuizSection() {
             className="bg-surface-subtle text-foreground hover:bg-border gap-2"
             onClick={resetQuestion}
           >
-            <RefreshCw className="size-3" /> Reset
+            <RefreshCw className="size-3" /> Reset Question
           </Button>
         </div>
       </div>
