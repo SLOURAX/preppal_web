@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  SaxCoin1Bulk,
-  SaxGiftBulk,
-  SaxLoginBulk,
-  SaxStar1Bulk,
-  SaxUserAddBulk,
-} from "@meysam213/iconsax-react";
+import { Gift, LogIn, UserPlus } from "lucide-react";
 import Link from "next/link";
 
 import { AppShell } from "@/components/layout";
@@ -19,57 +13,25 @@ import { RewardCatalog } from "./reward-catalog";
 export function RewardsHub() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const balance = useAuthStore((state) => state.preppalBalance);
-  const experiencePoints = useAuthStore((state) => state.experiencePoints);
 
   return (
     <AppShell>
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
         <header className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-start gap-3">
+          <div className="flex min-w-0 items-start gap-3">
             <span className="bg-primary/10 text-primary grid size-11 shrink-0 place-items-center rounded-2xl">
-              <SaxGiftBulk className="size-5" />
+              <Gift className="size-5" />
             </span>
             <div>
               <h1 className="text-foreground text-xl font-bold tracking-tight sm:text-2xl">
                 Rewards
               </h1>
-              <p className="text-muted-foreground mt-1 max-w-xl text-sm leading-relaxed">
+              <p className="text-muted-foreground mt-1 max-w-xl text-[.8rem] leading-relaxed">
                 Keep learning to earn XP, convert it into Preppal Coins, and
                 redeem your progress for useful rewards.
               </p>
             </div>
           </div>
-
-          {isAuthenticated && (
-            <div className="grid grid-cols-2 gap-2 self-start sm:self-auto">
-              <div className="bg-surface flex items-center gap-2 rounded-2xl px-3 py-2.5 shadow-sm">
-                <span className="bg-primary/10 text-primary grid size-8 place-items-center rounded-xl">
-                  <SaxCoin1Bulk className="size-4" />
-                </span>
-                <div>
-                  <p className="text-muted-foreground text-[9px] font-medium tracking-wide uppercase">
-                    Coins
-                  </p>
-                  <p className="text-foreground text-xs font-bold">
-                    {balance.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-              <div className="bg-surface flex items-center gap-2 rounded-2xl px-3 py-2.5 shadow-sm">
-                <span className="grid size-8 place-items-center rounded-xl bg-amber-500/10 text-amber-600">
-                  <SaxStar1Bulk className="size-4" />
-                </span>
-                <div>
-                  <p className="text-muted-foreground text-[9px] font-medium tracking-wide uppercase">
-                    XP
-                  </p>
-                  <p className="text-foreground text-xs font-bold">
-                    {experiencePoints.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
         </header>
 
         {isAuthenticated ? (
@@ -95,13 +57,13 @@ export function RewardsHub() {
                 className="bg-primary text-primary-foreground hover:bg-primary-strong inline-flex min-h-10 items-center justify-center gap-2 rounded-full px-5 text-sm font-medium transition-colors"
                 href="/register"
               >
-                <SaxUserAddBulk className="size-4" /> Create account
+                <UserPlus className="size-4" /> Create account
               </Link>
               <Link
                 className="bg-surface-subtle text-foreground hover:bg-border inline-flex min-h-10 items-center justify-center gap-2 rounded-full px-5 text-sm font-medium transition-colors"
                 href="/login"
               >
-                <SaxLoginBulk className="size-4" /> Log in
+                <LogIn className="size-4" /> Log in
               </Link>
             </div>
           </section>

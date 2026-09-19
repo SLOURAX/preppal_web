@@ -34,10 +34,10 @@ export function MomentumSection() {
   return (
     <section>
       <div className="mx-auto mt-10 max-w-2xl text-center">
-        <h2 className="text-foreground mt-4 text-3xl font-bold tracking-[-0.035em] sm:text-[2rem]">
+        <h2 className="text-foreground mt-4 text-[1.5rem] font-bold tracking-[-0.035em] sm:text-[2rem]">
           Small wins. Consistent progress.
         </h2>
-        <p className="text-muted-foreground text-sm leading-6">
+        <p className="text-muted-foreground text-sm leading-6 mt-1">
           Check in, keep your streak alive, and turn consistent practice into
           XP, ranks, and rewards.
         </p>
@@ -50,7 +50,7 @@ export function MomentumSection() {
           <div className="relative z-10 flex items-start justify-between gap-4">
             <div>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-bold tracking-wide uppercase">
-                <span className="size-1.5 rounded-full bg-emerald-300" />{" "}
+                {/* <span className="size-1.5 rounded-full bg-emerald-300" />{" "} */}
                 Today’s check-in
               </span>
               <h3 className="mt-4 text-[1.4rem] font-bold sm:text-2xl">

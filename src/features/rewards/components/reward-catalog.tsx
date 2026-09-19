@@ -1,9 +1,4 @@
-import {
-  SaxAwardBulk,
-  SaxCoin1Bulk,
-  SaxGiftBulk,
-} from "@meysam213/iconsax-react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Award, Coins, Gift } from "lucide-react";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
@@ -23,9 +18,6 @@ export function RewardCatalog({ balance }: RewardCatalogProps) {
           <h2 className="text-foreground mt-1 text-lg font-semibold">
             Redeem your Preppal Coins
           </h2>
-          <p className="text-muted-foreground mt-1 text-xs">
-            Convert your learning progress into useful perks.
-          </p>
         </div>
         <Link
           className="text-primary text-xs font-semibold hover:underline"
@@ -40,7 +32,7 @@ export function RewardCatalog({ balance }: RewardCatalogProps) {
           {REDEEMABLE_REWARDS.map((reward) => {
             const canRedeem = balance >= reward.cost;
             const RewardIcon =
-              reward.type === "plan" ? SaxAwardBulk : SaxGiftBulk;
+              reward.type === "plan" ? Award : Gift;
 
             return (
               <article
@@ -66,12 +58,12 @@ export function RewardCatalog({ balance }: RewardCatalogProps) {
                   </p>
                   <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
                     <span className="text-foreground flex items-center gap-1 text-xs font-semibold">
-                      <SaxCoin1Bulk className="text-primary size-3.5" />
+                      <Coins className="text-primary size-3.5" />
                       {reward.cost.toLocaleString()} P
                     </span>
                     {reward.type === "plan" ? (
                       <Link
-                        className="bg-primary text-primary-foreground inline-flex min-h-8 items-center rounded-full px-4 text-xs font-medium transition hover:opacity-90"
+                        className="bg-primary text-primary-foreground inline-flex min-h-8 items-center rounded-full px-6 text-xs font-medium transition hover:opacity-90"
                         href="/pricing"
                       >
                         View plans
@@ -79,10 +71,10 @@ export function RewardCatalog({ balance }: RewardCatalogProps) {
                     ) : (
                       <Link
                         className={cn(
-                          "inline-flex min-h-9 items-center gap-1.5 rounded-full px-4 text-xs font-bold shadow-sm transition",
+                          "inline-flex min-h-9 items-center gap-1.5 rounded-full px-4 text-xs font-bold transition",
                           canRedeem
-                            ? "bg-primary text-primary-foreground hover:opacity-90"
-                            : "bg-surface-subtle text-muted-foreground",
+                            ? "bg-primary text-primary hover:opacity-90"
+                            : "bg-surface text-primary",
                         )}
                         href="/marketplace"
                       >

@@ -40,13 +40,13 @@ const QUIZ_PATHS = [
   {
     value: "exam",
     title: "Prepare for an exam",
-    description: "Practice within the structure of JAMB, WAEC, or NECO.",
+    description: "Practice exams on JAMB, WAEC, NECO and more...",
     icon: GraduationCap,
   },
   {
     value: "subject",
     title: "Practice a subject",
-    description: "Focus directly on Mathematics, English, Sciences, and more.",
+    description: "Focus directly on Maths, English, Sciences, and more...",
     icon: BookOpenCheck,
   },
 ] as const;

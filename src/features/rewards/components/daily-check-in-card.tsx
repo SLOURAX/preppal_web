@@ -1,12 +1,13 @@
 "use client";
 
 import {
-  SaxAddCircleBulk,
-  SaxCalendarTickBulk,
-  SaxChartSuccessBulk,
-  SaxTickCircleBulk,
-} from "@meysam213/iconsax-react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+  ArrowLeft,
+  ArrowRight,
+  CalendarCheck2,
+  CheckCircle2,
+  CirclePlus,
+  TrendingUp,
+} from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui";
@@ -45,11 +46,11 @@ export function DailyCheckInCard() {
   };
 
   return (
-    <section className="surface-card p-5 sm:p-6">
+    <section className="surface-card min-w-0 overflow-hidden p-4 sm:p-6">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
-          <span className="bg-primary/10 text-primary grid size-10 place-items-center rounded-xl">
-            <SaxCalendarTickBulk className="size-5" />
+          <span className="bg-primary/10 text-primary grid size-10 shrink-0 place-items-center rounded-xl">
+            <CalendarCheck2 className="size-5" />
           </span>
           <div>
             <h2 className="text-foreground font-semibold">Daily check-in</h2>
@@ -58,8 +59,8 @@ export function DailyCheckInCard() {
             </p>
           </div>
         </div>
-        <span className="bg-surface-subtle text-foreground flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold">
-          <SaxChartSuccessBulk className="text-primary size-3.5" /> 1 day
+        <span className="bg-surface-subtle text-foreground flex h-12 shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold whitespace-nowrap">
+          <TrendingUp className="text-primary size-3.5" /> 1 day
         </span>
       </div>
 
@@ -111,7 +112,7 @@ export function DailyCheckInCard() {
                 )}
                 key={day}
               >
-                {isComplete ? <SaxTickCircleBulk className="size-3.5" /> : day}
+                {isComplete ? <CheckCircle2 className="size-3.5" /> : day}
               </span>
             );
           },
@@ -133,14 +134,15 @@ export function DailyCheckInCard() {
         disabled={hasCheckedIn}
         onClick={checkIn}
       >
-        {hasCheckedIn ? (
-          <SaxTickCircleBulk className="size-4" />
-        ) : (
-          <SaxAddCircleBulk className="size-4" />
-        )}
         {hasCheckedIn
           ? "Checked in today"
           : `Check in · +${CHECK_IN_REWARD} XP`}
+          
+        {hasCheckedIn ? (
+          <CheckCircle2 className="size-4" />
+        ) : (
+          <CirclePlus className="size-4" />
+        )}
       </Button>
     </section>
   );

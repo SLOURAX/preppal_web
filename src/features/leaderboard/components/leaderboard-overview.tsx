@@ -159,25 +159,21 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
             {filteredEntries.length === 1 ? "" : "s"}
           </span>
         </div>
-        <div className="divide-border divide-y">
+        <div>
           {visibleEntries.map((entry) => (
             <div
-              className="flex items-center justify-between gap-4 py-3"
+              className="group flex items-center justify-between gap-3 border-b border-border/40 px-1.5 py-3 transition-colors last:border-b-0 hover:bg-slate-50/80 sm:gap-4 sm:px-3 sm:py-3.5 dark:hover:bg-white/5"
               key={entry.rank}
             >
               <div className="flex min-w-0 items-center gap-3">
-                <span className="text-muted-foreground w-5 text-[.85rem] font-bold">
-                  {entry.rank}
+                <span className="text-muted-foreground w-7 text-center text-sm font-bold">#{entry.rank}</span>
+                <span className="bg-primary text-primary-foreground grid size-8 shrink-0 place-items-center rounded-full text-[11px] font-bold sm:size-9 sm:text-xs">
+                  {entry.name.split(" ").map((part) => part[0]).join("").slice(0, 2)}
                 </span>
-                <span className="bg-primary/10 text-primary grid size-8 place-items-center rounded-full text-xs font-bold">
-                  {entry.name.slice(0, 1)}
-                </span>
-                <span className="truncate text-[.8rem] font-medium">
-                  {entry.name}
-                </span>
+                <div className="min-w-0"><span className="text-foreground block truncate text-[.78rem] font-semibold sm:text-sm">{entry.name}</span><span className="text-muted-foreground mt-0.5 block text-[10px] sm:text-[11px]">Level {Math.max(1, Math.ceil(entry.score / 1500))}</span></div>
               </div>
-              <span className="text-muted-foreground text-[.8rem] font-semibold">
-                {entry.score.toLocaleString()} XP
+              <span className="text-foreground flex shrink-0 items-center gap-1 text-[.78rem] font-bold sm:gap-1.5 sm:text-sm">
+                <BadgeCent className="text-amber-500 size-3.5 sm:size-4" /> {entry.score.toLocaleString()} <span className="text-muted-foreground text-[10px] font-medium sm:text-[11px]">XP</span>
               </span>
             </div>
           ))}

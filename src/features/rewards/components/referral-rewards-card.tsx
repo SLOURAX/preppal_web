@@ -1,17 +1,9 @@
 "use client";
 
-import {
-  SaxCopyBulk,
-  SaxHashtagBulk,
-  SaxLinkBulk,
-  SaxPeopleBulk,
-  SaxShareBulk,
-  SaxTickCircleBulk,
-} from "@meysam213/iconsax-react";
+import { CheckCircle2, Copy, Hash, Link2, Share2, Users } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
 
-import { Button } from "@/components/ui";
 import { DataState } from "@/components/ui";
 
 import { REFERRAL_CODE, REFERRAL_LINK } from "../rewards.constants";
@@ -21,7 +13,7 @@ type CopiedValue = "code" | "link" | null;
 const REFERRAL_STATS = [
   { label: "Invited", value: "3" },
   { label: "Activated", value: "1" },
-  { label: "XP earned", value: "50 XP" },
+  { label: "XP earned", value: "50" },
 ] as const;
 
 export const REFERRALS = [
@@ -46,28 +38,23 @@ export function ReferralRewardsCard() {
     }
   };
 
-  const shareReferralLink = async (): Promise<void> => {
+  const shareValue = async (label: string, value: string): Promise<void> => {
     if (navigator.share) {
       try {
-        await navigator.share({
-          title: "Join me on Preppal",
-          text: "Learn, practise, and earn XP with me on Preppal.",
-          url: REFERRAL_LINK,
-        });
+        await navigator.share({ title: `Preppal ${label}`, text: value });
       } catch {
         return;
       }
       return;
     }
-
-    await copyValue("link", REFERRAL_LINK);
+    await copyValue(label === "Referral code" ? "code" : "link", value);
   };
 
   return (
     <section className="surface-card flex flex-col p-5 sm:p-6">
       <div className="flex items-start gap-3">
         <span className="bg-primary/10 text-primary grid size-10 shrink-0 place-items-center rounded-xl">
-          <SaxPeopleBulk className="size-5" />
+          <Users className="size-5" />
         </span>
         <div>
           <h2 className="text-foreground font-semibold">Invite friends</h2>
@@ -77,13 +64,13 @@ export function ReferralRewardsCard() {
         </div>
       </div>
 
-      <dl className="bg-surface-subtle mt-6 grid grid-cols-3 rounded-2xl p-4">
+      <dl className="bg-surface mt-6 grid grid-cols-3 rounded-2xl p-4">
         {REFERRAL_STATS.map((stat) => (
           <div className="text-center" key={stat.label}>
-            <dd className="text-foreground text-lg font-semibold">
+            <dd className="text-primary text-[.9rem] font-semibold">
               {stat.value}
             </dd>
-            <dt className="text-muted-foreground mt-0.5 text-[10px] font-medium sm:text-xs">
+            <dt className="text-muted-foreground mt-0.5 text-[.75rem] font-medium sm:text-[.75rem]">
               {stat.label}
             </dt>
           </div>
@@ -94,9 +81,6 @@ export function ReferralRewardsCard() {
         <div className="mb-2 flex items-center justify-between">
           <p className="text-foreground text-xs font-semibold">Your invites</p>
           <div className="flex items-center gap-3">
-            <span className="text-muted-foreground text-[10px]">
-              50 XP each
-            </span>
             <Link
               className="text-primary inline-flex items-center text-[10px] font-bold"
               href="/rewards/referrals"
@@ -106,7 +90,7 @@ export function ReferralRewardsCard() {
           </div>
         </div>
         {REFERRALS.length ? (
-          <div className="divide-border border-border/60 divide-y rounded-xl border px-3">
+          <div className="!divide-[#e5e5e5] !border-[#e5e5e5] divide-y rounded-xl border px-3 dark:divide-white/10 dark:border-white/10">
             {REFERRALS.slice(0, 3).map((referral) => (
               <div
                 className="flex items-center justify-between gap-3 py-2.5"
@@ -115,9 +99,6 @@ export function ReferralRewardsCard() {
                 <div className="min-w-0">
                   <p className="text-foreground truncate text-xs font-semibold">
                     {referral.name}
-                  </p>
-                  <p className="text-muted-foreground truncate text-[10px]">
-                    {referral.status}
                   </p>
                 </div>
                 <span
@@ -143,23 +124,22 @@ export function ReferralRewardsCard() {
       <div className="mt-4 space-y-2">
         <ReferralValue
           copied={copiedValue === "code"}
-          icon={<SaxHashtagBulk className="size-4" />}
+          icon={<Hash className="size-4" />}
           label="Referral code"
           onCopy={() => copyValue("code", REFERRAL_CODE)}
+          onShare={() => shareValue("Referral code", REFERRAL_CODE)}
           value={REFERRAL_CODE}
         />
         <ReferralValue
           copied={copiedValue === "link"}
-          icon={<SaxLinkBulk className="size-4" />}
+          icon={<Link2 className="size-4" />}
           label="Referral link"
           onCopy={() => copyValue("link", REFERRAL_LINK)}
+          onShare={() => shareValue("Referral link", REFERRAL_LINK)}
           value={REFERRAL_LINK}
         />
       </div>
 
-      <Button className="mt-4 w-full gap-2" onClick={shareReferralLink}>
-        <SaxShareBulk className="size-4" /> Share invite
-      </Button>
     </section>
   );
 }
@@ -169,6 +149,7 @@ interface ReferralValueProps {
   readonly icon: ReactNode;
   readonly label: string;
   readonly onCopy: () => void;
+  readonly onShare: () => void;
   readonly value: string;
 }
 
@@ -177,10 +158,11 @@ function ReferralValue({
   icon,
   label,
   onCopy,
+  onShare,
   value,
 }: ReferralValueProps) {
   return (
-    <div className="bg-surface-subtle flex min-w-0 items-center gap-3 rounded-xl p-2.5">
+    <div className="bg-surface flex min-w-0 items-center gap-3 rounded-xl border !border-[#e5e5e5] p-2.5 dark:border-white/10">
       <span className="text-muted-foreground grid size-8 shrink-0 place-items-center">
         {icon}
       </span>
@@ -192,6 +174,9 @@ function ReferralValue({
           {value}
         </p>
       </div>
+      <button aria-label={`Share ${label.toLowerCase()}`} className="hover:bg-surface text-muted-foreground hover:text-foreground grid size-9 shrink-0 place-items-center rounded-lg transition-colors" onClick={onShare} type="button">
+        <Share2 className="size-4" />
+      </button>
       <button
         aria-label={`Copy ${label.toLowerCase()}`}
         className="hover:bg-surface text-muted-foreground hover:text-foreground grid size-9 shrink-0 place-items-center rounded-lg transition-colors"
@@ -199,9 +184,9 @@ function ReferralValue({
         type="button"
       >
         {copied ? (
-          <SaxTickCircleBulk className="text-success size-4" />
+          <CheckCircle2 className="text-success size-4" />
         ) : (
-          <SaxCopyBulk className="size-4" />
+          <Copy className="size-4" />
         )}
       </button>
     </div>

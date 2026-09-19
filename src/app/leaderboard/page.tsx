@@ -21,7 +21,7 @@ export default function LeaderboardPage() {
           <h1 className="text-foreground text-3xl font-bold tracking-tight">
             Leaderboard
           </h1>
-          <p className="text-muted-foreground mx-auto mt-3 max-w-md text-sm leading-6">
+          <p className="text-muted-foreground mx-auto mt-1 max-w-md text-sm leading-6">
             See how your progress compares with the Preppal community and earn
             your place at the top.
           </p>

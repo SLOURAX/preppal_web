@@ -50,8 +50,8 @@ export function LeaderboardFilters({
               aria-pressed={isSelected}
               className={
                 isSelected
-                  ? "bg-primary text-primary-foreground flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold shadow-sm"
-                  : "text-muted-foreground hover:bg-surface-subtle hover:text-foreground flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors"
+                  ? "bg-primary text-primary-foreground flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-[.75rem] font-semibold shadow-sm"
+                  : "text-muted-foreground hover:bg-surface-subtle hover:text-foreground flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-[.75rem] font-medium transition-colors"
               }
               key={value}
               onClick={() => onRangeChange(value)}
@@ -94,7 +94,7 @@ export function LeaderboardFilters({
         </div>
       ) : null}
 
-      <label className="bg-surface-subtle flex min-w-0 items-center gap-2 rounded-full px-4 py-3">
+      <label className="bg-surface border flex min-w-0 items-center gap-2 rounded-full px-4 py-4">
         <Search className="text-muted-foreground size-4 shrink-0" />
         <span className="sr-only">Search for a user</span>
         <input
