@@ -37,7 +37,7 @@ export function MomentumSection() {
         <h2 className="text-foreground mt-4 text-[1.5rem] font-bold tracking-[-0.035em] sm:text-[2rem]">
           Small wins. Consistent progress.
         </h2>
-        <p className="text-muted-foreground text-sm leading-6 mt-1">
+        <p className="text-muted-foreground mt-1 text-sm leading-6">
           Check in, keep your streak alive, and turn consistent practice into
           XP, ranks, and rewards.
         </p>

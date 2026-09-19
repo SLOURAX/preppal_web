@@ -94,7 +94,7 @@ export function LeaderboardFilters({
         </div>
       ) : null}
 
-      <label className="bg-surface border flex min-w-0 items-center gap-2 rounded-full px-4 py-4">
+      <label className="bg-surface flex min-w-0 items-center gap-2 rounded-full border px-4 py-4">
         <Search className="text-muted-foreground size-4 shrink-0" />
         <span className="sr-only">Search for a user</span>
         <input

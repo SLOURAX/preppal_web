@@ -72,7 +72,9 @@ function FooterLinkGroup({
 }) {
   return (
     <div>
-      <h2 className="text-foreground text-[.9rem] font-semibold lg:text-[.84rem]">{title}</h2>
+      <h2 className="text-foreground text-[.9rem] font-semibold lg:text-[.84rem]">
+        {title}
+      </h2>
       <ul className="mt-4 space-y-3">
         {links.map((link) => (
           <li key={link.href}>
@@ -133,7 +135,9 @@ export function Footer() {
         <FooterLinkGroup links={COMPANY_LINKS} title="Company" />
 
         <div>
-          <h2 className="text-foreground text-sm font-semibold lg:text-[.84rem]">Need help?</h2>
+          <h2 className="text-foreground text-sm font-semibold lg:text-[.84rem]">
+            Need help?
+          </h2>
           <p className="text-muted-foreground mt-4 text-sm leading-6 lg:text-[.82rem]">
             Have a question or need support with your learning journey?
           </p>

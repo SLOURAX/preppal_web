@@ -57,8 +57,8 @@ export function ReferralRewardsCard() {
           <Users className="size-5" />
         </span>
         <div>
-          <h2 className="text-foreground font-semibold">Invite friends</h2>
-          <p className="text-muted-foreground mt-0.5 text-xs">
+          <h2 className="text-foreground text-[.85rem] font-semibold">Invite friends</h2>
+          <p className="text-muted-foreground mt-0.5 text-[.75rem]">
             Earn 50 XP when a friend joins and completes their first quiz.
           </p>
         </div>
@@ -79,7 +79,7 @@ export function ReferralRewardsCard() {
 
       <div className="mt-5">
         <div className="mb-2 flex items-center justify-between">
-          <p className="text-foreground text-xs font-semibold">Your invites</p>
+          <p className="text-foreground text-[.85rem] font-semibold">Your invites</p>
           <div className="flex items-center gap-3">
             <Link
               className="text-primary inline-flex items-center text-[10px] font-bold"
@@ -90,14 +90,14 @@ export function ReferralRewardsCard() {
           </div>
         </div>
         {REFERRALS.length ? (
-          <div className="!divide-[#e5e5e5] !border-[#e5e5e5] divide-y rounded-xl border px-3 dark:divide-white/10 dark:border-white/10">
+          <div className="divide-y !divide-[#e5e5e5] rounded-xl border !border-[#e5e5e5] px-3 dark:divide-white/10 dark:border-white/10">
             {REFERRALS.slice(0, 3).map((referral) => (
               <div
-                className="flex items-center justify-between gap-3 py-2.5"
+                className="flex items-center justify-between gap-5 py-4"
                 key={referral.name}
               >
                 <div className="min-w-0">
-                  <p className="text-foreground truncate text-xs font-semibold">
+                  <p className="text-foreground truncate text-[.75rem] font-semibold">
                     {referral.name}
                   </p>
                 </div>
@@ -139,7 +139,6 @@ export function ReferralRewardsCard() {
           value={REFERRAL_LINK}
         />
       </div>
-
     </section>
   );
 }
@@ -174,7 +173,12 @@ function ReferralValue({
           {value}
         </p>
       </div>
-      <button aria-label={`Share ${label.toLowerCase()}`} className="hover:bg-surface text-muted-foreground hover:text-foreground grid size-9 shrink-0 place-items-center rounded-lg transition-colors" onClick={onShare} type="button">
+      <button
+        aria-label={`Share ${label.toLowerCase()}`}
+        className="hover:bg-surface text-muted-foreground hover:text-foreground grid size-9 shrink-0 place-items-center rounded-lg transition-colors"
+        onClick={onShare}
+        type="button"
+      >
         <Share2 className="size-4" />
       </button>
       <button

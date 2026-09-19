@@ -36,7 +36,8 @@ export function Mascot({
       className={cn(
         "relative shrink-0 motion-safe:animate-[mascot-float_5s_ease-in-out_infinite]",
         sizeClasses[size],
-        mood === "celebrate" && "motion-safe:animate-[mascot-bounce_1.8s_ease-in-out_infinite]",
+        mood === "celebrate" &&
+          "motion-safe:animate-[mascot-bounce_1.8s_ease-in-out_infinite]",
         className,
       )}
       data-mascot-mood={mood}

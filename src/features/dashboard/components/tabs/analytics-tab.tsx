@@ -134,7 +134,9 @@ function ReadinessCard({ score }: { readonly score: number }) {
           </svg>
           <div className="bg-surface absolute grid size-24 place-items-center rounded-full">
             <div className="text-center">
-              <p className="text-foreground text-xl font-black sm:text-2xl">{score}%</p>
+              <p className="text-foreground text-xl font-black sm:text-2xl">
+                {score}%
+              </p>
               <p className="text-muted-foreground text-[10px] font-semibold uppercase">
                 ready
               </p>

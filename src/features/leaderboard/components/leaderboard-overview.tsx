@@ -162,18 +162,35 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
         <div>
           {visibleEntries.map((entry) => (
             <div
-              className="group flex items-center justify-between gap-3 border-b border-border/40 px-1.5 py-3 transition-colors last:border-b-0 hover:bg-slate-50/80 sm:gap-4 sm:px-3 sm:py-3.5 dark:hover:bg-white/5"
+              className="group border-border/40 flex items-center justify-between gap-3 border-b px-1.5 py-3 transition-colors last:border-b-0 hover:bg-slate-50/80 sm:gap-4 sm:px-3 sm:py-3.5 dark:hover:bg-white/5"
               key={entry.rank}
             >
               <div className="flex min-w-0 items-center gap-3">
-                <span className="text-muted-foreground w-7 text-center text-sm font-bold">#{entry.rank}</span>
-                <span className="bg-primary text-primary-foreground grid size-8 shrink-0 place-items-center rounded-full text-[11px] font-bold sm:size-9 sm:text-xs">
-                  {entry.name.split(" ").map((part) => part[0]).join("").slice(0, 2)}
+                <span className="text-muted-foreground w-7 text-center text-sm font-bold">
+                  #{entry.rank}
                 </span>
-                <div className="min-w-0"><span className="text-foreground block truncate text-[.78rem] font-semibold sm:text-sm">{entry.name}</span><span className="text-muted-foreground mt-0.5 block text-[10px] sm:text-[11px]">Level {Math.max(1, Math.ceil(entry.score / 1500))}</span></div>
+                <span className="bg-primary text-primary-foreground grid size-8 shrink-0 place-items-center rounded-full text-[11px] font-bold sm:size-9 sm:text-xs">
+                  {entry.name
+                    .split(" ")
+                    .map((part) => part[0])
+                    .join("")
+                    .slice(0, 2)}
+                </span>
+                <div className="min-w-0">
+                  <span className="text-foreground block truncate text-[.78rem] font-semibold sm:text-sm">
+                    {entry.name}
+                  </span>
+                  <span className="text-muted-foreground mt-0.5 block text-[10px] sm:text-[11px]">
+                    Level {Math.max(1, Math.ceil(entry.score / 1500))}
+                  </span>
+                </div>
               </div>
               <span className="text-foreground flex shrink-0 items-center gap-1 text-[.78rem] font-bold sm:gap-1.5 sm:text-sm">
-                <BadgeCent className="text-amber-500 size-3.5 sm:size-4" /> {entry.score.toLocaleString()} <span className="text-muted-foreground text-[10px] font-medium sm:text-[11px]">XP</span>
+                <BadgeCent className="size-3.5 text-amber-500 sm:size-4" />{" "}
+                {entry.score.toLocaleString()}{" "}
+                <span className="text-muted-foreground text-[10px] font-medium sm:text-[11px]">
+                  XP
+                </span>
               </span>
             </div>
           ))}

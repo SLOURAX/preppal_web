@@ -27,7 +27,9 @@ export function SubmitModal({
               <AlertTriangle className="size-5 text-amber-500" />
             </div> */}
             <div>
-              <h2 className="text-foreground text-sm font-bold sm:text-base">Submit Exam?</h2>
+              <h2 className="text-foreground text-sm font-bold sm:text-base">
+                Submit Exam?
+              </h2>
               <p className="text-muted-foreground text-[.75rem] leading-relaxed">
                 Once submitted, you cannot change your answers.
               </p>

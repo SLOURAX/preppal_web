@@ -4,7 +4,10 @@ import { Bell, Check, Info, AlertTriangle, Zap, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Mascot } from "@/components/ui";
-import { NOTIFICATIONS, type NotificationIconName } from "@/constants/notifications";
+import {
+  NOTIFICATIONS,
+  type NotificationIconName,
+} from "@/constants/notifications";
 
 const ICONS: Record<NotificationIconName, typeof Zap> = {
   zap: Zap,

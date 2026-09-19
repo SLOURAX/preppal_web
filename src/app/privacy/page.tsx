@@ -67,7 +67,7 @@ export default function PrivacyPage() {
           <div className="bg-primary/10 mb-5 inline-grid size-12 place-items-center rounded-2xl">
             <ShieldCheck className="text-primary size-6" />
           </div>
-          <h1 className="text-foreground text-2xl font-bold sm:text-4xl tracking-tight">
+          <h1 className="text-foreground text-2xl font-bold tracking-tight sm:text-4xl">
             Privacy Policy
           </h1>
           <p className="text-muted-foreground mt-3 text-sm leading-6 sm:text-base sm:leading-7">
@@ -86,7 +86,7 @@ export default function PrivacyPage() {
               <h2 className="text-foreground mb-2 text-base font-semibold sm:mb-3 sm:text-lg">
                 {section.title}
               </h2>
-              <p className="text-muted-foreground text-sm leading-6 sm:text-[.95rem] sm:leading-7 whitespace-pre-line">
+              <p className="text-muted-foreground text-sm leading-6 whitespace-pre-line sm:text-[.95rem] sm:leading-7">
                 {section.body}
               </p>
             </section>

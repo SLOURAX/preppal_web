@@ -23,7 +23,9 @@ export function RequireAuth({ children }: PropsWithChildren) {
     return (
       <main className="bg-background flex min-h-[60vh] items-center justify-center px-5 py-16">
         <section className="surface-card w-full max-w-sm p-6 text-center">
-          <h1 className="text-foreground text-lg font-bold">Sign in to continue</h1>
+          <h1 className="text-foreground text-lg font-bold">
+            Sign in to continue
+          </h1>
           <p className="text-muted-foreground mt-2 text-sm leading-6">
             Your learning progress and account activity are private to you.
           </p>

@@ -53,14 +53,14 @@ export function DailyCheckInCard() {
             <CalendarCheck2 className="size-5" />
           </span>
           <div>
-            <h2 className="text-foreground font-semibold">Daily check-in</h2>
-            <p className="text-muted-foreground mt-0.5 text-xs">
+            <h2 className="text-foreground text-[.85rem] font-semibold">Daily check-in</h2>
+            {/* <p className="text-muted-foreground mt-0.5 text-[.75rem]">
               Check in every day to earn experience points.
-            </p>
+            </p> */}
           </div>
         </div>
-        <span className="bg-surface-subtle text-foreground flex h-12 shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold whitespace-nowrap">
-          <TrendingUp className="text-primary size-3.5" /> 1 day
+        <span className="bg-surface flex h-10 shrink-0 items-center gap-1.5 rounded-full px-5 py-1 text-[.75rem] font-semibold whitespace-nowrap text-primary">
+          1 day
         </span>
       </div>
 
@@ -73,7 +73,7 @@ export function DailyCheckInCard() {
         >
           <ArrowLeft className="size-4" />
         </button>
-        <p className="text-sm font-semibold">{monthLabel}</p>
+        <p className="text-[.85rem] font-semibold">{monthLabel}</p>
         <button
           aria-label="Next month"
           className="hover:bg-surface-subtle grid size-8 place-items-center rounded-full"
@@ -87,7 +87,7 @@ export function DailyCheckInCard() {
       <div className="mt-4 grid grid-cols-7 gap-y-2 text-center">
         {WEEKDAYS.map((weekday) => (
           <span
-            className="text-muted-foreground text-[10px] font-medium"
+            className="text-muted-foreground text-[9px] font-medium"
             key={weekday}
           >
             {weekday}
@@ -119,9 +119,9 @@ export function DailyCheckInCard() {
         )}
       </div>
 
-      <div className="bg-surface-subtle mt-5 rounded-2xl p-4">
+      <div className="bg-surface mt-5 rounded-2xl p-4">
         <div className="flex items-center justify-between gap-3 text-xs">
-          <span className="text-muted-foreground">Next milestone</span>
+          <span className="text-muted-foreground font-semibold">Next milestone</span>
           <span className="text-foreground font-semibold">7-day streak</span>
         </div>
         <div className="bg-border/60 mt-3 h-1.5 overflow-hidden rounded-full">
@@ -137,7 +137,7 @@ export function DailyCheckInCard() {
         {hasCheckedIn
           ? "Checked in today"
           : `Check in · +${CHECK_IN_REWARD} XP`}
-          
+
         {hasCheckedIn ? (
           <CheckCircle2 className="size-4" />
         ) : (

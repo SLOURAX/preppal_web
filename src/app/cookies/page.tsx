@@ -74,7 +74,7 @@ export default function CookiesPage() {
           <div className="bg-primary/10 mb-5 inline-grid size-12 place-items-center rounded-2xl">
             <Cookie className="text-primary size-6" />
           </div>
-          <h1 className="text-foreground text-2xl font-bold sm:text-4xl tracking-tight">
+          <h1 className="text-foreground text-2xl font-bold tracking-tight sm:text-4xl">
             Cookies Policy
           </h1>
           <p className="text-muted-foreground mt-3 text-sm leading-6 sm:text-base sm:leading-7">
@@ -88,7 +88,7 @@ export default function CookiesPage() {
         </div>
 
         {/* Cookie type cards */}
-        <div className="mb-8 sm:mb-12 grid gap-4 sm:grid-cols-2">
+        <div className="mb-8 grid gap-4 sm:mb-12 sm:grid-cols-2">
           {COOKIE_TYPES.map((type) => (
             <div key={type.name} className="surface-card p-5">
               <div className="mb-3 flex items-center justify-between gap-2">

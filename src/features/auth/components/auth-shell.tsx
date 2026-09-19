@@ -10,7 +10,12 @@ export function AuthShell({ children }: PropsWithChildren) {
         aria-label="Preppal account access"
       >
         <div className="p-5 sm:p-7">
-          <Link className="text-muted-foreground hover:text-foreground mb-5 inline-flex items-center gap-2 text-sm font-medium transition-colors" href="/"><ArrowLeft className="size-4" /> Back</Link>
+          <Link
+            className="text-muted-foreground hover:text-foreground mb-5 inline-flex items-center gap-2 text-sm font-medium transition-colors"
+            href="/"
+          >
+            <ArrowLeft className="size-4" /> Back
+          </Link>
           <div>{children}</div>
         </div>
       </section>

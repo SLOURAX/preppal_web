@@ -15,7 +15,11 @@ import { useMemo, useState } from "react";
 
 import { DataState, Mascot } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import { NOTIFICATIONS, type NotificationIconName, type NotificationItem } from "@/constants/notifications";
+import {
+  NOTIFICATIONS,
+  type NotificationIconName,
+  type NotificationItem,
+} from "@/constants/notifications";
 
 const ICONS: Record<NotificationIconName, typeof Zap> = {
   zap: Zap,

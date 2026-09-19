@@ -64,7 +64,7 @@ export function ExamYearStep({
               className={cn(
                 "relative rounded-xl py-3 text-center text-[.8rem] font-semibold transition-colors",
                 isSelected
-                  ? "border border-primary text-primary bg-surface"
+                  ? "border-primary text-primary bg-surface border"
                   : "bg-surface text-foreground hover:bg-primary/5 border",
               )}
               key={year}

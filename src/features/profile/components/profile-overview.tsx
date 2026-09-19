@@ -1,4 +1,9 @@
-import { BookOpen, ChartNoAxesCombined, Crosshair, UserRound } from "lucide-react";
+import {
+  BookOpen,
+  ChartNoAxesCombined,
+  Crosshair,
+  UserRound,
+} from "lucide-react";
 
 interface ProfileOverviewProps {
   readonly userName: string;

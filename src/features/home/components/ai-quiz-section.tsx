@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  SaxCpuChargeBulk,
-  SaxTickCircleBulk,
-} from "@meysam213/iconsax-react";
+import { SaxCpuChargeBulk, SaxTickCircleBulk } from "@meysam213/iconsax-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui";

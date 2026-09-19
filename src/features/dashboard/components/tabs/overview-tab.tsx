@@ -156,7 +156,7 @@ export function OverviewTab() {
             >
               <Icon className="size-5" />
             </span>
-        <p className="text-foreground mt-4 text-base font-bold sm:text-xl">
+            <p className="text-foreground mt-4 text-base font-bold sm:text-xl">
               {value}
             </p>
             <div className="mt-0.5 flex items-center justify-between gap-2">

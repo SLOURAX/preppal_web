@@ -255,9 +255,21 @@ export function LiveLeaderboardSection() {
                 strokeDasharray="10 22"
               />
 
-              <circle cx="138" cy="402" r="5" fill="rgba(196,181,253,0.95)" filter="url(#glow-dot)" />
+              <circle
+                cx="138"
+                cy="402"
+                r="5"
+                fill="rgba(196,181,253,0.95)"
+                filter="url(#glow-dot)"
+              />
 
-              <circle cx="386" cy="118" r="3" fill="rgba(251,191,36,0.80)" filter="url(#glow-dot)" />
+              <circle
+                cx="386"
+                cy="118"
+                r="3"
+                fill="rgba(251,191,36,0.80)"
+                filter="url(#glow-dot)"
+              />
             </svg>
 
             <div

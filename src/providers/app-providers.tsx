@@ -14,7 +14,9 @@ export function AppProviders({ children }: PropsWithChildren) {
       enableSystem
       disableTransitionOnChange
     >
-      <QueryProvider><ToastProvider>{children}</ToastProvider></QueryProvider>
+      <QueryProvider>
+        <ToastProvider>{children}</ToastProvider>
+      </QueryProvider>
     </ThemeProvider>
   );
 }

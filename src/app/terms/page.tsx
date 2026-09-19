@@ -67,7 +67,7 @@ export default function TermsPage() {
           <div className="bg-primary/10 mb-5 inline-grid size-12 place-items-center rounded-2xl">
             <Scale className="text-primary size-6" />
           </div>
-          <h1 className="text-foreground text-2xl font-bold sm:text-4xl tracking-tight">
+          <h1 className="text-foreground text-2xl font-bold tracking-tight sm:text-4xl">
             Terms of Use
           </h1>
           <p className="text-muted-foreground mt-3 text-sm leading-6 sm:text-base sm:leading-7">

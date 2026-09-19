@@ -12,11 +12,19 @@ function LoadingVisual({
   compact = false,
 }: LoadingVisualProps) {
   return (
-    <div className={compact ? "flex items-center gap-3" : "text-center"} role="status" aria-live="polite">
-      <div className={compact ? "relative size-14 shrink-0" : "relative mx-auto size-32"}>
-        <div className="absolute inset-0 rounded-full border-2 border-primary/15" />
-        <div className="absolute inset-1 rounded-full border-2 border-transparent border-t-primary border-r-violet-300 motion-safe:animate-spin" />
-        <div className="absolute inset-3 rounded-full bg-primary/10 blur-md" />
+    <div
+      className={compact ? "flex items-center gap-3" : "text-center"}
+      role="status"
+      aria-live="polite"
+    >
+      <div
+        className={
+          compact ? "relative size-14 shrink-0" : "relative mx-auto size-32"
+        }
+      >
+        <div className="border-primary/15 absolute inset-0 rounded-full border-2" />
+        <div className="border-t-primary absolute inset-1 rounded-full border-2 border-transparent border-r-violet-300 motion-safe:animate-spin" />
+        <div className="bg-primary/10 absolute inset-3 rounded-full blur-md" />
         <Image
           alt=""
           className="relative z-10 object-contain p-3 motion-safe:animate-[mascot-float_3s_ease-in-out_infinite]"

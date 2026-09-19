@@ -20,7 +20,7 @@ export function ExamPathwaysMarquee() {
   return (
     <section
       aria-label="Exam pathways supported by Preppal"
-      className="overflow-hidden py-7 sm:py-8 mt-10"
+      className="mt-10 overflow-hidden py-7 sm:py-8"
     >
       <div className="px-5 text-center sm:px-8">
         <h2 className="text-foreground mt-2 text-[1.1rem] font-semibold tracking-tight sm:text-[1.1rem]">

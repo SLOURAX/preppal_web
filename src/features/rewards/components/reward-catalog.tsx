@@ -13,26 +13,19 @@ interface RewardCatalogProps {
 export function RewardCatalog({ balance }: RewardCatalogProps) {
   return (
     <section>
-      <div className="flex flex-wrap items-end justify-between gap-3">
+      <div className="flex flex-wrap items-end justify-between gap-3 mt-5">
         <div>
-          <h2 className="text-foreground mt-1 text-lg font-semibold">
-            Redeem your Preppal Coins
+          <h2 className="text-foreground mt-1 text-[1rem] font-semibold">
+            Redeem your coins
           </h2>
         </div>
-        <Link
-          className="text-primary text-xs font-semibold hover:underline"
-          href="/wallet"
-        >
-          View wallet
-        </Link>
       </div>
 
       {REDEEMABLE_REWARDS.length ? (
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {REDEEMABLE_REWARDS.map((reward) => {
             const canRedeem = balance >= reward.cost;
-            const RewardIcon =
-              reward.type === "plan" ? Award : Gift;
+            const RewardIcon = reward.type === "plan" ? Award : Gift;
 
             return (
               <article

@@ -115,7 +115,9 @@ export function QuestionAudioPlayer({
           />
         </div>
         <div>
-          <h3 className="text-foreground text-[.85rem] font-semibold">Read Aloud</h3>
+          <h3 className="text-foreground text-[.85rem] font-semibold">
+            Read Aloud
+          </h3>
           <div className="mt-0.5 flex h-3 items-center gap-1.5 overflow-hidden">
             {isPlaying ? (
               [45, 75, 55, 90, 65].map((height, i) => (

@@ -61,7 +61,9 @@ export function ArticleEngagement({
 
   const requireAuth = (): void => {
     if (isAuthenticated) return;
-    router.push(`/login?returnTo=${encodeURIComponent(window.location.pathname)}`);
+    router.push(
+      `/login?returnTo=${encodeURIComponent(window.location.pathname)}`,
+    );
   };
 
   const shareArticle = async (): Promise<void> => {

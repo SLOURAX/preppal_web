@@ -70,7 +70,7 @@ export function QuizAuthGate({
 
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
           <Link
-          className="border-rose-600 text-rose-600 hover:bg-rose-500/5 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-5 text-sm font-semibold transition-colors"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-rose-600 px-5 text-sm font-semibold text-rose-600 transition-colors hover:bg-rose-500/5"
             href={`/login?returnTo=${encodeURIComponent(returnTo)}`}
           >
             <X className="size-4" /> Cancel
