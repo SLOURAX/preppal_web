@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from "react";
+import { Suspense, type PropsWithChildren } from "react";
 
 import { AuthToggle } from "./auth-toggle";
 
@@ -11,7 +11,9 @@ export function AuthShell({ children }: PropsWithChildren) {
       >
         <div className="p-5 sm:p-7">
           <div className="mb-8">
-            <AuthToggle />
+            <Suspense fallback={null}>
+              <AuthToggle />
+            </Suspense>
           </div>
           <div>{children}</div>
         </div>
