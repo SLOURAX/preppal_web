@@ -100,7 +100,7 @@ export function LiveLeaderboardSection() {
       <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-8 px-6 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="flex flex-col gap-6">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl lg:text-4xl">
+            <h2 className="text-2xl font-black tracking-tight text-white sm:text-3xl lg:text-4xl">
               Top scholars <span className="text-violet-400">this week</span>
             </h2>
             <p className="mt-2 text-[.9rem] leading-relaxed text-slate-400">

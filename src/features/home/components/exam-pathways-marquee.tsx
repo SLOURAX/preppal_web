@@ -23,7 +23,7 @@ export function ExamPathwaysMarquee() {
       className="mt-10 overflow-hidden py-7 sm:py-8"
     >
       <div className="px-5 text-center sm:px-8">
-        <h2 className="text-foreground mt-2 text-[1.1rem] font-semibold tracking-tight sm:text-[1.1rem]">
+        <h2 className="text-foreground mt-2 text-[1.2rem] font-bold tracking-tight sm:text-[1.2rem]">
           Prepare with confidence, wherever you&apos;re starting
         </h2>
       </div>

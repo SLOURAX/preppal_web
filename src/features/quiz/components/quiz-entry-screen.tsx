@@ -192,12 +192,12 @@ export function QuizEntryScreen({
   return (
     <main className="mx-auto w-full max-w-5xl px-5 py-10 sm:px-8">
       <header className="mx-auto max-w-2xl text-center">
-        <h1 className="text-foreground text-2xl font-bold tracking-[-0.04em] sm:text-4xl">
+        <h1 className="text-foreground text-2xl font-black tracking-[-0.04em] sm:text-3xl">
           {setupStep === "entry"
             ? "What would you like to practice?"
             : "Build your practice session"}
         </h1>
-        <p className="text-muted-foreground mt-3 text-sm leading-6">
+        <p className="text-muted-foreground mt-1 text-sm leading-6">
           {setupStep === "entry"
             ? "Choose an exam for structured preparation or a subject for focused practice."
             : "Make a few focused choices so Preppal can prepare the right questions for you."}

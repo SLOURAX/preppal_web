@@ -23,7 +23,7 @@ export function WhatsAppSection() {
             <p className="mb-1 flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#168b46] uppercase">
               <SaxPeopleBulk className="size-4" /> Join the community
             </p>
-            <h2 className="whatsapp-community-title text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+            <h2 className="whatsapp-community-title text-xl font-black tracking-tight text-slate-900 sm:text-2xl">
               Learn together on WhatsApp
             </h2>
             <p className="whatsapp-community-copy mt-1 max-w-xl text-sm leading-6 text-slate-600">

@@ -34,7 +34,7 @@ export function MomentumSection() {
   return (
     <section>
       <div className="mx-auto mt-10 max-w-2xl text-center">
-        <h2 className="text-foreground mt-4 text-[1.5rem] font-bold tracking-[-0.035em] sm:text-[2rem]">
+        <h2 className="text-foreground mt-4 text-[1.5rem] font-black tracking-[-0.035em] sm:text-[2rem]">
           Small wins. Consistent progress.
         </h2>
         <p className="text-muted-foreground mt-1 text-sm leading-6">

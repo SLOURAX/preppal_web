@@ -60,7 +60,7 @@ export function NewsLanding() {
   return (
     <main className="mx-auto w-full max-w-6xl px-5 py-10 sm:px-8">
       <header className="max-w-2xl">
-        <h1 className="text-foreground mt-4 text-3xl font-bold tracking-[-0.045em] sm:text-4xl">
+        <h1 className="text-foreground mt-4 text-3xl font-black tracking-[-0.045em] sm:text-4xl">
           Ideas for better learning.
         </h1>
         <p className="text-muted-foreground mt-1 text-base leading-7">

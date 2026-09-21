@@ -55,7 +55,7 @@ export function ReferralSection() {
     <section className="surface-card overflow-hidden">
       <div className="grid lg:grid-cols-[1.05fr_0.95fr]">
         <div className="p-6 sm:p-8 lg:p-10">
-          <h2 className="text-foreground mt-4 text-3xl font-bold tracking-[-0.035em]">
+          <h2 className="text-foreground mt-4 text-3xl font-black tracking-[-0.035em]">
             Learn together. Earn together.
           </h2>
           <p className="text-muted-foreground mt-3 max-w-lg text-sm leading-6">

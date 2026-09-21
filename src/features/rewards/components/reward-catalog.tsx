@@ -15,7 +15,7 @@ export function RewardCatalog({ balance }: RewardCatalogProps) {
     <section>
       <div className="mt-5 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-foreground mt-1 text-[1rem] font-semibold">
+          <h2 className="text-foreground mt-1 text-[1rem] font-bold">
             Redeem your coins
           </h2>
         </div>

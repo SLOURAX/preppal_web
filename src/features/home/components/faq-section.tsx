@@ -44,7 +44,7 @@ export function FaqSection() {
   return (
     <section className="flex flex-col items-center">
       <div className="w-full max-w-2xl text-center">
-        <h2 className="text-foreground mt-4 text-3xl font-bold tracking-[-0.035em]">
+        <h2 className="text-foreground mt-4 text-3xl font-black tracking-[-0.035em]">
           Frequently asked questions
         </h2>
         <p className="text-muted-foreground mt-2 text-sm leading-6">

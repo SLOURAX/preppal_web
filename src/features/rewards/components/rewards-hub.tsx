@@ -23,7 +23,7 @@ export function RewardsHub() {
               <Gift className="size-5" />
             </span>
             <div>
-              <h1 className="text-foreground text-xl font-bold tracking-tight sm:text-2xl">
+              <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
                 Rewards
               </h1>
               <p className="text-muted-foreground mt-1 max-w-xl text-[.8rem] leading-relaxed">

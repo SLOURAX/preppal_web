@@ -24,7 +24,7 @@ export function TrustSection() {
     <section className="overflow-hidden px-5 py-10 sm:px-10 sm:py-12">
       <div className="grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr]">
         <div>
-          <h2 className="text-foreground mt-4 text-3xl font-bold tracking-[-0.035em] sm:text-4xl">
+          <h2 className="text-foreground mt-4 text-3xl font-black tracking-[-0.035em] sm:text-4xl">
             Built for the progress that matters most.
           </h2>
           <p className="text-muted-foreground mt-4 max-w-lg text-sm leading-6">

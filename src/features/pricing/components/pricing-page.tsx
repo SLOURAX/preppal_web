@@ -23,7 +23,7 @@ export function PricingPage() {
   return (
     <main className="mx-auto w-full max-w-5xl px-5 py-8 sm:px-8 sm:py-10">
       <header className="mx-auto max-w-2xl text-center">
-        <h1 className="text-foreground mt-4 text-2xl font-bold tracking-[-0.04em] sm:text-3xl">
+        <h1 className="text-foreground mt-4 text-2xl font-black tracking-[-0.04em] sm:text-3xl">
           Choose the support your learning needs
         </h1>
         <p className="text-muted-foreground mx-auto mt-1 max-w-xl text-sm leading-6">
