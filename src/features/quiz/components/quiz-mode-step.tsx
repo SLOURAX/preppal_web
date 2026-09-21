@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Play, BoomBox, Timer } from "lucide-react";
+import { ArrowLeft, BoomBox, Timer } from "lucide-react";
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { QUIZ_MODES, type QuizMode, type QuizPath } from "../quiz.constants";
@@ -130,7 +130,6 @@ export function QuizModeStep({
           disabled={!selectedMode}
           onClick={onStart}
         >
-          {/* <Play className="size-4" fill="currentColor" />  */}
           Start practice
         </Button>
       </div>

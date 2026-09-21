@@ -57,7 +57,9 @@ export function ReferralRewardsCard() {
           <Users className="size-5" />
         </span>
         <div>
-          <h2 className="text-foreground text-[.85rem] font-semibold">Invite friends</h2>
+          <h2 className="text-foreground text-[.85rem] font-semibold">
+            Invite friends
+          </h2>
           <p className="text-muted-foreground mt-0.5 text-[.75rem]">
             Earn 50 XP when a friend joins and completes their first quiz.
           </p>
@@ -79,7 +81,9 @@ export function ReferralRewardsCard() {
 
       <div className="mt-5">
         <div className="mb-2 flex items-center justify-between">
-          <p className="text-foreground text-[.85rem] font-semibold">Your invites</p>
+          <p className="text-foreground text-[.85rem] font-semibold">
+            Your invites
+          </p>
           <div className="flex items-center gap-3">
             <Link
               className="text-primary inline-flex items-center text-[10px] font-bold"

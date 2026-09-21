@@ -238,7 +238,7 @@ export function NavBar() {
               </div>
             ) : null}
 
-            <nav className="flex flex-1 flex-col gap-1 overflow-y-auto">
+            <nav className="flex flex-1 flex-col gap-2.5 overflow-y-auto py-2">
               {MOBILE_NAVIGATION.map((item) => {
                 const isActive = pathname === item.href;
                 const Icon = item.icon;
@@ -248,7 +248,7 @@ export function NavBar() {
                     href={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={cn(
-                      "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                      "flex min-h-12 items-center gap-3 rounded-xl px-3 py-3 text-sm leading-5 font-medium transition-colors",
                       isActive
                         ? "bg-primary/10 text-primary"
                         : "text-muted-foreground hover:bg-surface-subtle hover:text-foreground",

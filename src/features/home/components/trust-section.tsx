@@ -45,8 +45,12 @@ export function TrustSection() {
               className="flex w-[calc(50%-0.5rem)] min-w-32 flex-1 basis-36 flex-col items-center text-center sm:basis-40"
               key={title}
             >
-              <div className={`relative grid size-28 place-items-center rounded-full border shadow-[0_8px_30px_rgb(79_46_180/0.08)] sm:size-32 ${variant === "content" ? "border-violet-200 bg-violet-50" : variant === "practice" ? "border-fuchsia-200 bg-fuchsia-50" : "border-amber-200 bg-amber-50"}`}>
-                <div className={`absolute inset-2 rounded-full border ${variant === "content" ? "border-violet-200" : variant === "practice" ? "border-fuchsia-200" : "border-amber-200"}`} />
+              <div
+                className={`relative grid size-28 place-items-center rounded-full border shadow-[0_8px_30px_rgb(79_46_180/0.08)] sm:size-32 ${variant === "content" ? "border-violet-200 bg-violet-50" : variant === "practice" ? "border-fuchsia-200 bg-fuchsia-50" : "border-amber-200 bg-amber-50"}`}
+              >
+                <div
+                  className={`absolute inset-2 rounded-full border ${variant === "content" ? "border-violet-200" : variant === "practice" ? "border-fuchsia-200" : "border-amber-200"}`}
+                />
                 <Image
                   alt=""
                   className={`relative z-10 size-26 object-contain sm:size-28 ${variant === "content" ? "hue-rotate-[8deg]" : variant === "practice" ? "hue-rotate-[55deg] saturate-150" : "hue-rotate-[-18deg] saturate-125"}`}

@@ -74,6 +74,14 @@ const floatingStats = [
   },
 ];
 
+const learnerAvatars = [
+  { initial: "A", color: "bg-orange-500" },
+  { initial: "K", color: "bg-emerald-600" },
+  { initial: "T", color: "bg-blue-600" },
+  { initial: "F", color: "bg-violet-600" },
+  { initial: "M", color: "bg-neutral-900" },
+];
+
 export default function HomePage() {
   return (
     <AppShell>
@@ -309,7 +317,7 @@ export default function HomePage() {
             {floatingStats.map((stat, i) => (
               <div
                 key={i}
-                className="bg-surface border-border absolute z-20 flex items-center gap-2 rounded-2xl border px-3.5 py-2.5 text-xs font-semibold shadow-lg"
+                className="bg-white border-white absolute z-20 flex items-center gap-2 rounded-2xl border px-3.5 py-2.5 text-xs font-semibold shadow-lg"
                 style={{
                   top: i === 0 ? "8%" : i === 1 ? "50%" : "80%",
                   left: i === 1 ? "0%" : "auto",
@@ -326,6 +334,22 @@ export default function HomePage() {
                 </div>
               </div>
             ))}
+            <div className="absolute -bottom-2 left-1/2 z-30 flex -translate-x-1/2 items-center rounded-full bg-transparent px-3 py-2 whitespace-nowrap sm:px-4">
+              <div className="flex -space-x-2">
+                {learnerAvatars.map(({ initial, color }) => (
+                  <span
+                    className={`grid size-7 place-items-center rounded-full border-2 border-white text-[11px] font-bold text-white ${color}`}
+                    key={initial}
+                  >
+                    {initial}
+                  </span>
+                ))}
+              </div>
+              <p className="text-muted-foreground ml-3 text-[.75rem]">
+                <span className="text-foreground font-bold">10,000+ people</span>{" "}
+                already using Preppal
+              </p>
+            </div>
           </div>
         </section>
 

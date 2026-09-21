@@ -53,13 +53,15 @@ export function DailyCheckInCard() {
             <CalendarCheck2 className="size-5" />
           </span>
           <div>
-            <h2 className="text-foreground text-[.85rem] font-semibold">Daily check-in</h2>
+            <h2 className="text-foreground text-[.85rem] font-semibold">
+              Daily check-in
+            </h2>
             {/* <p className="text-muted-foreground mt-0.5 text-[.75rem]">
               Check in every day to earn experience points.
             </p> */}
           </div>
         </div>
-        <span className="bg-surface flex h-10 shrink-0 items-center gap-1.5 rounded-full px-5 py-1 text-[.75rem] font-semibold whitespace-nowrap text-primary">
+        <span className="bg-surface text-primary flex h-10 shrink-0 items-center gap-1.5 rounded-full px-5 py-1 text-[.75rem] font-semibold whitespace-nowrap">
           1 day
         </span>
       </div>
@@ -121,7 +123,9 @@ export function DailyCheckInCard() {
 
       <div className="bg-surface mt-5 rounded-2xl p-4">
         <div className="flex items-center justify-between gap-3 text-xs">
-          <span className="text-muted-foreground font-semibold">Next milestone</span>
+          <span className="text-muted-foreground font-semibold">
+            Next milestone
+          </span>
           <span className="text-foreground font-semibold">7-day streak</span>
         </div>
         <div className="bg-border/60 mt-3 h-1.5 overflow-hidden rounded-full">

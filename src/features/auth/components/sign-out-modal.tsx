@@ -36,18 +36,18 @@ export function SignOutModal() {
           </div>
 
           <div className="mt-6 flex gap-2">
-            <Button
-              onClick={logout}
-              className="bg-primary text-primary-foreground hover:bg-primary-strong w-full rounded-xl font-semibold"
-            >
-              Yes, sign out
-            </Button>
             <button
               onClick={closeSignOutModal}
-              className="w-full rounded-xl border !border-rose-600 py-2.5 text-sm font-semibold text-rose-600 transition-colors"
+              className="w-full rounded-xl border border-rose-600! py-2 text-[.8rem] font-semibold text-rose-600 transition-colors"
             >
               Cancel
             </button>
+            <Button
+              onClick={logout}
+              className="bg-primary text-primary-foreground hover:bg-primary-strong w-full rounded-xl text-[.8rem] font-semibold"
+            >
+              Yes, sign out
+            </Button>
           </div>
         </div>
       </div>

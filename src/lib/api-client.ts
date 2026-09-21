@@ -1,4 +1,6 @@
-const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000").replace(/\/$/, "");
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000"
+).replace(/\/$/, "");
 
 export class ApiError extends Error {
   readonly status: number;
@@ -12,9 +14,15 @@ export class ApiError extends Error {
   }
 }
 
-type ApiOptions = Omit<RequestInit, "body"> & { body?: unknown; token?: string };
+type ApiOptions = Omit<RequestInit, "body"> & {
+  body?: unknown;
+  token?: string;
+};
 
-export async function apiRequest<T>(path: string, options: ApiOptions = {}): Promise<T> {
+export async function apiRequest<T>(
+  path: string,
+  options: ApiOptions = {},
+): Promise<T> {
   const { body, token, headers, ...requestInit } = options;
   const response = await fetch(`${API_URL}${path}`, {
     ...requestInit,
@@ -28,14 +36,26 @@ export async function apiRequest<T>(path: string, options: ApiOptions = {}): Pro
   });
   const payload = await response.json().catch(() => null);
   if (!response.ok) {
-    const message = typeof payload === "object" && payload && "message" in payload ? String(payload.message) : "Request failed";
+    const message =
+      typeof payload === "object" && payload && "message" in payload
+        ? String(payload.message)
+        : "Request failed";
     throw new ApiError(message, response.status, payload);
   }
   return payload as T;
 }
 
 export const api = {
-  get: <T>(path: string, options?: Omit<ApiOptions, "method" | "body">) => apiRequest<T>(path, { ...options, method: "GET" }),
-  post: <T>(path: string, body?: unknown, options?: Omit<ApiOptions, "method" | "body">) => apiRequest<T>(path, { ...options, method: "POST", body }),
-  patch: <T>(path: string, body?: unknown, options?: Omit<ApiOptions, "method" | "body">) => apiRequest<T>(path, { ...options, method: "PATCH", body }),
+  get: <T>(path: string, options?: Omit<ApiOptions, "method" | "body">) =>
+    apiRequest<T>(path, { ...options, method: "GET" }),
+  post: <T>(
+    path: string,
+    body?: unknown,
+    options?: Omit<ApiOptions, "method" | "body">,
+  ) => apiRequest<T>(path, { ...options, method: "POST", body }),
+  patch: <T>(
+    path: string,
+    body?: unknown,
+    options?: Omit<ApiOptions, "method" | "body">,
+  ) => apiRequest<T>(path, { ...options, method: "PATCH", body }),
 };

@@ -1,10 +1,8 @@
 "use client";
 
 import {
-  Globe2,
   GraduationCap,
   Mail,
-  Phone,
   Crosshair,
   Megaphone,
   UserRound,
@@ -18,7 +16,6 @@ import { ListSelect } from "@/components/ui/list-select";
 import {
   AuthHeader,
   CheckboxField,
-  COUNTRIES,
   EXAM_GOALS,
   FormField,
   LEARNING_LEVELS,
@@ -36,12 +33,14 @@ function RegisterContent() {
   const searchParams = useSearchParams();
   const requestedReturnTo = searchParams.get("returnTo");
   const returnTo = requestedReturnTo?.startsWith("/") ? requestedReturnTo : "/";
-  const [country, setCountry] = useState("Nigeria");
+  const [countryCode, setCountryCode] = useState("+234");
   const [learningLevel, setLearningLevel] = useState("");
   const [examGoal, setExamGoal] = useState("");
   const [referralSource, setReferralSource] = useState("");
   const [formError, setFormError] = useState("");
   const [verificationEmail, setVerificationEmail] = useState("");
+  const [registrationEmail, setRegistrationEmail] = useState("");
+  const [isReferralModalOpen, setIsReferralModalOpen] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) router.replace(returnTo);
@@ -59,24 +58,26 @@ function RegisterContent() {
     const firstName = value("first-name");
     const surname = value("surname");
     const email = value("register-email");
-    const password = value("new-password");
-    const confirmPassword = value("confirm-password");
+    const phone = value("phone");
     if (!firstName || !surname)
       return setFormError("Enter your first name and surname.");
     if (!/^\S+@\S+\.\S+$/.test(email))
       return setFormError("Enter a valid email address.");
+    if (!countryCode || !phone)
+      return setFormError("Choose a country code and enter your phone number.");
+    if (!learningLevel || !examGoal)
+      return setFormError("Choose your learning level and exam goal.");
+    const password = value("new-password");
+    const confirmPassword = value("confirm-password");
     if (password.length < 8)
       return setFormError("Your password must be at least 8 characters.");
     if (password !== confirmPassword)
       return setFormError("Your passwords do not match.");
-    if (!learningLevel || !examGoal)
-      return setFormError("Choose your learning level and exam goal.");
     if (!form.querySelector<HTMLInputElement>("#terms")?.checked)
-      return setFormError(
-        "Accept the Terms of Service and Privacy Policy to continue.",
-      );
+      return setFormError("Accept the Terms and Privacy Policy to continue.");
     setFormError("");
-    setVerificationEmail(email);
+    setRegistrationEmail(email);
+    setIsReferralModalOpen(true);
   };
 
   if (verificationEmail)
@@ -99,7 +100,7 @@ function RegisterContent() {
   return (
     <>
       <AuthHeader
-        description="Tell us what you are preparing for so quizzes can match your goals."
+        description="Start with the basics so we can personalize your learning journey."
         title="Create your learner profile"
       />
 
@@ -145,27 +146,37 @@ function RegisterContent() {
             required
             type="email"
           />
-          <FormField
-            autoComplete="tel"
-            icon={Phone}
-            id="phone"
-            label="Phone number"
-            placeholder="0801 234 5678"
-            type="tel"
-          />
-          <ListSelect
-            icon={Globe2}
-            id="country"
-            label="Country"
-            onChange={setCountry}
-            options={COUNTRIES.map((option) => ({
-              value: option,
-              label: option,
-            }))}
-            placeholder="Choose your country"
-            compact
-            value={country}
-          />
+          <div className="space-y-1.5">
+            <label
+              className="text-foreground text-sm font-medium"
+              htmlFor="phone"
+            >
+              Phone number
+            </label>
+            <div className="border-border bg-surface/90 focus-within:border-primary focus-within:ring-primary/10 flex h-11 items-center overflow-hidden rounded-xl border transition-[border-color,box-shadow] focus-within:ring-4">
+              <select
+                aria-label="Country code"
+                className="text-foreground h-full w-[4.75rem] shrink-0 appearance-none bg-transparent pl-3 text-[13px] font-medium outline-none"
+                onChange={(event) => setCountryCode(event.target.value)}
+                value={countryCode}
+              >
+                {["+234", "+233", "+44", "+1"].map((code) => (
+                  <option key={code} value={code}>
+                    {code}
+                  </option>
+                ))}
+              </select>
+              <span className="bg-border h-5 w-px" aria-hidden="true" />
+              <input
+                autoComplete="tel-national"
+                className="text-foreground placeholder:text-muted-foreground/60 h-full min-w-0 flex-1 bg-transparent px-3 text-sm outline-none"
+                id="phone"
+                placeholder="801 234 5678"
+                required
+                type="tel"
+              />
+            </div>
+          </div>
           <ListSelect
             icon={GraduationCap}
             id="learning-level"
@@ -191,23 +202,6 @@ function RegisterContent() {
             placeholder="Choose an exam"
             compact
             value={examGoal}
-          />
-          <ListSelect
-            icon={Megaphone}
-            id="referral-source"
-            label="Where did you hear about us?"
-            onChange={setReferralSource}
-            options={[
-              "A friend or family member",
-              "Social media",
-              "Google search",
-              "School or community",
-              "Online advert",
-              "Other",
-            ].map((option) => ({ value: option, label: option }))}
-            placeholder="Choose an option"
-            compact
-            value={referralSource}
           />
           <PasswordField
             autoComplete="new-password"
@@ -255,7 +249,74 @@ function RegisterContent() {
           Create account
         </Button>
       </form>
+      {isReferralModalOpen && (
+        <ReferralModal
+          value={referralSource}
+          onChange={setReferralSource}
+          onContinue={() => {
+            if (!referralSource) return;
+            setIsReferralModalOpen(false);
+            setVerificationEmail(registrationEmail);
+          }}
+        />
+      )}
     </>
+  );
+}
+
+function ReferralModal({
+  value,
+  onChange,
+  onContinue,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  onContinue: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-[80] grid place-items-center p-4">
+      <div
+        aria-hidden="true"
+        className="bg-background/70 absolute inset-0 backdrop-blur-md"
+      />
+      <div className="bg-surface/80 border-border/70 relative z-10 w-full max-w-md rounded-3xl border p-6 shadow-2xl backdrop-blur-2xl sm:p-8">
+        <div className="bg-primary/10 text-primary mx-auto mb-4 grid size-14 place-items-center rounded-2xl">
+          <Megaphone className="size-7" />
+        </div>
+        <h2 className="text-foreground text-center text-[1.2rem] font-bold tracking-tight">
+          Help us meet you where you are
+        </h2>
+        <p className="text-muted-foreground text-center text-[.8rem] leading-4">
+          Your answer helps us improve the Preppal experience for learners like
+          you.
+        </p>
+        <div className="mt-6">
+          <ListSelect
+            id="referral-source-modal"
+            label="Where did you hear about us?"
+            onChange={onChange}
+            options={[
+              "A friend or family member",
+              "Social media",
+              "Google search",
+              "School or community",
+              "Online advert",
+              "Other",
+            ].map((option) => ({ value: option, label: option }))}
+            placeholder="Choose an option"
+            value={value}
+          />
+        </div>
+        <Button
+          className="mt-6 h-11 w-full rounded-xl"
+          disabled={!value}
+          onClick={onContinue}
+          type="button"
+        >
+          Register now
+        </Button>
+      </div>
+    </div>
   );
 }
 
@@ -325,7 +386,7 @@ function VerificationStep({
               <input
                 aria-label={`Verification digit ${index + 1}`}
                 autoFocus={index === 0}
-                className="border-border bg-surface focus:border-primary focus:ring-primary/15 h-14 min-w-0 flex-1 rounded-xl border text-center text-lg font-semibold shadow-sm outline-none focus:ring-4 sm:h-16 sm:text-xl"
+                className="border-border bg-surface focus:border-primary focus:ring-primary/15 h-14 min-w-0 flex-1 rounded-xl border text-center text-lg font-semibold outline-none focus:ring-4 sm:h-16 sm:text-xl"
                 inputMode="numeric"
                 key={index}
                 maxLength={1}
@@ -345,7 +406,7 @@ function VerificationStep({
           Verify email
         </Button>
         <button
-          className="text-muted-foreground hover:text-primary mx-auto flex items-center gap-1 border-b border-transparent py-1 text-sm font-medium transition-colors hover:border-current"
+          className="text-muted-foreground hover:text-primary mx-auto flex items-center gap-1 border-b border-transparent py-1 text-sm font-medium transition-colors hover:border-current mt-3"
           onClick={onBack}
           type="button"
         >

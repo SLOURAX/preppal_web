@@ -12,12 +12,12 @@ import {
 } from "lucide-react";
 import { SaxFlashBulk } from "@meysam213/iconsax-react";
 import Link from "next/link";
-import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store";
 import { ThemeToggle } from "@/components/navigation/theme-toggle";
+import { useAccountStore, useDashboardStore, type DashboardTab } from "@/state";
 
 import { OverviewTab } from "./tabs/overview-tab";
 import { AnalyticsTab } from "./tabs/analytics-tab";
@@ -27,14 +27,7 @@ import { WalletTab } from "./tabs/wallet-tab";
 import { QuizHistoryTab } from "./tabs/quiz-history-tab";
 import { WalletHistoryTab } from "./tabs/wallet-history-tab";
 
-type TabId =
-  | "home"
-  | "learn"
-  | "wallet"
-  | "analytics"
-  | "account"
-  | "quiz-history"
-  | "wallet-history";
+type TabId = DashboardTab;
 
 const TABS: Array<{
   id: TabId;
@@ -78,8 +71,10 @@ export function DashboardShell() {
     requestedTab === "account"
       ? requestedTab
       : null;
-  const [selectedTab, setSelectedTab] = useState<TabId>("home");
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const selectedTab = useDashboardStore((state) => state.activeTab);
+  const setSelectedTab = useDashboardStore((state) => state.setActiveTab);
+  const isProfileOpen = useAccountStore((state) => state.isProfileOpen);
+  const setIsProfileOpen = useAccountStore((state) => state.setProfileOpen);
   const activeTab: TabId =
     requestedView === "quiz-history" || requestedView === "wallet-history"
       ? requestedView
@@ -88,7 +83,7 @@ export function DashboardShell() {
   const userPlan = useAuthStore((s) => s.userPlan);
   const preppalBalance = useAuthStore((s) => s.preppalBalance);
   const experiencePoints = useAuthStore((s) => s.experiencePoints);
-  const openSignOutModal = useAuthStore((s) => s.openSignOutModal);
+  const openSignOutModal = useAuthStore((state) => state.openSignOutModal);
   const userInitials =
     userName
       .trim()
@@ -173,7 +168,7 @@ export function DashboardShell() {
                   type="button"
                   aria-label="Open account menu"
                   aria-expanded={isProfileOpen}
-                  onClick={() => setIsProfileOpen((open) => !open)}
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
                   className="text-foreground focus-visible:ring-primary/40 flex items-center gap-1.5 rounded-xl p-1 focus-visible:ring-2 focus-visible:outline-none"
                 >
                   <span className="bg-primary text-primary-foreground grid size-8 place-items-center rounded-full text-xs font-bold">

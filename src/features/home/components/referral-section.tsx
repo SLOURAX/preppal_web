@@ -66,12 +66,10 @@ export function ReferralSection() {
           <ol className="mt-6 space-y-3">
             {REFERRAL_STEPS.map((step, index) => (
               <li className="flex items-center gap-2" key={step}>
-                <span className="bg-primary/10 text-primary grid size-7 shrink-0 place-items-center rounded-full text-xs font-bold">
+                <span className="bg-primary/10 grid size-7 shrink-0 place-items-center rounded-full text-xs font-bold">
                   {index + 1}
                 </span>
-                <span className="text-primary text-[.8rem] font-semibold">
-                  {step}
-                </span>
+                <span className="text-[.8rem] font-semibold">{step}</span>
               </li>
             ))}
           </ol>

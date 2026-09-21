@@ -135,21 +135,21 @@ export function Footer() {
           <FooterLinkGroup links={ACCOUNT_LINKS} title="Account" />
           <FooterLinkGroup links={COMPANY_LINKS} title="Company" />
           <div>
-          <h2 className="text-foreground text-[.9rem] font-semibold tracking-[-0.025em]">
-            Need help?
-          </h2>
-          <p className="text-muted-foreground mt-3 text-[.75rem] font-medium leading-4 tracking-[-0.015em]">
-            Have a question or need support with your learning journey?
-          </p>
-          <a
-            className="bg-surface-subtle text-foreground hover:text-primary mt-5 inline-flex items-center gap-2 rounded-full px-5 py-3 text-[.8rem] font-medium transition-colors"
-            href="mailto:support@preppal.app"
-          >
-            <Mail className="size-4" /> Contact support
-          </a>
-          <p className="text-muted-foreground mt-7 text-[.8rem] leading-6 tracking-[-0.01em]">
-            © 2026 Preppal. Built for confident learners.
-          </p>
+            <h2 className="text-foreground text-[.9rem] font-semibold tracking-[-0.025em]">
+              Need help?
+            </h2>
+            <p className="text-muted-foreground mt-3 text-[.75rem] leading-4 font-medium tracking-[-0.015em]">
+              Have a question or need support with your learning journey?
+            </p>
+            <a
+              className="bg-surface-subtle text-foreground hover:text-primary mt-5 inline-flex items-center gap-2 rounded-full px-5 py-3 text-[.8rem] font-medium transition-colors"
+              href="mailto:support@preppal.app"
+            >
+              <Mail className="size-4" /> Contact support
+            </a>
+            <p className="text-muted-foreground mt-7 text-[.8rem] leading-6 tracking-[-0.01em]">
+              © 2026 Preppal. Built for confident learners.
+            </p>
           </div>
         </div>
       </div>

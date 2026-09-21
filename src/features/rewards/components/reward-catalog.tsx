@@ -13,7 +13,7 @@ interface RewardCatalogProps {
 export function RewardCatalog({ balance }: RewardCatalogProps) {
   return (
     <section>
-      <div className="flex flex-wrap items-end justify-between gap-3 mt-5">
+      <div className="mt-5 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-foreground mt-1 text-[1rem] font-semibold">
             Redeem your coins
