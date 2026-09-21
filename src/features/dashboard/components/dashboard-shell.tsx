@@ -231,7 +231,7 @@ export function DashboardShell() {
                       className={cn(
                         "flex items-center gap-2 rounded-lg px-3.5 py-2 text-[.8rem] font-medium transition-all",
                         isActive
-                          ? "bg-surface text-primary"
+                          ? "text-primary"
                           : "text-muted-foreground hover:bg-surface/60 hover:text-foreground",
                       )}
                     >

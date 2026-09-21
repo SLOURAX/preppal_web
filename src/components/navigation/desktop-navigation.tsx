@@ -24,7 +24,7 @@ export function DesktopNavigation({ pathname }: DesktopNavigationProps) {
             className={cn(
               "flex items-center gap-2 rounded-full px-4 py-2 text-[.78rem] font-medium transition-colors",
               isActive
-                ? "bg-surface text-primary shadow-[0_5px_18px_rgb(58_34_140/0.1)]"
+                ? "text-primary"
                 : "text-muted-foreground hover:bg-surface/65 hover:text-foreground",
             )}
             href={item.href}
