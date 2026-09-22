@@ -34,15 +34,15 @@ export function AiQuizSection() {
   return (
     <section className="mt-5 grid items-center gap-8 px-4 lg:grid-cols-[0.85fr_1.15fr]">
       <div>
-        <h2 className="text-foreground mt-4 text-3xl font-black tracking-[-0.035em]">
+        <h2 className="text-foreground mt-4 text-2xl font-extrabold tracking-[-0.035em] sm:text-3xl">
           Get help at the moment <br />
           you need it.
         </h2>
-        <p className="text-muted-foreground mt-4 max-w-lg text-sm leading-6">
+        <p className="text-muted-foreground mt-4 max-w-lg text-[.8rem] leading-5">
           Ask Preppal AI for guidance for practice questions, and understand the
           reasoning behind every answer before moving forward.
         </p>
-        <ul className="text-muted-foreground mt-6 space-y-3 text-sm">
+        <ul className="text-muted-foreground mt-6 space-y-3 text-[.8rem]">
           {[
             "Clear explanations for every question",
             "Helpful hints without giving the answer away",
@@ -59,10 +59,10 @@ export function AiQuizSection() {
       <div className="surface-card border-primary/20 from-surface via-surface to-primary/5 relative overflow-hidden bg-gradient-to-br p-5 sm:p-7">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-primary text-xs font-semibold">
+            <p className="text-primary text-xs font-extrabold">
               Biology · Question 3
             </p>
-            <h3 className="text-foreground mt-2 text-lg font-semibold">
+            <h3 className="text-foreground mt-2 text-[1rem] font-semibold">
               Which organelle is known as the powerhouse of the cell?
             </h3>
           </div>
@@ -75,7 +75,7 @@ export function AiQuizSection() {
               <button
                 aria-pressed={isSelected}
                 className={cn(
-                  "border-border hover:border-primary/50 rounded-xl border px-4 py-3 text-left text-sm font-medium transition-colors",
+                  "border-border hover:border-primary/50 rounded-xl border px-4 py-3 text-left text-[.85rem] font-medium transition-colors",
                   isSelected && "border-primary bg-primary/10 text-primary",
                 )}
                 key={option.id}
@@ -103,7 +103,7 @@ export function AiQuizSection() {
           </div>
         ) : null}
 
-        <div className="mt-5 flex flex-wrap gap-2">
+        <div className="mt-5 flex flex-wrap gap-1">
           <Button
             className="gap-2"
             disabled={!selectedAnswer}

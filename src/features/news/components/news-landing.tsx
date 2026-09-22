@@ -5,7 +5,7 @@ import {
   ArrowRight,
   Clock3,
   Heart,
-  MessageCircle,
+  BotMessageSquare,
   Search,
 } from "lucide-react";
 import Image from "next/image";
@@ -63,7 +63,7 @@ export function NewsLanding() {
         <h1 className="text-foreground mt-4 text-3xl font-black tracking-[-0.045em] sm:text-4xl">
           Ideas for better learning.
         </h1>
-        <p className="text-muted-foreground mt-1 text-base leading-7">
+        <p className="text-muted-foreground mt-2 text-[.85rem] leading-5">
           Practical study guidance, product updates, learner stories, and
           thoughtful perspectives from the Preppal community.
         </p>
@@ -88,11 +88,11 @@ export function NewsLanding() {
             </button>
           ))}
         </div>
-        <label className="bg-surface-subtle flex min-w-0 items-center gap-2 rounded-full px-4 py-2.5 lg:w-72">
+        <label className="bg-surface border flex min-w-0 items-center gap-2 rounded-full px-4 py-2.5 lg:w-72">
           <Search className="text-muted-foreground size-4 shrink-0" />
           <span className="sr-only">Search news</span>
           <input
-            className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent text-sm outline-none"
+            className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent text-[.8rem] outline-none"
             onChange={(event) => {
               setSearchQuery(event.target.value);
               setCurrentPage(1);
@@ -123,7 +123,7 @@ export function NewsLanding() {
             <span className="text-primary text-xs font-semibold">
               Featured · {featuredArticle.category}
             </span>
-            <h2 className="text-foreground mt-3 text-2xl font-bold tracking-[-0.035em] sm:text-3xl">
+            <h2 className="text-foreground mt-3 text-2xl font-bold tracking-[-0.035em] sm:text-2xl">
               <Link
                 className="hover:text-primary transition-colors"
                 href={`/news/${featuredArticle.slug}`}
@@ -131,7 +131,7 @@ export function NewsLanding() {
                 {featuredArticle.title}
               </Link>
             </h2>
-            <p className="text-muted-foreground mt-3 text-sm leading-6">
+            <p className="text-muted-foreground mt-3 text-[.85rem] leading-5">
               {featuredArticle.excerpt}
             </p>
             <div className="text-muted-foreground mt-5 flex flex-wrap items-center gap-4 text-xs">
@@ -146,7 +146,7 @@ export function NewsLanding() {
                 <Heart className="size-3.5" /> {featuredArticle.likes}
               </span>
               <span className="flex items-center gap-1">
-                <MessageCircle className="size-3.5" />{" "}
+                <BotMessageSquare className="size-3.5" />{" "}
                 {featuredArticle.comments}
               </span>
             </div>

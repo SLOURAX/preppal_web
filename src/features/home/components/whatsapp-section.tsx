@@ -23,7 +23,7 @@ export function WhatsAppSection() {
             <p className="mb-1 flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#168b46] uppercase">
               <SaxPeopleBulk className="size-4" /> Join the community
             </p>
-            <h2 className="whatsapp-community-title text-xl font-black tracking-tight text-slate-900 sm:text-2xl">
+            <h2 className="whatsapp-community-title text-xl font-extrabold tracking-tight text-slate-900 sm:text-2xl">
               Learn together on WhatsApp
             </h2>
             <p className="whatsapp-community-copy mt-1 max-w-xl text-sm leading-6 text-slate-600">
@@ -36,7 +36,7 @@ export function WhatsAppSection() {
           href="https://wa.me/2340000000000"
           target="_blank"
           rel="noreferrer"
-          className="whatsapp-community-cta inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[#168b46] px-5 py-3 text-sm font-bold text-white shadow-sm transition-transform hover:-translate-y-0.5"
+          className="whatsapp-community-cta inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[#168b46] px-5 py-3 text-[.8rem] font-semibold text-white shadow-sm transition-transform hover:-translate-y-0.5"
         >
           Join WhatsApp <ArrowRight className="size-4" />
         </Link>

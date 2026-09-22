@@ -55,7 +55,7 @@ export function ReferralSection() {
     <section className="surface-card overflow-hidden">
       <div className="grid lg:grid-cols-[1.05fr_0.95fr]">
         <div className="p-6 sm:p-8 lg:p-10">
-          <h2 className="text-foreground mt-4 text-3xl font-black tracking-[-0.035em]">
+          <h2 className="text-foreground mt-4 text-3xl font-extrabold tracking-[-0.035em]">
             Learn together. Earn together.
           </h2>
           <p className="text-muted-foreground mt-3 max-w-lg text-sm leading-6">
@@ -81,13 +81,13 @@ export function ReferralSection() {
                   <p className="text-muted-foreground text-[11px]">
                     Your invite link
                   </p>
-                  <p className="text-foreground truncate text-sm font-semibold">
+                  <p className="text-foreground truncate text-[.8rem] font-semibold">
                     {referralUrl}
                   </p>
                 </div>
                 <button
                   aria-label="Copy referral link"
-                  className="bg-surface text-primary grid size-10 shrink-0 place-items-center rounded-xl shadow-sm"
+                  className="bg-surface text-primary grid size-8 shrink-0 place-items-center rounded-[10px] shadow-sm"
                   onClick={copyReferralLink}
                   type="button"
                 >

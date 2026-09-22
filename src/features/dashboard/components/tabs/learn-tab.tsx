@@ -59,7 +59,7 @@ function DailyFlashcard() {
 
   return (
     <section className="relative overflow-hidden rounded-3xl bg-[#17113d] p-4 text-white shadow-[0_18px_45px_rgba(67,45,185,0.18)] sm:p-7">
-      <div className="pointer-events-none absolute inset-0 [background-image:radial-gradient(circle_at_15%_20%,rgba(255,255,255,0.25)_0_1px,transparent_1px),radial-gradient(circle_at_80%_70%,rgba(167,139,250,0.35)_0_1px,transparent_1px)] [background-size:24px_24px,34px_34px] opacity-40" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(255,255,255,0.25)_0_1px,transparent_1px),radial-gradient(circle_at_80%_70%,rgba(167,139,250,0.35)_0_1px,transparent_1px)] bg-size-[24px_24px,34px_34px] opacity-40" />
       <div className="bg-primary/35 pointer-events-none absolute -top-24 -right-12 size-64 rounded-full blur-3xl" />
       <div className="pointer-events-none absolute -bottom-32 -left-20 size-72 rounded-full bg-fuchsia-400/15 blur-3xl" />
       <div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-10">
@@ -148,8 +148,8 @@ export function LearnTab() {
 
   return (
     <section className="space-y-6">
-      <div className="from-primary/10 via-primary/5 to-surface relative overflow-hidden rounded-3xl bg-gradient-to-br p-6 sm:p-8">
-        <div className="pointer-events-none absolute inset-0 [background-image:linear-gradient(135deg,transparent_24%,color-mix(in_srgb,var(--primary)_6%,transparent)_25%,transparent_26%)] [background-size:28px_28px] opacity-50" />
+      <div className="from-primary/10 via-primary/5 to-surface relative overflow-hidden rounded-3xl bg-linear-to-br p-6 sm:p-8">
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,transparent_24%,color-mix(in_srgb,var(--primary)_6%,transparent)_25%,transparent_26%)] bg-size-[28px_28px] opacity-50" />
         <div className="bg-primary/10 pointer-events-none absolute -right-10 -bottom-20 size-56 rounded-full blur-3xl" />
         <GraduationCap className="text-primary/10 pointer-events-none absolute -right-5 -bottom-8 size-48 rotate-12" />
         <div className="relative flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
@@ -157,7 +157,7 @@ export function LearnTab() {
             <h1 className="text-foreground mt-2 text-xl font-bold tracking-tight sm:text-3xl">
               What would you like to practise?
             </h1>
-            <p className="text-muted-foreground mt-2 max-w-xl text-sm leading-6">
+            <p className="text-muted-foreground mt-2 max-w-xl text-sm leading-5">
               Follow an exam syllabus or focus on a subject. Every session is
               tailored to help you improve with confidence.
             </p>

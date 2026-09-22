@@ -94,11 +94,11 @@ export function LeaderboardFilters({
         </div>
       ) : null}
 
-      <label className="bg-surface flex min-w-0 items-center gap-2 rounded-full border px-4 py-4">
+      <label className="bg-surface flex min-w-0 items-center gap-2 rounded-full border px-4 py-3">
         <Search className="text-muted-foreground size-4 shrink-0" />
         <span className="sr-only">Search for a user</span>
         <input
-          className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent text-sm outline-none"
+          className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent text-[.8rem] outline-none"
           onChange={(event) => onSearchChange(event.target.value)}
           placeholder="Search for a user"
           type="search"

@@ -1,4 +1,4 @@
-import { Clock3, Heart, MessageCircle } from "lucide-react";
+import { Clock3, Heart, BotMessageSquare } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -14,7 +14,7 @@ export function NewsCard({ article }: NewsCardProps) {
     <article className="surface-card group overflow-hidden">
       <Link
         aria-label={`Read ${article.title}`}
-        className="relative block aspect-[16/10] overflow-hidden"
+        className="relative block aspect-16/10 overflow-hidden"
         href={`/news/${article.slug}`}
       >
         <Image
@@ -42,7 +42,7 @@ export function NewsCard({ article }: NewsCardProps) {
             {article.title}
           </Link>
         </h2>
-        <p className="text-muted-foreground mt-2 line-clamp-2 text-sm leading-6">
+        <p className="text-muted-foreground mt-2 line-clamp-2 text-[.8rem] leading-6">
           {article.excerpt}
         </p>
         <div className="text-muted-foreground mt-5 flex items-center justify-between text-[11px]">
@@ -55,7 +55,7 @@ export function NewsCard({ article }: NewsCardProps) {
               <Heart className="size-3.5" /> {article.likes}
             </span>
             <span className="flex items-center gap-1">
-              <MessageCircle className="size-3.5" /> {article.comments}
+              <BotMessageSquare className="size-3.5" /> {article.comments}
             </span>
           </span>
         </div>

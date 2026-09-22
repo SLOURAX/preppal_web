@@ -23,7 +23,7 @@ export function PricingPage() {
   return (
     <main className="mx-auto w-full max-w-5xl px-5 py-8 sm:px-8 sm:py-10">
       <header className="mx-auto max-w-2xl text-center">
-        <h1 className="text-foreground mt-4 text-2xl font-black tracking-[-0.04em] sm:text-3xl">
+        <h1 className="text-foreground mt-4 text-2xl font-extrabold tracking-[-0.04em] sm:text-3xl">
           Choose the support your learning needs
         </h1>
         <p className="text-muted-foreground mx-auto mt-1 max-w-xl text-sm leading-6">
@@ -31,7 +31,7 @@ export function PricingPage() {
           experience, richer insights, and faster rewards.
         </p>
 
-        <div className="mt-8 mb-5 flex flex-wrap justify-center gap-x-5 gap-y-2">
+        {/* <div className="mt-8 mb-5 flex flex-wrap justify-center gap-x-5 gap-y-2">
           {PRICING_ASSURANCES.map((assurance) => (
             <span
               className="text-muted-foreground flex items-center gap-2 text-xs font-medium"
@@ -40,12 +40,12 @@ export function PricingPage() {
               <BadgeCheck className="text-success size-4" /> {assurance}
             </span>
           ))}
-        </div>
+        </div> */}
       </header>
 
       <section
         aria-label="Preppal plans"
-        className="mt-8 grid items-stretch gap-4 lg:grid-cols-3"
+        className="mt-15 grid items-stretch gap-4 lg:grid-cols-3"
       >
         {PRICING_PLANS.map((plan) => (
           <PricingCard key={plan.id} plan={plan} />

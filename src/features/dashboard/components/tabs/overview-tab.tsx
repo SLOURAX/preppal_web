@@ -84,10 +84,10 @@ export function OverviewTab() {
         <div className="bg-primary/10 pointer-events-none absolute -right-16 -bottom-24 size-64 rounded-full blur-3xl" />
         <div className="relative flex min-w-0 items-center gap-3 sm:gap-4">
           <div className="bg-primary text-primary-foreground shadow-primary/20 grid size-12 shrink-0 place-items-center rounded-2xl text-lg font-black shadow-lg sm:size-14 sm:text-xl">
-            {userName.slice(0, 1).toUpperCase()}
+            {userName.slice(0, 2).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-muted-foreground text-xs sm:text-sm">
+            <p className="text-muted-foreground text-xs sm:text-sm font-bold">
               Welcome back
             </p>
             <h2 className="text-foreground mt-0.5 max-w-[11rem] text-base leading-tight font-bold sm:max-w-none sm:text-2xl">
@@ -259,9 +259,9 @@ export function OverviewTab() {
         </div>
         <div className="divide-border divide-y">
           {quizAttempts.length === 0 ? (
-            <div className="flex items-center justify-center gap-3 py-5 text-center">
-              <Mascot mood="thinking" size="sm" />
-              <p className="text-muted-foreground max-w-xs text-left text-xs">
+            <div className="flex flex-col items-center justify-center gap-2 py-5 text-center">
+              <Mascot mood="thinking" size="lg" />
+              <p className="text-muted-foreground max-w-xs text-center text-xs">
                 No quizzes yet. Start a practice session to see your progress
                 here.
               </p>

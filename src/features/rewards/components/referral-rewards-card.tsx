@@ -57,7 +57,7 @@ export function ReferralRewardsCard() {
           <Users className="size-5" />
         </span>
         <div>
-          <h2 className="text-foreground text-[.85rem] font-semibold">
+          <h2 className="text-foreground text-[.85rem] font-bold">
             Invite friends
           </h2>
           <p className="text-muted-foreground mt-0.5 text-[.75rem]">
@@ -86,7 +86,7 @@ export function ReferralRewardsCard() {
           </p>
           <div className="flex items-center gap-3">
             <Link
-              className="text-primary inline-flex items-center text-[10px] font-bold"
+              className="text-primary inline-flex items-center text-[12px] font-bold"
               href="/rewards/referrals"
             >
               View all

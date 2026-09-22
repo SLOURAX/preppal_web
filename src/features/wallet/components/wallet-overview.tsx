@@ -465,10 +465,10 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
               <History className="size-5" />
             </span>
             <div>
-              <h2 className="text-foreground text-[.9rem] font-semibold">
+              <h2 className="text-foreground text-[.9rem] font-bold">
                 Transaction history
               </h2>
-              <p className="text-muted-foreground mt-0.5 text-xs">
+              <p className="text-muted-foreground text-xs">
                 Your latest wallet activity
               </p>
             </div>
@@ -497,10 +497,10 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                       <Icon className="size-4" />
                     </span>
                     <div className="min-w-0">
-                      <p className="text-foreground truncate text-[.8rem] font-semibold">
+                      <p className="text-foreground truncate text-[.75rem] font-semibold">
                         {transaction.label}
                       </p>
-                      <p className="text-muted-foreground text-xs">
+                      <p className="text-muted-foreground text-[.7rem]">
                         {transaction.date}
                       </p>
                     </div>

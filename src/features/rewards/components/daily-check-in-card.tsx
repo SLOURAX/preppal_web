@@ -53,7 +53,7 @@ export function DailyCheckInCard() {
             <CalendarCheck2 className="size-5" />
           </span>
           <div>
-            <h2 className="text-foreground text-[.85rem] font-semibold">
+            <h2 className="text-foreground text-[.85rem] font-bold">
               Daily check-in
             </h2>
             {/* <p className="text-muted-foreground mt-0.5 text-[.75rem]">
@@ -142,11 +142,11 @@ export function DailyCheckInCard() {
           ? "Checked in today"
           : `Check in · +${CHECK_IN_REWARD} XP`}
 
-        {hasCheckedIn ? (
+        {/* {hasCheckedIn ? (
           <CheckCircle2 className="size-4" />
         ) : (
           <CirclePlus className="size-4" />
-        )}
+        )} */}
       </Button>
     </section>
   );

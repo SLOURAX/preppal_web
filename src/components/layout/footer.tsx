@@ -24,7 +24,7 @@ const PRODUCT_LINKS: readonly FooterLink[] = [
   { href: "/games", label: "Learning games" },
   { href: "/leaderboard", label: "Leaderboard" },
   { href: "/rewards", label: "Rewards" },
-  { href: "/pricing", label: "Pricing" },
+  { href: "/pricing", label: "Preppal Pricing" },
 ];
 
 const ACCOUNT_LINKS: readonly FooterLink[] = [
@@ -130,7 +130,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 grid grid-cols-2 gap-8 border-y border-black/[0.06] py-9 text-left sm:gap-x-12 lg:grid-cols-4 lg:gap-x-16">
+        <div className="mt-10 grid grid-cols-2 gap-8 border-t border-black/[0.06] py-10 text-left sm:gap-x-12 lg:grid-cols-4 lg:gap-x-16">
           <FooterLinkGroup links={PRODUCT_LINKS} title="Explore" />
           <FooterLinkGroup links={ACCOUNT_LINKS} title="Account" />
           <FooterLinkGroup links={COMPANY_LINKS} title="Company" />
@@ -142,12 +142,12 @@ export function Footer() {
               Have a question or need support with your learning journey?
             </p>
             <a
-              className="bg-surface-subtle text-foreground hover:text-primary mt-5 inline-flex items-center gap-2 rounded-full px-5 py-3 text-[.8rem] font-medium transition-colors"
+              className="bg-primary hover:text-primary mt-5 inline-flex items-center gap-2 rounded-full px-7 py-2.5 text-[.75rem] font-medium text-white transition-colors"
               href="mailto:support@preppal.app"
             >
               <Mail className="size-4" /> Contact support
             </a>
-            <p className="text-muted-foreground mt-7 text-[.8rem] leading-6 tracking-[-0.01em]">
+            <p className="text-muted-foreground mt-7 text-[.75rem] leading-6 tracking-[-0.01em]">
               © 2026 Preppal. Built for confident learners.
             </p>
           </div>

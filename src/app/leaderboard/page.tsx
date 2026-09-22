@@ -18,10 +18,10 @@ export default function LeaderboardPage() {
           <div className="bg-primary/10 mx-auto mb-4 grid size-16 place-items-center rounded-full">
             <Crown className="text-primary size-8" />
           </div>
-          <h1 className="text-foreground text-3xl font-bold tracking-tight">
+          <h1 className="text-foreground text-2xl sm:text-3xl font-extrabold tracking-tight">
             Leaderboard
           </h1>
-          <p className="text-muted-foreground mx-auto mt-1 max-w-md text-sm leading-6">
+          <p className="text-muted-foreground mx-auto mt-1 max-w-md text-sm leading-5">
             See how your progress compares with the Preppal community and earn
             your place at the top.
           </p>

@@ -1,9 +1,9 @@
 "use client";
 
-import { SaxArrowDown1Bulk } from "@meysam213/iconsax-react";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
+import { ChevronDown } from "lucide-react";
 
 interface FaqItem {
   readonly question: string;
@@ -44,7 +44,7 @@ export function FaqSection() {
   return (
     <section className="flex flex-col items-center">
       <div className="w-full max-w-2xl text-center">
-        <h2 className="text-foreground mt-4 text-3xl font-black tracking-[-0.035em]">
+        <h2 className="text-foreground mt-4 text-3xl font-extrabold tracking-[-0.035em]">
           Frequently asked questions
         </h2>
         <p className="text-muted-foreground mt-2 text-sm leading-6">
@@ -81,7 +81,7 @@ export function FaqSection() {
                   <span className="text-foreground text-sm leading-snug font-semibold">
                     {faq.question}
                   </span>
-                  <SaxArrowDown1Bulk
+                  <ChevronDown
                     aria-hidden="true"
                     className={cn(
                       "text-muted-foreground size-4 shrink-0 transition-transform duration-200",

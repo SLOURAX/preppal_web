@@ -85,8 +85,8 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
       />
       <section className="surface-card from-primary/10 via-surface to-surface overflow-hidden bg-gradient-to-br px-4 pt-5 sm:px-7 sm:pt-6">
         <div className="text-center">
-          <h2 className="text-foreground text-xl font-bold">{championLabel}</h2>
-          <p className="text-muted-foreground mt-1 text-xs sm:text-sm">
+          <h2 className="text-foreground text-xl font-extrabold">{championLabel}</h2>
+          <p className="text-muted-foreground mt-1 text-[.8rem]">
             Top performers earning XP through eligible activities
           </p>
         </div>
@@ -104,15 +104,15 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
               >
                 <div className="relative">
                   <div
-                    className={`grid place-items-center rounded-full font-bold text-white shadow-lg ring-4 ring-white/80 dark:ring-white/10 ${
+                    className={`grid place-items-center uppercase rounded-full font-bold text-white shadow-lg ring-4 ring-white/80 dark:ring-white/10 ${
                       isWinner
-                        ? "from-primary to-primary-strong size-20 bg-gradient-to-br text-2xl sm:size-24 sm:text-3xl"
+                        ? "from-primary to-primary-strong size-20 bg-gradient-to-br text-xl sm:size-24 sm:text-2xl"
                         : isSecond
                           ? "size-16 bg-slate-400 text-xl sm:size-20 sm:text-2xl"
                           : "size-16 bg-orange-500 text-xl sm:size-20 sm:text-2xl"
                     }`}
                   >
-                    {entry.name.slice(0, 1)}
+                    {entry.name.slice(0, 2)}
                   </div>
                   <span
                     className={`absolute -right-1 -bottom-1 grid size-7 place-items-center rounded-full bg-white shadow-md ${entry.accent}`}
@@ -120,7 +120,7 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
                     <MedalIcon className="size-4" />
                   </span>
                 </div>
-                <p className="text-foreground mt-2 w-full truncate text-center text-xs font-semibold sm:text-sm">
+                <p className="text-foreground mt-2 w-full truncate text-center text-[.8rem] font-semibold">
                   {entry.name}
                 </p>
                 <p className="text-primary mt-0.5 flex items-center gap-1 text-xs font-bold">
@@ -128,9 +128,9 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
                   {entry.score.toLocaleString()} XP
                 </p>
                 <div
-                  className={`podium-grid relative z-10 mt-2 flex w-full items-start justify-center rounded-2xl border border-white/25 pt-3 font-bold text-white/90 shadow-inner ${
+                  className={`podium-grid text-[.85rem] relative z-10 mt-2 flex w-full items-start justify-center rounded-2xl border border-white/25 pt-3 font-bold text-white/90 shadow-inner ${
                     isWinner
-                      ? "from-primary to-primary-strong h-24 bg-gradient-to-b sm:h-28"
+                      ? "from-primary to-primary-strong h-28 bg-gradient-to-b sm:h-28"
                       : isSecond
                         ? "h-[4.5rem] bg-gradient-to-b from-slate-400 to-slate-500 sm:h-20"
                         : "h-14 bg-gradient-to-b from-orange-400 to-orange-600 sm:h-16"
@@ -151,7 +151,7 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
       </section>
       <section className="surface-card p-5 sm:p-6">
         <div className="mb-2 flex items-center justify-between gap-3">
-          <h3 className="text-[.9rem] font-semibold">
+          <h3 className="text-[.9rem] font-bold">
             {normalizedQuery ? "Search results" : "Leaderboard rankings"}
           </h3>
           <span className="text-muted-foreground text-xs">
@@ -169,7 +169,7 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
                 <span className="text-muted-foreground w-7 text-center text-sm font-bold">
                   #{entry.rank}
                 </span>
-                <span className="bg-primary text-primary-foreground grid size-8 shrink-0 place-items-center rounded-full text-[11px] font-bold sm:size-9 sm:text-xs">
+                <span className="bg-primary text-primary-foreground grid size-8 shrink-0 place-items-center rounded-full text-[10px] font-bold sm:size-9 sm:text-xs">
                   {entry.name
                     .split(" ")
                     .map((part) => part[0])
@@ -177,7 +177,7 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
                     .slice(0, 2)}
                 </span>
                 <div className="min-w-0">
-                  <span className="text-foreground block truncate text-[.78rem] font-semibold sm:text-sm">
+                  <span className="text-foreground block truncate text-[.75rem] font-bold">
                     {entry.name}
                   </span>
                   <span className="text-muted-foreground mt-0.5 block text-[10px] sm:text-[11px]">

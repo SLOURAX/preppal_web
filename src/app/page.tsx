@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import {
+  SaxArrow2Twotone,
   SaxAwardBulk,
   SaxChartSuccessBulk,
   SaxCoinBulk,
@@ -88,11 +89,11 @@ export default function HomePage() {
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-16 px-3 py-10 sm:px-5 lg:gap-20 lg:py-14">
         <section className="grid items-center gap-12 lg:grid-cols-2">
           <div className="flex flex-col gap-6">
-            <h1 className="text-foreground text-4xl leading-[1.3] font-black tracking-[-0.04em] sm:text-4xl lg:text-[3.2rem]">
+            <h1 className="text-foreground text-4xl leading-[1.3] font-extrabold tracking-[-0.04em] sm:text-4xl lg:text-[3.2rem]">
               Prep smarter with AI. <br />{" "}
               <span className="relative isolate inline-block px-[0.12em] text-amber-500">
                 <span className="absolute inset-[-0.08em_-0.14em] -z-10 rounded-[46%] border-2 border-violet-500/80" />
-                <span className="absolute inset-[-0.17em_-0.22em] -z-10 rotate-[-3deg] rounded-[48%] border border-dashed border-violet-400/70" />
+                <span className="absolute inset-[-0.17em_-0.22em] -z-10 -rotate-3 rounded-[48%] border border-dashed border-violet-400/70" />
                 <span className="absolute inset-[-0.2em_-0.18em] -z-10 rotate-[4deg] rounded-[45%] border border-dotted border-violet-300/60" />
                 Get rewarded.
               </span>
@@ -109,13 +110,13 @@ export default function HomePage() {
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <Link
                 href="/register"
-                className="bg-primary hover:bg-primary-strong text-primary-foreground shadow-primary/25 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold shadow-lg transition-all active:scale-[0.98]"
+                className="bg-primary hover:bg-primary-strong text-primary-foreground shadow-primary/25 inline-flex items-center gap-2 rounded-full px-8 py-3 text-sm font-medium shadow-lg transition-all active:scale-[0.98]"
               >
-                <SaxStar1Bulk className="h-4 w-4" /> Get Started Free
+                Get Started <SaxArrow2Twotone className="h-4 w-4" /> 
               </Link>
               <Link
                 href="/quiz"
-                className="bg-surface-subtle hover:bg-border text-foreground border-border inline-flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold transition-all"
+                className="bg-surface-subtle hover:bg-border text-foreground border-border inline-flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-medium transition-all"
               >
                 <SaxCpuChargeBulk className="h-4 w-4" /> Try a Quiz
               </Link>
@@ -131,7 +132,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="relative flex h-[420px] items-center justify-center lg:h-[480px]">
+          <div className="relative flex h-105 items-center justify-center lg:h-120">
             {/* ── Orthogonal circuit — connects all 9 nodes ──────── */}
             <svg
               className="pointer-events-none absolute inset-0 z-10 hidden h-full w-full overflow-visible sm:block"

@@ -198,7 +198,7 @@ export function LiveLeaderboardSection() {
 
             <div className="flex items-center justify-between border-t border-white/10 bg-white/5 px-4 py-3">
               <p className="text-xs text-slate-400">
-                Updated weekly · Join to claim your spot
+                Join to claim your spot
               </p>
               <a
                 href="/leaderboard"

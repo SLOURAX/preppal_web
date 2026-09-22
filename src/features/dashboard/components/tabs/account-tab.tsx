@@ -115,7 +115,7 @@ export function AccountTab() {
       {/* Account */}
       <div className="surface-card divide-border divide-y overflow-hidden rounded-3xl p-0 shadow-sm">
         <div className="px-5 py-4">
-          <p className="text-muted-foreground text-xs font-semibold tracking-widest uppercase">
+          <p className="text-muted-foreground text-xs font-bold tracking-widest uppercase">
             Account
           </p>
         </div>
@@ -179,7 +179,7 @@ export function AccountTab() {
       {/* Study Goals */}
       <div className="surface-card divide-border divide-y overflow-hidden rounded-3xl p-0 shadow-sm">
         <div className="px-5 py-4">
-          <p className="text-muted-foreground text-xs font-semibold tracking-widest uppercase">
+          <p className="text-muted-foreground text-xs font-bold tracking-widest uppercase">
             Study Goals
           </p>
         </div>
@@ -226,7 +226,7 @@ export function AccountTab() {
       {/* Appearance */}
       <div className="surface-card divide-border divide-y overflow-hidden rounded-3xl p-0 shadow-sm">
         <div className="px-5 py-4">
-          <p className="text-muted-foreground text-xs font-semibold tracking-widest uppercase">
+          <p className="text-muted-foreground text-xs font-bold tracking-widest uppercase">
             Appearance
           </p>
         </div>
@@ -252,7 +252,7 @@ export function AccountTab() {
       <div className="surface-card divide-border divide-y overflow-hidden rounded-3xl p-0 shadow-sm">
         <div className="flex items-center gap-2 px-5 py-4">
           <Bell className="text-muted-foreground size-4" />
-          <p className="text-muted-foreground text-xs font-semibold tracking-widest uppercase">
+          <p className="text-muted-foreground text-xs font-bold tracking-widest uppercase">
             Notifications
           </p>
         </div>
@@ -301,7 +301,7 @@ export function AccountTab() {
       <div className="surface-card divide-border divide-y overflow-hidden rounded-3xl border-rose-500/20 p-0 shadow-sm">
         <div className="flex items-center gap-2 px-5 py-4">
           <Shield className="size-4 text-rose-500" />
-          <p className="text-xs font-semibold tracking-widest text-rose-500 uppercase">
+          <p className="text-xs font-bold tracking-widest text-rose-500 uppercase">
             Danger zone
           </p>
         </div>
@@ -314,7 +314,7 @@ export function AccountTab() {
           </div>
           <button
             onClick={openSignOutModal}
-            className="flex items-center gap-2 rounded-xl bg-rose-500/10 px-3 py-1.5 text-xs font-bold text-rose-600 transition-colors hover:bg-rose-500/20"
+            className="flex items-center gap-2 rounded-2xl bg-rose-500/10 px-5 py-2 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-500/20"
           >
             <LogOut className="size-3.5" />
             Sign out
@@ -330,7 +330,7 @@ export function AccountTab() {
             </p>
           </div>
           <button
-            className="flex items-center gap-2 rounded-xl bg-rose-500/10 px-4 py-1.5 text-xs font-bold text-rose-600 transition-colors hover:bg-rose-500/20"
+            className="flex items-center gap-2 rounded-2xl bg-rose-500/10 px-5 py-2 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-500/20"
             onClick={() => setShowDeleteConfirmation(true)}
             type="button"
           >
