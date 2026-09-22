@@ -4,8 +4,10 @@ import {
   BadgeCent,
   ChevronDown,
   ChevronRight,
+  LogIn,
   LogOut,
   User,
+  UserPlus,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -143,17 +145,19 @@ export function NavBar() {
                 </div>
               </div>
             ) : (
-              <div className="flex items-center gap-1 sm:gap-2">
+              <div className="bg-surface-subtle/70 flex items-center gap-1 rounded-full p-1">
                 <Link
-                  className="text-foreground hover:text-primary hidden px-2 text-sm font-medium transition-colors sm:block"
+                  className="text-foreground hover:bg-surface hover:text-primary hidden items-center gap-2 rounded-full px-4 py-2 text-[.8rem] font-medium transition-colors sm:inline-flex"
                   href="/login"
                 >
+                  <LogIn className="size-4" />
                   Log in
                 </Link>
                 <Link
-                  className="bg-primary text-primary-foreground hover:bg-primary-strong rounded-full px-5 py-2.5 text-sm text-[.85rem] font-medium shadow-sm transition sm:px-5"
+                  className="bg-primary text-primary-foreground hover:bg-primary-strong inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[.8rem] font-semibold shadow-sm transition-colors"
                   href="/register"
                 >
+                  <UserPlus className="size-4" />
                   Get started
                 </Link>
               </div>

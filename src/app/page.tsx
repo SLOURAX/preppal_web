@@ -134,7 +134,7 @@ export default function HomePage() {
           <div className="relative flex h-[420px] items-center justify-center lg:h-[480px]">
             {/* ── Orthogonal circuit — connects all 9 nodes ──────── */}
             <svg
-              className="pointer-events-none absolute inset-0 z-10 h-full w-full overflow-visible"
+              className="pointer-events-none absolute inset-0 z-10 hidden h-full w-full overflow-visible sm:block"
               viewBox="0 0 600 420"
               preserveAspectRatio="xMidYMid meet"
               xmlns="http://www.w3.org/2000/svg"
@@ -283,6 +283,7 @@ export default function HomePage() {
                     alt="Preppal mascot"
                     width={112}
                     height={112}
+                    priority
                     className="h-56 w-56 object-contain drop-shadow-xl sm:h-72 sm:w-72"
                   />
                   <div className="bg-surface border-border relative z-20 -mt-8 flex items-center gap-1 rounded-full border px-3 py-1 shadow-sm sm:-mt-12">
@@ -317,7 +318,7 @@ export default function HomePage() {
             {floatingStats.map((stat, i) => (
               <div
                 key={i}
-                className="bg-white border-white absolute z-20 flex items-center gap-2 rounded-2xl border px-3.5 py-2.5 text-xs font-semibold shadow-lg"
+                className="absolute z-20 flex items-center gap-2 rounded-2xl border border-white bg-white px-3.5 py-2.5 text-xs font-semibold shadow-lg"
                 style={{
                   top: i === 0 ? "8%" : i === 1 ? "50%" : "80%",
                   left: i === 1 ? "0%" : "auto",
@@ -346,7 +347,9 @@ export default function HomePage() {
                 ))}
               </div>
               <p className="text-muted-foreground ml-3 text-[.75rem]">
-                <span className="text-foreground font-bold">10,000+ people</span>{" "}
+                <span className="text-foreground font-bold">
+                  10,000+ people
+                </span>{" "}
                 already using Preppal
               </p>
             </div>
