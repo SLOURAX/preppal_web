@@ -118,7 +118,7 @@ export function ReferralSection() {
           <div className="relative z-10 flex items-center justify-between gap-4">
             <div>
               <p className="text-muted-foreground text-sm">Referral progress</p>
-              <p className="text-foreground mt-1 text-2xl font-bold">
+              <p className="mt-1 text-[1.2rem] font-black">
                 2 of 5 friends
               </p>
             </div>

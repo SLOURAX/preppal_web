@@ -156,7 +156,7 @@ function RegisterContent() {
             <div className="border-border bg-surface/90 focus-within:border-primary focus-within:ring-primary/10 flex h-11 items-center overflow-hidden rounded-xl border transition-[border-color,box-shadow] focus-within:ring-4">
               <select
                 aria-label="Country code"
-                className="text-foreground h-full w-[4.75rem] shrink-0 appearance-none bg-transparent pl-3 text-[13px] font-medium outline-none"
+                className="text-foreground h-full w-max min-w-16 shrink-0 appearance-none bg-transparent px-3 text-[13px] font-medium outline-none"
                 onChange={(event) => setCountryCode(event.target.value)}
                 value={countryCode}
               >
@@ -406,7 +406,7 @@ function VerificationStep({
           Verify email
         </Button>
         <button
-          className="text-muted-foreground hover:text-primary mx-auto flex items-center gap-1 border-b border-transparent py-1 text-sm font-medium transition-colors hover:border-current mt-3"
+          className="text-muted-foreground hover:text-primary mx-auto mt-3 flex items-center gap-1 border-b border-transparent py-1 text-sm font-medium transition-colors hover:border-current"
           onClick={onBack}
           type="button"
         >
