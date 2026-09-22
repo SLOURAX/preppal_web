@@ -60,9 +60,6 @@ export function NavBar() {
             <span className="bg-primary text-primary-foreground grid size-9 place-items-center rounded-xl text-base font-black shadow-sm">
               pp
             </span>
-            <span className="text-lg font-bold tracking-[-0.025em]">
-              Preppal
-            </span>
           </Link>
 
           <div className="hidden items-center gap-2.5 sm:gap-4 md:flex">
