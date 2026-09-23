@@ -88,7 +88,7 @@ export function NewsLanding() {
             </button>
           ))}
         </div>
-        <label className="bg-surface border flex min-w-0 items-center gap-2 rounded-full px-4 py-2.5 lg:w-72">
+        <label className="bg-surface flex min-w-0 items-center gap-2 rounded-full border px-4 py-2.5 lg:w-72">
           <Search className="text-muted-foreground size-4 shrink-0" />
           <span className="sr-only">Search news</span>
           <input

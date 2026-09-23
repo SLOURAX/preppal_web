@@ -39,12 +39,20 @@ export default function ForgotPasswordPage() {
             the link to reset your password.
           </p>
         </div>
-        {/* <Link
-          href="/login"
-          className="text-primary mt-4 flex items-center gap-2 font-semibold hover:underline"
-        >
-          <ArrowLeft className="h-4 w-4" /> Back to log in
-        </Link> */}
+        <div className="mt-2 flex flex-col items-center gap-4">
+          <Link
+            href="/login"
+            className="text-primary flex items-center gap-2 font-semibold hover:underline"
+          >
+            <ArrowLeft className="h-4 w-4" /> Back to log in
+          </Link>
+          <Link
+            href="/register"
+            className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors"
+          >
+            Need an account? Sign up
+          </Link>
+        </div>
       </div>
     );
   }
@@ -69,14 +77,20 @@ export default function ForgotPasswordPage() {
           Send reset link
         </Button>
       </form>
-      {/* <div className="mt-8 text-center">
+      <div className="mt-8 flex flex-col items-center gap-3 text-center">
         <Link
           href="/login"
           className="text-muted-foreground hover:text-foreground flex items-center justify-center gap-2 text-sm font-semibold transition-colors"
         >
           <ArrowLeft className="h-4 w-4" /> Back to log in
         </Link>
-      </div> */}
+        <Link
+          href="/register"
+          className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+        >
+          Need an account? Sign up
+        </Link>
+      </div>
     </>
   );
 }

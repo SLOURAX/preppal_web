@@ -87,7 +87,7 @@ export function OverviewTab() {
             {userName.slice(0, 2).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-muted-foreground text-xs sm:text-sm font-bold">
+            <p className="text-muted-foreground text-xs font-bold sm:text-sm">
               Welcome back
             </p>
             <h2 className="text-foreground mt-0.5 max-w-[11rem] text-base leading-tight font-bold sm:max-w-none sm:text-2xl">

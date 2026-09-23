@@ -13,6 +13,7 @@ import {
   SaxStar1Bulk,
 } from "@meysam213/iconsax-react";
 import { AppShell } from "@/components/layout";
+import { AdSlot } from "@/components/ads";
 import { AppDownloadButtons } from "@/components/ui/app-download-buttons";
 import { FINANCE_PREVIEW } from "@/constants/finance";
 import {
@@ -112,7 +113,7 @@ export default function HomePage() {
                 href="/register"
                 className="bg-primary hover:bg-primary-strong text-primary-foreground shadow-primary/25 inline-flex items-center gap-2 rounded-full px-8 py-3 text-sm font-medium shadow-lg transition-all active:scale-[0.98]"
               >
-                Get Started <SaxArrow2Twotone className="h-4 w-4" /> 
+                Get Started <SaxArrow2Twotone className="h-4 w-4" />
               </Link>
               <Link
                 href="/quiz"
@@ -386,8 +387,14 @@ export default function HomePage() {
         <MomentumSection />
         <ExamPathwaysMarquee />
         <LiveLeaderboardSection />
+        <AdSlot
+          format="horizontal"
+          placement="top-right"
+          slotId="homepage-between-sections"
+        />
         <ReferralSection />
         <WhatsAppSection />
+        <AdSlot format="rectangle" slotId="homepage-before-footer" />
         <FaqSection />
       </main>
     </AppShell>

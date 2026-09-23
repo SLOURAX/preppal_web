@@ -67,8 +67,8 @@ export function MomentumSection() {
           </div>
           <div className="relative z-10 mt-12 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <div className="flex items-center gap-2 font-bold text-[.85rem]">
-                <SaxAwardBulk className="size-5 text-amber-300 " /> +2 XP today
+              <div className="flex items-center gap-2 text-[.85rem] font-bold">
+                <SaxAwardBulk className="size-5 text-amber-300" /> +2 XP today
               </div>
               <div className="mt-3 h-1.5 w-44 overflow-hidden rounded-full bg-white/20">
                 <div className="h-full w-4/5 rounded-full bg-amber-300" />

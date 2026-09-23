@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui";
+import { useFeedback } from "@/components/ui";
 import {
   AuthBenefits,
   AuthHeader,
@@ -17,6 +18,7 @@ import {
   AuthDivider,
 } from "@/features/auth";
 import { useAuthStore } from "@/store";
+import { loginSchema } from "@/features/auth/auth.schemas";
 
 function LoginContent() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -26,6 +28,7 @@ function LoginContent() {
   const requestedReturnTo = searchParams.get("returnTo");
   const returnTo = requestedReturnTo?.startsWith("/") ? requestedReturnTo : "/";
   const [formError, setFormError] = useState("");
+  const { showFeedback } = useFeedback();
 
   useEffect(() => {
     if (isAuthenticated) router.replace(returnTo);
@@ -36,24 +39,38 @@ function LoginContent() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     const form = event.currentTarget;
-    const email = String(
+    const identifier = String(
       form.querySelector<HTMLInputElement>("#email")?.value ?? "",
     ).trim();
     const password = String(
       form.querySelector<HTMLInputElement>("#password")?.value ?? "",
     );
-    if (!/^\S+@\S+\.\S+$/.test(email))
-      return setFormError("Enter a valid email address.");
-    if (!password) return setFormError("Enter your password.");
+    const parsed = loginSchema.safeParse({ identifier, password });
+    if (!parsed.success)
+      return setFormError(
+        parsed.error.issues[0]?.message ?? "Enter valid login details.",
+      );
     setFormError("");
-    login();
-    router.push(returnTo);
+    void login(parsed.data)
+      .then(() => router.push(returnTo))
+      .catch((error: unknown) => {
+        showFeedback({
+          kind: "error",
+          title: "Sign in failed",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Unable to sign in. Please try again.",
+        });
+      });
   };
 
-  const handleSocialLogin = () => {
-    login();
-    router.push(returnTo);
-  };
+  const handleSocialLogin = () =>
+    showFeedback({
+      kind: "info",
+      title: "Social sign-in unavailable",
+      message: "Use your email and password to sign in.",
+    });
 
   return (
     <>
@@ -70,14 +87,6 @@ function LoginContent() {
       <AuthDivider />
 
       <form className="space-y-4" onSubmit={handleSubmit}>
-        {formError && (
-          <p
-            className="bg-danger/10 text-danger rounded-xl px-3 py-2 text-xs font-medium"
-            role="alert"
-          >
-            {formError}
-          </p>
-        )}
         <FormField
           autoComplete="email"
           icon={Mail}
@@ -94,7 +103,12 @@ function LoginContent() {
           placeholder="Enter your password"
           required
         />
-        <div className="flex items-center justify-between gap-4 text-sm">
+        {formError && (
+          <p className="text-danger -mt-2 text-xs font-medium" role="alert">
+            {formError}
+          </p>
+        )}
+        <div className="flex items-center justify-between gap-4 text-[.8rem]">
           <CheckboxField id="remember" label="Remember me" name="remember" />
           <Link
             className="text-primary-strong font-semibold hover:underline"

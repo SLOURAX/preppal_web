@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Clock3 } from "lucide-react";
+import { AdSlot } from "@/components/ads";
 
 import {
   ArticleEngagement,
@@ -87,8 +88,17 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         </div>
 
         <div className="text-muted-foreground mx-auto mt-10 max-w-2xl space-y-6 text-[15px] leading-8">
-          {article.body.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
+          {article.body.map((paragraph, index) => (
+            <div key={paragraph}>
+              <p>{paragraph}</p>
+              {index === 0 ? (
+                <AdSlot
+                  className="my-10"
+                  format="rectangle"
+                  slotId="news-article-after-intro"
+                />
+              ) : null}
+            </div>
           ))}
         </div>
 
@@ -105,6 +115,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       </article>
 
       <div className="mx-auto max-w-2xl">
+        <AdSlot
+          className="my-10"
+          format="horizontal"
+          slotId="news-article-before-engagement"
+        />
         <ArticleEngagement
           articleTitle={article.title}
           initialCommentCount={article.comments}

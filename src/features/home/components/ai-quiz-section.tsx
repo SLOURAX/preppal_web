@@ -103,16 +103,16 @@ export function AiQuizSection() {
           </div>
         ) : null}
 
-        <div className="mt-5 flex flex-wrap gap-1">
+        <div className="mt-5 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
           <Button
-            className="gap-2"
+            className="w-full min-w-0 gap-1 px-2 text-xs sm:w-auto sm:gap-2 sm:px-4 sm:text-sm"
             disabled={!selectedAnswer}
             onClick={() => setShowExplanation(true)}
           >
             <SaxCpuChargeBulk className="size-4" /> Ask Preppal AI
           </Button>
           <Button
-            className="bg-surface-subtle text-foreground hover:bg-border gap-2"
+            className="bg-surface-subtle text-foreground hover:bg-border w-full min-w-0 gap-1 px-2 text-xs sm:w-auto sm:gap-2 sm:px-4 sm:text-sm"
             onClick={resetQuestion}
           >
             <RefreshCw className="size-3" /> Reset Question

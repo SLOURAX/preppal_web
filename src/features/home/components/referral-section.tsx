@@ -118,9 +118,7 @@ export function ReferralSection() {
           <div className="relative z-10 flex items-center justify-between gap-4">
             <div>
               <p className="text-muted-foreground text-sm">Referral progress</p>
-              <p className="mt-1 text-[1.2rem] font-black">
-                2 of 5 friends
-              </p>
+              <p className="mt-1 text-[1.2rem] font-black">2 of 5 friends</p>
             </div>
             <span className="bg-primary text-primary-foreground relative z-10 grid size-12 place-items-center rounded-2xl shadow-[0_8px_24px_rgba(124,58,237,0.2)]">
               <SaxPeopleBulk className="size-6" />

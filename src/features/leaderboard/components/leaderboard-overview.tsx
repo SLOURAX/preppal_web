@@ -85,7 +85,9 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
       />
       <section className="surface-card from-primary/10 via-surface to-surface overflow-hidden bg-gradient-to-br px-4 pt-5 sm:px-7 sm:pt-6">
         <div className="text-center">
-          <h2 className="text-foreground text-xl font-extrabold">{championLabel}</h2>
+          <h2 className="text-foreground text-xl font-extrabold">
+            {championLabel}
+          </h2>
           <p className="text-muted-foreground mt-1 text-[.8rem]">
             Top performers earning XP through eligible activities
           </p>
@@ -104,7 +106,7 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
               >
                 <div className="relative">
                   <div
-                    className={`grid place-items-center uppercase rounded-full font-bold text-white shadow-lg ring-4 ring-white/80 dark:ring-white/10 ${
+                    className={`grid place-items-center rounded-full font-bold text-white uppercase shadow-lg ring-4 ring-white/80 dark:ring-white/10 ${
                       isWinner
                         ? "from-primary to-primary-strong size-20 bg-gradient-to-br text-xl sm:size-24 sm:text-2xl"
                         : isSecond
@@ -128,7 +130,7 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
                   {entry.score.toLocaleString()} XP
                 </p>
                 <div
-                  className={`podium-grid text-[.85rem] relative z-10 mt-2 flex w-full items-start justify-center rounded-2xl border border-white/25 pt-3 font-bold text-white/90 shadow-inner ${
+                  className={`podium-grid relative z-10 mt-2 flex w-full items-start justify-center rounded-2xl border border-white/25 pt-3 text-[.85rem] font-bold text-white/90 shadow-inner ${
                     isWinner
                       ? "from-primary to-primary-strong h-28 bg-gradient-to-b sm:h-28"
                       : isSecond

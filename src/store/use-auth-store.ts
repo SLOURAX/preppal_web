@@ -1,6 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { INITIAL_FINANCE_BALANCES, XP_TO_COIN_RATE } from "@/constants/finance";
+import { apiClient } from "@/lib/api/client";
+import type { LoginInput } from "@/features/auth/auth.schemas";
+import { loginSchema } from "@/features/auth/auth.schemas";
 
 export interface QuizAttempt {
   id: string;
@@ -31,7 +34,7 @@ interface AuthState {
   lastCheckIn: string | null;
   notificationSettings: Record<string, boolean>;
   isSignOutModalOpen: boolean;
-  login: () => void;
+  login: (credentials: LoginInput) => Promise<void>;
   logout: () => void;
   setBalance: (balance: number) => void;
   setDepositedFunds: (amount: number) => void;
@@ -64,8 +67,17 @@ export const useAuthStore = create<AuthState>()(
         "Leaderboard updates": true,
       },
       isSignOutModalOpen: false,
-      login: (): void => {
-        set({ isAuthenticated: true });
+      login: async (credentials): Promise<void> => {
+        const validated = loginSchema.parse(credentials);
+        const response = await apiClient<{
+          accessToken: string;
+          user: { fullName: string; email: string };
+        }>("/api/v1/auth/login", {
+          method: "POST",
+          credentials: "include",
+          body: JSON.stringify(validated),
+        });
+        set({ isAuthenticated: true, userName: response.user.fullName });
       },
       logout: (): void => {
         set({
@@ -155,6 +167,11 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "preppal-auth",
+      version: 2,
+      migrate: (persistedState) => ({
+        ...(persistedState as AuthState),
+        isAuthenticated: false,
+      }),
       partialize: (state) => ({ ...state, isSignOutModalOpen: false }),
     },
   ),

@@ -12,6 +12,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui";
+import { useFeedback } from "@/components/ui";
 import { ListSelect } from "@/components/ui/list-select";
 import {
   AuthHeader,
@@ -28,7 +29,6 @@ import { useAuthStore } from "@/store";
 
 function RegisterContent() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const login = useAuthStore((state) => state.login);
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestedReturnTo = searchParams.get("returnTo");
@@ -41,6 +41,7 @@ function RegisterContent() {
   const [verificationEmail, setVerificationEmail] = useState("");
   const [registrationEmail, setRegistrationEmail] = useState("");
   const [isReferralModalOpen, setIsReferralModalOpen] = useState(false);
+  const { showFeedback } = useFeedback();
 
   useEffect(() => {
     if (isAuthenticated) router.replace(returnTo);
@@ -85,7 +86,6 @@ function RegisterContent() {
       <VerificationStep
         email={verificationEmail}
         onVerified={() => {
-          login();
           router.push(returnTo);
         }}
         onBack={() => setVerificationEmail("")}
@@ -93,8 +93,11 @@ function RegisterContent() {
     );
 
   const handleSocialLogin = () => {
-    login();
-    router.push(returnTo);
+    showFeedback({
+      kind: "info",
+      title: "Social sign-up unavailable",
+      message: "Use the registration form to create your account.",
+    });
   };
 
   return (
