@@ -2,9 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   SaxArrow2Twotone,
-  SaxAwardBulk,
   SaxChartSuccessBulk,
-  SaxCoinBulk,
   SaxCpuChargeBulk,
   SaxCrown1Bulk,
   SaxGameBulk,
@@ -43,7 +41,15 @@ const capabilities: readonly Capability[] = [
     color: "text-[#8659d3] bg-[#e6e2f8] dark:bg-[#8659d3]/20",
   },
   {
-    icon: <SaxCoinBulk className="h-6 w-6" />,
+    icon: (
+      <Image
+        alt=""
+        className="h-[26px] w-[26px] object-contain"
+        height={26}
+        src="/assets/coins/preppal-coin.png"
+        width={26}
+      />
+    ),
     title: "Earn & withdraw",
     detail:
       "Complete quizzes and learning activities to earn XP. Convert your XP into withdrawable Preppal Coins.",
@@ -62,7 +68,15 @@ const floatingStats = [
   {
     label: "Coins earned",
     value: `${FINANCE_PREVIEW.coinsEarned.toLocaleString()} coins`,
-    icon: <SaxCoinBulk className="h-3.5 w-3.5 text-amber-400" />,
+    icon: (
+      <Image
+        alt=""
+        className="h-[18px] w-[18px] object-contain"
+        height={18}
+        src="/assets/coins/preppal-coin.png"
+        width={18}
+      />
+    ),
   },
   {
     label: "Top rank",
@@ -281,15 +295,21 @@ export default function HomePage() {
               <div className="from-primary/30 via-primary/10 border-primary/20 relative z-10 flex h-full w-full flex-col items-center justify-center gap-1 rounded-full border bg-gradient-to-br to-transparent shadow-xl backdrop-blur-sm">
                 <div className="flex flex-col items-center">
                   <Image
-                    src="/owl-mascot.png"
+                    src="/assets/mascots/success.png"
                     alt="Preppal mascot"
-                    width={112}
-                    height={112}
+                    width={144}
+                    height={144}
                     priority
-                    className="h-56 w-56 object-contain drop-shadow-xl sm:h-72 sm:w-72"
+                    className="h-52 w-52 object-contain drop-shadow-xl sm:h-64 sm:w-64"
                   />
                   <div className="bg-surface border-border relative z-20 -mt-8 flex items-center gap-1 rounded-full border px-3 py-1 shadow-sm sm:-mt-12">
-                    <SaxAwardBulk className="h-3.5 w-3.5 text-amber-400" />
+                    <Image
+                      alt=""
+                      className="h-[18px] w-[18px] object-contain"
+                      height={18}
+                      src="/assets/coins/preppal-coin.png"
+                      width={18}
+                    />
                     <span className="text-xs font-bold">
                       +{FINANCE_PREVIEW.activityXp} XP earned!
                     </span>

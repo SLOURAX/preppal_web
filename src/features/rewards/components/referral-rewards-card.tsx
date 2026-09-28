@@ -6,15 +6,7 @@ import Link from "next/link";
 
 import { DataState } from "@/components/ui";
 
-import { REFERRAL_CODE, REFERRAL_LINK } from "../rewards.constants";
-
 type CopiedValue = "code" | "link" | null;
-
-const REFERRAL_STATS = [
-  { label: "Invited", value: "3" },
-  { label: "Activated", value: "1" },
-  { label: "XP earned", value: "50" },
-] as const;
 
 export const REFERRALS = [
   { name: "Amaka O.", status: "Completed first quiz", reward: "+50 XP" },
@@ -22,7 +14,7 @@ export const REFERRALS = [
   { name: "Fatima A.", status: "Invite sent", reward: "Pending" },
 ] as const;
 
-export function ReferralRewardsCard() {
+export function ReferralRewardsCard({ summary }: { summary: any }) {
   const [copiedValue, setCopiedValue] = useState<CopiedValue>(null);
 
   const copyValue = async (
@@ -67,7 +59,24 @@ export function ReferralRewardsCard() {
       </div>
 
       <dl className="bg-surface mt-6 grid grid-cols-3 rounded-2xl p-4">
-        {REFERRAL_STATS.map((stat) => (
+        {[
+          { label: "Invited", value: summary?.referrals?.length ?? 0 },
+          {
+            label: "Activated",
+            value:
+              summary?.referrals?.filter(
+                (item: any) => item.status === "ACTIVATED",
+              ).length ?? 0,
+          },
+          {
+            label: "XP earned",
+            value:
+              summary?.referrals?.reduce(
+                (total: number, item: any) => total + (item.rewardPoints ?? 0),
+                0,
+              ) ?? 0,
+          },
+        ].map((stat) => (
           <div className="text-center" key={stat.label}>
             <dd className="text-primary text-[.9rem] font-semibold">
               {stat.value}
@@ -93,9 +102,9 @@ export function ReferralRewardsCard() {
             </Link>
           </div>
         </div>
-        {REFERRALS.length ? (
+        {(summary?.referrals?.length ?? 0) ? (
           <div className="divide-y !divide-[#e5e5e5] rounded-xl border !border-[#e5e5e5] px-3 dark:divide-white/10 dark:border-white/10">
-            {REFERRALS.slice(0, 3).map((referral) => (
+            {summary.referrals.slice(0, 3).map((referral: any) => (
               <div
                 className="flex items-center justify-between gap-5 py-4"
                 key={referral.name}
@@ -107,12 +116,12 @@ export function ReferralRewardsCard() {
                 </div>
                 <span
                   className={
-                    referral.reward === "+50 XP"
+                    referral.status === "ACTIVATED"
                       ? "text-success text-[10px] font-bold"
                       : "text-muted-foreground text-[10px] font-medium"
                   }
                 >
-                  {referral.reward}
+                  {referral.status === "ACTIVATED" ? "+50 XP" : "Pending"}
                 </span>
               </div>
             ))}
@@ -130,17 +139,21 @@ export function ReferralRewardsCard() {
           copied={copiedValue === "code"}
           icon={<Hash className="size-4" />}
           label="Referral code"
-          onCopy={() => copyValue("code", REFERRAL_CODE)}
-          onShare={() => shareValue("Referral code", REFERRAL_CODE)}
-          value={REFERRAL_CODE}
+          onCopy={() => copyValue("code", summary?.referralCode ?? "")}
+          onShare={() =>
+            shareValue("Referral code", summary?.referralCode ?? "")
+          }
+          value={summary?.referralCode ?? ""}
         />
         <ReferralValue
           copied={copiedValue === "link"}
           icon={<Link2 className="size-4" />}
           label="Referral link"
-          onCopy={() => copyValue("link", REFERRAL_LINK)}
-          onShare={() => shareValue("Referral link", REFERRAL_LINK)}
-          value={REFERRAL_LINK}
+          onCopy={() => copyValue("link", summary?.referralLink ?? "")}
+          onShare={() =>
+            shareValue("Referral link", summary?.referralLink ?? "")
+          }
+          value={summary?.referralLink ?? ""}
         />
       </div>
     </section>

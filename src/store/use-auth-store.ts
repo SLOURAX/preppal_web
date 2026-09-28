@@ -28,6 +28,8 @@ interface AuthState {
   experiencePoints: number;
   userName: string;
   userPlan: string;
+  referralCode: string;
+  referralLink: string;
   weeklyGoal: number | null;
   weeklyActivity: boolean[];
   quizAttempts: QuizAttempt[];
@@ -37,6 +39,10 @@ interface AuthState {
   login: (credentials: LoginInput) => Promise<void>;
   logout: () => void;
   setBalance: (balance: number) => void;
+  setRewardBalances: (balances: {
+    experiencePoints: number;
+    preppalBalance: number;
+  }) => void;
   setDepositedFunds: (amount: number) => void;
   setUserName: (userName: string) => void;
   setWeeklyGoal: (goal: number) => void;
@@ -58,6 +64,8 @@ export const useAuthStore = create<AuthState>()(
       ...INITIAL_FINANCE_BALANCES,
       userName: "Solomon Udumizi",
       userPlan: "Level 1",
+      referralCode: "",
+      referralLink: "",
       weeklyGoal: null,
       weeklyActivity: initialActivity,
       quizAttempts: [],
@@ -71,15 +79,34 @@ export const useAuthStore = create<AuthState>()(
         const validated = loginSchema.parse(credentials);
         const response = await apiClient<{
           accessToken: string;
-          user: { fullName: string; email: string };
+          user: {
+            fullName: string;
+            email: string;
+            experiencePoints: number;
+            referralCode: string;
+            referralLink: string;
+            wallet?: { availableBalanceMinor: number } | null;
+          };
         }>("/api/v1/auth/login", {
           method: "POST",
           credentials: "include",
           body: JSON.stringify(validated),
         });
-        set({ isAuthenticated: true, userName: response.user.fullName });
+        set({
+          isAuthenticated: true,
+          userName: response.user.fullName,
+          experiencePoints: response.user.experiencePoints,
+          preppalBalance: response.user.wallet?.availableBalanceMinor ?? 0,
+          referralCode: response.user.referralCode,
+          referralLink: response.user.referralLink,
+        });
+        window.localStorage.setItem(
+          "preppal_access_token",
+          response.accessToken,
+        );
       },
       logout: (): void => {
+        window.localStorage.removeItem("preppal_access_token");
         set({
           isAuthenticated: false,
           isSignOutModalOpen: false,
@@ -95,6 +122,9 @@ export const useAuthStore = create<AuthState>()(
       },
       setBalance: (preppalBalance: number): void => {
         set({ preppalBalance });
+      },
+      setRewardBalances: ({ experiencePoints, preppalBalance }): void => {
+        set({ experiencePoints, preppalBalance });
       },
       setDepositedFunds: (depositedFunds: number): void => {
         set({ depositedFunds: Math.max(0, depositedFunds) });

@@ -10,10 +10,10 @@ import {
   UserPlus,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store";
@@ -69,7 +69,13 @@ export function NavBar() {
             {isAuthenticated ? (
               <div className="flex items-center gap-2 sm:gap-4">
                 <div className="hidden items-center gap-1 rounded-full bg-[#21194d] px-5 py-1 text-white sm:flex">
-                  <span className="font-bold text-amber-400">ℙ</span>
+                  <Image
+                    alt="Preppal Coin"
+                    className="size-[22px] object-contain"
+                    height={22}
+                    src="/assets/coins/preppal-coin.png"
+                    width={22}
+                  />
                   <span className="text-xs font-bold">{preppalBalance}</span>
                 </div>
                 <div className="hidden items-center gap-1.5 rounded-full bg-amber-500/10 px-3.5 py-1.5 text-amber-600 sm:flex">

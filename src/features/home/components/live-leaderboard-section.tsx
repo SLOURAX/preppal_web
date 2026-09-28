@@ -311,10 +311,10 @@ export function LiveLeaderboardSection() {
             </div>
 
             <Image
-              src="/mascot-leaderboard.png"
-              alt="Preppal Mascot"
+              src="/assets/mascots/excited.png"
+              alt="Preppal mascot celebrating leaderboard progress"
               fill
-              className="scale-[0.75] object-contain drop-shadow-2xl"
+              className="scale-[0.75] object-contain drop-shadow-2xl motion-safe:animate-[mascot-breathe_2.8s_ease-in-out_infinite]"
             />
           </div>
         </div>

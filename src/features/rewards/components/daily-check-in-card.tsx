@@ -13,16 +13,29 @@ import { useState } from "react";
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store";
+import { apiClient } from "@/lib/api/client";
 
-const CURRENT_DAY = 2;
 const CHECK_IN_REWARD = 2;
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
 
-export function DailyCheckInCard() {
-  const [visibleMonth, setVisibleMonth] = useState<Date>(new Date(2026, 8, 1));
+export function DailyCheckInCard({
+  summary,
+  onUpdated,
+}: {
+  summary: any;
+  onUpdated: () => void;
+}) {
+  const [visibleMonth, setVisibleMonth] = useState<Date>(new Date());
+  const [isCheckingIn, setIsCheckingIn] = useState(false);
   const lastCheckIn = useAuthStore((state) => state.lastCheckIn);
   const completeCheckIn = useAuthStore((state) => state.completeCheckIn);
-  const hasCheckedIn = lastCheckIn === new Date().toISOString().slice(0, 10);
+  const today = new Date().toISOString().slice(0, 10);
+  const checkInDates = new Set<string>(
+    (summary?.checkIns ?? []).map((item: any) =>
+      String(item.checkInDate).slice(0, 10),
+    ),
+  );
+  const hasCheckedIn = checkInDates.has(today);
   const monthLabel = new Intl.DateTimeFormat("en", {
     month: "long",
     year: "numeric",
@@ -42,7 +55,13 @@ export function DailyCheckInCard() {
 
   const checkIn = (): void => {
     if (hasCheckedIn) return;
-    completeCheckIn();
+    setIsCheckingIn(true);
+    void apiClient("/api/v1/rewards/check-in", {
+      method: "POST",
+      credentials: "include",
+    })
+      .then(() => onUpdated())
+      .finally(() => setIsCheckingIn(false));
   };
 
   return (
@@ -100,11 +119,9 @@ export function DailyCheckInCard() {
         ))}
         {Array.from({ length: daysInMonth }, (_, index) => index + 1).map(
           (day) => {
-            const isCurrentMonth =
-              visibleMonth.getFullYear() === 2026 &&
-              visibleMonth.getMonth() === 8;
-            const isComplete = isCurrentMonth && day === 1;
-            const isToday = isCurrentMonth && day === CURRENT_DAY;
+            const dateKey = `${visibleMonth.getFullYear()}-${String(visibleMonth.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+            const isComplete = checkInDates.has(dateKey);
+            const isToday = dateKey === today;
             return (
               <span
                 className={cn(
@@ -135,7 +152,8 @@ export function DailyCheckInCard() {
 
       <Button
         className="mt-4 w-full gap-2"
-        disabled={hasCheckedIn}
+        disabled={hasCheckedIn || isCheckingIn}
+        loading={isCheckingIn}
         onClick={checkIn}
       >
         {hasCheckedIn

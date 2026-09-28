@@ -1,12 +1,16 @@
 import type { ButtonHTMLAttributes } from "react";
+import { LoaderCircle } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
 export function Button({
   className,
+  loading = false,
   type = "button",
+  children,
+  disabled,
   ...props
-}: ButtonHTMLAttributes<HTMLButtonElement>) {
+}: ButtonHTMLAttributes<HTMLButtonElement> & { loading?: boolean }) {
   return (
     <button
       type={type}
@@ -15,6 +19,10 @@ export function Button({
         className,
       )}
       {...props}
-    />
+      disabled={loading || disabled}
+    >
+      {loading ? <LoaderCircle aria-hidden="true" className="mr-2 size-4 animate-spin" /> : null}
+      {loading ? "Please wait…" : children}
+    </button>
   );
 }

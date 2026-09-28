@@ -5,9 +5,16 @@ import { ArrowLeft, Users } from "lucide-react";
 
 import { AppShell } from "@/components/layout";
 import { DataState } from "@/components/ui";
-import { REFERRALS } from "@/features/rewards/components/referral-rewards-card";
+import { apiClient } from "@/lib/api/client";
+import { useEffect, useState } from "react";
 
 export default function ReferralHistoryPage() {
+  const [referrals, setReferrals] = useState<any[]>([]);
+  useEffect(() => {
+    void apiClient<any>("/api/v1/rewards/summary", {
+      credentials: "include",
+    }).then((data) => setReferrals(data.referrals ?? []));
+  }, []);
   return (
     <AppShell>
       <main className="mx-auto w-full max-w-3xl px-5 py-8 sm:py-10">
@@ -31,33 +38,36 @@ export default function ReferralHistoryPage() {
         <section className="surface-card mt-8 overflow-hidden p-5 sm:p-6">
           <div className="mb-4 flex items-center justify-between">
             <p className="text-foreground text-sm font-semibold">
-              {REFERRALS.length} invited
+              {referrals.length} invited
             </p>
             <p className="text-muted-foreground text-xs">50 XP each</p>
           </div>
-          {REFERRALS.length ? (
+          {referrals.length ? (
             <div className="divide-border border-border/60 divide-y rounded-xl border px-3">
-              {REFERRALS.map((referral) => (
+              {referrals.map((referral) => (
                 <div
                   className="flex items-center justify-between gap-3 py-3.5"
-                  key={referral.name}
+                  key={referral.id}
                 >
                   <div className="min-w-0">
                     <p className="text-foreground text-[.8rem] font-semibold">
-                      {referral.name}
+                      {referral.referredUser?.firstName ??
+                        referral.referredUser?.email}
                     </p>
                     <p className="text-muted-foreground text-xs">
-                      {referral.status}
+                      {referral.status === "ACTIVATED"
+                        ? "Activated"
+                        : "Pending"}
                     </p>
                   </div>
                   <span
                     className={
-                      referral.reward === "+50 XP"
+                      referral.status === "ACTIVATED"
                         ? "text-success text-xs font-bold"
                         : "text-muted-foreground text-xs font-medium"
                     }
                   >
-                    {referral.reward}
+                    {referral.status === "ACTIVATED" ? "+50 XP" : "Pending"}
                   </span>
                 </div>
               ))}

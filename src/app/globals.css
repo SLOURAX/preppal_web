@@ -20,6 +20,16 @@
   }
 }
 
+@keyframes mascot-breathe {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.035) rotate(-1deg);
+  }
+}
+
 @keyframes loading-stage {
   0%,
   100% {

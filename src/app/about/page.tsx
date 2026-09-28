@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowRight, BookOpenCheck, Coins, BarChart } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight } from "lucide-react";
 import { AppShell } from "@/components/layout";
 
 export const metadata = {
@@ -9,17 +10,17 @@ export const metadata = {
 
 const PRINCIPLES = [
   {
-    icon: BookOpenCheck,
+    mascot: "/assets/mascots/thinking.png",
     title: "Learn with purpose",
     text: "Practice with professionally authored and AI-powered questions built around real exam pathways.",
   },
   {
-    icon: BarChart,
+    mascot: "/assets/mascots/encouraging.png",
     title: "See your progress",
     text: "Get clear explanations, build streaks, and understand where every improvement comes from.",
   },
   {
-    icon: Coins,
+    mascot: "/assets/mascots/proud.png",
     title: "Earn as you grow",
     text: "Eligible learning activities earn XP, which can be converted into withdrawable Preppal Coins.",
   },
@@ -61,13 +62,19 @@ export default function AboutPage() {
           </div>
         </section>
         <section className="mt-8 grid gap-3 sm:mt-14 sm:grid-cols-3 sm:gap-4">
-          {PRINCIPLES.map(({ icon: Icon, title, text }) => (
+          {PRINCIPLES.map(({ mascot, title, text }) => (
             <article
               className="surface-card flex items-start gap-4 p-4 sm:block sm:p-6"
               key={title}
             >
-              <span className="bg-primary/10 text-primary grid aspect-square size-11 shrink-0 place-items-center rounded-2xl">
-                <Icon className="size-5" />
+              <span className="bg-primary/10 text-primary grid aspect-square size-11 shrink-0 place-items-center overflow-hidden rounded-2xl">
+                <Image
+                  alt=""
+                  className="size-10 object-contain"
+                  height={40}
+                  src={mascot}
+                  width={40}
+                />
               </span>
               <div className="min-w-0">
                 <h2 className="text-foreground text-base font-bold sm:mt-5">

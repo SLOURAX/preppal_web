@@ -2,11 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowDownLeft,
   ArrowUpRight,
   ChevronRight,
-  Coins,
   CreditCard,
   History,
   LoaderCircle,
@@ -120,7 +120,12 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3">
                 <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-white/10 text-violet-100">
-                  <Coins className="size-5" />
+                  <Image
+                    alt=""
+                    height={22}
+                    src="/assets/coins/preppal-coin.png"
+                    width={22}
+                  />
                 </span>
                 <div>
                   <p className="text-sm font-medium text-violet-200">
@@ -238,7 +243,13 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             </label>
             <div className="mt-1 flex items-center gap-2">
               <div className="bg-surface-subtle flex flex-1 items-center gap-2 rounded-xl px-3">
-                <Coins className="text-primary size-4" />
+                <Image
+                  alt=""
+                  className="size-[18px] object-contain"
+                  height={18}
+                  src="/assets/coins/preppal-coin.png"
+                  width={18}
+                />
                 <input
                   className="text-foreground w-full bg-transparent py-2.5 text-sm font-bold outline-none"
                   id="xp-amount"
@@ -450,7 +461,13 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
           </div>
         </div>
         <div className="surface-card flex items-center gap-3 rounded-2xl p-4 sm:p-5">
-          <Coins className="size-5 text-amber-500" />
+          <Image
+            alt=""
+            className="size-[22px] object-contain"
+            height={22}
+            src="/assets/coins/preppal-coin.png"
+            width={22}
+          />
           <div>
             <p className="text-muted-foreground text-xs">Conversion rate</p>
             <p className="text-foreground text-sm font-bold">10 XP = 1 coin</p>

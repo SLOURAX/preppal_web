@@ -1,5 +1,6 @@
-import { ArrowRight, Award, Coins, Gift } from "lucide-react";
+import { ArrowRight, Award, Gift } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 import { DataState } from "@/components/ui";
@@ -51,8 +52,14 @@ export function RewardCatalog({ balance }: RewardCatalogProps) {
                   </p>
                   <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
                     <span className="text-foreground flex items-center gap-1 text-xs font-semibold">
-                      <Coins className="text-primary size-3.5" />
-                      {reward.cost.toLocaleString()} P
+                      <Image
+                        alt=""
+                        className="size-[18px] object-contain"
+                        height={18}
+                        src="/assets/coins/preppal-coin.png"
+                        width={18}
+                      />
+                      {balance.toLocaleString()} P
                     </span>
                     {reward.type === "plan" ? (
                       <Link

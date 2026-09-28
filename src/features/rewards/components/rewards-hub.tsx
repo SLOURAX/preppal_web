@@ -5,6 +5,8 @@ import Link from "next/link";
 
 import { AppShell } from "@/components/layout";
 import { useAuthStore } from "@/store";
+import { apiClient } from "@/lib/api/client";
+import { useEffect, useState } from "react";
 
 import { DailyCheckInCard } from "./daily-check-in-card";
 import { ReferralRewardsCard } from "./referral-rewards-card";
@@ -13,6 +15,21 @@ import { RewardCatalog } from "./reward-catalog";
 export function RewardsHub() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const balance = useAuthStore((state) => state.preppalBalance);
+  const setRewardBalances = useAuthStore((state) => state.setRewardBalances);
+  const [summary, setSummary] = useState<any>(null);
+  const refreshSummary = () =>
+    apiClient<any>("/api/v1/rewards/summary", { credentials: "include" })
+      .then((nextSummary) => {
+        setSummary(nextSummary);
+        setRewardBalances({
+          experiencePoints: nextSummary.experiencePoints ?? 0,
+          preppalBalance: nextSummary.coins ?? 0,
+        });
+      })
+      .catch(() => setSummary(null));
+  useEffect(() => {
+    if (isAuthenticated) void refreshSummary();
+  }, [isAuthenticated]);
 
   return (
     <AppShell>
@@ -23,7 +40,7 @@ export function RewardsHub() {
               <Gift className="size-5" />
             </span>
             <div>
-              <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
+              <h1 className="text-foreground text-xl font-extrabold tracking-tight sm:text-2xl">
                 Rewards
               </h1>
               <p className="text-muted-foreground mt-1 max-w-xl text-[.8rem] leading-relaxed">
@@ -37,8 +54,8 @@ export function RewardsHub() {
         {isAuthenticated ? (
           <div className="mt-7 space-y-8">
             <div className="grid items-stretch gap-5 lg:grid-cols-2">
-              <DailyCheckInCard />
-              <ReferralRewardsCard />
+              <DailyCheckInCard summary={summary} onUpdated={refreshSummary} />
+              <ReferralRewardsCard summary={summary} />
             </div>
             <RewardCatalog balance={balance} />
           </div>

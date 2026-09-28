@@ -26,12 +26,14 @@ import {
   AuthDivider,
 } from "@/features/auth";
 import { useAuthStore } from "@/store";
+import { apiClient } from "@/lib/api/client";
 
 function RegisterContent() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestedReturnTo = searchParams.get("returnTo");
+  const referralCodeFromUrl = searchParams.get("referralCode") ?? "";
   const returnTo = requestedReturnTo?.startsWith("/") ? requestedReturnTo : "/";
   const [countryCode, setCountryCode] = useState("+234");
   const [learningLevel, setLearningLevel] = useState("");
@@ -39,8 +41,7 @@ function RegisterContent() {
   const [referralSource, setReferralSource] = useState("");
   const [formError, setFormError] = useState("");
   const [verificationEmail, setVerificationEmail] = useState("");
-  const [registrationEmail, setRegistrationEmail] = useState("");
-  const [isReferralModalOpen, setIsReferralModalOpen] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
   const { showFeedback } = useFeedback();
 
   useEffect(() => {
@@ -59,6 +60,7 @@ function RegisterContent() {
     const firstName = value("first-name");
     const surname = value("surname");
     const email = value("register-email");
+    const referralCode = value("referral-code");
     const phone = value("phone");
     if (!firstName || !surname)
       return setFormError("Enter your first name and surname.");
@@ -66,8 +68,10 @@ function RegisterContent() {
       return setFormError("Enter a valid email address.");
     if (!countryCode || !phone)
       return setFormError("Choose a country code and enter your phone number.");
-    if (!learningLevel || !examGoal)
-      return setFormError("Choose your learning level and exam goal.");
+    if (!learningLevel || !examGoal || !referralSource)
+      return setFormError(
+        "Choose your learning level, exam goal, and how you heard about us.",
+      );
     const password = value("new-password");
     const confirmPassword = value("confirm-password");
     if (password.length < 8)
@@ -77,16 +81,65 @@ function RegisterContent() {
     if (!form.querySelector<HTMLInputElement>("#terms")?.checked)
       return setFormError("Accept the Terms and Privacy Policy to continue.");
     setFormError("");
-    setRegistrationEmail(email);
-    setIsReferralModalOpen(true);
+    setIsRegistering(true);
+    void apiClient("/api/v1/auth/register", {
+      method: "POST",
+      body: JSON.stringify({
+        firstName,
+        surname,
+        email,
+        phone,
+        phoneCountryCode: countryCode,
+        learningLevel,
+        primaryExamGoal: examGoal,
+        password,
+        referralSource,
+        referralCode,
+      }),
+    })
+      .then(() => {
+        showFeedback({
+          kind: "success",
+          title: "Account successfully registered",
+          message:
+            "Your account has been created. Check your email to verify it, then proceed to sign in.",
+        });
+        setVerificationEmail(email);
+      })
+      .catch((error: unknown) => {
+        showFeedback({
+          kind: "error",
+          title: "Registration failed",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Unable to create your account.",
+        });
+      })
+      .finally(() => setIsRegistering(false));
   };
 
   if (verificationEmail)
     return (
       <VerificationStep
         email={verificationEmail}
-        onVerified={() => {
-          router.push(returnTo);
+        onVerified={async (code) => {
+          try {
+            await apiClient("/api/v1/auth/verify-email", {
+              method: "POST",
+              body: JSON.stringify({ token: code }),
+            });
+            router.push("/login?verified=1");
+          } catch (error) {
+            showFeedback({
+              kind: "error",
+              title: "Verification failed",
+              message:
+                error instanceof Error
+                  ? error.message
+                  : "That code is invalid or expired.",
+            });
+          }
         }}
         onBack={() => setVerificationEmail("")}
       />
@@ -149,6 +202,14 @@ function RegisterContent() {
             required
             type="email"
           />
+          <FormField
+            autoComplete="off"
+            icon={UserRound}
+            id="referral-code"
+            label="Referral code (optional)"
+            placeholder="Enter a friend’s code"
+            defaultValue={referralCodeFromUrl}
+          />
           <div className="space-y-1.5">
             <label
               className="text-foreground text-sm font-medium"
@@ -206,6 +267,23 @@ function RegisterContent() {
             compact
             value={examGoal}
           />
+          <ListSelect
+            icon={Megaphone}
+            id="referral-source"
+            label="How did you hear about us?"
+            onChange={setReferralSource}
+            options={[
+              "A friend or family member",
+              "Social media",
+              "Google search",
+              "School or community",
+              "Online advert",
+              "Other",
+            ].map((option) => ({ value: option, label: option }))}
+            placeholder="Choose an option"
+            compact
+            value={referralSource}
+          />
           <PasswordField
             autoComplete="new-password"
             id="new-password"
@@ -248,78 +326,15 @@ function RegisterContent() {
             </>
           }
         />
-        <Button className="h-11 w-full rounded-xl" type="submit">
+        <Button
+          className="h-11 w-full rounded-xl"
+          loading={isRegistering}
+          type="submit"
+        >
           Create account
         </Button>
       </form>
-      {isReferralModalOpen && (
-        <ReferralModal
-          value={referralSource}
-          onChange={setReferralSource}
-          onContinue={() => {
-            if (!referralSource) return;
-            setIsReferralModalOpen(false);
-            setVerificationEmail(registrationEmail);
-          }}
-        />
-      )}
     </>
-  );
-}
-
-function ReferralModal({
-  value,
-  onChange,
-  onContinue,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  onContinue: () => void;
-}) {
-  return (
-    <div className="fixed inset-0 z-[80] grid place-items-center p-4">
-      <div
-        aria-hidden="true"
-        className="bg-background/70 absolute inset-0 backdrop-blur-md"
-      />
-      <div className="bg-surface/80 border-border/70 relative z-10 w-full max-w-md rounded-3xl border p-6 shadow-2xl backdrop-blur-2xl sm:p-8">
-        <div className="bg-primary/10 text-primary mx-auto mb-4 grid size-14 place-items-center rounded-2xl">
-          <Megaphone className="size-7" />
-        </div>
-        <h2 className="text-foreground text-center text-[1.2rem] font-bold tracking-tight">
-          Help us meet you where you are
-        </h2>
-        <p className="text-muted-foreground text-center text-[.8rem] leading-4">
-          Your answer helps us improve the Preppal experience for learners like
-          you.
-        </p>
-        <div className="mt-6">
-          <ListSelect
-            id="referral-source-modal"
-            label="Where did you hear about us?"
-            onChange={onChange}
-            options={[
-              "A friend or family member",
-              "Social media",
-              "Google search",
-              "School or community",
-              "Online advert",
-              "Other",
-            ].map((option) => ({ value: option, label: option }))}
-            placeholder="Choose an option"
-            value={value}
-          />
-        </div>
-        <Button
-          className="mt-6 h-11 w-full rounded-xl"
-          disabled={!value}
-          onClick={onContinue}
-          type="button"
-        >
-          Register now
-        </Button>
-      </div>
-    </div>
   );
 }
 
@@ -329,7 +344,7 @@ function VerificationStep({
   onBack,
 }: {
   email: string;
-  onVerified: () => void;
+  onVerified: (code: string) => void | Promise<void>;
   onBack: () => void;
 }) {
   const [code, setCode] = useState("");
@@ -348,7 +363,7 @@ function VerificationStep({
     event.preventDefault();
     if (!/^\d{6}$/.test(code))
       return setError("Enter the six-digit code from your email.");
-    onVerified();
+    void onVerified(code);
   };
   return (
     <div className="space-y-6">

@@ -19,6 +19,12 @@ const TRUST_POINTS = [
   },
 ] as const;
 
+const MASCOT_BY_VARIANT = {
+  content: "/assets/mascots/thinking.png",
+  practice: "/assets/mascots/encouraging.png",
+  rewards: "/assets/mascots/proud.png",
+} as const;
+
 export function TrustSection() {
   return (
     <section className="overflow-hidden px-5 py-10 sm:px-10 sm:py-12">
@@ -55,7 +61,7 @@ export function TrustSection() {
                   alt=""
                   className={`relative z-10 size-26 object-contain sm:size-28 ${variant === "content" ? "hue-rotate-[8deg]" : variant === "practice" ? "hue-rotate-[55deg] saturate-150" : "hue-rotate-[-18deg] saturate-125"}`}
                   height={85}
-                  src="/owl-mascot.png"
+                  src={MASCOT_BY_VARIANT[variant]}
                   width={85}
                 />
               </div>

@@ -17,6 +17,13 @@ const moodLabels: Record<MascotMood, string> = {
   thinking: "Preppal mascot thinking",
 };
 
+const moodSources: Record<MascotMood, string> = {
+  wave: "/assets/mascots/encouraging.png",
+  encourage: "/assets/mascots/encouraging.png",
+  celebrate: "/assets/mascots/excited.png",
+  thinking: "/assets/mascots/thinking.png",
+};
+
 const sizeClasses = {
   sm: "size-14",
   md: "size-20",
@@ -44,10 +51,10 @@ export function Mascot({
     >
       <Image
         alt={alt ?? moodLabels[mood]}
-        className="object-contain drop-shadow-sm"
+        className="object-contain drop-shadow-sm motion-safe:animate-[mascot-breathe_2.8s_ease-in-out_infinite]"
         fill
         sizes="112px"
-        src="/owl-mascot.png"
+        src={moodSources[mood]}
       />
     </div>
   );

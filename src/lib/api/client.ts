@@ -14,10 +14,22 @@ export async function apiClient<T>(
   path: string,
   init?: RequestInit,
 ): Promise<T> {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 30_000);
+  const token =
+    typeof window !== "undefined"
+      ? window.localStorage.getItem("preppal_access_token")
+      : null;
   const response = await fetch(`${env.apiUrl}${path}`, {
     ...init,
-    headers: { "Content-Type": "application/json", ...init?.headers },
+    signal: controller.signal,
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...init?.headers,
+    },
   });
+  window.clearTimeout(timeout);
 
   if (!response.ok) {
     let message = `API request failed (${response.status})`;

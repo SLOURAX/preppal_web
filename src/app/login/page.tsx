@@ -18,6 +18,7 @@ import {
   AuthDivider,
 } from "@/features/auth";
 import { useAuthStore } from "@/store";
+import { ApiError } from "@/lib/api/client";
 import { loginSchema } from "@/features/auth/auth.schemas";
 
 function LoginContent() {
@@ -26,13 +27,24 @@ function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestedReturnTo = searchParams.get("returnTo");
+  const wasVerified = searchParams.get("verified") === "1";
   const returnTo = requestedReturnTo?.startsWith("/") ? requestedReturnTo : "/";
   const [formError, setFormError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { showFeedback } = useFeedback();
 
   useEffect(() => {
     if (isAuthenticated) router.replace(returnTo);
   }, [isAuthenticated, returnTo, router]);
+
+  useEffect(() => {
+    if (!wasVerified) return;
+    showFeedback({
+      kind: "success",
+      title: "Account successfully verified",
+      message: "Your email has been verified. You can now proceed to sign in.",
+    });
+  }, [showFeedback, wasVerified]);
 
   if (isAuthenticated) return null;
 
@@ -51,9 +63,18 @@ function LoginContent() {
         parsed.error.issues[0]?.message ?? "Enter valid login details.",
       );
     setFormError("");
+    setIsSubmitting(true);
     void login(parsed.data)
       .then(() => router.push(returnTo))
       .catch((error: unknown) => {
+        if (
+          error instanceof ApiError &&
+          error.status === 403 &&
+          identifier.includes("@")
+        ) {
+          router.push(`/verify-email?email=${encodeURIComponent(identifier)}`);
+          return;
+        }
         showFeedback({
           kind: "error",
           title: "Sign in failed",
@@ -62,7 +83,8 @@ function LoginContent() {
               ? error.message
               : "Unable to sign in. Please try again.",
         });
-      });
+      })
+      .finally(() => setIsSubmitting(false));
   };
 
   const handleSocialLogin = () =>
@@ -117,7 +139,11 @@ function LoginContent() {
             Forgot password?
           </Link>
         </div>
-        <Button className="h-11 w-full rounded-xl" type="submit">
+        <Button
+          className="h-11 w-full rounded-xl"
+          loading={isSubmitting}
+          type="submit"
+        >
           Sign in
         </Button>
       </form>

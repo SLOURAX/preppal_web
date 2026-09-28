@@ -28,10 +28,9 @@ const REFERRAL_MILESTONES = [
 
 export function ReferralSection() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const userName = useAuthStore((state) => state.userName);
+  const referralCode = useAuthStore((state) => state.referralCode);
+  const referralUrl = useAuthStore((state) => state.referralLink);
   const [hasCopied, setHasCopied] = useState<boolean>(false);
-  const referralCode = `${userName.split(" ")[0]?.toUpperCase() ?? "PREPPAL"}50`;
-  const referralUrl = `https://preppal.app/invite/${referralCode}`;
 
   const copyReferralLink = async (): Promise<void> => {
     await navigator.clipboard.writeText(referralUrl);

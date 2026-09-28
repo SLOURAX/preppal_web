@@ -43,6 +43,12 @@ function FeedbackDialog({
   feedback: Feedback;
   onClose: () => void;
 }) {
+  const mascotByKind = {
+    success: "/assets/mascots/success.png",
+    error: "/assets/mascots/error.png",
+    info: "/assets/mascots/thinking.png",
+  } as const;
+
   return (
     <div
       className="fixed inset-0 z-[200] grid place-items-center bg-slate-950/35 p-5 backdrop-blur-sm"
@@ -56,11 +62,11 @@ function FeedbackDialog({
       >
         <div className="flex flex-col items-center text-center">
           <Image
-            alt="Preppal mascot"
-            className="size-40 object-contain"
-            height={160}
-            src="/owl-mascot.png"
-            width={160}
+            alt={`${feedback.kind} Preppal mascot`}
+            className="size-44 object-contain"
+            height={176}
+            src={mascotByKind[feedback.kind]}
+            width={176}
           />
           <div className="mt-1 min-w-0">
             <h2
