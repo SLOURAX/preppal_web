@@ -77,9 +77,9 @@ export function DailyCheckInCard({
   };
 
   return (
-    <section className="surface-card min-w-0 overflow-hidden p-4 sm:p-6">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-center gap-3">
+    <section className="surface-card w-full max-w-full min-w-0 overflow-hidden p-3.5 sm:p-6">
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+        <div className="flex min-w-0 items-center gap-3">
           <span className="bg-primary/10 text-primary grid size-10 shrink-0 place-items-center rounded-xl">
             <CalendarCheck2 className="size-5" />
           </span>
@@ -92,12 +92,12 @@ export function DailyCheckInCard({
             </p> */}
           </div>
         </div>
-        <span className="bg-surface text-primary flex h-10 shrink-0 items-center justify-center rounded-full px-5 py-1 text-[.75rem] font-semibold whitespace-nowrap">
+        <span className="bg-surface text-primary flex h-9 w-fit shrink-0 items-center justify-center self-start rounded-full px-4 py-1 text-[.75rem] font-semibold whitespace-nowrap sm:h-10 sm:self-auto sm:px-5">
           {streak} {streak === 1 ? "day" : "days"}
         </span>
       </div>
 
-      <div className="mt-6 flex items-center justify-between">
+      <div className="mt-5 flex min-w-0 items-center justify-between gap-2 sm:mt-6">
         <button
           aria-label="Previous month"
           className="hover:bg-surface-subtle grid size-8 place-items-center rounded-full"
@@ -106,7 +106,9 @@ export function DailyCheckInCard({
         >
           <ArrowLeft className="size-4" />
         </button>
-        <p className="text-[.85rem] font-semibold">{monthLabel}</p>
+        <p className="min-w-0 truncate text-center text-[.8rem] font-semibold sm:text-[.85rem]">
+          {monthLabel}
+        </p>
         <button
           aria-label="Next month"
           className="hover:bg-surface-subtle grid size-8 place-items-center rounded-full"
@@ -117,7 +119,7 @@ export function DailyCheckInCard({
         </button>
       </div>
 
-      <div className="mt-4 grid grid-cols-7 gap-y-2 text-center">
+      <div className="mt-4 grid min-w-0 grid-cols-7 gap-x-0 gap-y-2 text-center">
         {WEEKDAYS.map((weekday) => (
           <span
             className="text-muted-foreground text-[9px] font-medium"
@@ -137,7 +139,7 @@ export function DailyCheckInCard({
             return (
               <span
                 className={cn(
-                  "mx-auto grid size-7 place-items-center rounded-full text-xs",
+                  "mx-auto grid size-6 place-items-center rounded-full text-[11px] sm:size-7 sm:text-xs",
                   isComplete && "bg-success/10 text-success font-semibold",
                   isToday && "bg-primary text-primary-foreground font-semibold",
                 )}
@@ -150,8 +152,8 @@ export function DailyCheckInCard({
         )}
       </div>
 
-      <div className="bg-surface mt-5 rounded-2xl p-4">
-        <div className="flex items-center justify-between gap-3 text-xs">
+      <div className="bg-surface mt-5 rounded-2xl p-3.5 sm:p-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
           <span className="text-muted-foreground font-semibold">
             Next milestone
           </span>

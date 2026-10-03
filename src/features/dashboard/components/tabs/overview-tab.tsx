@@ -5,11 +5,55 @@ import {
   ArrowUpRight,
   Crosshair,
   ArrowRight,
+  Trophy,
+  Gamepad2,
+  Gift,
+  Newspaper,
+  Crown,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuthStore } from "@/store";
 import { Mascot } from "@/components/ui";
+
+const EXPLORE_LINKS = [
+  {
+    title: "Leaderboard",
+    description: "See your rank and this week's top learners.",
+    href: "/leaderboard",
+    action: "View rankings",
+    icon: Trophy,
+    color: "text-amber-600 bg-amber-500/12",
+    glow: "bg-amber-400/15",
+  },
+  {
+    title: "Games",
+    description: "Play quick challenges and earn more XP.",
+    href: "/games",
+    action: "Play now",
+    icon: Gamepad2,
+    color: "text-violet-600 bg-violet-500/12",
+    glow: "bg-violet-400/15",
+  },
+  {
+    title: "Rewards",
+    description: "Check in, invite friends, and redeem your progress.",
+    href: "/rewards",
+    action: "Open rewards",
+    icon: Gift,
+    color: "text-emerald-600 bg-emerald-500/12",
+    glow: "bg-emerald-400/15",
+  },
+  {
+    title: "News & blog",
+    description: "Read study tips, exam updates, and useful guides.",
+    href: "/news",
+    action: "Start reading",
+    icon: Newspaper,
+    color: "text-rose-600 bg-rose-500/12",
+    glow: "bg-rose-400/15",
+  },
+] as const;
 
 export function OverviewTab() {
   const userName = useAuthStore((s) => s.userName);
@@ -96,6 +140,14 @@ export function OverviewTab() {
             <p className="text-muted-foreground mt-1 text-[11px] sm:text-xs">
               Ready for your next win?
             </p>
+            <Link
+              className="border-primary/20 bg-surface/75 text-primary hover:bg-surface mt-2 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-bold shadow-sm transition-all hover:-translate-y-0.5 sm:px-3 sm:py-1.5 sm:text-[11px]"
+              href="/pricing"
+            >
+              <Crown className="size-3.5" />
+              Go Premium
+              <ArrowRight className="size-3" />
+            </Link>
           </div>
           <div className="relative ml-auto flex h-16 w-20 shrink-0 sm:h-28 sm:w-32">
             <Image
@@ -169,11 +221,71 @@ export function OverviewTab() {
         ))}
       </div>
 
+      {/* Links back to the main Preppal experience */}
+      <section className="surface-card overflow-hidden p-4 sm:p-6">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <p className="text-primary text-[10px] font-bold tracking-[0.18em] uppercase">
+              Explore Preppal
+            </p>
+            <h3 className="text-foreground mt-1 text-base font-bold sm:text-lg">
+              There is more waiting for you
+            </h3>
+            <p className="text-muted-foreground mt-1 max-w-lg text-xs leading-relaxed">
+              Jump from your dashboard into rankings, games, rewards, plans, and
+              the latest learning stories.
+            </p>
+          </div>
+          <Mascot
+            alt="Preppal mascot inviting you to explore"
+            className="hidden shrink-0 sm:block"
+            mood="celebrate"
+            size="md"
+          />
+        </div>
+
+        <div className="mt-5 grid grid-cols-1 gap-3 min-[360px]:grid-cols-2">
+          {EXPLORE_LINKS.map(
+            ({ title, description, href, action, icon: Icon, color, glow }) => (
+              <Link
+                className="border-border/70 bg-surface-subtle/35 hover:border-primary/25 hover:bg-surface group relative min-w-0 overflow-hidden rounded-2xl border p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                href={href}
+                key={title}
+              >
+                <span
+                  aria-hidden="true"
+                  className={`pointer-events-none absolute -top-8 -right-8 size-24 rounded-full blur-2xl ${glow}`}
+                />
+                <div className="relative flex items-start gap-3">
+                  <span
+                    className={`grid size-10 shrink-0 place-items-center rounded-xl ${color}`}
+                  >
+                    <Icon className="size-5" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <h4 className="text-foreground text-sm font-bold">
+                      {title}
+                    </h4>
+                    <p className="text-muted-foreground mt-1 text-[11px] leading-4">
+                      {description}
+                    </p>
+                    <span className="text-primary mt-3 inline-flex items-center gap-1 text-[11px] font-bold">
+                      {action}
+                      <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ),
+          )}
+        </div>
+      </section>
+
       {/* Weekly progress */}
       <div className="surface-card p-5 sm:p-6">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h3 className="text-foreground font-semibold">Weekly goal</h3>
+            <h3 className="text-foreground font-bold">Weekly goal</h3>
             <p className="text-muted-foreground mt-1 text-xs">
               A little consistency goes a long way
             </p>
@@ -245,7 +357,7 @@ export function OverviewTab() {
       <div className="surface-card overflow-hidden p-5 sm:p-6">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h3 className="text-foreground font-semibold">Recent quizzes</h3>
+            <h3 className="text-foreground font-bold">Recent quizzes</h3>
             <p className="text-muted-foreground text-xs">
               Your latest practice activity
             </p>

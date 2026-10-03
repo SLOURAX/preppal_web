@@ -27,6 +27,7 @@ interface AuthState {
   depositedFunds: number;
   experiencePoints: number;
   userName: string;
+  userEmail: string;
   userPlan: string;
   referralCode: string;
   referralLink: string;
@@ -63,6 +64,7 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       ...INITIAL_FINANCE_BALANCES,
       userName: "Solomon Udumizi",
+      userEmail: "",
       userPlan: "Level 1",
       referralCode: "",
       referralLink: "",
@@ -95,6 +97,7 @@ export const useAuthStore = create<AuthState>()(
         set({
           isAuthenticated: true,
           userName: response.user.fullName,
+          userEmail: response.user.email,
           experiencePoints: response.user.experiencePoints,
           preppalBalance: response.user.wallet?.availableBalanceMinor ?? 0,
           referralCode: response.user.referralCode,
@@ -109,6 +112,7 @@ export const useAuthStore = create<AuthState>()(
         window.localStorage.removeItem("preppal_access_token");
         set({
           isAuthenticated: false,
+          userEmail: "",
           isSignOutModalOpen: false,
           weeklyGoal: null,
           weeklyActivity: initialActivity,

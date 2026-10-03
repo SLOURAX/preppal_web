@@ -33,7 +33,7 @@ export function RewardsHub() {
 
   return (
     <AppShell>
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
+      <main className="mx-auto w-full max-w-5xl min-w-0 flex-1 px-3 py-6 sm:px-6 sm:py-10">
         <header className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-start gap-3">
             <span className="bg-primary/10 text-primary grid size-11 shrink-0 place-items-center rounded-2xl">
@@ -53,7 +53,7 @@ export function RewardsHub() {
 
         {isAuthenticated ? (
           <div className="mt-7 space-y-8">
-            <div className="grid items-stretch gap-5 lg:grid-cols-2">
+            <div className="grid min-w-0 grid-cols-1 items-stretch gap-5 lg:grid-cols-2">
               <DailyCheckInCard summary={summary} onUpdated={refreshSummary} />
               <ReferralRewardsCard summary={summary} />
             </div>

@@ -40,6 +40,7 @@ const NOTIFICATION_PREFS = [
 export function AccountTab() {
   const { resolvedTheme } = useTheme();
   const userName = useAuthStore((s) => s.userName);
+  const userEmail = useAuthStore((s) => s.userEmail);
   const userPlan = useAuthStore((s) => s.userPlan);
   const preppalBalance = useAuthStore((s) => s.preppalBalance);
   const weeklyGoal = useAuthStore((s) => s.weeklyGoal);
@@ -157,6 +158,21 @@ export function AccountTab() {
             >
               Edit
             </button>
+          ) : null}
+        </div>
+        <div className="flex items-center justify-between gap-4 px-5 py-5">
+          <div className="min-w-0">
+            <p className="text-foreground text-sm font-semibold">
+              Email address
+            </p>
+            <p className="text-muted-foreground mt-1 truncate text-xs">
+              {userEmail || "Sign in again to display your email"}
+            </p>
+          </div>
+          {userEmail ? (
+            <span className="bg-success/10 text-success rounded-full px-3 py-1 text-xs font-semibold">
+              Verified
+            </span>
           ) : null}
         </div>
         <div className="flex items-center justify-between gap-4 px-5 py-5">

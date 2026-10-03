@@ -43,12 +43,12 @@ export function ReferralRewardsCard({ summary }: { summary: any }) {
   };
 
   return (
-    <section className="surface-card flex flex-col p-5 sm:p-6">
-      <div className="flex items-start gap-3">
+    <section className="surface-card flex w-full max-w-full min-w-0 flex-col overflow-hidden p-3.5 sm:p-6">
+      <div className="flex min-w-0 items-start gap-3">
         <span className="bg-primary/10 text-primary grid size-10 shrink-0 place-items-center rounded-xl">
           <Users className="size-5" />
         </span>
-        <div>
+        <div className="min-w-0">
           <h2 className="text-foreground text-[.85rem] font-bold">
             Invite friends
           </h2>
@@ -58,7 +58,7 @@ export function ReferralRewardsCard({ summary }: { summary: any }) {
         </div>
       </div>
 
-      <dl className="bg-surface mt-6 grid grid-cols-3 rounded-2xl p-4">
+      <dl className="bg-surface mt-5 grid min-w-0 grid-cols-3 gap-1 rounded-2xl px-2 py-3 sm:mt-6 sm:p-4">
         {[
           { label: "Invited", value: summary?.referrals?.length ?? 0 },
           {
@@ -77,11 +77,11 @@ export function ReferralRewardsCard({ summary }: { summary: any }) {
               ) ?? 0,
           },
         ].map((stat) => (
-          <div className="text-center" key={stat.label}>
+          <div className="min-w-0 text-center" key={stat.label}>
             <dd className="text-primary text-[.9rem] font-semibold">
               {stat.value}
             </dd>
-            <dt className="text-muted-foreground mt-0.5 text-[.75rem] font-medium sm:text-[.75rem]">
+            <dt className="text-muted-foreground mt-0.5 truncate text-[10px] font-medium sm:text-[.75rem]">
               {stat.label}
             </dt>
           </div>
@@ -89,7 +89,7 @@ export function ReferralRewardsCard({ summary }: { summary: any }) {
       </dl>
 
       <div className="mt-5">
-        <div className="mb-2 flex items-center justify-between">
+        <div className="mb-2 flex min-w-0 items-center justify-between gap-3">
           <p className="text-foreground text-[.85rem] font-semibold">
             Your invites
           </p>
@@ -178,8 +178,8 @@ function ReferralValue({
   value,
 }: ReferralValueProps) {
   return (
-    <div className="bg-surface flex min-w-0 items-center gap-3 rounded-xl border !border-[#e5e5e5] p-2.5 dark:border-white/10">
-      <span className="text-muted-foreground grid size-8 shrink-0 place-items-center">
+    <div className="bg-surface flex min-w-0 items-center gap-1.5 rounded-xl border !border-[#e5e5e5] p-2 sm:gap-3 sm:p-2.5 dark:border-white/10">
+      <span className="text-muted-foreground grid size-7 shrink-0 place-items-center sm:size-8">
         {icon}
       </span>
       <div className="min-w-0 flex-1">
@@ -192,7 +192,7 @@ function ReferralValue({
       </div>
       <button
         aria-label={`Share ${label.toLowerCase()}`}
-        className="hover:bg-surface text-muted-foreground hover:text-foreground grid size-9 shrink-0 place-items-center rounded-lg transition-colors"
+        className="hover:bg-surface text-muted-foreground hover:text-foreground grid size-8 shrink-0 place-items-center rounded-lg transition-colors sm:size-9"
         onClick={onShare}
         type="button"
       >
@@ -200,7 +200,7 @@ function ReferralValue({
       </button>
       <button
         aria-label={`Copy ${label.toLowerCase()}`}
-        className="hover:bg-surface text-muted-foreground hover:text-foreground grid size-9 shrink-0 place-items-center rounded-lg transition-colors"
+        className="hover:bg-surface text-muted-foreground hover:text-foreground grid size-8 shrink-0 place-items-center rounded-lg transition-colors sm:size-9"
         onClick={onCopy}
         type="button"
       >
