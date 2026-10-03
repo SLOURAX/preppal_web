@@ -1,6 +1,7 @@
 "use client";
 
 import { X, BookOpen } from "lucide-react";
+import Image from "next/image";
 
 const INSTRUCTIONS = [
   "Select one answer per question by clicking on it.",
@@ -21,13 +22,24 @@ export function InstructionsModal({ onClose }: InstructionsModalProps) {
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="bg-surface relative z-10 w-full max-w-md overflow-hidden rounded-2xl shadow-2xl">
+      <div className="relative z-10 w-full max-w-md overflow-hidden rounded-3xl border border-white/70 bg-white/90 shadow-2xl shadow-slate-900/20 backdrop-blur-2xl">
+        <div className="bg-primary/10 mx-auto mt-4 grid size-24 place-items-center rounded-full">
+          <Image
+            alt="Preppal mascot ready to teach"
+            className="size-20 object-contain"
+            height={80}
+            src="/assets/mascots/thinking.png"
+            width={80}
+          />
+        </div>
         <div className="border-border flex items-center justify-between border-b px-4 py-4 sm:px-6 sm:py-5">
           <div className="flex items-center gap-2.5">
             <div className="bg-primary/10 grid size-8 place-items-center rounded-lg">
               <BookOpen className="text-primary size-4" />
             </div>
-            <h2 className="text-foreground font-bold">Exam Instructions</h2>
+            <h2 className="text-foreground text-sm font-bold">
+              Exam Instructions
+            </h2>
           </div>
           <button
             onClick={onClose}

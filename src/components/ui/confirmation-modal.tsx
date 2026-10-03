@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle } from "lucide-react";
+import Image from "next/image";
 import { useEffect } from "react";
 
 interface ConfirmationModalProps {
@@ -41,15 +41,27 @@ export function ConfirmationModal({
       <div
         aria-labelledby="confirmation-title"
         aria-modal="true"
-        className="bg-surface relative z-10 w-full max-w-sm rounded-2xl p-5 shadow-2xl"
+        className="relative z-10 w-full max-w-sm rounded-3xl border border-white/70 bg-white/90 p-5 shadow-2xl shadow-slate-900/20 backdrop-blur-2xl"
         role="dialog"
       >
-        <div className="flex flex-col items-start justify-center gap-3">
-          <span
-            className={`grid size-10 shrink-0 place-items-center rounded-xl ${destructive ? "bg-rose-500/10 text-rose-600" : "bg-amber-500/10 text-amber-600"}`}
-          >
-            <AlertTriangle className="size-5" />
-          </span>
+        <div className="bg-primary/10 mx-auto mb-3 grid size-24 place-items-center rounded-full">
+          <Image
+            alt={
+              destructive
+                ? "Preppal mascot looking concerned"
+                : "Preppal mascot asking you to confirm"
+            }
+            className="size-20 object-contain"
+            height={80}
+            src={
+              destructive
+                ? "/assets/mascots/error.png"
+                : "/assets/mascots/thinking.png"
+            }
+            width={80}
+          />
+        </div>
+        <div className="flex flex-col items-center justify-center gap-2 text-center">
           <div>
             <h2
               className="text-foreground text-sm font-bold sm:text-base"
@@ -57,7 +69,7 @@ export function ConfirmationModal({
             >
               {title}
             </h2>
-            <p className="text-muted-foreground mt-1 text-[.75rem] leading-5">
+            <p className="text-muted-foreground mx-auto mt-1 max-w-[18rem] text-xs leading-5">
               {description}
             </p>
           </div>

@@ -13,6 +13,7 @@ export interface FormFieldProps extends Omit<
   optional?: boolean;
   labelClassName?: string;
   trailing?: ReactNode;
+  hideLabel?: boolean;
 }
 
 export function FormField({
@@ -22,23 +23,28 @@ export function FormField({
   optional = false,
   labelClassName,
   trailing,
+  hideLabel = false,
   type = "text",
   ...inputProps
 }: FormFieldProps) {
   return (
     <div className="space-y-1.5">
-      <label
-        className={cn(
-          "text-foreground flex items-center gap-1 text-sm font-medium",
-          labelClassName,
-        )}
-        htmlFor={id}
-      >
-        {label}
-        {optional ? (
-          <span className="text-muted-foreground font-normal">(optional)</span>
-        ) : null}
-      </label>
+      {!hideLabel && (
+        <label
+          className={cn(
+            "text-foreground flex items-center gap-1 text-sm font-medium",
+            labelClassName,
+          )}
+          htmlFor={id}
+        >
+          {label}
+          {optional ? (
+            <span className="text-muted-foreground font-normal">
+              (optional)
+            </span>
+          ) : null}
+        </label>
+      )}
       <div className="group relative">
         <Icon
           aria-hidden="true"

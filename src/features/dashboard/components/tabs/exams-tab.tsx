@@ -104,7 +104,7 @@ export function ExamsTab() {
 
             <Link
               href={`/quiz?path=exam&choice=${exam.value}`}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 mt-auto flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition-colors"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 mt-auto flex items-center justify-center gap-2 rounded-xl py-2.5 text-[.8rem] font-medium transition-colors"
             >
               Start practice <ArrowRight className="size-4" />
             </Link>
@@ -128,7 +128,7 @@ export function ExamsTab() {
           href="/quiz?path=subject&choice=mathematics"
           className="border-border hover:bg-surface-subtle text-foreground hidden items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium transition-colors sm:flex"
         >
-          Go <ArrowRight className="size-4" />
+          Start <ArrowRight className="size-4" />
         </Link>
       </div>
     </div>

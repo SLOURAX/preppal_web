@@ -98,12 +98,8 @@ function RegisterContent() {
       }),
     })
       .then(() => {
-        showFeedback({
-          kind: "success",
-          title: "Account successfully registered",
-          message:
-            "Your account has been created. Check your email to verify it, then proceed to sign in.",
-        });
+        // The verification screen already explains where the code was sent,
+        // so take the user there without an intermediate success modal.
         setVerificationEmail(email);
       })
       .catch((error: unknown) => {
@@ -183,6 +179,7 @@ function RegisterContent() {
             id="first-name"
             label="First name"
             placeholder="Your first name"
+            labelClassName="text-xs"
             required
           />
           <FormField
@@ -191,6 +188,7 @@ function RegisterContent() {
             id="surname"
             label="Surname"
             placeholder="Your surname"
+            labelClassName="text-xs"
             required
           />
           <FormField
@@ -201,6 +199,7 @@ function RegisterContent() {
             placeholder="you@example.com"
             required
             type="email"
+            labelClassName="text-xs"
           />
           <FormField
             autoComplete="off"
@@ -209,10 +208,11 @@ function RegisterContent() {
             label="Referral code (optional)"
             placeholder="Enter a friend’s code"
             defaultValue={referralCodeFromUrl}
+            labelClassName="text-xs"
           />
           <div className="space-y-1.5">
             <label
-              className="text-foreground text-sm font-medium"
+              className="text-foreground mb-1 block text-xs font-medium"
               htmlFor="phone"
             >
               Phone number
@@ -253,6 +253,7 @@ function RegisterContent() {
             placeholder="Choose your level"
             compact
             value={learningLevel}
+            labelClassName="text-xs"
           />
           <ListSelect
             icon={Crosshair}
@@ -266,6 +267,7 @@ function RegisterContent() {
             placeholder="Choose an exam"
             compact
             value={examGoal}
+            labelClassName="text-xs"
           />
           <ListSelect
             icon={Megaphone}
@@ -283,6 +285,7 @@ function RegisterContent() {
             placeholder="Choose an option"
             compact
             value={referralSource}
+            labelClassName="text-xs"
           />
           <PasswordField
             autoComplete="new-password"
@@ -291,6 +294,7 @@ function RegisterContent() {
             minLength={8}
             placeholder="At least 8 characters"
             required
+            labelClassName="text-xs"
           />
           <PasswordField
             autoComplete="new-password"
@@ -299,6 +303,7 @@ function RegisterContent() {
             minLength={8}
             placeholder="Repeat your password"
             required
+            labelClassName="text-xs"
           />
         </div>
         <CheckboxField

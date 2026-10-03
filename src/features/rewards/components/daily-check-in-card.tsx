@@ -29,13 +29,25 @@ export function DailyCheckInCard({
   const [isCheckingIn, setIsCheckingIn] = useState(false);
   const lastCheckIn = useAuthStore((state) => state.lastCheckIn);
   const completeCheckIn = useAuthStore((state) => state.completeCheckIn);
-  const today = new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
   const checkInDates = new Set<string>(
     (summary?.checkIns ?? []).map((item: any) =>
       String(item.checkInDate).slice(0, 10),
     ),
   );
   const hasCheckedIn = checkInDates.has(today);
+  const streak = (() => {
+    const localKey = (date: Date) =>
+      `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    let count = 0;
+    const cursor = new Date(`${today}T00:00:00`);
+    while (checkInDates.has(localKey(cursor))) {
+      count += 1;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    return count;
+  })();
   const monthLabel = new Intl.DateTimeFormat("en", {
     month: "long",
     year: "numeric",
@@ -80,8 +92,8 @@ export function DailyCheckInCard({
             </p> */}
           </div>
         </div>
-        <span className="bg-surface text-primary flex h-10 shrink-0 items-center gap-1.5 rounded-full px-5 py-1 text-[.75rem] font-semibold whitespace-nowrap">
-          1 day
+        <span className="bg-surface text-primary flex h-10 shrink-0 items-center justify-center rounded-full px-5 py-1 text-[.75rem] font-semibold whitespace-nowrap">
+          {streak} {streak === 1 ? "day" : "days"}
         </span>
       </div>
 

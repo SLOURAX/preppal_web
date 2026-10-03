@@ -125,13 +125,13 @@ export default function HomePage() {
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <Link
                 href="/register"
-                className="bg-primary hover:bg-primary-strong text-primary-foreground shadow-primary/25 inline-flex items-center gap-2 rounded-full px-8 py-3 text-sm font-medium shadow-lg transition-all active:scale-[0.98]"
+                className="bg-primary hover:bg-primary-strong text-primary-foreground shadow-primary/25 inline-flex items-center gap-2 rounded-full px-8 py-3 text-[.8rem] font-medium shadow-lg transition-all active:scale-[0.98]"
               >
                 Get Started <SaxArrow2Twotone className="h-4 w-4" />
               </Link>
               <Link
                 href="/quiz"
-                className="bg-surface-subtle hover:bg-border text-foreground border-border inline-flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-medium transition-all"
+                className="bg-surface-subtle hover:bg-border text-foreground border-border inline-flex items-center gap-2 rounded-full border px-6 py-3 text-[.8rem] font-medium transition-all"
               >
                 <SaxCpuChargeBulk className="h-4 w-4" /> Try a Quiz
               </Link>
@@ -300,17 +300,17 @@ export default function HomePage() {
                     width={144}
                     height={144}
                     priority
-                    className="h-52 w-52 object-contain drop-shadow-xl sm:h-64 sm:w-64"
+                    className="h-48 w-48 object-contain drop-shadow-xl sm:h-56 sm:w-56"
                   />
                   <div className="bg-surface border-border relative z-20 -mt-8 flex items-center gap-1 rounded-full border px-3 py-1 shadow-sm sm:-mt-12">
                     <Image
                       alt=""
-                      className="h-[18px] w-[18px] object-contain"
-                      height={18}
+                      className="h-[22px] w-[22px] object-contain"
+                      height={22}
                       src="/assets/coins/preppal-coin.png"
-                      width={18}
+                      width={22}
                     />
-                    <span className="text-xs font-bold">
+                    <span className="text-[.75rem] font-bold">
                       +{FINANCE_PREVIEW.activityXp} XP earned!
                     </span>
                   </div>

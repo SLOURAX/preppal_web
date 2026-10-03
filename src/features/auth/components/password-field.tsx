@@ -24,7 +24,7 @@ export function PasswordField({
       trailing={
         <button
           aria-label={isVisible ? "Hide password" : "Show password"}
-          className="text-muted-foreground hover:bg-surface-subtle hover:text-foreground focus-visible:outline-primary absolute top-1/2 right-2.5 grid size-8 -translate-y-1/2 place-items-center rounded-lg transition-colors focus-visible:outline-2"
+          className="text-muted-foreground hover:bg-surface-subtle hover:text-foreground focus-visible:outline-primary absolute top-1/2 right-2.5 grid size-8 -translate-y-1/2 place-items-center rounded-lg text-[.75rem] transition-colors focus-visible:outline-2"
           onClick={() => setIsVisible((current: boolean) => !current)}
           type="button"
         >

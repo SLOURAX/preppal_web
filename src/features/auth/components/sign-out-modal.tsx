@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut } from "lucide-react";
+import Image from "next/image";
 import { Button } from "@/components/ui";
 import { useAuthStore } from "@/store";
 
@@ -20,22 +20,25 @@ export function SignOutModal() {
       />
 
       {/* Modal */}
-      <div className="bg-surface relative z-10 w-full max-w-sm overflow-hidden rounded-3xl shadow-2xl">
+      <div className="relative z-10 w-full max-w-sm overflow-hidden rounded-3xl border border-white/70 bg-white/90 shadow-2xl shadow-slate-900/20 backdrop-blur-2xl">
         <div className="px-6 pt-6 pb-5">
-          <div className="mb-5 flex items-start gap-4">
-            <div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-rose-500/10">
-              <LogOut className="size-5 text-rose-500" />
-            </div>
-            <div className="pt-1">
-              <h2 className="text-foreground text-lg font-bold">Sign out?</h2>
-              <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
-                Are you sure you want to sign out of your account on this
-                device?
-              </p>
-            </div>
+          <div className="mx-auto mb-3 grid size-24 place-items-center rounded-full bg-rose-500/10">
+            <Image
+              alt="Preppal mascot waving goodbye"
+              className="size-20 object-contain"
+              height={80}
+              src="/assets/mascots/encouraging.png"
+              width={80}
+            />
+          </div>
+          <div className="text-center">
+            <h2 className="text-foreground text-base font-bold">Sign out?</h2>
+            <p className="text-muted-foreground mx-auto mt-1 max-w-[18rem] text-xs leading-relaxed">
+              Are you sure you want to sign out of your account on this device?
+            </p>
           </div>
 
-          <div className="mt-6 flex gap-2">
+          <div className="mt-5 flex gap-2">
             <button
               onClick={closeSignOutModal}
               className="w-full rounded-xl border border-rose-600! py-2 text-[.8rem] font-semibold text-rose-600 transition-colors"

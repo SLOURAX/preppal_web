@@ -1,6 +1,7 @@
 "use client";
 
 import { LockKeyhole, UserPlus, X } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
 
@@ -38,6 +39,15 @@ export function QuizAuthGate({
         onMouseDown={(event) => event.stopPropagation()}
         role="dialog"
       >
+        <div className="bg-primary/10 mx-auto mb-2 grid size-28 place-items-center rounded-full">
+          <Image
+            alt="Preppal mascot encouraging you to keep learning"
+            className="size-20 object-contain"
+            height={80}
+            src="/assets/mascots/encouraging.png"
+            width={80}
+          />
+        </div>
         <button
           aria-label="Close sign-in prompt"
           className="absolute top-4 right-4 grid size-9 place-items-center rounded-full bg-rose-500/10 text-rose-600 transition-colors hover:bg-rose-500/15"

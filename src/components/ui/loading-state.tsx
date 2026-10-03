@@ -30,7 +30,7 @@ function LoadingVisual({
           className="relative z-10 object-contain p-3 motion-safe:animate-[mascot-float_3s_ease-in-out_infinite]"
           fill
           sizes={compact ? "56px" : "128px"}
-          src="/owl-mascot.png"
+          src="/assets/mascots/thinking.png"
         />
       </div>
       <div className={compact ? "min-w-0" : "mt-4"}>

@@ -17,6 +17,10 @@ import {
   SaxCoin1Bulk,
 } from "@meysam213/iconsax-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { useAuthStore } from "@/store";
+import { useFeedback } from "@/components/ui";
+import { apiClient } from "@/lib/api/client";
 
 const QUESTIONS = [
   {
@@ -71,6 +75,11 @@ export default function GamesPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
+  const experiencePoints = useAuthStore((state) => state.experiencePoints);
+  const preppalBalance = useAuthStore((state) => state.preppalBalance);
+  const setRewardBalances = useAuthStore((state) => state.setRewardBalances);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { showFeedback } = useFeedback();
   const question = QUESTIONS[questionIndex]!;
   const finished = questionIndex === QUESTIONS.length - 1 && selected !== null;
 
@@ -92,7 +101,39 @@ export default function GamesPage() {
   };
 
   const nextQuestion = (): void => {
-    if (finished) return;
+    if (finished) {
+      if (!isAuthenticated) return;
+      void apiClient<{ awarded: number; experiencePoints: number }>(
+        "/api/v1/rewards/game-complete",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            score,
+            idempotencyKey: crypto.randomUUID(),
+          }),
+        },
+      )
+        .then((result) => {
+          setRewardBalances({
+            experiencePoints: result.experiencePoints,
+            preppalBalance,
+          });
+          showFeedback({
+            kind: "success",
+            title: "Game complete",
+            message: `You earned ${result.awarded} XP.`,
+          });
+        })
+        .catch((error: unknown) =>
+          showFeedback({
+            kind: "error",
+            title: "Could not save game",
+            message:
+              error instanceof Error ? error.message : "Please try again.",
+          }),
+        );
+      return;
+    }
     setQuestionIndex((value) => value + 1);
     setSelected(null);
   };
@@ -133,10 +174,17 @@ export default function GamesPage() {
                 Game wallet
               </p>
               <div className="mt-0.5 flex items-center gap-3 text-sm font-bold">
-                <span>1,240 XP</span>
+                <span>{experiencePoints.toLocaleString()} XP</span>
                 <span className="text-white/30">·</span>
                 <span className="inline-flex items-center gap-1">
-                  <SaxCoin1Bulk className="size-3.5 text-amber-300" /> 200
+                  <Image
+                    alt=""
+                    className="size-4 object-contain"
+                    height={16}
+                    src="/assets/coins/preppal-coin.png"
+                    width={16}
+                  />{" "}
+                  {preppalBalance.toLocaleString()}
                 </span>
               </div>
             </div>
@@ -180,11 +228,11 @@ export default function GamesPage() {
                 </p>
               </div>
               <button
-                className="bg-surface-subtle text-muted-foreground inline-flex min-h-10 cursor-not-allowed items-center gap-2 rounded-full px-6 text-sm font-bold"
-                disabled
+                className="bg-primary text-primary-foreground inline-flex min-h-10 items-center gap-2 rounded-full px-6 text-sm font-bold"
+                onClick={startGame}
                 type="button"
               >
-                <SaxLock1Bulk className="size-4" /> Coming soon
+                <SaxGameBulk className="size-4" /> Start game
               </button>
             </div>
           ) : finished ? (

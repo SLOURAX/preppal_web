@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertTriangle, ArrowLeft, Send } from "lucide-react";
+import Image from "next/image";
 import { Button } from "@/components/ui";
 
 interface SubmitModalProps {
@@ -20,17 +21,26 @@ export function SubmitModal({
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="bg-surface relative z-10 w-full max-w-sm overflow-hidden rounded-2xl shadow-2xl">
+      <div className="relative z-10 w-full max-w-sm overflow-hidden rounded-3xl border border-white/70 bg-white/90 shadow-2xl shadow-slate-900/20 backdrop-blur-2xl">
+        <div className="bg-primary/10 mx-auto mt-4 grid size-24 place-items-center rounded-full">
+          <Image
+            alt="Preppal mascot focused and ready"
+            className="size-20 object-contain"
+            height={80}
+            src="/assets/mascots/proud.png"
+            width={80}
+          />
+        </div>
         <div className="px-4 py-5 sm:px-6 sm:py-6">
-          <div className="mb-4 flex items-start gap-3 sm:mb-5">
+          <div className="mb-4 text-center sm:mb-5">
             {/* <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-amber-500/10">
               <AlertTriangle className="size-5 text-amber-500" />
             </div> */}
             <div>
-              <h2 className="text-foreground text-sm font-bold sm:text-base">
+              <h2 className="text-foreground text-sm font-bold">
                 Submit Exam?
               </h2>
-              <p className="text-muted-foreground text-[.75rem] leading-relaxed">
+              <p className="text-muted-foreground mx-auto max-w-[18rem] text-xs leading-relaxed">
                 Once submitted, you cannot change your answers.
               </p>
             </div>

@@ -117,6 +117,7 @@ function LoginContent() {
           placeholder="you@example.com"
           required
           type="email"
+          labelClassName="text-xs"
         />
         <PasswordField
           autoComplete="current-password"
@@ -124,6 +125,7 @@ function LoginContent() {
           label="Password"
           placeholder="Enter your password"
           required
+          labelClassName="text-xs"
         />
         {formError && (
           <p className="text-danger -mt-2 text-xs font-medium" role="alert">

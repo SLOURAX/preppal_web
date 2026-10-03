@@ -21,6 +21,8 @@ interface ListSelectProps {
   readonly className?: string;
   readonly showOptionDescriptions?: boolean;
   readonly compact?: boolean;
+  readonly hideLabel?: boolean;
+  readonly labelClassName?: string;
 }
 
 export function ListSelect({
@@ -34,6 +36,8 @@ export function ListSelect({
   className,
   showOptionDescriptions = true,
   compact = false,
+  hideLabel = false,
+  labelClassName,
 }: ListSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -56,11 +60,12 @@ export function ListSelect({
 
   return (
     <div className={cn("relative w-full", className)} ref={containerRef}>
-      {label && (
+      {label && !hideLabel && (
         <label
           className={cn(
             "text-foreground block font-semibold",
             compact ? "mb-1 text-sm" : "mb-2 text-sm",
+            labelClassName,
           )}
           htmlFor={id}
         >
@@ -73,7 +78,7 @@ export function ListSelect({
         id={id}
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "border-border bg-surface text-foreground hover:border-primary/50 focus:ring-primary/15 relative flex w-full items-center justify-between border text-left font-medium transition-all focus:ring-4 focus:outline-none",
+          "border-border bg-surface text-foreground hover:border-primary/50 focus:ring-primary/15 relative flex w-full items-center justify-between border text-left font-normal transition-all focus:ring-4 focus:outline-none",
           compact
             ? "h-11 rounded-xl px-3 text-xs"
             : "h-14 rounded-2xl px-4 text-sm",

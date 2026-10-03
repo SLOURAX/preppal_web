@@ -13,34 +13,31 @@ import {
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
-import { DataState, Mascot } from "@/components/ui";
+import { Mascot } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import {
-  NOTIFICATIONS,
-  type NotificationIconName,
-  type NotificationItem,
-} from "@/constants/notifications";
+import { useNotifications } from "@/features/notifications/use-notifications";
+import type { AppNotification } from "@/features/notifications/use-notifications";
+import { useAuthStore } from "@/store/use-auth-store";
 
-const ICONS: Record<NotificationIconName, typeof Zap> = {
+const ICONS: Record<AppNotification["icon"], typeof Zap> = {
   zap: Zap,
   info: Info,
   warning: AlertTriangle,
 };
 
-const iconStyles: Record<NotificationItem["type"], string> = {
+const iconStyles: Record<AppNotification["type"], string> = {
   success: "bg-amber-100 text-amber-600 dark:bg-amber-500/20",
   info: "bg-blue-100 text-blue-600 dark:bg-blue-500/20",
   warning: "bg-orange-100 text-orange-600 dark:bg-orange-500/20",
 };
 
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState<NotificationItem[]>([
-    ...NOTIFICATIONS,
-  ]);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { notifications, unreadCount, read, readAll, isLoading, isError } =
+    useNotifications(isAuthenticated);
   const [filter, setFilter] = useState<"all" | "unread">("all");
   const [page, setPage] = useState(1);
   const pageSize = 5;
-  const unreadCount = notifications.filter((item) => !item.read).length;
   const visibleNotifications = useMemo(
     () =>
       filter === "unread"
@@ -58,15 +55,7 @@ export default function NotificationsPage() {
     currentPage * pageSize,
   );
 
-  const markAllAsRead = (): void => {
-    setNotifications((items) => items.map((item) => ({ ...item, read: true })));
-  };
-
-  const markAsRead = (id: number): void => {
-    setNotifications((items) =>
-      items.map((item) => (item.id === id ? { ...item, read: true } : item)),
-    );
-  };
+  const formatTime = (value: string) => new Date(value).toLocaleString();
 
   return (
     <main className="mx-auto w-full max-w-4xl px-5 py-10 sm:px-8 sm:py-14">
@@ -80,7 +69,7 @@ export default function NotificationsPage() {
         {unreadCount > 0 ? (
           <button
             className="text-primary hover:text-primary-strong inline-flex items-center gap-1.5 text-xs font-semibold transition-colors"
-            onClick={markAllAsRead}
+            onClick={() => readAll.mutate()}
             type="button"
           >
             <Check className="size-3.5" /> Mark all as read
@@ -90,10 +79,10 @@ export default function NotificationsPage() {
 
       <header className="mt-8 flex items-end justify-between gap-4">
         <div>
-          <h1 className="text-foreground text-3xl font-bold tracking-tight sm:text-4xl">
+          <h1 className="text-foreground text-[1.8rem] font-bold tracking-tight">
             Notifications
           </h1>
-          <p className="text-muted-foreground mt-2 text-sm leading-6">
+          <p className="text-muted-foreground mt-1 text-[.8rem] leading-4">
             Stay up to date with your learning, rewards, and account activity.
           </p>
         </div>
@@ -125,7 +114,21 @@ export default function NotificationsPage() {
       </div>
 
       <section className="surface-card mt-4 overflow-hidden" aria-live="polite">
-        {visibleNotifications.length > 0 ? (
+        {isLoading ? (
+          <div className="text-muted-foreground p-8 text-center text-sm">
+            Loading notifications…
+          </div>
+        ) : isError ? (
+          <div className="bg-surface-subtle/55 border-border/70 flex flex-col items-center rounded-2xl border border-dashed px-5 py-8 text-center">
+            <Mascot mood="disappointed" size="lg" animated={false} />
+            <p className="text-foreground mt-2 text-[.9rem] font-semibold">
+              Unable to load notifications
+            </p>
+            <p className="text-muted-foreground mt-1 text-xs leading-5">
+              Please try again shortly.
+            </p>
+          </div>
+        ) : visibleNotifications.length > 0 ? (
           <div className="divide-border divide-y">
             {pageNotifications.map((notification) => {
               const Icon = ICONS[notification.icon];
@@ -136,7 +139,9 @@ export default function NotificationsPage() {
                     !notification.read && "bg-primary/[0.035]",
                   )}
                   key={notification.id}
-                  onClick={() => markAsRead(notification.id)}
+                  onClick={() =>
+                    !notification.read && read.mutate(notification.id)
+                  }
                   type="button"
                 >
                   <span
@@ -151,7 +156,7 @@ export default function NotificationsPage() {
                     <span className="flex items-center justify-between gap-3">
                       <span
                         className={cn(
-                          "text-sm",
+                          "text-[.85rem]",
                           notification.read
                             ? "text-foreground font-medium"
                             : "text-foreground font-bold",
@@ -160,10 +165,10 @@ export default function NotificationsPage() {
                         {notification.title}
                       </span>
                       <span className="text-muted-foreground shrink-0 text-xs font-medium">
-                        {notification.time}
+                        {formatTime(notification.time)}
                       </span>
                     </span>
-                    <span className="text-muted-foreground mt-1 block text-sm leading-6">
+                    <span className="text-muted-foreground mt-1 block text-[.8rem] leading-4">
                       {notification.message}
                     </span>
                   </span>
@@ -200,21 +205,18 @@ export default function NotificationsPage() {
             ) : null}
           </div>
         ) : (
-          <div className="p-6">
-            <DataState
-              description="You’re all caught up. New learning and reward updates will appear here."
-              icon={<Bell className="size-5" />}
-              title="No unread notifications"
-            />
+          <div className="bg-surface-subtle/55 border-border/70 flex flex-col items-center rounded-2xl border border-dashed px-5 py-8 text-center">
+            <Mascot mood="disappointed" size="lg" animated={false} />
+            <p className="text-foreground mt-2 text-[.9rem] font-semibold">
+              No notifications yet
+            </p>
+            <p className="text-muted-foreground mt-1 text-xs leading-5">
+              You&apos;re all caught up. New learning and reward updates will
+              appear here.
+            </p>
           </div>
         )}
       </section>
-
-      {notifications.length === 0 ? (
-        <div className="mt-4">
-          <Mascot mood="wave" size="sm" />
-        </div>
-      ) : null}
     </main>
   );
 }

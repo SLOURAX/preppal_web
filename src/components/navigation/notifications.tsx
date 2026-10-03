@@ -1,44 +1,44 @@
 "use client";
 
-import { Bell, Check, Info, AlertTriangle, Zap, X } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
-import { cn } from "@/lib/utils";
+import { AlertTriangle, Bell, Check, Info, X, Zap } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Mascot } from "@/components/ui";
-import {
-  NOTIFICATIONS,
-  type NotificationIconName,
-} from "@/constants/notifications";
+import { useNotifications } from "@/features/notifications/use-notifications";
+import type { AppNotification } from "@/features/notifications/use-notifications";
+import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/store/use-auth-store";
 
-const ICONS: Record<NotificationIconName, typeof Zap> = {
+const ICONS: Record<AppNotification["icon"], typeof Zap> = {
   zap: Zap,
   info: Info,
   warning: AlertTriangle,
 };
+const formatTime = (value: string) => {
+  const date = new Date(value);
+  const minutes = Math.floor((Date.now() - date.getTime()) / 60000);
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 1440) return `${Math.floor(minutes / 60)}h ago`;
+  return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+};
 
 export function Notifications() {
   const [isOpen, setIsOpen] = useState(false);
-  const [notifications, setNotifications] = useState([...NOTIFICATIONS]);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { notifications, unreadCount, read, readAll } =
+    useNotifications(isAuthenticated);
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handler = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
-      ) {
+      )
         setIsOpen(false);
-      }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, []);
-
-  const markAllAsRead = () => {
-    setNotifications(notifications.map((n) => ({ ...n, read: true })));
-  };
-
   return (
     <div className="relative" ref={dropdownRef}>
       <button
@@ -51,10 +51,8 @@ export function Notifications() {
           <span className="bg-danger ring-surface absolute top-1.5 right-1.5 h-2 w-2 animate-pulse rounded-full ring-2" />
         )}
       </button>
-
       {isOpen && (
         <>
-          {/* Mobile Overlay to catch outside clicks if needed (though full screen catches everything) */}
           <div
             className="bg-background/80 fixed inset-0 z-[60] backdrop-blur-sm sm:hidden"
             onClick={() => setIsOpen(false)}
@@ -65,15 +63,14 @@ export function Notifications() {
               <div className="flex items-center gap-4">
                 {unreadCount > 0 && (
                   <button
-                    onClick={markAllAsRead}
-                    className="text-primary hover:text-primary-strong flex items-center gap-1 text-xs font-semibold transition-colors"
+                    onClick={() => readAll.mutate()}
+                    className="text-primary flex items-center gap-1 text-xs font-semibold"
                   >
                     <Check className="h-3 w-3" /> Mark all read
                   </button>
                 )}
-                {/* Close button for mobile */}
                 <button
-                  className="text-muted-foreground hover:bg-surface-subtle rounded-full p-1 sm:hidden"
+                  className="text-muted-foreground rounded-full p-1 sm:hidden"
                   onClick={() => setIsOpen(false)}
                 >
                   <X className="h-5 w-5" />
@@ -89,45 +86,37 @@ export function Notifications() {
                       <div
                         key={notification.id}
                         className={cn(
-                          "hover:bg-surface-subtle flex cursor-pointer gap-3 p-4 transition-colors",
+                          "hover:bg-surface-subtle flex cursor-pointer gap-3 p-4",
                           !notification.read && "bg-primary/5",
                         )}
-                        onClick={() => {
-                          setNotifications(
-                            notifications.map((n) =>
-                              n.id === notification.id
-                                ? { ...n, read: true }
-                                : n,
-                            ),
-                          );
-                        }}
+                        onClick={() =>
+                          !notification.read && read.mutate(notification.id)
+                        }
                       >
                         <div
                           className={cn(
                             "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full",
                             notification.type === "success"
-                              ? "bg-amber-100 text-amber-600 dark:bg-amber-500/20"
+                              ? "bg-amber-100 text-amber-600"
                               : notification.type === "warning"
-                                ? "bg-orange-100 text-orange-600 dark:bg-orange-500/20"
-                                : "bg-blue-100 text-blue-600 dark:bg-blue-500/20",
+                                ? "bg-orange-100 text-orange-600"
+                                : "bg-blue-100 text-blue-600",
                           )}
                         >
                           <Icon className="h-4 w-4" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between gap-2">
+                          <div className="flex justify-between gap-2">
                             <p
                               className={cn(
                                 "truncate text-[.85rem]",
-                                notification.read
-                                  ? "text-foreground font-medium"
-                                  : "text-foreground font-bold",
+                                notification.read ? "font-medium" : "font-bold",
                               )}
                             >
                               {notification.title}
                             </p>
-                            <span className="text-muted-foreground text-[.75rem] font-medium whitespace-nowrap">
-                              {notification.time}
+                            <span className="text-muted-foreground text-[.75rem] whitespace-nowrap">
+                              {formatTime(notification.time)}
                             </span>
                           </div>
                           <p className="text-muted-foreground mt-0.5 line-clamp-2 text-[.75rem]">
@@ -135,7 +124,7 @@ export function Notifications() {
                           </p>
                         </div>
                         {!notification.read && (
-                          <div className="bg-primary mt-1.5 h-2 w-2 flex-shrink-0 rounded-full" />
+                          <div className="bg-primary mt-1.5 h-2 w-2 rounded-full" />
                         )}
                       </div>
                     );
@@ -143,18 +132,14 @@ export function Notifications() {
                 </div>
               ) : (
                 <div className="text-muted-foreground flex flex-col items-center p-6 text-center">
-                  <Mascot mood="wave" size="sm" />
-                  <Bell className="mt-2 mb-2 h-6 w-6 opacity-20" />
+                  <Mascot mood="disappointed" size="md" animated={false} />
                   <p className="text-sm font-medium">No notifications yet</p>
-                  <p className="mt-1 max-w-[14rem] text-xs">
-                    We&apos;ll let you know when there&apos;s something new.
-                  </p>
                 </div>
               )}
             </div>
-            <div className="border-border bg-surface-subtle/50 border-t p-3 text-center">
+            <div className="border-border border-t p-3 text-center">
               <a
-                className="text-foreground hover:text-primary text-sm font-semibold transition-colors"
+                className="text-foreground text-sm font-semibold"
                 href="/notifications"
                 onClick={() => setIsOpen(false)}
               >

@@ -1,13 +1,15 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-type MascotMood = "wave" | "encourage" | "celebrate" | "thinking";
+type MascotMood =
+  "wave" | "encourage" | "celebrate" | "thinking" | "disappointed" | "proud";
 
 interface MascotProps {
   readonly mood?: MascotMood;
   readonly size?: "sm" | "md" | "lg";
   readonly className?: string;
   readonly alt?: string;
+  readonly animated?: boolean;
 }
 
 const moodLabels: Record<MascotMood, string> = {
@@ -15,6 +17,8 @@ const moodLabels: Record<MascotMood, string> = {
   encourage: "Preppal mascot encouraging you",
   celebrate: "Preppal mascot celebrating your progress",
   thinking: "Preppal mascot thinking",
+  disappointed: "Preppal mascot disappointed",
+  proud: "Preppal mascot proud of your progress",
 };
 
 const moodSources: Record<MascotMood, string> = {
@@ -22,6 +26,8 @@ const moodSources: Record<MascotMood, string> = {
   encourage: "/assets/mascots/encouraging.png",
   celebrate: "/assets/mascots/excited.png",
   thinking: "/assets/mascots/thinking.png",
+  disappointed: "/assets/mascots/error.png",
+  proud: "/assets/mascots/proud.png",
 };
 
 const sizeClasses = {
@@ -36,14 +42,18 @@ export function Mascot({
   size = "md",
   className,
   alt,
+  animated = true,
 }: MascotProps) {
   return (
     <div
       aria-hidden={alt ? undefined : true}
       className={cn(
-        "relative shrink-0 motion-safe:animate-[mascot-float_5s_ease-in-out_infinite]",
+        "relative shrink-0",
+        animated &&
+          "motion-safe:animate-[mascot-float_5s_ease-in-out_infinite]",
         sizeClasses[size],
-        mood === "celebrate" &&
+        animated &&
+          mood === "celebrate" &&
           "motion-safe:animate-[mascot-bounce_1.8s_ease-in-out_infinite]",
         className,
       )}
@@ -51,7 +61,11 @@ export function Mascot({
     >
       <Image
         alt={alt ?? moodLabels[mood]}
-        className="object-contain drop-shadow-sm motion-safe:animate-[mascot-breathe_2.8s_ease-in-out_infinite]"
+        className={cn(
+          "object-contain drop-shadow-sm",
+          animated &&
+            "motion-safe:animate-[mascot-breathe_2.8s_ease-in-out_infinite]",
+        )}
         fill
         sizes="112px"
         src={moodSources[mood]}

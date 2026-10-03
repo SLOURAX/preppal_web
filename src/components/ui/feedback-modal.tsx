@@ -57,25 +57,27 @@ function FeedbackDialog({
       <div
         aria-labelledby="feedback-title"
         aria-modal="true"
-        className="surface-card w-full max-w-sm p-6 shadow-2xl"
+        className="w-full max-w-sm rounded-3xl border border-white/70 bg-white/90 p-6 shadow-2xl shadow-slate-900/20 backdrop-blur-2xl"
         role="dialog"
       >
         <div className="flex flex-col items-center text-center">
-          <Image
-            alt={`${feedback.kind} Preppal mascot`}
-            className="size-44 object-contain"
-            height={176}
-            src={mascotByKind[feedback.kind]}
-            width={176}
-          />
+          <div className="bg-primary/10 grid size-28 place-items-center rounded-full">
+            <Image
+              alt={`${feedback.kind} Preppal mascot`}
+              className="size-20 object-contain"
+              height={80}
+              src={mascotByKind[feedback.kind]}
+              width={80}
+            />
+          </div>
           <div className="mt-1 min-w-0">
             <h2
-              className="text-foreground text-[1.1rem] font-bold"
+              className="text-foreground text-base font-bold"
               id="feedback-title"
             >
               {feedback.title}
             </h2>
-            <p className="text-muted-foreground mt-1 text-[.85rem] leading-4">
+            <p className="text-muted-foreground mx-auto mt-1 max-w-[18rem] text-xs leading-4">
               {feedback.message}
             </p>
           </div>
