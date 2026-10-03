@@ -174,20 +174,20 @@ function RegisterContent() {
         )}
         <div className="grid gap-3.5 sm:grid-cols-2">
           <FormField
-            autoComplete="given-name"
-            icon={UserRound}
-            id="first-name"
-            label="First name"
-            placeholder="Your first name"
-            labelClassName="text-xs"
-            required
-          />
-          <FormField
             autoComplete="family-name"
             icon={UserRound}
             id="surname"
             label="Surname"
             placeholder="Your surname"
+            labelClassName="text-xs"
+            required
+          />
+          <FormField
+            autoComplete="given-name"
+            icon={UserRound}
+            id="first-name"
+            label="First name"
+            placeholder="Your first name"
             labelClassName="text-xs"
             required
           />
