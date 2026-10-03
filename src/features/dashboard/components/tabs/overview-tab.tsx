@@ -225,15 +225,12 @@ export function OverviewTab() {
       <section className="surface-card overflow-hidden p-4 sm:p-6">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-primary text-[10px] font-bold tracking-[0.18em] uppercase">
-              Explore Preppal
-            </p>
             <h3 className="text-foreground mt-1 text-base font-bold sm:text-lg">
               There is more waiting for you
             </h3>
-            <p className="text-muted-foreground mt-1 max-w-lg text-xs leading-relaxed">
-              Jump from your dashboard into rankings, games, rewards, plans, and
-              the latest learning stories.
+            <p className="text-muted-foreground max-w-lg text-xs leading-relaxed">
+              Jump from your dashboard into rankings, games, rewards, and the
+              latest learning stories.
             </p>
           </div>
           <Mascot
@@ -244,7 +241,7 @@ export function OverviewTab() {
           />
         </div>
 
-        <div className="mt-5 grid grid-cols-1 gap-3 min-[360px]:grid-cols-2">
+        <div className="mt-5 grid grid-cols-[repeat(auto-fit,minmax(min(100%,19rem),1fr))] gap-3">
           {EXPLORE_LINKS.map(
             ({ title, description, href, action, icon: Icon, color, glow }) => (
               <Link
