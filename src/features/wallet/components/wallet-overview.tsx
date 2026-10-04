@@ -13,6 +13,7 @@ import {
   Plus,
   Send,
   PiggyBank,
+  Calculator,
 } from "lucide-react";
 import { ConfirmationModal, DataState, useFeedback } from "@/components/ui";
 import { SaxSecuritySafeBulk } from "@meysam213/iconsax-react";
@@ -192,31 +193,49 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 </p>
               </div>
             </div>
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white/10 p-3 text-xs">
+          </div>
+        </section>
+
+        <section className="surface-card overflow-hidden p-5 sm:p-6">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-3">
+              <span className="bg-primary/10 text-primary grid size-10 shrink-0 place-items-center rounded-xl">
+                <Calculator className="size-5" />
+              </span>
               <div>
-                <p className="text-violet-200">Coin calculator</p>
-                <p className="mt-0.5 text-violet-200/75">
-                  Estimate your withdrawable value (₦1,000 / coin)
+                <p className="text-foreground text-sm font-bold">
+                  Coin calculator
+                </p>
+                <p className="text-muted-foreground mt-1 text-xs leading-5">
+                  See the cash value of your Preppal Coins. One coin is worth ₦
+                  {COIN_VALUE_NGN.toLocaleString()}.
                 </p>
               </div>
-              <div className="flex items-center gap-2">
+            </div>
+            <div className="bg-surface-subtle flex w-full items-center gap-2 rounded-2xl p-3 sm:w-auto">
+              <div className="border-border bg-surface flex min-w-0 flex-1 items-center gap-2 rounded-xl border px-3 sm:w-32 sm:flex-none">
+                <Image
+                  alt=""
+                  height={18}
+                  src="/assets/coins/preppal-coin.png"
+                  width={18}
+                />
                 <input
                   aria-label="Coins to calculate"
-                  className="w-20 rounded-lg border border-white/15 bg-white/10 px-2.5 py-1.5 text-right font-bold text-white outline-none placeholder:text-violet-200/60 focus:border-violet-200/60"
+                  className="text-foreground w-full bg-transparent py-2 text-right text-sm font-bold outline-none"
                   inputMode="decimal"
                   min="0"
                   onChange={(event) => setCoinAmount(event.target.value)}
                   type="number"
                   value={coinAmount}
                 />
-                <span className="text-violet-200">coins =</span>
-                <span className="min-w-20 text-right font-bold text-white">
-                  ₦
-                  {(
-                    (Number(coinAmount) || 0) * COIN_VALUE_NGN
-                  ).toLocaleString()}
-                </span>
               </div>
+              <span className="text-muted-foreground text-xs font-semibold">
+                equals
+              </span>
+              <span className="text-foreground min-w-24 text-right text-base font-black">
+                ₦{((Number(coinAmount) || 0) * COIN_VALUE_NGN).toLocaleString()}
+              </span>
             </div>
           </div>
         </section>
@@ -294,12 +313,14 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                   value={xp}
                 />
               </div>
-              <span className="w-12 text-center text-primary text-[.95rem] font-bold">
+              <span className="text-primary w-12 text-center text-[.95rem] font-bold">
                 XP
               </span>
             </div>
             <div className="mt-4 flex items-center justify-between">
-              <span className="text-muted-foreground text-[.8rem] font-semibold">You receive</span>
+              <span className="text-muted-foreground text-[.8rem] font-semibold">
+                You receive
+              </span>
               <span className="text-foreground text-lg font-black">
                 {convertedCoins.toLocaleString()} coins
               </span>
