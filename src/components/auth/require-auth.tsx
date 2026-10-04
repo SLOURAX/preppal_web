@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type PropsWithChildren } from "react";
+import { useEffect, type PropsWithChildren } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useAuthStore } from "@/store";
@@ -9,15 +9,15 @@ export function RequireAuth({ children }: PropsWithChildren) {
   const router = useRouter();
   const pathname = usePathname();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const [checked, setChecked] = useState(false);
+  const sessionChecked = useAuthStore((state) => state.sessionChecked);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (sessionChecked && !isAuthenticated) {
       router.replace(`/login?returnTo=${encodeURIComponent(pathname)}`);
-      return;
     }
-    setChecked(true);
-  }, [isAuthenticated, pathname, router]);
+  }, [isAuthenticated, pathname, router, sessionChecked]);
+
+  if (!sessionChecked) return null;
 
   if (!isAuthenticated) {
     return (
@@ -40,5 +40,5 @@ export function RequireAuth({ children }: PropsWithChildren) {
     );
   }
 
-  return checked ? children : null;
+  return children;
 }

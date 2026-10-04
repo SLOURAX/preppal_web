@@ -7,13 +7,17 @@ import { AppShell } from "@/components/layout";
 import { DataState } from "@/components/ui";
 import { apiClient } from "@/lib/api/client";
 import { useEffect, useState } from "react";
+import type {
+  RewardReferral,
+  RewardSummary,
+} from "@/features/rewards/reward.types";
 
 export default function ReferralHistoryPage() {
-  const [referrals, setReferrals] = useState<any[]>([]);
+  const [referrals, setReferrals] = useState<RewardReferral[]>([]);
   useEffect(() => {
-    void apiClient<any>("/api/v1/rewards/summary", {
-      credentials: "include",
-    }).then((data) => setReferrals(data.referrals ?? []));
+    void apiClient<RewardSummary>("/api/v1/rewards/summary").then((data) =>
+      setReferrals(data.referrals ?? []),
+    );
   }, []);
   return (
     <AppShell>
@@ -51,8 +55,12 @@ export default function ReferralHistoryPage() {
                 >
                   <div className="min-w-0">
                     <p className="text-foreground text-[.8rem] font-semibold">
-                      {referral.referredUser?.firstName ??
-                        referral.referredUser?.email}
+                      {[
+                        referral.referredUser?.firstName,
+                        referral.referredUser?.surname,
+                      ]
+                        .filter(Boolean)
+                        .join(" ") || "Invited learner"}
                     </p>
                     <p className="text-muted-foreground text-xs">
                       {referral.status === "ACTIVATED"

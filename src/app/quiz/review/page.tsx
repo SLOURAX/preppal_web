@@ -240,7 +240,7 @@ export default function QuizReviewPage() {
                     }}
                     type="button"
                   >
-                    <ThumbsDown className="size-4" /> No, it wasn't
+                    <ThumbsDown className="size-4" /> No, it wasn&apos;t
                   </button>
                 </div>
                 {followUpOpen ? (

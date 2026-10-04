@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store";
 import { ConfirmationModal } from "@/components/ui";
 import { ThemeToggle } from "@/components/navigation/theme-toggle";
@@ -23,6 +24,8 @@ import {
   SaxSecuritySafeBulk,
   SaxTickCircleBulk,
 } from "@meysam213/iconsax-react";
+import { apiClient } from "@/lib/api/client";
+import { useFeedback } from "@/components/ui";
 
 const NOTIFICATION_PREFS = [
   {
@@ -38,6 +41,8 @@ const NOTIFICATION_PREFS = [
 ] as const;
 
 export function AccountTab() {
+  const router = useRouter();
+  const { showFeedback } = useFeedback();
   const { resolvedTheme } = useTheme();
   const userName = useAuthStore((s) => s.userName);
   const userEmail = useAuthStore((s) => s.userEmail);
@@ -47,6 +52,7 @@ export function AccountTab() {
   const setWeeklyGoal = useAuthStore((s) => s.setWeeklyGoal);
   const openSignOutModal = useAuthStore((s) => s.openSignOutModal);
   const setUserName = useAuthStore((s) => s.setUserName);
+  const clearSession = useAuthStore((s) => s.clearSession);
   const notificationSettings = useAuthStore((s) => s.notificationSettings);
   const setNotificationPreference = useAuthStore(
     (s) => s.setNotificationPreference,
@@ -62,6 +68,27 @@ export function AccountTab() {
   });
   const [editingName, setEditingName] = useState(false);
   const [draftName, setDraftName] = useState(userName);
+  const [isSavingName, setIsSavingName] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isRevokingSessions, setIsRevokingSessions] = useState(false);
+
+  const signOutEverywhere = (): void => {
+    setIsRevokingSessions(true);
+    void apiClient("/api/v1/auth/logout-all", { method: "POST" })
+      .then(() => {
+        clearSession();
+        router.replace("/login");
+      })
+      .catch((error: unknown) =>
+        showFeedback({
+          kind: "error",
+          title: "Could not end your sessions",
+          message: error instanceof Error ? error.message : "Please try again.",
+        }),
+      )
+      .finally(() => setIsRevokingSessions(false));
+  };
 
   const submitPasswordChange = (
     event: React.FormEvent<HTMLFormElement>,
@@ -76,8 +103,80 @@ export function AccountTab() {
     if (passwords.next !== passwords.confirm)
       return setPasswordError("Your new passwords do not match.");
     setPasswordError(null);
-    setPasswordChanged(true);
-    setPasswords({ current: "", next: "", confirm: "" });
+    setIsChangingPassword(true);
+    void apiClient("/api/v1/auth/change-password", {
+      method: "POST",
+      body: JSON.stringify({
+        currentPassword: passwords.current,
+        newPassword: passwords.next,
+      }),
+    })
+      .then(() => {
+        setPasswordChanged(true);
+        setPasswords({ current: "", next: "", confirm: "" });
+      })
+      .catch((error: unknown) =>
+        setPasswordError(
+          error instanceof Error ? error.message : "Unable to change password.",
+        ),
+      )
+      .finally(() => setIsChangingPassword(false));
+  };
+
+  const saveDisplayName = (): void => {
+    const parts = draftName.trim().split(/\s+/);
+    if (parts.length < 2) {
+      showFeedback({
+        kind: "error",
+        title: "Enter your full name",
+        message: "Include both your first name and surname.",
+      });
+      return;
+    }
+    const firstName = parts.shift()!;
+    const surname = parts.join(" ");
+    setIsSavingName(true);
+    void apiClient<{ fullName: string }>("/api/v1/users/me/profile", {
+      method: "PATCH",
+      body: JSON.stringify({ firstName, surname }),
+    })
+      .then((user) => {
+        setUserName(user.fullName);
+        setEditingName(false);
+      })
+      .catch((error: unknown) =>
+        showFeedback({
+          kind: "error",
+          title: "Could not update your name",
+          message: error instanceof Error ? error.message : "Please try again.",
+        }),
+      )
+      .finally(() => setIsSavingName(false));
+  };
+
+  const deleteAccount = (): void => {
+    setIsDeleting(true);
+    void apiClient("/api/v1/users/me", { method: "DELETE" })
+      .then(() => {
+        clearSession();
+        router.replace("/");
+        showFeedback({
+          kind: "success",
+          title: "Account deleted",
+          message: "Your Preppal account and associated data were removed.",
+        });
+      })
+      .catch((error: unknown) =>
+        showFeedback({
+          kind: "error",
+          title: "Could not delete account",
+          message: error instanceof Error ? error.message : "Please try again.",
+        }),
+      )
+      .finally(() => {
+        setIsDeleting(false);
+        setShowDeleteConfirmation(false);
+      });
   };
 
   return (
@@ -134,13 +233,11 @@ export function AccountTab() {
                 />
                 <button
                   className="text-primary text-xs font-bold"
-                  onClick={() => {
-                    setUserName(draftName);
-                    setEditingName(false);
-                  }}
+                  disabled={isSavingName}
+                  onClick={saveDisplayName}
                   type="button"
                 >
-                  Save
+                  {isSavingName ? "Saving…" : "Save"}
                 </button>
               </div>
             ) : (
@@ -179,7 +276,7 @@ export function AccountTab() {
           <div>
             <p className="text-foreground text-sm font-semibold">Password</p>
             <p className="text-muted-foreground mt-1 text-xs">
-              Last changed never
+              Use at least 8 characters and avoid reusing old passwords.
             </p>
           </div>
           <button
@@ -323,6 +420,25 @@ export function AccountTab() {
         </div>
         <div className="flex items-center justify-between gap-4 px-5 py-5">
           <div>
+            <p className="text-foreground text-sm font-semibold">
+              Sign out everywhere
+            </p>
+            <p className="text-muted-foreground mt-1 text-xs">
+              End every active session, including this device.
+            </p>
+          </div>
+          <button
+            className="flex items-center gap-2 rounded-2xl bg-rose-500/10 px-5 py-2 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-500/20 disabled:opacity-60"
+            disabled={isRevokingSessions}
+            onClick={signOutEverywhere}
+            type="button"
+          >
+            <ShieldCheck className="size-3.5" />
+            {isRevokingSessions ? "Signing out…" : "All devices"}
+          </button>
+        </div>
+        <div className="flex items-center justify-between gap-4 px-5 py-5">
+          <div>
             <p className="text-foreground text-sm font-semibold">Sign out</p>
             <p className="text-muted-foreground mt-1 text-xs">
               Sign out of your account on this device.
@@ -462,9 +578,10 @@ export function AccountTab() {
                   </button>
                   <button
                     className="bg-primary text-primary-foreground flex-1 rounded-xl px-3 py-2 text-[.8rem] font-semibold"
+                    disabled={isChangingPassword}
                     type="submit"
                   >
-                    Update password
+                    {isChangingPassword ? "Updating…" : "Update password"}
                   </button>
                 </div>
               </form>
@@ -476,10 +593,10 @@ export function AccountTab() {
         <ConfirmationModal
           title="Delete your account?"
           description="This action permanently removes your account, quiz history, and rewards."
-          confirmLabel="Delete account"
           destructive
+          confirmLabel={isDeleting ? "Deleting…" : "Delete account"}
+          onConfirm={deleteAccount}
           onCancel={() => setShowDeleteConfirmation(false)}
-          onConfirm={() => setShowDeleteConfirmation(false)}
         />
       ) : null}
     </div>

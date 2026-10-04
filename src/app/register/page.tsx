@@ -68,6 +68,8 @@ function RegisterContent() {
       return setFormError("Enter a valid email address.");
     if (!countryCode || !phone)
       return setFormError("Choose a country code and enter your phone number.");
+    if (!/^\d{5,11}$/.test(phone))
+      return setFormError("Enter a phone number with no more than 11 digits.");
     if (!learningLevel || !examGoal || !referralSource)
       return setFormError(
         "Choose your learning level, exam goal, and how you heard about us.",
@@ -123,7 +125,7 @@ function RegisterContent() {
           try {
             await apiClient("/api/v1/auth/verify-email", {
               method: "POST",
-              body: JSON.stringify({ token: code }),
+              body: JSON.stringify({ email: verificationEmail, token: code }),
             });
             router.push("/login?verified=1");
           } catch (error) {
@@ -235,7 +237,14 @@ function RegisterContent() {
                 autoComplete="tel-national"
                 className="text-foreground placeholder:text-muted-foreground/60 h-full min-w-0 flex-1 bg-transparent px-3 text-sm outline-none"
                 id="phone"
-                placeholder="801 234 5678"
+                inputMode="numeric"
+                maxLength={11}
+                onInput={(event) => {
+                  event.currentTarget.value = event.currentTarget.value
+                    .replace(/\D/g, "")
+                    .slice(0, 11);
+                }}
+                placeholder="08012345678"
                 required
                 type="tel"
               />
@@ -354,6 +363,9 @@ function VerificationStep({
 }) {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
+  const [status, setStatus] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isResending, setIsResending] = useState(false);
   const updateCode = (value: string, index: number) => {
     const digits = value.replace(/\D/g, "").slice(0, 6);
     if (digits.length > 1) setCode(digits);
@@ -364,11 +376,42 @@ function VerificationStep({
       );
     setError("");
   };
-  const verify = (event: FormEvent) => {
+  const verify = async (event: FormEvent) => {
     event.preventDefault();
+    if (isVerifying) return;
     if (!/^\d{6}$/.test(code))
       return setError("Enter the six-digit code from your email.");
-    void onVerified(code);
+    setError("");
+    setStatus("Verifying your code…");
+    setIsVerifying(true);
+    try {
+      await onVerified(code);
+    } finally {
+      setIsVerifying(false);
+      setStatus("");
+    }
+  };
+  const resendCode = async (): Promise<void> => {
+    if (isResending || isVerifying) return;
+    setError("");
+    setStatus("Sending a fresh code…");
+    setIsResending(true);
+    try {
+      await apiClient("/api/v1/auth/resend-verification", {
+        method: "POST",
+        body: JSON.stringify({ email }),
+      });
+      setStatus("A fresh verification code has been sent.");
+    } catch (resendError) {
+      setError(
+        resendError instanceof Error
+          ? resendError.message
+          : "Could not resend the code. Please try again.",
+      );
+      setStatus("");
+    } finally {
+      setIsResending(false);
+    }
   };
   return (
     <div className="space-y-6">
@@ -377,7 +420,7 @@ function VerificationStep({
         title="Verify your email"
       />
       <form className="space-y-4" onSubmit={verify}>
-        <fieldset>
+        <fieldset disabled={isVerifying || isResending}>
           <legend className="text-foreground text-sm font-medium">
             Verification code
           </legend>
@@ -425,11 +468,33 @@ function VerificationStep({
             {error}
           </p>
         )}
-        <Button className="h-11 w-full rounded-xl" type="submit">
+        {status ? (
+          <p
+            aria-live="polite"
+            className="text-muted-foreground text-center text-xs font-medium"
+            role="status"
+          >
+            {status}
+          </p>
+        ) : null}
+        <Button
+          className="h-11 w-full rounded-xl"
+          loading={isVerifying}
+          type="submit"
+        >
           Verify email
         </Button>
         <button
+          className="text-primary mx-auto flex py-1 text-sm font-semibold disabled:opacity-50"
+          disabled={isResending || isVerifying}
+          onClick={() => void resendCode()}
+          type="button"
+        >
+          {isResending ? "Sending new code…" : "Resend code"}
+        </button>
+        <button
           className="text-muted-foreground hover:text-primary mx-auto mt-3 flex items-center gap-1 border-b border-transparent py-1 text-sm font-medium transition-colors hover:border-current"
+          disabled={isVerifying || isResending}
           onClick={onBack}
           type="button"
         >

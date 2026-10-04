@@ -19,6 +19,7 @@ import {
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAuthStore } from "@/store";
+import type { LevelProgress } from "@/store/use-auth-store";
 import { useFeedback } from "@/components/ui";
 import { apiClient } from "@/lib/api/client";
 
@@ -78,6 +79,7 @@ export default function GamesPage() {
   const experiencePoints = useAuthStore((state) => state.experiencePoints);
   const preppalBalance = useAuthStore((state) => state.preppalBalance);
   const setRewardBalances = useAuthStore((state) => state.setRewardBalances);
+  const setLevelProgress = useAuthStore((state) => state.setLevelProgress);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const { showFeedback } = useFeedback();
   const question = QUESTIONS[questionIndex]!;
@@ -103,21 +105,23 @@ export default function GamesPage() {
   const nextQuestion = (): void => {
     if (finished) {
       if (!isAuthenticated) return;
-      void apiClient<{ awarded: number; experiencePoints: number }>(
-        "/api/v1/rewards/game-complete",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            score,
-            idempotencyKey: crypto.randomUUID(),
-          }),
-        },
-      )
+      void apiClient<{
+        awarded: number;
+        experiencePoints: number;
+        progress: LevelProgress;
+      }>("/api/v1/rewards/game-complete", {
+        method: "POST",
+        body: JSON.stringify({
+          score,
+          idempotencyKey: crypto.randomUUID(),
+        }),
+      })
         .then((result) => {
           setRewardBalances({
             experiencePoints: result.experiencePoints,
             preppalBalance,
           });
+          setLevelProgress(result.progress);
           showFeedback({
             kind: "success",
             title: "Game complete",

@@ -5,6 +5,7 @@ import { useState, type ReactNode } from "react";
 import Link from "next/link";
 
 import { DataState } from "@/components/ui";
+import type { RewardSummary } from "../reward.types";
 
 type CopiedValue = "code" | "link" | null;
 
@@ -14,8 +15,13 @@ export const REFERRALS = [
   { name: "Fatima A.", status: "Invite sent", reward: "Pending" },
 ] as const;
 
-export function ReferralRewardsCard({ summary }: { summary: any }) {
+export function ReferralRewardsCard({
+  summary,
+}: {
+  summary: RewardSummary | null;
+}) {
   const [copiedValue, setCopiedValue] = useState<CopiedValue>(null);
+  const referrals = summary?.referrals ?? [];
 
   const copyValue = async (
     kind: Exclude<CopiedValue, null>,
@@ -53,28 +59,25 @@ export function ReferralRewardsCard({ summary }: { summary: any }) {
             Invite friends
           </h2>
           <p className="text-muted-foreground mt-0.5 text-[.75rem]">
-            Earn 50 XP when a friend joins and completes their first quiz.
+            Earn 50 XP when a friend joins and verifies their account.
           </p>
         </div>
       </div>
 
       <dl className="bg-surface mt-5 grid min-w-0 grid-cols-3 gap-1 rounded-2xl px-2 py-3 sm:mt-6 sm:p-4">
         {[
-          { label: "Invited", value: summary?.referrals?.length ?? 0 },
+          { label: "Invited", value: referrals.length },
           {
             label: "Activated",
-            value:
-              summary?.referrals?.filter(
-                (item: any) => item.status === "ACTIVATED",
-              ).length ?? 0,
+            value: referrals.filter((item) => item.status === "ACTIVATED")
+              .length,
           },
           {
             label: "XP earned",
-            value:
-              summary?.referrals?.reduce(
-                (total: number, item: any) => total + (item.rewardPoints ?? 0),
-                0,
-              ) ?? 0,
+            value: referrals.reduce(
+              (total, item) => total + (item.rewardPoints ?? 0),
+              0,
+            ),
           },
         ].map((stat) => (
           <div className="min-w-0 text-center" key={stat.label}>
@@ -102,16 +105,21 @@ export function ReferralRewardsCard({ summary }: { summary: any }) {
             </Link>
           </div>
         </div>
-        {(summary?.referrals?.length ?? 0) ? (
+        {referrals.length ? (
           <div className="divide-y !divide-[#e5e5e5] rounded-xl border !border-[#e5e5e5] px-3 dark:divide-white/10 dark:border-white/10">
-            {summary.referrals.slice(0, 3).map((referral: any) => (
+            {referrals.slice(0, 3).map((referral) => (
               <div
                 className="flex items-center justify-between gap-5 py-4"
-                key={referral.name}
+                key={referral.id}
               >
                 <div className="min-w-0">
                   <p className="text-foreground truncate text-[.75rem] font-semibold">
-                    {referral.name}
+                    {[
+                      referral.referredUser.firstName,
+                      referral.referredUser.surname,
+                    ]
+                      .filter(Boolean)
+                      .join(" ") || "Invited learner"}
                   </p>
                 </div>
                 <span

@@ -10,11 +10,21 @@ import {
   Gift,
   Newspaper,
   Crown,
+  Book,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuthStore } from "@/store";
 import { Mascot } from "@/components/ui";
+import { useQuery } from "@tanstack/react-query";
+import { apiClient } from "@/lib/api/client";
+
+interface LevelDefinition {
+  number: number;
+  name: string;
+  minXp: number;
+  description: string;
+}
 
 const EXPLORE_LINKS = [
   {
@@ -61,6 +71,13 @@ export function OverviewTab() {
   const weeklyActivity = useAuthStore((s) => s.weeklyActivity);
   const setWeeklyGoal = useAuthStore((s) => s.setWeeklyGoal);
   const quizAttempts = useAuthStore((s) => s.quizAttempts);
+  const experiencePoints = useAuthStore((s) => s.experiencePoints);
+  const levelProgress = useAuthStore((s) => s.levelProgress);
+  const levelsQuery = useQuery({
+    queryKey: ["progression", "levels"],
+    queryFn: () => apiClient<LevelDefinition[]>("/api/v1/progression/levels"),
+    staleTime: 24 * 60 * 60 * 1000,
+  });
 
   const completedDays = weeklyActivity.filter(Boolean).length;
   const formatLabel = (value: string): string =>
@@ -106,7 +123,7 @@ export function OverviewTab() {
     ],
     [
       "XP earned",
-      `${quizAttempts.reduce((sum, attempt) => sum + attempt.correct * 10, 0).toLocaleString()} P`,
+      `${experiencePoints.toLocaleString()} XP`,
       BadgeCent,
       "text-amber-500 bg-amber-500/10",
     ],
@@ -221,6 +238,79 @@ export function OverviewTab() {
         ))}
       </div>
 
+      <section className="surface-card overflow-hidden p-4 sm:p-6">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-3">
+              <span className="bg-primary/10 text-primary grid size-10 shrink-0 place-items-center rounded-xl">
+                <Book className="size-5" />
+              </span>
+              <div>
+                <p className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase">
+                  Your learning level
+                </p>
+                <h3 className="text-foreground text-base font-bold sm:text-lg">
+                  {levelProgress
+                    ? `Level ${levelProgress.current.number} · ${levelProgress.current.name}`
+                    : "Level 1 · Starter"}
+                </h3>
+              </div>
+            </div>
+            <div className="bg-surface-subtle mt-5 h-2 overflow-hidden rounded-full">
+              <div
+                className="from-primary to-primary-strong h-full rounded-full bg-gradient-to-r transition-[width]"
+                style={{ width: `${levelProgress?.progressPercent ?? 0}%` }}
+              />
+            </div>
+            <div className="text-muted-foreground mt-2 flex items-center justify-between gap-3 text-[11px]">
+              {/* <span className="font-semibold uppercase">
+                {(
+                  levelProgress?.lifetimeExperiencePoints ?? 0
+                ).toLocaleString()}{" "}
+                lifetime XP
+              </span> */}
+              <span className="font-semibold">
+                {levelProgress?.nextLevelXp === null
+                  ? "Maximum level reached"
+                  : `${(levelProgress?.xpToNext ?? 5_000).toLocaleString()} XP to next level`}
+              </span>
+            </div>
+          </div>
+          {/* <p className="text-muted-foreground max-w-sm text-xs leading-5 lg:pt-1">
+            Every 5,000 lifetime XP unlocks a new level, up to Level 5 at 20,000
+            XP. Converting spendable XP into Preppal Coins never lowers your
+            level.
+          </p> */}
+        </div>
+        {levelsQuery.data ? (
+          <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-5">
+            {levelsQuery.data.map((level) => {
+              const active = levelProgress?.current.number === level.number;
+              return (
+                <div
+                  className={`rounded-2xl border p-3 ${
+                    active
+                      ? "border-primary/40 bg-primary/8"
+                      : "border-border/70 bg-surface-subtle/35"
+                  }`}
+                  key={level.number}
+                >
+                  <p className="text-primary text-[10px] font-black uppercase">
+                    Level {level.number}
+                  </p>
+                  <p className="text-foreground mt-1 truncate text-xs font-bold">
+                    {level.name}
+                  </p>
+                  <p className="text-muted-foreground mt-1 text-[10px]">
+                    {level.minXp.toLocaleString()} XP
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        ) : null}
+      </section>
+
       {/* Links back to the main Preppal experience */}
       <section className="surface-card overflow-hidden p-4 sm:p-6">
         <div className="flex items-end justify-between gap-4">
@@ -263,7 +353,7 @@ export function OverviewTab() {
                     <h4 className="text-foreground text-sm font-bold">
                       {title}
                     </h4>
-                    <p className="text-muted-foreground mt-1 text-[11px] leading-4">
+                    <p className="text-muted-foreground text-[11px] leading-4">
                       {description}
                     </p>
                     <span className="text-primary mt-3 inline-flex items-center gap-1 text-[11px] font-bold">

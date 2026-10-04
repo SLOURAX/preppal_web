@@ -5,6 +5,7 @@ import type { PropsWithChildren } from "react";
 
 import { QueryProvider } from "./query-provider";
 import { FeedbackProvider, ToastProvider } from "@/components/ui";
+import { AuthBootstrap } from "./auth-bootstrap";
 
 export function AppProviders({ children }: PropsWithChildren) {
   return (
@@ -16,7 +17,9 @@ export function AppProviders({ children }: PropsWithChildren) {
     >
       <QueryProvider>
         <ToastProvider>
-          <FeedbackProvider>{children}</FeedbackProvider>
+          <FeedbackProvider>
+            <AuthBootstrap>{children}</AuthBootstrap>
+          </FeedbackProvider>
         </ToastProvider>
       </QueryProvider>
     </ThemeProvider>

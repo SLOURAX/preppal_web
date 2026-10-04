@@ -21,14 +21,42 @@ export interface QuizAttempt {
   seed?: number;
 }
 
+export interface LevelProgress {
+  current: {
+    number: number;
+    name: string;
+    minXp: number;
+    description: string;
+  };
+  experiencePoints: number;
+  lifetimeExperiencePoints: number;
+  nextLevelXp: number | null;
+  xpToNext: number;
+  progressPercent: number;
+  maxLevel: number;
+  xpPerLevel: number;
+}
+
+interface AuthUserPayload {
+  fullName: string;
+  email: string;
+  experiencePoints: number;
+  referralCode: string;
+  referralLink: string;
+  wallet?: { availableBalanceMinor: number } | null;
+  progress: LevelProgress;
+}
+
 interface AuthState {
   isAuthenticated: boolean;
+  sessionChecked: boolean;
   preppalBalance: number;
   depositedFunds: number;
   experiencePoints: number;
   userName: string;
   userEmail: string;
   userPlan: string;
+  levelProgress: LevelProgress | null;
   referralCode: string;
   referralLink: string;
   weeklyGoal: number | null;
@@ -38,18 +66,19 @@ interface AuthState {
   notificationSettings: Record<string, boolean>;
   isSignOutModalOpen: boolean;
   login: (credentials: LoginInput) => Promise<void>;
-  logout: () => void;
+  restoreSession: () => Promise<void>;
+  logout: () => Promise<void>;
+  clearSession: () => void;
   setBalance: (balance: number) => void;
   setRewardBalances: (balances: {
     experiencePoints: number;
     preppalBalance: number;
   }) => void;
+  setLevelProgress: (progress: LevelProgress) => void;
   setDepositedFunds: (amount: number) => void;
   setUserName: (userName: string) => void;
   setWeeklyGoal: (goal: number) => void;
-  addExperience: (amount: number) => void;
-  convertExperienceToCoins: (amount: number) => boolean;
-  completeCheckIn: () => boolean;
+  convertExperienceToCoins: (amount: number) => Promise<boolean>;
   recordQuizAttempt: (attempt: QuizAttempt) => void;
   setNotificationPreference: (label: string, enabled: boolean) => void;
   openSignOutModal: () => void;
@@ -62,10 +91,12 @@ export const useAuthStore = create<AuthState>()(
   persist<AuthState>(
     (set, get) => ({
       isAuthenticated: false,
+      sessionChecked: false,
       ...INITIAL_FINANCE_BALANCES,
       userName: "Solomon Udumizi",
       userEmail: "",
       userPlan: "Level 1",
+      levelProgress: null,
       referralCode: "",
       referralLink: "",
       weeklyGoal: null,
@@ -80,15 +111,8 @@ export const useAuthStore = create<AuthState>()(
       login: async (credentials): Promise<void> => {
         const validated = loginSchema.parse(credentials);
         const response = await apiClient<{
-          accessToken: string;
-          user: {
-            fullName: string;
-            email: string;
-            experiencePoints: number;
-            referralCode: string;
-            referralLink: string;
-            wallet?: { availableBalanceMinor: number } | null;
-          };
+          expiresAt: string;
+          user: AuthUserPayload;
         }>("/api/v1/auth/login", {
           method: "POST",
           credentials: "include",
@@ -102,17 +126,46 @@ export const useAuthStore = create<AuthState>()(
           preppalBalance: response.user.wallet?.availableBalanceMinor ?? 0,
           referralCode: response.user.referralCode,
           referralLink: response.user.referralLink,
+          userPlan: `Level ${response.user.progress.current.number}`,
+          levelProgress: response.user.progress,
+          sessionChecked: true,
         });
-        window.localStorage.setItem(
-          "preppal_access_token",
-          response.accessToken,
-        );
       },
-      logout: (): void => {
-        window.localStorage.removeItem("preppal_access_token");
+      restoreSession: async (): Promise<void> => {
+        try {
+          const user = await apiClient<AuthUserPayload>("/api/v1/auth/me");
+          set({
+            isAuthenticated: true,
+            sessionChecked: true,
+            userName: user.fullName,
+            userEmail: user.email,
+            experiencePoints: user.experiencePoints,
+            preppalBalance: user.wallet?.availableBalanceMinor ?? 0,
+            referralCode: user.referralCode,
+            referralLink: user.referralLink,
+            userPlan: `Level ${user.progress.current.number}`,
+            levelProgress: user.progress,
+          });
+        } catch {
+          get().clearSession();
+        }
+      },
+      logout: async (): Promise<void> => {
+        try {
+          await apiClient("/api/v1/auth/logout", { method: "POST" });
+        } finally {
+          get().clearSession();
+        }
+      },
+      clearSession: (): void => {
         set({
           isAuthenticated: false,
+          sessionChecked: true,
           userEmail: "",
+          userName: "Learner",
+          userPlan: "Level 1",
+          levelProgress: null,
+          ...INITIAL_FINANCE_BALANCES,
           isSignOutModalOpen: false,
           weeklyGoal: null,
           weeklyActivity: initialActivity,
@@ -130,6 +183,13 @@ export const useAuthStore = create<AuthState>()(
       setRewardBalances: ({ experiencePoints, preppalBalance }): void => {
         set({ experiencePoints, preppalBalance });
       },
+      setLevelProgress: (levelProgress): void => {
+        set({
+          levelProgress,
+          experiencePoints: levelProgress.experiencePoints,
+          userPlan: `Level ${levelProgress.current.number}`,
+        });
+      },
       setDepositedFunds: (depositedFunds: number): void => {
         set({ depositedFunds: Math.max(0, depositedFunds) });
       },
@@ -139,12 +199,7 @@ export const useAuthStore = create<AuthState>()(
       setWeeklyGoal: (weeklyGoal: number): void => {
         set({ weeklyGoal });
       },
-      addExperience: (amount: number): void => {
-        set((state) => ({
-          experiencePoints: Math.max(0, state.experiencePoints + amount),
-        }));
-      },
-      convertExperienceToCoins: (amount: number): boolean => {
+      convertExperienceToCoins: async (amount: number): Promise<boolean> => {
         const requestedXp = Math.floor(amount);
         const state = get();
         if (
@@ -152,28 +207,25 @@ export const useAuthStore = create<AuthState>()(
           requestedXp > state.experiencePoints
         )
           return false;
-        const coins = Math.floor(requestedXp / XP_TO_COIN_RATE);
-        if (!coins) return false;
-        set({
-          experiencePoints: state.experiencePoints - coins * XP_TO_COIN_RATE,
-          preppalBalance: state.preppalBalance + coins,
-        });
-        return true;
-      },
-      completeCheckIn: (): boolean => {
-        const today = new Date().toISOString().slice(0, 10);
-        if (get().lastCheckIn === today) return false;
-        const dayIndex = (new Date().getDay() + 6) % 7;
-        set((state) => {
-          const activity = [...state.weeklyActivity];
-          activity[dayIndex] = true;
-          return {
-            lastCheckIn: today,
-            weeklyActivity: activity,
-            experiencePoints: state.experiencePoints + 2,
-          };
-        });
-        return true;
+        try {
+          const result = await apiClient<{
+            experiencePoints: number;
+            coins: number;
+            progress: LevelProgress;
+          }>("/api/v1/rewards/convert-xp", {
+            method: "POST",
+            body: JSON.stringify({ xp: requestedXp }),
+          });
+          set({
+            experiencePoints: result.experiencePoints,
+            preppalBalance: result.coins,
+            levelProgress: result.progress,
+            userPlan: `Level ${result.progress.current.number}`,
+          });
+          return true;
+        } catch {
+          return false;
+        }
       },
       recordQuizAttempt: (attempt: QuizAttempt): void => {
         set((state) => ({
@@ -181,7 +233,6 @@ export const useAuthStore = create<AuthState>()(
             attempt,
             ...state.quizAttempts.filter((item) => item.id !== attempt.id),
           ].slice(0, 50),
-          experiencePoints: state.experiencePoints + attempt.correct * 10,
         }));
       },
       setNotificationPreference: (label: string, enabled: boolean): void => {
@@ -201,12 +252,20 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "preppal-auth",
-      version: 2,
+      version: 3,
       migrate: (persistedState) => ({
         ...(persistedState as AuthState),
         isAuthenticated: false,
+        sessionChecked: false,
+        ...INITIAL_FINANCE_BALANCES,
+        levelProgress: null,
       }),
-      partialize: (state) => ({ ...state, isSignOutModalOpen: false }),
+      partialize: (state) => ({
+        ...state,
+        isAuthenticated: false,
+        sessionChecked: false,
+        isSignOutModalOpen: false,
+      }),
     },
   ),
 );

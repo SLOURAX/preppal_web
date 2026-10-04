@@ -13,6 +13,7 @@ const AUTH_ROUTES: readonly string[] = [
   "/login",
   "/register",
   "/forgot-password",
+  "/reset-password",
 ];
 
 // Routes that render their own full-page chrome (no shared nav/footer)

@@ -2,9 +2,9 @@
 export const XP_TO_COIN_RATE = 10;
 
 export const INITIAL_FINANCE_BALANCES = {
-  preppalBalance: 200,
+  preppalBalance: 0,
   depositedFunds: 0,
-  experiencePoints: 1240,
+  experiencePoints: 0,
 } as const;
 
 /** Values used only in unauthenticated marketing previews until analytics are connected. */

@@ -6,7 +6,8 @@ import Link from "next/link";
 import { AppShell } from "@/components/layout";
 import { useAuthStore } from "@/store";
 import { apiClient } from "@/lib/api/client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import type { RewardSummary } from "../reward.types";
 
 import { DailyCheckInCard } from "./daily-check-in-card";
 import { ReferralRewardsCard } from "./referral-rewards-card";
@@ -16,20 +17,25 @@ export function RewardsHub() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const balance = useAuthStore((state) => state.preppalBalance);
   const setRewardBalances = useAuthStore((state) => state.setRewardBalances);
-  const [summary, setSummary] = useState<any>(null);
-  const refreshSummary = () =>
-    apiClient<any>("/api/v1/rewards/summary", { credentials: "include" })
-      .then((nextSummary) => {
-        setSummary(nextSummary);
-        setRewardBalances({
-          experiencePoints: nextSummary.experiencePoints ?? 0,
-          preppalBalance: nextSummary.coins ?? 0,
-        });
-      })
-      .catch(() => setSummary(null));
+  const setLevelProgress = useAuthStore((state) => state.setLevelProgress);
+  const [summary, setSummary] = useState<RewardSummary | null>(null);
+  const refreshSummary = useCallback(
+    () =>
+      apiClient<RewardSummary>("/api/v1/rewards/summary")
+        .then((nextSummary) => {
+          setSummary(nextSummary);
+          setRewardBalances({
+            experiencePoints: nextSummary.experiencePoints ?? 0,
+            preppalBalance: nextSummary.coins ?? 0,
+          });
+          if (nextSummary.progress) setLevelProgress(nextSummary.progress);
+        })
+        .catch(() => setSummary(null)),
+    [setLevelProgress, setRewardBalances],
+  );
   useEffect(() => {
     if (isAuthenticated) void refreshSummary();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, refreshSummary]);
 
   return (
     <AppShell>

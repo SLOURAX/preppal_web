@@ -16,16 +16,12 @@ export async function apiClient<T>(
 ): Promise<T> {
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), 30_000);
-  const token =
-    typeof window !== "undefined"
-      ? window.localStorage.getItem("preppal_access_token")
-      : null;
   const response = await fetch(`${env.apiUrl}${path}`, {
+    credentials: "include",
     ...init,
     signal: controller.signal,
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...init?.headers,
     },
   });

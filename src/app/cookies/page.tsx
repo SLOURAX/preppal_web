@@ -79,8 +79,8 @@ export default function CookiesPage() {
           </h1>
           <p className="text-muted-foreground mt-3 text-sm leading-6 sm:text-sm sm:leading-6">
             We use cookies and similar technologies to keep Preppal working
-            smoothly and to understand how you use it. Here's a clear breakdown
-            of what we use and why.
+            smoothly and to understand how you use it. Here&apos;s a clear
+            breakdown of what we use and why.
           </p>
           <p className="text-muted-foreground mt-4 text-sm">
             Last updated: <span className="font-medium">1 September 2026</span>

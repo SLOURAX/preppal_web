@@ -5,15 +5,13 @@ import {
   ArrowRight,
   CalendarCheck2,
   CheckCircle2,
-  CirclePlus,
-  TrendingUp,
 } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import { useAuthStore } from "@/store";
 import { apiClient } from "@/lib/api/client";
+import type { RewardSummary } from "../reward.types";
 
 const CHECK_IN_REWARD = 2;
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
@@ -22,17 +20,15 @@ export function DailyCheckInCard({
   summary,
   onUpdated,
 }: {
-  summary: any;
+  summary: RewardSummary | null;
   onUpdated: () => void;
 }) {
   const [visibleMonth, setVisibleMonth] = useState<Date>(new Date());
   const [isCheckingIn, setIsCheckingIn] = useState(false);
-  const lastCheckIn = useAuthStore((state) => state.lastCheckIn);
-  const completeCheckIn = useAuthStore((state) => state.completeCheckIn);
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
   const checkInDates = new Set<string>(
-    (summary?.checkIns ?? []).map((item: any) =>
+    (summary?.checkIns ?? []).map((item) =>
       String(item.checkInDate).slice(0, 10),
     ),
   );
