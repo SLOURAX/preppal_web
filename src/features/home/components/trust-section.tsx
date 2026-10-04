@@ -45,24 +45,24 @@ export function TrustSection() {
             See how Preppal works <span aria-hidden="true">→</span>
           </Link>
         </div>
-        <div className="flex flex-wrap justify-center gap-x-4 gap-y-9 sm:gap-x-6 sm:gap-y-10">
-          {TRUST_POINTS.map(({ title, detail, variant }) => (
+        <div className="mx-auto grid w-full max-w-xl grid-cols-2 justify-items-center gap-x-6 gap-y-8 sm:gap-x-10 sm:gap-y-10">
+          {TRUST_POINTS.map(({ variant }, index) => (
             <div
-              className="flex w-[calc(50%-0.5rem)] min-w-32 flex-1 basis-36 flex-col items-center text-center sm:basis-40"
-              key={title}
+              className={`flex w-full flex-col items-center text-center ${index === 2 ? "col-span-2 max-w-[calc(50%-0.75rem)] sm:max-w-[calc(50%-1.25rem)]" : "max-w-52"}`}
+              key={variant}
             >
               <div
-                className={`relative grid size-28 place-items-center rounded-full border shadow-[0_8px_30px_rgb(79_46_180/0.08)] sm:size-32 ${variant === "content" ? "border-violet-200 bg-violet-50" : variant === "practice" ? "border-fuchsia-200 bg-fuchsia-50" : "border-amber-200 bg-amber-50"}`}
+                className={`relative grid size-32 place-items-center rounded-full border shadow-[0_8px_30px_rgb(79_46_180/0.08)] sm:size-36 ${variant === "content" ? "border-violet-200 bg-violet-50" : variant === "practice" ? "border-fuchsia-200 bg-fuchsia-50" : "border-amber-200 bg-amber-50"}`}
               >
                 <div
                   className={`absolute inset-2 rounded-full border ${variant === "content" ? "border-violet-200" : variant === "practice" ? "border-fuchsia-200" : "border-amber-200"}`}
                 />
                 <Image
                   alt=""
-                  className={`relative z-10 size-26 object-contain sm:size-28 ${variant === "content" ? "hue-rotate-[8deg]" : variant === "practice" ? "hue-rotate-[55deg] saturate-150" : "hue-rotate-[-18deg] saturate-125"}`}
-                  height={85}
+                  className={`relative z-10 size-30 object-contain sm:size-34 ${variant === "content" ? "hue-rotate-[8deg]" : variant === "practice" ? "hue-rotate-[55deg] saturate-150" : "hue-rotate-[-18deg] saturate-125"}`}
+                  height={110}
                   src={MASCOT_BY_VARIANT[variant]}
-                  width={85}
+                  width={110}
                 />
               </div>
             </div>

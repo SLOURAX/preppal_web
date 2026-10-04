@@ -314,7 +314,7 @@ export function LiveLeaderboardSection() {
               src="/assets/mascots/excited.png"
               alt="Preppal mascot celebrating leaderboard progress"
               fill
-              className="scale-[0.75] object-contain drop-shadow-2xl motion-safe:animate-[mascot-breathe_2.8s_ease-in-out_infinite]"
+              className="scale-[0.5] object-contain drop-shadow-2xl motion-safe:animate-[mascot-breathe_2.8s_ease-in-out_infinite]"
             />
           </div>
         </div>

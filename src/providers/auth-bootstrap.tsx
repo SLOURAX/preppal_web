@@ -15,7 +15,7 @@ export function AuthBootstrap({ children }: PropsWithChildren) {
   if (!sessionChecked)
     return (
       <main className="grid min-h-dvh place-items-center">
-        <LoadingState immersive title="Restoring your session" />
+        <LoadingState immersive title="" />
       </main>
     );
   return children;

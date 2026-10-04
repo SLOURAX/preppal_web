@@ -29,7 +29,7 @@ function LoadingVisual({
           compact
             ? "relative size-14 shrink-0"
             : isLarge
-              ? "bg-primary/8 ring-primary/10 relative mx-auto size-44 rounded-full ring-1 sm:size-52"
+              ? "bg-primary/8 ring-primary/10 relative mx-auto size-36 rounded-full ring-1 sm:size-40"
               : "relative mx-auto size-32"
         }
       >
@@ -46,18 +46,20 @@ function LoadingVisual({
           alt=""
           className={`relative z-10 object-contain ${isLarge ? "p-5 sm:p-6" : "p-3 motion-safe:animate-[mascot-float_3s_ease-in-out_infinite]"}`}
           fill
-          sizes={compact ? "56px" : isLarge ? "208px" : "128px"}
+          sizes={compact ? "56px" : isLarge ? "160px" : "128px"}
           src="/assets/mascots/thinking.png"
         />
       </div>
       <div className={compact ? "min-w-0" : isLarge ? "mt-5" : "mt-4"}>
+        {title ? (
+          <p
+            className={`text-foreground font-semibold ${isLarge ? "text-md sm:text-xl" : "text-sm"}`}
+          >
+            {title}
+          </p>
+        ) : null}
         <p
-          className={`text-foreground font-semibold ${isLarge ? "text-lg sm:text-xl" : "text-sm"}`}
-        >
-          {title}
-        </p>
-        <p
-          className={`text-muted-foreground mt-1 ${isLarge ? "text-sm" : "text-xs"}`}
+          className={`text-muted-foreground ${title ? "mt-1" : ""} ${isLarge ? "text-sm" : "text-xs"}`}
         >
           {description}
         </p>

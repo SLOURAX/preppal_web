@@ -94,19 +94,18 @@ export function DashboardShell() {
       .join("") || "U";
 
   return (
-    <div
-      className="bg-background relative flex min-h-dvh flex-col overflow-hidden"
-      style={{
-        backgroundImage:
-          "linear-gradient(135deg, hsl(var(--primary) / .045) 1px, transparent 1px), linear-gradient(45deg, hsl(var(--primary) / .03) 1px, transparent 1px)",
-        backgroundSize: "36px 36px",
-      }}
-    >
+    <div className="bg-background relative isolate flex min-h-dvh flex-col overflow-hidden">
       <div
-        className="bg-background/55 pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 z-0 opacity-45"
         aria-hidden="true"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, color-mix(in srgb, var(--star) 65%, transparent) 0 1px, transparent 1.5px), radial-gradient(circle, color-mix(in srgb, var(--star) 55%, transparent) 0 1px, transparent 1.5px), radial-gradient(circle at 88% 10%, color-mix(in srgb, var(--primary) 5%, transparent), transparent 28rem), repeating-linear-gradient(135deg, color-mix(in srgb, var(--stripe) 48%, transparent) 0, color-mix(in srgb, var(--stripe) 48%, transparent) 1px, transparent 1px, transparent 15px)",
+          backgroundPosition: "8px 10px, 34px 40px, 0 0, 0 0",
+          backgroundSize: "52px 52px, 68px 68px, 100% 100%, auto",
+        }}
       />
-      <div className="relative flex min-h-dvh flex-col">
+      <div className="relative z-10 flex min-h-dvh flex-col">
         <header className="bg-surface/95 border-border sticky top-0 z-40 border-b backdrop-blur-xl">
           <div className="mx-auto flex h-14 w-full items-center justify-between gap-4 px-4 sm:px-6">
             <div className="flex items-center gap-3">

@@ -402,9 +402,17 @@ export default function HomePage() {
           ))}
         </section>
 
-        <TrustSection />
+        <div className="relative left-1/2 w-dvw -translate-x-1/2">
+          <div className="mx-auto max-w-6xl px-3 sm:px-5">
+            <TrustSection />
+          </div>
+        </div>
         <AiQuizSection />
-        <MomentumSection />
+        <div className="relative left-1/2 w-dvw -translate-x-1/2">
+          <div className="mx-auto max-w-6xl px-3 py-10 sm:px-5 lg:py-14">
+            <MomentumSection />
+          </div>
+        </div>
         <ExamPathwaysMarquee />
         <LiveLeaderboardSection />
         <AdSlot
@@ -415,7 +423,11 @@ export default function HomePage() {
         <ReferralSection />
         <WhatsAppSection />
         <AdSlot format="rectangle" slotId="homepage-before-footer" />
-        <FaqSection />
+        <div className="relative left-1/2 w-dvw -translate-x-1/2">
+          <div className="mx-auto max-w-6xl px-3 py-12 sm:px-5 lg:py-16">
+            <FaqSection />
+          </div>
+        </div>
       </main>
     </AppShell>
   );
