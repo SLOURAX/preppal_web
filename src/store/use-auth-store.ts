@@ -59,11 +59,8 @@ interface AuthState {
   levelProgress: LevelProgress | null;
   referralCode: string;
   referralLink: string;
-  weeklyGoal: number | null;
-  weeklyActivity: boolean[];
   quizAttempts: QuizAttempt[];
   lastCheckIn: string | null;
-  notificationSettings: Record<string, boolean>;
   isSignOutModalOpen: boolean;
   login: (credentials: LoginInput) => Promise<void>;
   restoreSession: () => Promise<void>;
@@ -77,15 +74,11 @@ interface AuthState {
   setLevelProgress: (progress: LevelProgress) => void;
   setDepositedFunds: (amount: number) => void;
   setUserName: (userName: string) => void;
-  setWeeklyGoal: (goal: number) => void;
   convertExperienceToCoins: (amount: number) => Promise<boolean>;
   recordQuizAttempt: (attempt: QuizAttempt) => void;
-  setNotificationPreference: (label: string, enabled: boolean) => void;
   openSignOutModal: () => void;
   closeSignOutModal: () => void;
 }
-
-const initialActivity = [false, false, false, false, false, false, false];
 
 export const useAuthStore = create<AuthState>()(
   persist<AuthState>(
@@ -95,18 +88,12 @@ export const useAuthStore = create<AuthState>()(
       ...INITIAL_FINANCE_BALANCES,
       userName: "Solomon Udumizi",
       userEmail: "",
-      userPlan: "Level 1",
+      userPlan: "Starter",
       levelProgress: null,
       referralCode: "",
       referralLink: "",
-      weeklyGoal: null,
-      weeklyActivity: initialActivity,
       quizAttempts: [],
       lastCheckIn: null,
-      notificationSettings: {
-        "Quiz reminders": true,
-        "Leaderboard updates": true,
-      },
       isSignOutModalOpen: false,
       login: async (credentials): Promise<void> => {
         const validated = loginSchema.parse(credentials);
@@ -126,7 +113,7 @@ export const useAuthStore = create<AuthState>()(
           preppalBalance: response.user.wallet?.availableBalanceMinor ?? 0,
           referralCode: response.user.referralCode,
           referralLink: response.user.referralLink,
-          userPlan: `Level ${response.user.progress.current.number}`,
+          userPlan: "Starter",
           levelProgress: response.user.progress,
           sessionChecked: true,
         });
@@ -143,7 +130,7 @@ export const useAuthStore = create<AuthState>()(
             preppalBalance: user.wallet?.availableBalanceMinor ?? 0,
             referralCode: user.referralCode,
             referralLink: user.referralLink,
-            userPlan: `Level ${user.progress.current.number}`,
+            userPlan: "Starter",
             levelProgress: user.progress,
           });
         } catch {
@@ -163,18 +150,12 @@ export const useAuthStore = create<AuthState>()(
           sessionChecked: true,
           userEmail: "",
           userName: "Learner",
-          userPlan: "Level 1",
+          userPlan: "Starter",
           levelProgress: null,
           ...INITIAL_FINANCE_BALANCES,
           isSignOutModalOpen: false,
-          weeklyGoal: null,
-          weeklyActivity: initialActivity,
           quizAttempts: [],
           lastCheckIn: null,
-          notificationSettings: {
-            "Quiz reminders": true,
-            "Leaderboard updates": true,
-          },
         });
       },
       setBalance: (preppalBalance: number): void => {
@@ -187,7 +168,6 @@ export const useAuthStore = create<AuthState>()(
         set({
           levelProgress,
           experiencePoints: levelProgress.experiencePoints,
-          userPlan: `Level ${levelProgress.current.number}`,
         });
       },
       setDepositedFunds: (depositedFunds: number): void => {
@@ -195,9 +175,6 @@ export const useAuthStore = create<AuthState>()(
       },
       setUserName: (userName: string): void => {
         set({ userName: userName.trim() || "Learner" });
-      },
-      setWeeklyGoal: (weeklyGoal: number): void => {
-        set({ weeklyGoal });
       },
       convertExperienceToCoins: async (amount: number): Promise<boolean> => {
         const requestedXp = Math.floor(amount);
@@ -220,7 +197,6 @@ export const useAuthStore = create<AuthState>()(
             experiencePoints: result.experiencePoints,
             preppalBalance: result.coins,
             levelProgress: result.progress,
-            userPlan: `Level ${result.progress.current.number}`,
           });
           return true;
         } catch {
@@ -235,14 +211,6 @@ export const useAuthStore = create<AuthState>()(
           ].slice(0, 50),
         }));
       },
-      setNotificationPreference: (label: string, enabled: boolean): void => {
-        set((state) => ({
-          notificationSettings: {
-            ...state.notificationSettings,
-            [label]: enabled,
-          },
-        }));
-      },
       openSignOutModal: (): void => {
         set({ isSignOutModalOpen: true });
       },
@@ -252,9 +220,10 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "preppal-auth",
-      version: 3,
+      version: 4,
       migrate: (persistedState) => ({
         ...(persistedState as AuthState),
+        userPlan: "Starter",
         isAuthenticated: false,
         sessionChecked: false,
         ...INITIAL_FINANCE_BALANCES,

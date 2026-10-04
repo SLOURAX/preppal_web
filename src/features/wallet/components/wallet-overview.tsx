@@ -14,12 +14,18 @@ import {
   Send,
   PiggyBank,
 } from "lucide-react";
-import { ConfirmationModal, DataState } from "@/components/ui";
+import { ConfirmationModal, DataState, useFeedback } from "@/components/ui";
 import { SaxSecuritySafeBulk } from "@meysam213/iconsax-react";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { WALLET_TRANSACTIONS } from "../constants";
-import { XP_TO_COIN_RATE } from "@/constants/finance";
+import { COIN_VALUE_NGN, XP_TO_COIN_RATE } from "@/constants/finance";
 import { useAuthStore } from "@/store";
+import {
+  formatWalletDate,
+  useWalletActivity,
+  type WalletAsset,
+  type WalletRange,
+} from "../wallet-api";
 
 interface WalletOverviewProps {
   readonly balance: number;
@@ -36,7 +42,9 @@ const BANKS = [
 ] as const;
 
 export function WalletOverview({ balance }: WalletOverviewProps) {
-  const [xp, setXp] = useState<string>("500");
+  const queryClient = useQueryClient();
+  const { showFeedback } = useFeedback();
+  const [xp, setXp] = useState<string>("50");
   const [coinAmount, setCoinAmount] = useState<string>("1");
   const [pendingAction, setPendingAction] = useState<
     "deposit" | "withdraw" | "convert" | null
@@ -46,11 +54,23 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
   const [bankDetails, setBankDetails] = useState({ bank: "", account: "" });
   const [accountName, setAccountName] = useState("");
   const [isVerifyingAccount, setIsVerifyingAccount] = useState(false);
+  const [isConverting, setIsConverting] = useState(false);
+  const [asset, setAsset] = useState<WalletAsset>("coin");
+  const [range, setRange] = useState<WalletRange>("month");
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
   const depositedFunds = useAuthStore((state) => state.depositedFunds);
   const experiencePoints = useAuthStore((state) => state.experiencePoints);
   const convertExperienceToCoins = useAuthStore(
     (state) => state.convertExperienceToCoins,
   );
+  const activityQuery = useWalletActivity({
+    asset,
+    range,
+    from: range === "custom" ? customFrom : undefined,
+    to: range === "custom" ? customTo : undefined,
+    limit: 5,
+  });
   useEffect(() => {
     if (!bankDetails.bank || bankDetails.account.length !== 10) return;
     const verification = window.setTimeout(() => {
@@ -69,19 +89,9 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
     () => Math.floor(requestedXp / XP_TO_COIN_RATE),
     [requestedXp],
   );
-  const transactionTotals = useMemo(
-    () =>
-      WALLET_TRANSACTIONS.reduce(
-        (totals, transaction) => {
-          if (transaction.type === "credit")
-            totals.earned += transaction.amount;
-          else totals.redeemed += transaction.amount;
-          return totals;
-        },
-        { earned: 0, redeemed: 0 },
-      ),
-    [],
-  );
+  const xpNeededToConvert = Math.max(0, XP_TO_COIN_RATE - experiencePoints);
+  const canStartConverting = experiencePoints >= XP_TO_COIN_RATE;
+  const activity = activityQuery.data;
   const actionCopy =
     pendingAction === "convert"
       ? {
@@ -105,7 +115,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
 
   return (
     <div className="space-y-5">
-      <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+      <div className="grid gap-4">
         <section className="relative isolate flex h-full flex-col overflow-hidden rounded-3xl bg-[#21194d] p-5 text-white shadow-[0_20px_50px_rgb(52_31_140/0.2)] sm:p-6">
           <div
             className="pointer-events-none absolute inset-0 -z-10 opacity-10"
@@ -186,7 +196,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
               <div>
                 <p className="text-violet-200">Coin calculator</p>
                 <p className="mt-0.5 text-violet-200/75">
-                  Estimate your withdrawable value (₦1,300 / coin)
+                  Estimate your withdrawable value (₦1,000 / coin)
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -201,7 +211,10 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 />
                 <span className="text-violet-200">coins =</span>
                 <span className="min-w-20 text-right font-bold text-white">
-                  ₦{((Number(coinAmount) || 0) * 1300).toLocaleString()}
+                  ₦
+                  {(
+                    (Number(coinAmount) || 0) * COIN_VALUE_NGN
+                  ).toLocaleString()}
                 </span>
               </div>
             </div>
@@ -232,9 +245,28 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
               </span>
             </div>
             <p className="text-muted-foreground mt-3 text-xs leading-5">
-              Convert your learning XP into withdrawable coins at a simple 10 XP
-              = 1 coin rate.
+              Save your learning points, then turn them into withdrawable
+              Preppal Coins.
             </p>
+            <div
+              className={`mt-4 rounded-2xl border p-4 ${
+                canStartConverting
+                  ? "border-emerald-500/25 bg-emerald-500/10"
+                  : "border-amber-500/30 bg-amber-500/10"
+              }`}
+            >
+              <p className="text-foreground text-base font-black">
+                You need at least 50 XP to convert.
+              </p>
+              <p className="text-muted-foreground mt-1 text-xs leading-5 font-semibold">
+                {canStartConverting
+                  ? `You have ${experiencePoints.toLocaleString()} XP, so you can convert now.`
+                  : `You currently have ${experiencePoints.toLocaleString()} XP. Earn ${xpNeededToConvert.toLocaleString()} more XP to unlock conversion.`}
+              </p>
+              <p className="text-primary mt-2 text-sm font-black">
+                50 XP = 1 Preppal Coin
+              </p>
+            </div>
             <label
               className="text-muted-foreground mt-5 block text-[11px] font-semibold"
               htmlFor="xp-amount"
@@ -252,6 +284,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 />
                 <input
                   className="text-foreground w-full bg-transparent py-2.5 text-sm font-bold outline-none"
+                  disabled={!canStartConverting}
                   id="xp-amount"
                   inputMode="numeric"
                   max={experiencePoints}
@@ -261,20 +294,20 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                   value={xp}
                 />
               </div>
-              <span className="text-muted-foreground text-xs font-bold">
+              <span className="w-12 text-center text-primary text-[.95rem] font-bold">
                 XP
               </span>
             </div>
             <div className="mt-4 flex items-center justify-between">
-              <span className="text-muted-foreground text-xs">You receive</span>
+              <span className="text-muted-foreground text-[.8rem] font-semibold">You receive</span>
               <span className="text-foreground text-lg font-black">
                 {convertedCoins.toLocaleString()} coins
               </span>
             </div>
-            <p className="text-muted-foreground mt-2 text-[10px] leading-4">
-              Only complete 10 XP blocks convert. Any remainder stays in your XP
-              balance.
-            </p>
+            {/* <p className="text-muted-foreground mt-2 text-[11px] leading-4 font-semibold">
+              We convert complete groups of 50 XP. Any XP left over stays safely
+              in your balance.
+            </p> */}
             <button
               className="bg-primary text-primary-foreground hover:bg-primary/90 mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-45"
               disabled={
@@ -283,7 +316,10 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
               type="button"
               onClick={() => setPendingAction("convert")}
             >
-              Convert XP <ChevronRight className="size-4" />
+              {canStartConverting
+                ? "Convert XP"
+                : `Earn ${xpNeededToConvert.toLocaleString()} more XP`}{" "}
+              <ChevronRight className="size-4" />
             </button>
           </div>
         </section>
@@ -293,10 +329,29 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             title={actionCopy.title}
             description={actionCopy.description}
             confirmLabel={actionCopy.confirmLabel}
+            loading={pendingAction === "convert" && isConverting}
             onCancel={() => setPendingAction(null)}
             onConfirm={() => {
               if (pendingAction === "convert") {
-                convertExperienceToCoins(requestedXp);
+                setIsConverting(true);
+                void convertExperienceToCoins(requestedXp)
+                  .then(async (converted) => {
+                    if (converted) {
+                      await queryClient.invalidateQueries({
+                        queryKey: ["wallet", "activity"],
+                      });
+                      setPendingAction(null);
+                    } else {
+                      showFeedback({
+                        kind: "error",
+                        title: "Conversion failed",
+                        message:
+                          "Your XP could not be converted. Refresh your balance and try again.",
+                      });
+                    }
+                  })
+                  .finally(() => setIsConverting(false));
+                return;
               }
               setPendingAction(null);
             }}
@@ -441,13 +496,90 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
         </button>
       </section>
 
+      <section className="surface-card space-y-4 p-4 sm:p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-foreground text-sm font-bold">
+              Coin and XP activity
+            </h2>
+            <p className="text-muted-foreground mt-0.5 text-xs">
+              Switch between your withdrawable Coins and learning XP ledger.
+            </p>
+          </div>
+          <div className="bg-surface-subtle grid grid-cols-2 rounded-xl p-1">
+            {(["coin", "xp"] as const).map((option) => (
+              <button
+                className={`rounded-lg px-5 py-2 text-xs font-bold transition-colors ${
+                  asset === option
+                    ? "bg-surface text-primary shadow-sm"
+                    : "text-muted-foreground"
+                }`}
+                key={option}
+                onClick={() => setAsset(option)}
+                type="button"
+              >
+                {option === "coin" ? "Preppal Coins" : "Experience points"}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {(
+            [
+              ["7d", "7 days"],
+              ["month", "This month"],
+              ["all", "All time"],
+              ["custom", "Custom"],
+            ] as const
+          ).map(([value, label]) => (
+            <button
+              className={`rounded-full border px-3 py-1.5 text-[11px] font-semibold ${
+                range === value
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border text-muted-foreground"
+              }`}
+              key={value}
+              onClick={() => setRange(value)}
+              type="button"
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        {range === "custom" ? (
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="text-muted-foreground text-[11px] font-semibold">
+              From
+              <input
+                className="border-border bg-surface text-foreground mt-1 block h-10 w-full rounded-xl border px-3 text-xs"
+                max={customTo || undefined}
+                onChange={(event) => setCustomFrom(event.target.value)}
+                type="date"
+                value={customFrom}
+              />
+            </label>
+            <label className="text-muted-foreground text-[11px] font-semibold">
+              To
+              <input
+                className="border-border bg-surface text-foreground mt-1 block h-10 w-full rounded-xl border px-3 text-xs"
+                min={customFrom || undefined}
+                onChange={(event) => setCustomTo(event.target.value)}
+                type="date"
+                value={customTo}
+              />
+            </label>
+          </div>
+        ) : null}
+      </section>
+
       <div className="grid gap-3 sm:grid-cols-3">
         <div className="surface-card flex items-center gap-3 rounded-2xl p-4 sm:p-5">
           <CreditCard className="text-primary size-5" />
           <div>
-            <p className="text-muted-foreground text-xs">This month</p>
+            <p className="text-muted-foreground text-xs">Earned</p>
             <p className="text-foreground text-sm font-bold">
-              +{transactionTotals.earned.toLocaleString()} coins earned
+              +{(activity?.earned ?? 0).toLocaleString()}{" "}
+              {asset === "coin" ? "coins" : "XP"}
             </p>
           </div>
         </div>
@@ -456,7 +588,8 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
           <div>
             <p className="text-muted-foreground text-xs">Redeemed</p>
             <p className="text-foreground text-sm font-bold">
-              {transactionTotals.redeemed.toLocaleString()} coins
+              {(activity?.redeemed ?? 0).toLocaleString()}{" "}
+              {asset === "coin" ? "coins" : "XP"}
             </p>
           </div>
         </div>
@@ -470,7 +603,9 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
           />
           <div>
             <p className="text-muted-foreground text-xs">Conversion rate</p>
-            <p className="text-foreground text-sm font-bold">10 XP = 1 coin</p>
+            <p className="text-foreground text-sm font-bold">
+              {XP_TO_COIN_RATE} XP = 1 coin
+            </p>
           </div>
         </div>
       </div>
@@ -492,15 +627,25 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
           </div>
           <Link
             className="text-primary inline-flex items-center gap-1 text-xs font-bold"
-            href="/dashboard?view=wallet-history"
+            href={`/dashboard?view=wallet-history&asset=${asset}&range=${range}${customFrom ? `&from=${customFrom}` : ""}${customTo ? `&to=${customTo}` : ""}`}
           >
             View all <ChevronRight className="size-3.5" />
           </Link>
         </div>
-        {WALLET_TRANSACTIONS.length ? (
+        {activityQuery.isLoading ? (
+          <div className="text-muted-foreground flex min-h-28 items-center justify-center gap-2 text-xs">
+            <LoaderCircle className="text-primary size-5 animate-spin" />{" "}
+            Loading activity…
+          </div>
+        ) : activityQuery.isError ? (
+          <DataState
+            title="Could not load wallet activity"
+            description="Please try again shortly."
+          />
+        ) : activity?.transactions.length ? (
           <div className="divide-border divide-y">
-            {WALLET_TRANSACTIONS.map((transaction) => {
-              const isCredit = transaction.type === "credit";
+            {activity.transactions.map((transaction) => {
+              const isCredit = transaction.direction === "credit";
               const Icon = isCredit ? ArrowDownLeft : ArrowUpRight;
               return (
                 <div
@@ -518,7 +663,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                         {transaction.label}
                       </p>
                       <p className="text-muted-foreground text-[.7rem]">
-                        {transaction.date}
+                        {formatWalletDate(transaction.createdAt)}
                       </p>
                     </div>
                   </div>
@@ -526,7 +671,8 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                     className={`shrink-0 text-sm font-bold ${isCredit ? "text-emerald-600" : "text-rose-600"}`}
                   >
                     {isCredit ? "+" : "−"}
-                    {transaction.amount} P
+                    {transaction.amount.toLocaleString()}{" "}
+                    {asset === "coin" ? "coins" : "XP"}
                   </span>
                 </div>
               );

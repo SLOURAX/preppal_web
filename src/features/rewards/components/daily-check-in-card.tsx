@@ -12,6 +12,8 @@ import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { apiClient } from "@/lib/api/client";
 import type { RewardSummary } from "../reward.types";
+import { useQueryClient } from "@tanstack/react-query";
+import { weeklyGoalQueryKey } from "@/features/progression/weekly-goal-api";
 
 const CHECK_IN_REWARD = 2;
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
@@ -23,6 +25,7 @@ export function DailyCheckInCard({
   summary: RewardSummary | null;
   onUpdated: () => void;
 }) {
+  const queryClient = useQueryClient();
   const [visibleMonth, setVisibleMonth] = useState<Date>(new Date());
   const [isCheckingIn, setIsCheckingIn] = useState(false);
   const now = new Date();
@@ -68,7 +71,10 @@ export function DailyCheckInCard({
       method: "POST",
       credentials: "include",
     })
-      .then(() => onUpdated())
+      .then(() => {
+        onUpdated();
+        void queryClient.invalidateQueries({ queryKey: weeklyGoalQueryKey });
+      })
       .finally(() => setIsCheckingIn(false));
   };
 

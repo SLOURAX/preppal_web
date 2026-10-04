@@ -1,5 +1,6 @@
 /** Shared finance rules and seed values used by the current mock data layer. */
-export const XP_TO_COIN_RATE = 10;
+export const XP_TO_COIN_RATE = 50;
+export const COIN_VALUE_NGN = 1_000;
 
 export const INITIAL_FINANCE_BALANCES = {
   preppalBalance: 0,

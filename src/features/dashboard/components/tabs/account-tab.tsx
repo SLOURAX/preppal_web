@@ -12,10 +12,12 @@ import {
   Sun,
   Trash2,
   ShieldCheck,
+  Crown,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuthStore } from "@/store";
 import { ConfirmationModal } from "@/components/ui";
 import { ThemeToggle } from "@/components/navigation/theme-toggle";
@@ -26,14 +28,25 @@ import {
 } from "@meysam213/iconsax-react";
 import { apiClient } from "@/lib/api/client";
 import { useFeedback } from "@/components/ui";
+import {
+  useUpdateWeeklyGoal,
+  useWeeklyGoal,
+} from "@/features/progression/weekly-goal-api";
+import {
+  useNotificationPreferences,
+  useUpdateNotificationPreferences,
+  type NotificationPreferences,
+} from "@/features/notifications/notification-preferences-api";
 
 const NOTIFICATION_PREFS = [
   {
+    key: "quizReminders",
     label: "Quiz reminders",
     description: "Daily nudge to maintain your streak",
     defaultOn: true,
   },
   {
+    key: "leaderboardUpdates",
     label: "Leaderboard updates",
     description: "Get notified about your rank and progress",
     defaultOn: true,
@@ -47,16 +60,16 @@ export function AccountTab() {
   const userName = useAuthStore((s) => s.userName);
   const userEmail = useAuthStore((s) => s.userEmail);
   const userPlan = useAuthStore((s) => s.userPlan);
+  const levelProgress = useAuthStore((s) => s.levelProgress);
   const preppalBalance = useAuthStore((s) => s.preppalBalance);
-  const weeklyGoal = useAuthStore((s) => s.weeklyGoal);
-  const setWeeklyGoal = useAuthStore((s) => s.setWeeklyGoal);
+  const weeklyGoalQuery = useWeeklyGoal();
+  const updateWeeklyGoal = useUpdateWeeklyGoal();
+  const weeklyGoal = weeklyGoalQuery.data?.targetDays ?? null;
   const openSignOutModal = useAuthStore((s) => s.openSignOutModal);
   const setUserName = useAuthStore((s) => s.setUserName);
   const clearSession = useAuthStore((s) => s.clearSession);
-  const notificationSettings = useAuthStore((s) => s.notificationSettings);
-  const setNotificationPreference = useAuthStore(
-    (s) => s.setNotificationPreference,
-  );
+  const notificationPreferencesQuery = useNotificationPreferences();
+  const updateNotificationPreferences = useUpdateNotificationPreferences();
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordChanged, setPasswordChanged] = useState(false);
@@ -202,8 +215,15 @@ export function AccountTab() {
           </h2>
           <div className="mt-2 flex flex-wrap items-center gap-3">
             <span className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-semibold">
-              {userPlan} plan
+              Level {levelProgress?.current.number ?? 1} · {userPlan}
             </span>
+            <Link
+              className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-amber-300/70 bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 px-3.5 py-1.5 text-xs font-extrabold text-amber-950 shadow-sm shadow-amber-500/20 transition-all hover:-translate-y-0.5 hover:shadow-md hover:shadow-amber-500/25 focus-visible:ring-2 focus-visible:ring-amber-400/40 focus-visible:outline-none"
+              href="/pricing"
+            >
+              <Crown className="size-3.5" aria-hidden="true" />
+              Go Premium
+            </Link>
             <span className="flex items-center gap-1 text-sm font-bold text-amber-500">
               <BadgeCent className="size-4" />
               {preppalBalance} P
@@ -318,7 +338,20 @@ export function AccountTab() {
               return (
                 <button
                   key={days}
-                  onClick={() => setWeeklyGoal(days)}
+                  disabled={updateWeeklyGoal.isPending}
+                  onClick={() =>
+                    updateWeeklyGoal.mutate(days, {
+                      onError: (error) =>
+                        showFeedback({
+                          kind: "error",
+                          title: "Goal not saved",
+                          message:
+                            error instanceof Error
+                              ? error.message
+                              : "Please try again.",
+                        }),
+                    })
+                  }
                   className={`flex flex-col items-center justify-center rounded-full px-4 py-1.5 transition-all ${
                     isSelected
                       ? "bg-surface text-primary shadow-sm"
@@ -384,23 +417,41 @@ export function AccountTab() {
             </div>
             <button
               aria-label={`Toggle ${pref.label}`}
-              aria-pressed={notificationSettings[pref.label]}
-              onClick={() =>
-                setNotificationPreference(
-                  pref.label,
-                  !notificationSettings[pref.label],
-                )
+              aria-pressed={
+                notificationPreferencesQuery.data?.[pref.key] ?? true
               }
+              disabled={
+                notificationPreferencesQuery.isLoading ||
+                updateNotificationPreferences.isPending
+              }
+              onClick={() => {
+                const enabled =
+                  notificationPreferencesQuery.data?.[pref.key] ?? true;
+                updateNotificationPreferences.mutate(
+                  { [pref.key]: !enabled } as Partial<NotificationPreferences>,
+                  {
+                    onError: (error) =>
+                      showFeedback({
+                        kind: "error",
+                        title: "Preference not saved",
+                        message:
+                          error instanceof Error
+                            ? error.message
+                            : "Please try again.",
+                      }),
+                  },
+                );
+              }}
               className={`relative h-6 w-11 rounded-full transition-colors ${
-                notificationSettings[pref.label]
+                (notificationPreferencesQuery.data?.[pref.key] ?? true)
                   ? "bg-primary"
                   : "bg-surface-subtle"
-              }`}
+              } disabled:cursor-wait disabled:opacity-60`}
               type="button"
             >
               <span
                 className={`absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow-sm transition-transform ${
-                  notificationSettings[pref.label]
+                  (notificationPreferencesQuery.data?.[pref.key] ?? true)
                     ? "translate-x-5"
                     : "translate-x-0"
                 }`}

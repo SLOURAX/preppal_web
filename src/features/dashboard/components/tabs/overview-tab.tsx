@@ -15,9 +15,13 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useAuthStore } from "@/store";
-import { Mascot } from "@/components/ui";
+import { Mascot, useFeedback } from "@/components/ui";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api/client";
+import {
+  useUpdateWeeklyGoal,
+  useWeeklyGoal,
+} from "@/features/progression/weekly-goal-api";
 
 interface LevelDefinition {
   number: number;
@@ -66,10 +70,8 @@ const EXPLORE_LINKS = [
 ] as const;
 
 export function OverviewTab() {
+  const { showFeedback } = useFeedback();
   const userName = useAuthStore((s) => s.userName);
-  const weeklyGoal = useAuthStore((s) => s.weeklyGoal);
-  const weeklyActivity = useAuthStore((s) => s.weeklyActivity);
-  const setWeeklyGoal = useAuthStore((s) => s.setWeeklyGoal);
   const quizAttempts = useAuthStore((s) => s.quizAttempts);
   const experiencePoints = useAuthStore((s) => s.experiencePoints);
   const levelProgress = useAuthStore((s) => s.levelProgress);
@@ -78,8 +80,13 @@ export function OverviewTab() {
     queryFn: () => apiClient<LevelDefinition[]>("/api/v1/progression/levels"),
     staleTime: 24 * 60 * 60 * 1000,
   });
-
-  const completedDays = weeklyActivity.filter(Boolean).length;
+  const weeklyGoalQuery = useWeeklyGoal();
+  const updateWeeklyGoal = useUpdateWeeklyGoal();
+  const weeklyGoal = weeklyGoalQuery.data?.targetDays ?? null;
+  const weeklyActivity =
+    weeklyGoalQuery.data?.days.map((day) => day.active) ??
+    Array<boolean>(7).fill(false);
+  const completedDays = weeklyGoalQuery.data?.completedDays ?? 0;
   const formatLabel = (value: string): string =>
     value.replace(/\b\w/g, (character) => character.toUpperCase());
   const formatDate = (value: string): string => {
@@ -377,7 +384,15 @@ export function OverviewTab() {
               A little consistency goes a long way
             </p>
           </div>
-          {weeklyGoal ? (
+          {weeklyGoalQuery.isLoading ? (
+            <span className="bg-surface-subtle text-muted-foreground rounded-full px-3 py-1 text-xs font-bold">
+              Loading…
+            </span>
+          ) : weeklyGoalQuery.isError ? (
+            <span className="rounded-full bg-rose-500/10 px-3 py-1 text-xs font-bold text-rose-600">
+              Unavailable
+            </span>
+          ) : weeklyGoal ? (
             <span className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-bold">
               {completedDays} / {weeklyGoal} days
             </span>
@@ -387,7 +402,22 @@ export function OverviewTab() {
             </span>
           )}
         </div>
-        {weeklyGoal ? (
+        {weeklyGoalQuery.isLoading ? (
+          <div className="bg-surface-subtle h-14 animate-pulse rounded-xl" />
+        ) : weeklyGoalQuery.isError ? (
+          <div className="border-border bg-surface-subtle/40 flex items-center justify-between gap-3 rounded-2xl border p-4">
+            <p className="text-muted-foreground text-xs">
+              We could not load your weekly goal.
+            </p>
+            <button
+              className="text-primary text-xs font-bold"
+              onClick={() => void weeklyGoalQuery.refetch()}
+              type="button"
+            >
+              Try again
+            </button>
+          </div>
+        ) : weeklyGoal ? (
           <div className="flex gap-1.5">
             {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, i) => {
               const isActive = weeklyActivity[i];
@@ -422,10 +452,26 @@ export function OverviewTab() {
                   <button
                     className="border-primary/25 text-primary hover:bg-primary/10 rounded-full border px-4 py-1.5 text-xs font-bold transition-colors"
                     key={days}
-                    onClick={() => setWeeklyGoal(days)}
+                    disabled={updateWeeklyGoal.isPending}
+                    onClick={() =>
+                      updateWeeklyGoal.mutate(days, {
+                        onError: (error) =>
+                          showFeedback({
+                            kind: "error",
+                            title: "Goal not saved",
+                            message:
+                              error instanceof Error
+                                ? error.message
+                                : "Please try again.",
+                          }),
+                      })
+                    }
                     type="button"
                   >
-                    {days} days
+                    {updateWeeklyGoal.isPending &&
+                    updateWeeklyGoal.variables === days
+                      ? "Saving…"
+                      : `${days} days`}
                   </button>
                 ))}
               </div>

@@ -22,6 +22,8 @@ import { useAuthStore } from "@/store";
 import type { LevelProgress } from "@/store/use-auth-store";
 import { useFeedback } from "@/components/ui";
 import { apiClient } from "@/lib/api/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { weeklyGoalQueryKey } from "@/features/progression/weekly-goal-api";
 
 const QUESTIONS = [
   {
@@ -71,6 +73,7 @@ const COMING_SOON = [
 
 export default function GamesPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [started, setStarted] = useState(false);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
@@ -122,6 +125,7 @@ export default function GamesPage() {
             preppalBalance,
           });
           setLevelProgress(result.progress);
+          void queryClient.invalidateQueries({ queryKey: weeklyGoalQueryKey });
           showFeedback({
             kind: "success",
             title: "Game complete",
