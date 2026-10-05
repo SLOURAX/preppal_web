@@ -140,7 +140,10 @@ export function ReferralSection() {
 
         <div className="from-primary/15 via-primary/5 to-surface relative flex min-w-0 flex-col justify-center overflow-hidden bg-gradient-to-br p-4 sm:p-8 lg:p-10">
           <div className="bg-grid-pattern pointer-events-none absolute inset-0 opacity-60" />
-          <div className="relative z-10 flex min-w-0 items-start justify-between gap-3 sm:items-center sm:gap-4">
+          <div className="relative z-10 flex min-w-0 flex-col items-start gap-3 sm:gap-4">
+            <span className="bg-primary text-primary-foreground relative z-10 grid size-14 shrink-0 place-items-center rounded-2xl shadow-[0_10px_28px_rgba(124,58,237,0.24)] sm:size-16">
+              <SaxPeopleBulk className="size-8 sm:size-9" />
+            </span>
             <div>
               <p className="text-muted-foreground text-xs sm:text-sm">
                 Referral progress
@@ -161,9 +164,6 @@ export function ReferralSection() {
                 </p>
               )}
             </div>
-            <span className="bg-primary text-primary-foreground relative z-10 grid size-10 shrink-0 place-items-center rounded-2xl shadow-[0_8px_24px_rgba(124,58,237,0.2)] sm:size-12">
-              <SaxPeopleBulk className="size-6" />
-            </span>
           </div>
           {!referralQuery.isError && (
             <div className="bg-surface-subtle relative z-10 mt-5 h-2 overflow-hidden rounded-full">
@@ -206,36 +206,9 @@ export function ReferralSection() {
             <p className="text-muted-foreground bg-surface/80 relative z-10 mt-5 rounded-xl p-3 text-xs leading-5 sm:p-4">
               Referral progress could not load. Please refresh and try again.
             </p>
-          ) : referrals.length ? (
-            <ul className="divide-border relative z-10 mt-4 divide-y">
-              {referrals.slice(0, 2).map((referral) => {
-                const name = [
-                  referral.referredUser.firstName,
-                  referral.referredUser.surname,
-                ]
-                  .filter(Boolean)
-                  .join(" ");
-                return (
-                  <li
-                    className="flex min-w-0 items-center justify-between gap-3 py-2.5"
-                    key={referral.id}
-                  >
-                    <span className="text-foreground min-w-0 truncate text-xs font-semibold">
-                      {name || "Invited learner"}
-                    </span>
-                    <span className="text-muted-foreground shrink-0 text-[11px]">
-                      {referral.status === "ACTIVATED"
-                        ? `+${referral.rewardPoints} XP`
-                        : "Pending verification"}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
           ) : isAuthenticated && !referralQuery.isLoading ? (
             <p className="text-muted-foreground relative z-10 mt-4 text-xs leading-5">
-              No friends invited yet. Share your invite link to start earning
-              referral XP.
+              Share your invite link and start earning referral XP.
             </p>
           ) : null}
         </div>
