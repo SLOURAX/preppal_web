@@ -122,14 +122,14 @@ export function LiveLeaderboardSection() {
           </div>
 
           <div className="relative w-full max-w-[460px] overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] shadow-2xl backdrop-blur-md">
-            <div className="relative z-10 flex items-center gap-3 border-b border-white/10 bg-white/5 px-4 py-2.5">
-              <span className="w-7 text-center text-[10px] font-semibold tracking-widest text-slate-400 uppercase">
+            <div className="relative z-10 flex items-center gap-2 border-b border-white/10 bg-white/5 px-3 py-2.5 sm:gap-3 sm:px-4">
+              <span className="w-6 shrink-0 text-center text-[10px] font-semibold tracking-widest text-slate-400 uppercase sm:w-7">
                 #
               </span>
               <span className="flex-1 text-[10px] font-semibold tracking-widest text-slate-400 uppercase">
                 Student
               </span>
-              <span className="w-24 text-right text-[10px] font-semibold tracking-widest text-slate-400 uppercase">
+              <span className="w-[4.5rem] shrink-0 text-right text-[9px] font-semibold tracking-widest text-slate-400 uppercase sm:w-24 sm:text-[10px]">
                 XP points
               </span>
             </div>
@@ -141,16 +141,16 @@ export function LiveLeaderboardSection() {
                     <li
                       key={`hidden-rank-${rank}`}
                       aria-label={`Leaderboard position ${rank} hidden`}
-                      className="flex items-center gap-3 px-4 py-3"
+                      className="flex items-center gap-2 px-3 py-3 sm:gap-3 sm:px-4"
                     >
-                      <div className="w-7 text-center text-sm font-bold text-slate-500">
+                      <div className="w-6 shrink-0 text-center text-sm font-bold text-slate-500 sm:w-7">
                         {rank}
                       </div>
                       <div
                         aria-hidden="true"
-                        className="flex min-w-0 flex-1 items-center gap-3 opacity-50 blur-[5px] select-none"
+                        className="flex min-w-0 flex-1 items-center gap-2 opacity-50 blur-[5px] select-none sm:gap-3"
                       >
-                        <span className="grid size-8 shrink-0 place-items-center rounded-full bg-white/10 text-xs font-bold text-slate-300">
+                        <span className="grid size-7 shrink-0 place-items-center rounded-full bg-white/10 text-[10px] font-bold text-slate-300 sm:size-8 sm:text-xs">
                           PP
                         </span>
                         <span className="flex-1 truncate text-[.8rem] font-medium text-slate-200">
@@ -159,7 +159,7 @@ export function LiveLeaderboardSection() {
                       </div>
                       <span
                         aria-hidden="true"
-                        className="w-24 text-right text-xs font-bold text-slate-400 opacity-50 blur-[5px] select-none"
+                        className="w-[4.5rem] shrink-0 text-right text-[10px] font-bold text-slate-400 opacity-50 blur-[5px] select-none sm:w-24 sm:text-xs"
                       >
                         000 XP
                       </span>
@@ -178,43 +178,43 @@ export function LiveLeaderboardSection() {
                 return (
                   <li
                     key={entry.id}
-                    className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-white/5"
+                    className="flex items-center gap-2 px-3 py-3 transition-colors hover:bg-white/5 sm:gap-3 sm:px-4"
                   >
                     <div
                       className={cn(
-                        "w-7 shrink-0 text-center text-sm",
+                        "w-6 shrink-0 text-center text-sm sm:w-7",
                         config.rankClass,
                       )}
                     >
                       {rank}
                     </div>
 
-                    <div className="flex min-w-0 flex-1 items-center gap-3">
+                    <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
                       <span
                         className={cn(
-                          "grid size-8 shrink-0 place-items-center rounded-full text-xs font-bold",
+                          "grid size-7 shrink-0 place-items-center rounded-full text-[10px] font-bold sm:size-8 sm:text-xs",
                           config.avatarClass,
                         )}
                       >
                         {initials}
                       </span>
-                      <span className="min-w-0 truncate text-[.8rem] font-medium text-slate-200">
+                      <span className="min-w-0 flex-1 truncate text-xs font-medium text-slate-200 sm:text-[.8rem]">
                         {entry.name}
                       </span>
                       {isTopThree && (
                         <span
                           className={cn(
-                            "hidden items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold sm:flex",
+                            "inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[9px] leading-none font-bold sm:px-2.5 sm:text-[10px]",
                             config.badgeClass,
                           )}
                         >
-                          <Icon className="size-3" />
+                          <Icon className="size-2.5 sm:size-3" />
                           {config.label}
                         </span>
                       )}
                     </div>
 
-                    <div className="w-24 shrink-0 text-right">
+                    <div className="w-[4.5rem] shrink-0 text-right sm:w-24">
                       <span
                         className={cn(
                           "text-xs font-bold sm:text-[.8rem]",
