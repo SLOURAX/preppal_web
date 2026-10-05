@@ -1,3 +1,5 @@
+"use client";
+
 import type { ComponentType, SVGProps } from "react";
 import {
   SaxAwardBulk,
@@ -7,23 +9,21 @@ import {
   SaxRanking1Bulk,
 } from "@meysam213/iconsax-react";
 import Image from "next/image";
+import { useQuery } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
+import { apiClient } from "@/lib/api/client";
 
 interface LeaderboardEntry {
-  readonly rank: 1 | 2 | 3 | 4 | 5;
+  readonly id: string;
+  readonly rank: number;
   readonly name: string;
-  readonly score: string;
-  readonly streak: number;
+  readonly score: number;
 }
 
-const LEADERBOARD: readonly LeaderboardEntry[] = [
-  { rank: 1, name: "Alex M.", score: "15,240 XP", streak: 14 },
-  { rank: 2, name: "Sarah K.", score: "14,800 XP", streak: 9 },
-  { rank: 3, name: "David L.", score: "12,950 XP", streak: 7 },
-  { rank: 4, name: "Emma R.", score: "11,100 XP", streak: 5 },
-  { rank: 5, name: "Michael T.", score: "10,500 XP", streak: 3 },
-] as const;
+interface LeaderboardResponse {
+  readonly entries: LeaderboardEntry[];
+}
 
 interface RankStyle {
   readonly icon: ComponentType<SVGProps<SVGSVGElement>>;
@@ -34,7 +34,7 @@ interface RankStyle {
   readonly scoreClass: string;
 }
 
-const RANK_CONFIG: Record<1 | 2 | 3 | 4 | 5, RankStyle> = {
+const RANK_CONFIG: Record<number, RankStyle> = {
   1: {
     icon: SaxCrown1Bulk,
     label: "Gold",
@@ -81,6 +81,18 @@ const RANK_CONFIG: Record<1 | 2 | 3 | 4 | 5, RankStyle> = {
 };
 
 export function LiveLeaderboardSection() {
+  const leaderboardQuery = useQuery({
+    queryKey: ["leaderboard", "week", "home-preview"],
+    queryFn: () =>
+      apiClient<LeaderboardResponse>("/api/v1/leaderboard?range=week"),
+    staleTime: 60_000,
+  });
+  const leaderboard = (leaderboardQuery.data?.entries ?? []).slice(0, 5);
+  const leaderboardRows = Array.from({ length: 5 }, (_, index) => ({
+    rank: index + 1,
+    entry: leaderboard[index],
+  }));
+
   return (
     <section className="relative left-1/2 my-10 -ml-[50dvw] w-[100dvw] overflow-hidden border-y border-white/5 bg-[#0A0A0C] py-10 sm:py-10 lg:py-20">
       <div
@@ -117,19 +129,47 @@ export function LiveLeaderboardSection() {
               <span className="flex-1 text-[10px] font-semibold tracking-widest text-slate-400 uppercase">
                 Student
               </span>
-              <span className="text-[10px] font-semibold tracking-widest text-slate-400 uppercase">
-                Streak
+              <span className="w-24 text-right text-[10px] font-semibold tracking-widest text-slate-400 uppercase">
+                XP points
               </span>
-              {/* <span className="w-20 text-right text-[10px] font-semibold tracking-widest text-slate-400 uppercase">
-                Coins
-              </span> */}
             </div>
 
             <ul className="relative z-10 divide-y divide-white/5">
-              {LEADERBOARD.map((entry) => {
-                const config = RANK_CONFIG[entry.rank];
+              {leaderboardRows.map(({ rank, entry }) => {
+                if (!entry) {
+                  return (
+                    <li
+                      key={`hidden-rank-${rank}`}
+                      aria-label={`Leaderboard position ${rank} hidden`}
+                      className="flex items-center gap-3 px-4 py-3"
+                    >
+                      <div className="w-7 text-center text-sm font-bold text-slate-500">
+                        {rank}
+                      </div>
+                      <div
+                        aria-hidden="true"
+                        className="flex min-w-0 flex-1 items-center gap-3 opacity-50 blur-[5px] select-none"
+                      >
+                        <span className="grid size-8 shrink-0 place-items-center rounded-full bg-white/10 text-xs font-bold text-slate-300">
+                          PP
+                        </span>
+                        <span className="flex-1 truncate text-[.8rem] font-medium text-slate-200">
+                          More learners
+                        </span>
+                      </div>
+                      <span
+                        aria-hidden="true"
+                        className="w-24 text-right text-xs font-bold text-slate-400 opacity-50 blur-[5px] select-none"
+                      >
+                        000 XP
+                      </span>
+                    </li>
+                  );
+                }
+
+                const config = RANK_CONFIG[rank] ?? RANK_CONFIG[5];
                 const Icon = config.icon;
-                const isTopThree = entry.rank <= 3;
+                const isTopThree = rank <= 3;
                 const initials = entry.name
                   .split(" ")
                   .map((n) => n[0])
@@ -137,19 +177,19 @@ export function LiveLeaderboardSection() {
 
                 return (
                   <li
-                    key={entry.rank}
+                    key={entry.id}
                     className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-white/5"
                   >
                     <div
                       className={cn(
-                        "w-7 text-center text-sm",
+                        "w-7 shrink-0 text-center text-sm",
                         config.rankClass,
                       )}
                     >
-                      {entry.rank}
+                      {rank}
                     </div>
 
-                    <div className="flex flex-1 items-center gap-3">
+                    <div className="flex min-w-0 flex-1 items-center gap-3">
                       <span
                         className={cn(
                           "grid size-8 shrink-0 place-items-center rounded-full text-xs font-bold",
@@ -158,7 +198,7 @@ export function LiveLeaderboardSection() {
                       >
                         {initials}
                       </span>
-                      <span className="text-[.8rem] font-medium text-slate-200">
+                      <span className="min-w-0 truncate text-[.8rem] font-medium text-slate-200">
                         {entry.name}
                       </span>
                       {isTopThree && (
@@ -174,30 +214,27 @@ export function LiveLeaderboardSection() {
                       )}
                     </div>
 
-                    <div className="flex items-center gap-1.5">
-                      <SaxAwardBulk className="size-3.5 text-orange-400" />
-                      <span className="text-xs font-medium text-slate-300">
-                        {entry.streak}d
-                      </span>
-                    </div>
-
-                    {/* <div className="w-20 text-right">
+                    <div className="w-24 shrink-0 text-right">
                       <span
                         className={cn(
-                          "text-[.8rem] font-bold",
+                          "text-xs font-bold sm:text-[.8rem]",
                           config.scoreClass,
                         )}
                       >
-                        {entry.score}
+                        {entry.score.toLocaleString()} XP
                       </span>
-                    </div> */}
+                    </div>
                   </li>
                 );
               })}
             </ul>
 
             <div className="flex items-center justify-between border-t border-white/10 bg-white/5 px-4 py-3">
-              <p className="text-xs text-slate-400">Join to claim your spot</p>
+              <p className="text-xs text-slate-400">
+                {leaderboardQuery.isError
+                  ? "Leaderboard unavailable"
+                  : "Join to claim your spot"}
+              </p>
               <a
                 href="/leaderboard"
                 className="text-xs font-medium text-violet-400 transition-colors hover:text-violet-300 hover:underline"

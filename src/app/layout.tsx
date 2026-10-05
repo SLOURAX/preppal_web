@@ -12,6 +12,10 @@ export const metadata: Metadata = {
   title: { default: "Preppal", template: "%s | Preppal" },
   description:
     "Smart preparation, confident outcomes, and rewards for learning.",
+  icons: {
+    icon: "/assets/brand/preppal-mark.svg",
+    apple: "/assets/brand/preppal-mark.svg",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -59,9 +59,14 @@ export function NavBar() {
             href="/"
             onClick={() => setIsMobileMenuOpen(false)}
           >
-            <span className="bg-primary text-primary-foreground grid size-9 place-items-center rounded-xl text-base font-black shadow-sm">
-              pp
-            </span>
+            <Image
+              alt="Preppal home"
+              className="size-10 object-contain"
+              height={40}
+              priority
+              src="/assets/brand/preppal-mark.svg"
+              width={40}
+            />
           </Link>
 
           <div className="hidden items-center gap-2.5 sm:gap-4 md:flex">

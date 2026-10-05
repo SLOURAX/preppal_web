@@ -1,4 +1,5 @@
 import { Mail } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import type { IconType } from "react-icons";
 import {
@@ -99,9 +100,13 @@ export function Footer() {
       <div className="mx-auto max-w-5xl px-5 py-12 text-center sm:px-8 sm:py-14">
         <div className="mx-auto flex max-w-xl flex-col items-center">
           <Link className="inline-flex items-center gap-2.5" href="/">
-            <span className="bg-primary text-primary-foreground grid size-10 place-items-center rounded-xl text-base font-black shadow-sm">
-              pp
-            </span>
+            <Image
+              alt=""
+              className="size-11 object-contain"
+              height={44}
+              src="/assets/brand/preppal-mark.svg"
+              width={44}
+            />
             <span className="text-foreground text-xl font-bold tracking-[-0.04em]">
               Preppal
             </span>
