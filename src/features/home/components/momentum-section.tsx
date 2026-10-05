@@ -7,30 +7,119 @@ import {
   SaxCrown1Bulk,
   SaxFlag2Bulk,
 } from "@meysam213/iconsax-react";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { apiClient } from "@/lib/api/client";
+import { useAuthStore } from "@/store";
+import type { RewardSummary } from "@/features/rewards/reward.types";
+import { useWeeklyGoal } from "@/features/progression/weekly-goal-api";
 
-const MOMENTUM_STATS = [
-  {
-    label: "Current streak",
-    value: "7 days",
-    icon: SaxChartSuccessBulk,
-    color: "text-orange-500 bg-orange-500/10",
-  },
-  {
-    label: "Weekly goal",
-    value: "4 of 6",
-    icon: SaxFlag2Bulk,
-    color: "text-success bg-success/10",
-  },
-  {
-    label: "Weekly rank",
-    value: "#4",
-    icon: SaxCrown1Bulk,
-    color: "text-amber-500 bg-amber-500/10",
-  },
-] as const;
+interface LeaderboardEntry {
+  id: string;
+  rank: number;
+  name: string;
+  score: number;
+}
+
+interface LeaderboardResponse {
+  entries: LeaderboardEntry[];
+  currentUser: LeaderboardEntry | null;
+}
+
+function getLagosDateKey(date: Date): string {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Africa/Lagos",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const values = Object.fromEntries(
+    parts.map(({ type, value }) => [type, value]),
+  );
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
+function getCurrentStreak(checkIns: RewardSummary["checkIns"], today: string) {
+  const checkInDates = new Set(
+    checkIns.map(({ checkInDate }) => checkInDate.slice(0, 10)),
+  );
+  const cursor = new Date(`${today}T00:00:00.000Z`);
+  if (!checkInDates.has(today)) cursor.setUTCDate(cursor.getUTCDate() - 1);
+
+  let streak = 0;
+  while (checkInDates.has(cursor.toISOString().slice(0, 10))) {
+    streak += 1;
+    cursor.setUTCDate(cursor.getUTCDate() - 1);
+  }
+  return streak;
+}
 
 export function MomentumSection() {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const today = getLagosDateKey(new Date());
+  const rewardsQuery = useQuery({
+    queryKey: ["rewards", "summary"],
+    queryFn: () => apiClient<RewardSummary>("/api/v1/rewards/summary"),
+    enabled: isAuthenticated,
+    staleTime: 30_000,
+  });
+  const weeklyGoalQuery = useWeeklyGoal(isAuthenticated);
+  const leaderboardQuery = useQuery({
+    queryKey: ["leaderboard", "week", "current-user"],
+    queryFn: () =>
+      apiClient<LeaderboardResponse>("/api/v1/leaderboard?range=week"),
+    enabled: isAuthenticated,
+    staleTime: 30_000,
+  });
+
+  const checkIns = rewardsQuery.data?.checkIns ?? [];
+  const checkInXpToday = checkIns
+    .filter(({ checkInDate }) => checkInDate.slice(0, 10) === today)
+    .reduce((total, { xpAwarded }) => total + xpAwarded, 0);
+  const streak = rewardsQuery.data ? getCurrentStreak(checkIns, today) : null;
+  const goal = weeklyGoalQuery.data;
+  const weeklyProgress =
+    goal?.targetDays && goal.targetDays > 0
+      ? Math.min(100, (goal.completedDays / goal.targetDays) * 100)
+      : 0;
+  const rank = leaderboardQuery.data?.currentUser?.rank;
+  const stats = [
+    {
+      label: "Current streak",
+      value: rewardsQuery.isError
+        ? "Unavailable"
+        : streak === null
+          ? "—"
+          : `${streak} ${streak === 1 ? "day" : "days"}`,
+      icon: SaxChartSuccessBulk,
+      color: "text-orange-500 bg-orange-500/10",
+    },
+    {
+      label: "Weekly goal",
+      value: weeklyGoalQuery.isError
+        ? "Unavailable"
+        : !goal
+          ? "—"
+          : goal.targetDays === null
+            ? "Not set"
+            : `${goal.completedDays} of ${goal.targetDays}`,
+      icon: SaxFlag2Bulk,
+      color: "text-success bg-success/10",
+    },
+    {
+      label: "Weekly rank",
+      value: leaderboardQuery.isError
+        ? "Unavailable"
+        : leaderboardQuery.data
+          ? rank
+            ? `#${rank}`
+            : "Unranked"
+          : "—",
+      icon: SaxCrown1Bulk,
+      color: "text-amber-500 bg-amber-500/10",
+    },
+  ] as const;
+
   return (
     <section>
       <div className="mx-auto mt-10 max-w-2xl text-center">
@@ -68,11 +157,39 @@ export function MomentumSection() {
           <div className="relative z-10 mt-12 flex flex-wrap items-end justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 text-[.85rem] font-bold">
-                <SaxAwardBulk className="size-5 text-amber-300" /> +2 XP today
+                <SaxAwardBulk className="size-5 text-amber-300" />
+                {!isAuthenticated
+                  ? "Sign in to see your progress"
+                  : rewardsQuery.isLoading
+                    ? "Loading today’s XP…"
+                    : rewardsQuery.isError
+                      ? "Today’s XP unavailable"
+                      : checkInXpToday > 0
+                        ? `+${checkInXpToday} XP from check-in today`
+                        : "No check-in XP today"}
               </div>
               <div className="mt-3 h-1.5 w-44 overflow-hidden rounded-full bg-white/20">
-                <div className="h-full w-4/5 rounded-full bg-amber-300" />
+                <div
+                  aria-label="Weekly goal progress"
+                  aria-valuemax={goal?.targetDays ?? 0}
+                  aria-valuemin={0}
+                  aria-valuenow={goal?.completedDays ?? 0}
+                  className="h-full rounded-full bg-amber-300 transition-[width] duration-500"
+                  role="progressbar"
+                  style={{ width: `${weeklyProgress}%` }}
+                />
               </div>
+              <p className="mt-1.5 text-[10px] opacity-75">
+                {!isAuthenticated
+                  ? "Sign in to track your weekly goal"
+                  : weeklyGoalQuery.isLoading
+                    ? "Loading weekly goal…"
+                    : weeklyGoalQuery.isError
+                      ? "Weekly goal unavailable"
+                      : !goal?.targetDays
+                        ? "Set a weekly goal in your dashboard"
+                        : `Weekly goal: ${goal.completedDays} of ${goal.targetDays} days`}
+              </p>
               {/* <p className="mt-1.5 text-[10px] opacity-70">
                 One check-in away from your next bonus
               </p> */}
@@ -87,7 +204,7 @@ export function MomentumSection() {
         </div>
 
         <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-          {MOMENTUM_STATS.map(({ label, value, icon: Icon, color }) => (
+          {stats.map(({ label, value, icon: Icon, color }) => (
             <div
               className="surface-card flex items-center gap-4 p-4 transition-transform hover:-translate-y-0.5"
               key={label}

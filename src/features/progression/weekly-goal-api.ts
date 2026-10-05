@@ -20,10 +20,11 @@ export interface WeeklyGoal {
 
 export const weeklyGoalQueryKey = ["progression", "weekly-goal"] as const;
 
-export function useWeeklyGoal() {
+export function useWeeklyGoal(enabled = true) {
   return useQuery({
     queryKey: weeklyGoalQueryKey,
     queryFn: () => apiClient<WeeklyGoal>("/api/v1/progression/weekly-goal"),
+    enabled,
     staleTime: 60_000,
   });
 }
