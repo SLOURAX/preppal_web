@@ -56,7 +56,12 @@ export function DailyCheckInCard({
     visibleMonth.getMonth() + 1,
     0,
   ).getDate();
-  const mondayOffset = (visibleMonth.getDay() + 6) % 7;
+  const firstDayOfMonth = new Date(
+    visibleMonth.getFullYear(),
+    visibleMonth.getMonth(),
+    1,
+  );
+  const mondayOffset = (firstDayOfMonth.getDay() + 6) % 7;
 
   const moveMonth = (offset: number): void => {
     setVisibleMonth(
