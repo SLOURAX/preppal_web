@@ -141,7 +141,7 @@ export function LoadingModal({
         role="alertdialog"
         tabIndex={-1}
       >
-        <Info className="mx-auto h-10 w-10 text-primary mb-10" />
+        <Info className="mx-auto h-10 w-10 text-primary mb-3" />
         <h2 className="text-foreground text-base font-semibold" id={titleId}>
           {title}
         </h2>
