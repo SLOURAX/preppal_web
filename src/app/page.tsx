@@ -46,6 +46,7 @@ const capabilities: readonly Capability[] = [
         alt=""
         className="h-[26px] w-[26px] object-contain"
         height={26}
+        loading="lazy"
         src="/assets/coins/preppal-coin.png"
         width={26}
       />
@@ -73,6 +74,7 @@ const floatingStats = [
         alt=""
         className="h-[18px] w-[18px] object-contain"
         height={18}
+        loading="lazy"
         src="/assets/coins/preppal-coin.png"
         width={18}
       />
@@ -299,7 +301,7 @@ export default function HomePage() {
                     alt="Preppal mascot"
                     width={144}
                     height={144}
-                    priority
+                    loading="lazy"
                     className="h-48 w-48 object-contain drop-shadow-xl sm:h-56 sm:w-56"
                   />
                   <div className="bg-surface border-border relative z-20 -mt-8 flex items-center gap-1 rounded-full border px-3 py-1 shadow-sm sm:-mt-12">
@@ -307,6 +309,7 @@ export default function HomePage() {
                       alt=""
                       className="h-[22px] w-[22px] object-contain"
                       height={22}
+                      loading="lazy"
                       src="/assets/coins/preppal-coin.png"
                       width={22}
                     />

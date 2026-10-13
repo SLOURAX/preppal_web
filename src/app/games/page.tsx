@@ -42,12 +42,12 @@ export default function GamesPage() {
           </div>
           <div className="relative mt-7 flex flex-wrap gap-3 text-xs font-semibold text-white/85">
             <span className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2">
-              <Lock className="size-4 text-amber-300" /> New challenges
-              coming soon
+              <Lock className="size-4 text-amber-300" /> New challenges coming
+              soon
             </span>
             <span className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2">
-              <Timer className="size-4 text-cyan-200" /> Made for quick
-              study breaks
+              <Timer className="size-4 text-cyan-200" /> Made for quick study
+              breaks
             </span>
           </div>
           <div className="relative mt-6 flex w-full max-w-xs items-center gap-3 rounded-2xl border border-white/15 bg-[#21194d]/70 px-4 py-3 backdrop-blur-sm sm:absolute sm:right-8 sm:bottom-8 sm:mt-0 sm:w-auto">
@@ -66,6 +66,7 @@ export default function GamesPage() {
                     alt=""
                     className="size-4 object-contain"
                     height={16}
+                    loading="lazy"
                     src="/assets/coins/preppal-coin.png"
                     width={16}
                   />{" "}
@@ -102,14 +103,14 @@ export default function GamesPage() {
           <div className="from-primary/5 to-surface-subtle mt-6 flex flex-col items-center justify-between gap-5 rounded-2xl bg-gradient-to-r p-5 text-center sm:flex-row sm:p-6 sm:text-left">
             <div className="blur-sm select-none" aria-hidden="true">
               <p className="text-foreground text-sm font-semibold">
-                We're getting the first challenge ready.
+                We&apos;re getting the first challenge ready.
               </p>
               <p className="text-muted-foreground mt-1 text-xs">
-                Games will appear here when they're ready to play.
+                Games will appear here when they&apos;re ready to play.
               </p>
             </div>
             <Link
-              className="relative z-10 bg-surface text-foreground border-border inline-flex min-h-10 items-center gap-2 rounded-full border px-5 text-[.8rem] font-semibold"
+              className="bg-surface text-foreground border-border relative z-10 inline-flex min-h-10 items-center gap-2 rounded-full border px-5 text-[.8rem] font-semibold"
               href="/dashboard"
             >
               Back to dashboard

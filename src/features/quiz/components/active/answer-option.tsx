@@ -55,7 +55,10 @@ export function AnswerOption({
       >
         {letter}
       </span>
-      <span className="text-foreground flex-1 text-[.8rem]">{text}</span>
+      <span
+        className="rich-content text-foreground flex-1 text-[.8rem]"
+        dangerouslySetInnerHTML={{ __html: text }}
+      />
       {isCorrect && isSelected ? (
         <span
           aria-label="Correct selection"

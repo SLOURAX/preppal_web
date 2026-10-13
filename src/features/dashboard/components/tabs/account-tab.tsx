@@ -19,7 +19,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuthStore } from "@/store";
-import { ConfirmationModal } from "@/components/ui";
+import { ConfirmationModal, LoadingModal } from "@/components/ui";
 import { ThemeToggle } from "@/components/navigation/theme-toggle";
 import { PasswordField } from "@/features/auth";
 import {
@@ -59,7 +59,7 @@ export function AccountTab() {
   const { resolvedTheme } = useTheme();
   const userName = useAuthStore((s) => s.userName);
   const userEmail = useAuthStore((s) => s.userEmail);
-  const userPlan = useAuthStore((s) => s.userPlan);
+  const membership = useAuthStore((s) => s.membership);
   const levelProgress = useAuthStore((s) => s.levelProgress);
   const preppalBalance = useAuthStore((s) => s.preppalBalance);
   const weeklyGoalQuery = useWeeklyGoal();
@@ -215,15 +215,38 @@ export function AccountTab() {
           </h2>
           <div className="mt-2 flex flex-wrap items-center gap-3">
             <span className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-semibold">
-              Level {levelProgress?.current.number ?? 1} · {userPlan}
+              Level {levelProgress?.current.number ?? 1}
+              {levelProgress?.current.name
+                ? ` · ${levelProgress.current.name}`
+                : ""}
             </span>
-            <Link
-              className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-amber-300/70 bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 px-3.5 py-1.5 text-xs font-extrabold text-amber-950 shadow-sm shadow-amber-500/20 transition-all hover:-translate-y-0.5 hover:shadow-md hover:shadow-amber-500/25 focus-visible:ring-2 focus-visible:ring-amber-400/40 focus-visible:outline-none"
-              href="/pricing"
+            <span
+              className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                membership?.isPremium
+                  ? "bg-emerald-500/10 text-emerald-600"
+                  : "bg-surface-subtle text-muted-foreground"
+              }`}
             >
-              <Crown className="size-3.5" aria-hidden="true" />
-              Go Premium
-            </Link>
+              {membership?.plan.name ?? "Starter"}
+            </span>
+            {!membership?.isPremium ? (
+              <Link
+                className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-amber-300/70 bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 px-3.5 py-1.5 text-xs font-extrabold text-amber-950 shadow-sm shadow-amber-500/20 transition-all hover:-translate-y-0.5 hover:shadow-md hover:shadow-amber-500/25 focus-visible:ring-2 focus-visible:ring-amber-400/40 focus-visible:outline-none"
+                href="/pricing"
+              >
+                <Crown className="size-3.5" aria-hidden="true" />
+                Go Premium
+              </Link>
+            ) : membership.currentPeriodEnd ? (
+              <span className="text-muted-foreground text-xs font-semibold">
+                Active until{" "}
+                {new Intl.DateTimeFormat("en-NG", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                }).format(new Date(membership.currentPeriodEnd))}
+              </span>
+            ) : null}
             <span className="flex items-center gap-1 text-sm font-bold text-amber-500">
               <BadgeCent className="size-4" />
               {preppalBalance} P
@@ -231,6 +254,56 @@ export function AccountTab() {
           </div>
         </div>
       </div>
+
+      {/* Membership */}
+      <section className="surface-card relative overflow-hidden rounded-3xl p-5 shadow-sm sm:p-6">
+        <div className="bg-primary/8 pointer-events-none absolute -top-16 -right-12 size-40 rounded-full blur-3xl" />
+        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3.5">
+            <span className="bg-primary/10 text-primary grid size-11 shrink-0 place-items-center rounded-2xl">
+              <Crown className="size-5" aria-hidden="true" />
+            </span>
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="text-foreground text-base font-black">
+                  {membership?.plan.name ?? "Starter"}
+                </p>
+                <span
+                  className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${
+                    membership?.isPremium
+                      ? "bg-emerald-500/10 text-emerald-600"
+                      : "bg-surface-subtle text-muted-foreground"
+                  }`}
+                >
+                  {membership?.isPremium ? "Active plan" : "Free plan"}
+                </span>
+              </div>
+              <p className="text-muted-foreground mt-1 text-xs leading-5">
+                {membership?.isPremium && membership.currentPeriodEnd
+                  ? `Your premium access ends on ${new Intl.DateTimeFormat(
+                      "en-NG",
+                      {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      },
+                    ).format(new Date(membership.currentPeriodEnd))}.`
+                  : "Upgrade when you want unlimited premium learning features."}
+              </p>
+            </div>
+          </div>
+          <Link
+            className={`inline-flex min-h-10 shrink-0 items-center justify-center rounded-xl px-4 text-xs font-bold transition-colors ${
+              membership?.isPremium
+                ? "border-border text-primary hover:bg-primary/5 border"
+                : "bg-primary text-primary-foreground hover:bg-primary-strong"
+            }`}
+            href="/pricing"
+          >
+            {membership?.isPremium ? "View plan details" : "Go Premium"}
+          </Link>
+        </div>
+      </section>
 
       {/* Account */}
       <div className="surface-card divide-border divide-y overflow-hidden rounded-3xl p-0 shadow-sm">
@@ -646,10 +719,27 @@ export function AccountTab() {
           description="This action permanently removes your account, quiz history, and rewards."
           destructive
           confirmLabel={isDeleting ? "Deleting…" : "Delete account"}
+          loading={isDeleting}
           onConfirm={deleteAccount}
           onCancel={() => setShowDeleteConfirmation(false)}
         />
       ) : null}
+      <LoadingModal
+        open={
+          isSavingName ||
+          isChangingPassword ||
+          isRevokingSessions ||
+          updateWeeklyGoal.isPending ||
+          updateNotificationPreferences.isPending
+        }
+        title={
+          isChangingPassword
+            ? "Updating your password"
+            : isRevokingSessions
+              ? "Securing your account"
+              : "Saving your changes"
+        }
+      />
     </div>
   );
 }

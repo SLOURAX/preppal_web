@@ -1,3 +1,6 @@
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
 import {
   BadgeCheck,
   BrainCircuit,
@@ -12,6 +15,7 @@ import {
   PRICING_PLANS,
 } from "../pricing.constants";
 import { PricingCard } from "./pricing-card";
+import { apiClient } from "@/lib/api/client";
 
 const PREMIUM_HIGHLIGHTS = [
   { label: "AI-supported learning", icon: BrainCircuit },
@@ -20,6 +24,18 @@ const PREMIUM_HIGHLIGHTS = [
 ] as const;
 
 export function PricingPage() {
+  const plansQuery = useQuery({
+    queryKey: ["payments", "plans"],
+    queryFn: () =>
+      apiClient<Array<{ slug: string; amountMinor: number }>>(
+        "/api/v1/payments/plans",
+      ),
+    staleTime: 5 * 60 * 1000,
+  });
+  const plans = PRICING_PLANS.map((plan) => {
+    const current = plansQuery.data?.find((item) => item.slug === plan.id);
+    return current ? { ...plan, price: current.amountMinor / 100 } : plan;
+  });
   return (
     <main className="mx-auto w-full max-w-5xl px-5 py-8 sm:px-8 sm:py-10">
       <header className="mx-auto max-w-2xl text-center">
@@ -47,7 +63,7 @@ export function PricingPage() {
         aria-label="Preppal plans"
         className="mt-15 grid items-stretch gap-4 lg:grid-cols-3"
       >
-        {PRICING_PLANS.map((plan) => (
+        {plans.map((plan) => (
           <PricingCard key={plan.id} plan={plan} />
         ))}
       </section>

@@ -13,20 +13,20 @@ import {
 } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store";
+import { apiClient } from "@/lib/api/client";
 
 import {
-  EXAM_CHOICES,
-  SUBJECT_CHOICES,
-  SUBJECT_TOPICS,
   type QuizDifficulty,
   type QuizPath,
   type QuizSetupStep,
   type QuizMode,
 } from "../quiz.constants";
+import type { QuizCatalog } from "../quiz-catalog";
 import { ExamYearStep } from "./exam-year-step";
 import { ExamSubjectStep } from "./exam-subject-step";
 import { QuizAuthGate } from "./quiz-auth-gate";
@@ -94,7 +94,25 @@ export function QuizEntryScreen({
   const [selectedMode, setSelectedMode] = useState<QuizMode | null>(null);
   const [isAuthGateOpen, setIsAuthGateOpen] = useState<boolean>(false);
 
-  const choices = quizPath === "exam" ? EXAM_CHOICES : SUBJECT_CHOICES;
+  const catalogQuery = useQuery({
+    queryKey: ["quiz", "catalog"],
+    queryFn: () => apiClient<QuizCatalog>("/api/v1/question-bank/catalog"),
+  });
+  const catalog = catalogQuery.data;
+  const examChoices =
+    catalog?.exams.map((exam) => ({
+      value: exam.id,
+      label: exam.name,
+      description: exam.description,
+    })) ?? [];
+  const subjectChoices =
+    catalog?.standaloneSubjects.map((subject) => ({
+      value: subject.id,
+      label: subject.name,
+      description: subject.description,
+    })) ?? [];
+
+  const choices = quizPath === "exam" ? examChoices : subjectChoices;
   const selectedValue = quizPath === "exam" ? selectedExam : selectedSubject;
   const selectedChoice = choices.find(
     (choice) => choice.value === selectedValue,
@@ -116,8 +134,24 @@ export function QuizEntryScreen({
   }
 
   const subjectTopics = selectedSubject
-    ? (SUBJECT_TOPICS[selectedSubject] ?? [])
+    ? (catalog?.standaloneSubjects
+        .find((subject) => subject.id === selectedSubject)
+        ?.topics.map((topic) => topic.name) ?? [])
     : [];
+  const selectedExamRecord = catalog?.exams.find(
+    (exam) => exam.id === selectedExam,
+  );
+  const examSubjects =
+    selectedExamRecord?.subjects.map((entry) => ({
+      value: entry.id,
+      label: entry.name,
+      description: entry.description,
+    })) ?? [];
+  const selectedExamSubjectRecord = selectedExamRecord?.subjects.find(
+    (entry) => entry.id === selectedExamSubject,
+  );
+  const examYears =
+    selectedExamSubjectRecord?.years.map((entry) => entry.examYear.year) ?? [];
 
   const updatePath = (path: QuizPath): void => {
     setQuizPath(path);
@@ -175,19 +209,36 @@ export function QuizEntryScreen({
     if (selectedMode) params.set("mode", selectedMode);
     if (quizPath) params.set("path", quizPath);
     if (selectedExam) params.set("exam", selectedExam);
+    if (selectedExamRecord) params.set("examName", selectedExamRecord.name);
     if (selectedExamSubject) params.set("subject", selectedExamSubject);
     if (selectedSubject) params.set("subject", selectedSubject);
+    const selectedStandaloneSubject = catalog?.standaloneSubjects.find(
+      (subject) => subject.id === selectedSubject,
+    );
+    const selectedSubjectName =
+      selectedExamSubjectRecord?.name ??
+      selectedStandaloneSubject?.name;
+    if (selectedSubjectName) params.set("subjectName", selectedSubjectName);
     if (selectedYear) params.set("year", selectedYear.toString());
+    const selectedYearLink = selectedExamSubjectRecord?.years.find(
+      (entry) => entry.examYear.year === selectedYear,
+    );
+    if (selectedYearLink) params.set("yearLink", selectedYearLink.id);
+    if (selectedDifficulty) params.set("difficulty", selectedDifficulty);
+    if (selectedTopics.length) {
+      params.set("topics", selectedTopics.join(","));
+      const topicIds = selectedStandaloneSubject?.topics
+        .filter((topic) => selectedTopics.includes(topic.name))
+        .map((topic) => topic.id);
+      if (topicIds?.length) params.set("topicIds", topicIds.join(","));
+    }
     if (selectedMode === "timed") params.set("seed", String(Date.now()));
 
     router.push(`/quiz/preview?${params.toString()}`);
   };
 
   // Find label for context
-  const selectedExamSubjectLabel = selectedExamSubject
-    ? (EXAM_CHOICES.find((c) => c.value === selectedExamSubject)?.label ??
-      selectedExamSubject) // Note: this isn't strictly right since EXAM_CHOICES doesn't have subjects, but it'll fallback. Actually, it should be looked up from EXAM_SUBJECTS in a real app, but for context chip the value is fine.
-    : undefined;
+  const selectedExamSubjectLabel = selectedExamSubjectRecord?.name;
 
   return (
     <main className="mx-auto w-full max-w-5xl px-5 py-10 sm:px-8">
@@ -265,6 +316,16 @@ export function QuizEntryScreen({
             </fieldset>
 
             <div className="mt-6">
+              {catalogQuery.isLoading ? (
+                <p className="text-muted-foreground mb-3 text-xs">
+                  Loading available learning content…
+                </p>
+              ) : null}
+              {catalogQuery.error ? (
+                <p className="text-danger mb-3 text-xs">
+                  {catalogQuery.error.message}
+                </p>
+              ) : null}
               <QuizSelect
                 icon={quizPath === "exam" ? GraduationCap : BookOpenCheck}
                 id="quiz-category"
@@ -316,7 +377,7 @@ export function QuizEntryScreen({
         {setupStep === "exam-subject" && selectedChoice ? (
           <ExamSubjectStep
             examLabel={selectedChoice.label}
-            examValue={selectedChoice.value}
+            subjects={examSubjects}
             selectedSubject={selectedExamSubject}
             onBack={() => setSetupStep("entry")}
             onSelectSubject={setSelectedExamSubject}
@@ -331,6 +392,7 @@ export function QuizEntryScreen({
             onSelectYear={setSelectedYear}
             selectedYear={selectedYear}
             onContinue={() => setSetupStep("quiz-mode")}
+            years={examYears}
           />
         ) : null}
 
@@ -368,10 +430,7 @@ export function QuizEntryScreen({
                 quizPath === "exam" ? selectedChoice?.label : undefined,
               subjectLabel:
                 quizPath === "exam"
-                  ? selectedExamSubject
-                    ? selectedExamSubject.charAt(0).toUpperCase() +
-                      selectedExamSubject.slice(1)
-                    : undefined
+                  ? selectedExamSubjectLabel
                   : selectedChoice?.label,
               yearLabel: selectedYear ? String(selectedYear) : undefined,
               difficulty: selectedDifficulty ?? undefined,

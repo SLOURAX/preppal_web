@@ -4,6 +4,7 @@ import { INITIAL_FINANCE_BALANCES, XP_TO_COIN_RATE } from "@/constants/finance";
 import { apiClient } from "@/lib/api/client";
 import type { LoginInput } from "@/features/auth/auth.schemas";
 import { loginSchema } from "@/features/auth/auth.schemas";
+import { getMembership, type Membership } from "@/features/payments";
 
 export interface QuizAttempt {
   id: string;
@@ -43,9 +44,54 @@ interface AuthUserPayload {
   experiencePoints: number;
   referralCode: string;
   referralLink: string;
-  wallet?: { availableBalanceMinor: number } | null;
+  wallet?: {
+    availableBalanceMinor: number;
+    depositedBalanceMinor: number;
+  } | null;
   progress: LevelProgress;
 }
+
+interface StoredQuizSession {
+  id: string;
+  subject: string;
+  examType: string;
+  mode: "timed" | "untimed";
+  path?: "exam" | "subject" | null;
+  examYear?: string | null;
+  scorePercent: number;
+  totalQuestions: number;
+  correctAnswers: number;
+  completedAt: string;
+  durationSeconds?: number | null;
+  answers?: Record<string, string> | null;
+  simulationSeed?: number | null;
+}
+
+const getQuizHistory = async (): Promise<QuizAttempt[]> => {
+  const sessions = await apiClient<StoredQuizSession[]>(
+    "/api/v1/learning/quiz-sessions",
+  );
+  return sessions.map((session) => ({
+    id: session.id,
+    subject: session.subject,
+    exam: session.examType,
+    mode: session.mode,
+    path: session.path ?? undefined,
+    year: session.examYear ?? undefined,
+    score: session.scorePercent,
+    total: session.totalQuestions,
+    correct: session.correctAnswers,
+    date: session.completedAt,
+    durationSeconds: session.durationSeconds ?? 0,
+    answers: Object.fromEntries(
+      Object.entries(session.answers ?? {}).map(([key, value]) => [
+        Number(key),
+        value,
+      ]),
+    ),
+    seed: session.simulationSeed ?? undefined,
+  }));
+};
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -56,6 +102,7 @@ interface AuthState {
   userName: string;
   userEmail: string;
   userPlan: string;
+  membership: Membership | null;
   levelProgress: LevelProgress | null;
   referralCode: string;
   referralLink: string;
@@ -89,6 +136,7 @@ export const useAuthStore = create<AuthState>()(
       userName: "Solomon Udumizi",
       userEmail: "",
       userPlan: "Starter",
+      membership: null,
       levelProgress: null,
       referralCode: "",
       referralLink: "",
@@ -105,6 +153,10 @@ export const useAuthStore = create<AuthState>()(
           credentials: "include",
           body: JSON.stringify(validated),
         });
+        const [membership, quizAttempts] = await Promise.all([
+          getMembership(),
+          getQuizHistory().catch(() => []),
+        ]);
         set({
           isAuthenticated: true,
           userName: response.user.fullName,
@@ -113,14 +165,22 @@ export const useAuthStore = create<AuthState>()(
           preppalBalance: response.user.wallet?.availableBalanceMinor ?? 0,
           referralCode: response.user.referralCode,
           referralLink: response.user.referralLink,
-          userPlan: "Starter",
+          depositedFunds:
+            (response.user.wallet?.depositedBalanceMinor ?? 0) / 100,
+          userPlan: membership.plan.name,
+          membership,
           levelProgress: response.user.progress,
+          quizAttempts,
           sessionChecked: true,
         });
       },
       restoreSession: async (): Promise<void> => {
         try {
-          const user = await apiClient<AuthUserPayload>("/api/v1/auth/me");
+          const [user, membership, quizAttempts] = await Promise.all([
+            apiClient<AuthUserPayload>("/api/v1/auth/me"),
+            getMembership(),
+            getQuizHistory().catch(() => []),
+          ]);
           set({
             isAuthenticated: true,
             sessionChecked: true,
@@ -130,8 +190,11 @@ export const useAuthStore = create<AuthState>()(
             preppalBalance: user.wallet?.availableBalanceMinor ?? 0,
             referralCode: user.referralCode,
             referralLink: user.referralLink,
-            userPlan: "Starter",
+            depositedFunds: (user.wallet?.depositedBalanceMinor ?? 0) / 100,
+            userPlan: membership.plan.name,
+            membership,
             levelProgress: user.progress,
+            quizAttempts,
           });
         } catch {
           get().clearSession();
@@ -151,6 +214,7 @@ export const useAuthStore = create<AuthState>()(
           userEmail: "",
           userName: "Learner",
           userPlan: "Starter",
+          membership: null,
           levelProgress: null,
           ...INITIAL_FINANCE_BALANCES,
           isSignOutModalOpen: false,
@@ -224,6 +288,7 @@ export const useAuthStore = create<AuthState>()(
       migrate: (persistedState) => ({
         ...(persistedState as AuthState),
         userPlan: "Starter",
+        membership: null,
         isAuthenticated: false,
         sessionChecked: false,
         ...INITIAL_FINANCE_BALANCES,

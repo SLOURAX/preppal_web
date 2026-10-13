@@ -20,8 +20,12 @@ function QuizPreviewContent() {
   const mode = searchParams.get("mode") || "timed";
   const isUntimed = mode === "untimed";
 
-  const subject = searchParams.get("subject") || "Mathematics";
-  const exam = searchParams.get("exam") || "JAMB";
+  const subject =
+    searchParams.get("subjectName") ||
+    searchParams.get("subject") ||
+    "Mathematics";
+  const exam =
+    searchParams.get("examName") || searchParams.get("exam") || "JAMB";
   const year = searchParams.get("year") || "2023";
   const [questionCount, setQuestionCount] = useState<number>(10);
 

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect } from "react";
 import { LoaderCircle } from "lucide-react";
+import { LoadingModal } from "./loading-state";
 
 interface ConfirmationModalProps {
   readonly title: string;
@@ -58,6 +59,7 @@ export function ConfirmationModal({
             }
             className="size-20 object-contain"
             height={80}
+            loading="lazy"
             src={
               destructive
                 ? "/assets/mascots/error.png"
@@ -101,6 +103,7 @@ export function ConfirmationModal({
           </button>
         </div>
       </div>
+      <LoadingModal open={loading} title="Processing your request" />
     </div>
   );
 }

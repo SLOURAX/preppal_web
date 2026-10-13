@@ -66,6 +66,7 @@ function FeedbackDialog({
               alt={`${feedback.kind} Preppal mascot`}
               className="size-20 object-contain"
               height={80}
+              loading="lazy"
               src={mascotByKind[feedback.kind]}
               width={80}
             />

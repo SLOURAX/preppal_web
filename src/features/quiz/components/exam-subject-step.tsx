@@ -4,11 +4,11 @@ import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui";
 import { ListSelect } from "@/components/ui/list-select";
 import { cn } from "@/lib/utils";
-import { EXAM_SUBJECTS } from "../quiz.constants";
+import type { QuizChoice } from "../quiz.constants";
 
 interface ExamSubjectStepProps {
   readonly examLabel: string;
-  readonly examValue: string;
+  readonly subjects: readonly QuizChoice[];
   readonly selectedSubject: string | null;
   readonly onBack: () => void;
   readonly onSelectSubject: (value: string) => void;
@@ -17,14 +17,12 @@ interface ExamSubjectStepProps {
 
 export function ExamSubjectStep({
   examLabel,
-  examValue,
+  subjects,
   selectedSubject,
   onBack,
   onSelectSubject,
   onContinue,
 }: ExamSubjectStepProps) {
-  const subjects = EXAM_SUBJECTS[examValue] ?? [];
-
   return (
     <section className="surface-card mx-auto max-w-3xl p-5 sm:p-8">
       <button

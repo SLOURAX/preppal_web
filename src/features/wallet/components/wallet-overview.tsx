@@ -14,10 +14,18 @@ import {
   Send,
   PiggyBank,
   Calculator,
+  Check,
+  ChevronDown,
+  Search,
 } from "lucide-react";
-import { ConfirmationModal, DataState, useFeedback } from "@/components/ui";
+import {
+  ConfirmationModal,
+  DataState,
+  LoadingModal,
+  useFeedback,
+} from "@/components/ui";
 import { SaxSecuritySafeBulk } from "@meysam213/iconsax-react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { COIN_VALUE_NGN, XP_TO_COIN_RATE } from "@/constants/finance";
 import { useAuthStore } from "@/store";
@@ -27,20 +35,18 @@ import {
   type WalletAsset,
   type WalletRange,
 } from "../wallet-api";
+import {
+  createDepositCheckout,
+  createPayout,
+  getNigerianBanks,
+  getPayoutAccount,
+  linkPayoutAccount,
+  resolveNigerianBankAccount,
+} from "@/features/payments";
 
 interface WalletOverviewProps {
   readonly balance: number;
 }
-
-const BANKS = [
-  "Access Bank",
-  "First Bank",
-  "GTBank",
-  "Kuda",
-  "Opay",
-  "UBA",
-  "Zenith Bank",
-] as const;
 
 export function WalletOverview({ balance }: WalletOverviewProps) {
   const queryClient = useQueryClient();
@@ -50,11 +56,25 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
   const [pendingAction, setPendingAction] = useState<
     "deposit" | "withdraw" | "convert" | null
   >(null);
-  const [isBankLinked, setIsBankLinked] = useState(false);
   const [showBankModal, setShowBankModal] = useState(false);
-  const [bankDetails, setBankDetails] = useState({ bank: "", account: "" });
+  const [showDepositModal, setShowDepositModal] = useState(false);
+  const [showWithdrawalModal, setShowWithdrawalModal] = useState(false);
+  const [depositAmount, setDepositAmount] = useState("5000");
+  const [withdrawalCoins, setWithdrawalCoins] = useState("1");
+  const [bankDetails, setBankDetails] = useState({
+    bankCode: "",
+    bankName: "",
+    account: "",
+  });
   const [accountName, setAccountName] = useState("");
-  const [isVerifyingAccount, setIsVerifyingAccount] = useState(false);
+  const [accountResolveError, setAccountResolveError] = useState<string | null>(
+    null,
+  );
+  const [isResolvingAccount, setIsResolvingAccount] = useState(false);
+  const [bankSearch, setBankSearch] = useState("");
+  const [isBankPickerOpen, setIsBankPickerOpen] = useState(false);
+  const [isLinkingAccount, setIsLinkingAccount] = useState(false);
+  const [isStartingPayment, setIsStartingPayment] = useState(false);
   const [isConverting, setIsConverting] = useState(false);
   const [asset, setAsset] = useState<WalletAsset>("coin");
   const [range, setRange] = useState<WalletRange>("month");
@@ -72,22 +92,62 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
     to: range === "custom" ? customTo : undefined,
     limit: 5,
   });
+  const banksQuery = useQuery({
+    queryKey: ["payments", "banks"],
+    queryFn: getNigerianBanks,
+    staleTime: 24 * 60 * 60 * 1000,
+  });
+  const payoutAccountQuery = useQuery({
+    queryKey: ["payments", "payout-account"],
+    queryFn: getPayoutAccount,
+  });
+  const payoutAccount = payoutAccountQuery.data;
+  const isBankLinked = Boolean(payoutAccount?.isUsable);
+  const filteredBanks = useMemo(() => {
+    const term = bankSearch.trim().toLowerCase();
+    return (banksQuery.data ?? []).filter((bank) =>
+      bank.name.toLowerCase().includes(term),
+    );
+  }, [bankSearch, banksQuery.data]);
   useEffect(() => {
-    if (!bankDetails.bank || bankDetails.account.length !== 10) return;
-    const verification = window.setTimeout(() => {
-      setAccountName("Solomon Udumizi");
-      setIsVerifyingAccount(false);
-    }, 900);
-    return () => window.clearTimeout(verification);
-  }, [bankDetails.account, bankDetails.bank]);
+    if (!bankDetails.bankCode || !/^\d{10}$/.test(bankDetails.account)) {
+      return;
+    }
+    let active = true;
+    const timer = window.setTimeout(() => {
+      setIsResolvingAccount(true);
+      setAccountResolveError(null);
+      setAccountName("");
+      void resolveNigerianBankAccount({
+        bankCode: bankDetails.bankCode,
+        accountNumber: bankDetails.account,
+      })
+        .then((result) => {
+          if (active) setAccountName(result.accountName);
+        })
+        .catch((error: unknown) => {
+          if (active)
+            setAccountResolveError(
+              error instanceof Error
+                ? error.message
+                : "We could not verify this account.",
+            );
+        })
+        .finally(() => {
+          if (active) setIsResolvingAccount(false);
+        });
+    }, 500);
+    return () => {
+      active = false;
+      window.clearTimeout(timer);
+    };
+  }, [bankDetails.account, bankDetails.bankCode]);
   const requestedXp = useMemo(() => {
     const parsed = Number(xp);
-    return Number.isFinite(parsed)
-      ? Math.max(0, Math.floor(parsed / XP_TO_COIN_RATE) * XP_TO_COIN_RATE)
-      : 0;
+    return Number.isFinite(parsed) ? Math.max(0, Math.floor(parsed)) : 0;
   }, [xp]);
   const convertedCoins = useMemo(
-    () => Math.floor(requestedXp / XP_TO_COIN_RATE),
+    () => requestedXp / XP_TO_COIN_RATE,
     [requestedXp],
   );
   const xpNeededToConvert = Math.max(0, XP_TO_COIN_RATE - experiencePoints);
@@ -97,7 +157,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
     pendingAction === "convert"
       ? {
           title: "Convert XP to Coins?",
-          description: `This will convert ${requestedXp.toLocaleString()} XP into ${convertedCoins.toLocaleString()} Preppal Coins. XP is your learning progress; coins are the withdrawable value.`,
+          description: `This will convert ${requestedXp.toLocaleString()} XP into ${convertedCoins.toFixed(2)} Preppal Coins. XP is your learning progress; coins are the withdrawable value.`,
           confirmLabel: "Convert",
         }
       : pendingAction === "withdraw"
@@ -134,6 +194,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                   <Image
                     alt=""
                     height={22}
+                    loading="lazy"
                     src="/assets/coins/preppal-coin.png"
                     width={22}
                   />
@@ -161,7 +222,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
               <button
                 className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-2.5 text-[.8rem] font-semibold text-[#21194d] transition-transform hover:-translate-y-0.5"
                 type="button"
-                onClick={() => setPendingAction("deposit")}
+                onClick={() => setShowDepositModal(true)}
               >
                 <Plus className="size-4" />
                 Deposit funds
@@ -171,7 +232,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 type="button"
                 onClick={() =>
                   isBankLinked
-                    ? setPendingAction("withdraw")
+                    ? setShowWithdrawalModal(true)
                     : setShowBankModal(true)
                 }
               >
@@ -217,6 +278,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 <Image
                   alt=""
                   height={18}
+                  loading="lazy"
                   src="/assets/coins/preppal-coin.png"
                   width={18}
                 />
@@ -298,6 +360,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                   alt=""
                   className="size-[18px] object-contain"
                   height={18}
+                  loading="lazy"
                   src="/assets/coins/preppal-coin.png"
                   width={18}
                 />
@@ -322,13 +385,12 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 You receive
               </span>
               <span className="text-foreground text-lg font-black">
-                {convertedCoins.toLocaleString()} coins
+                {convertedCoins.toFixed(2)} coins
               </span>
             </div>
-            {/* <p className="text-muted-foreground mt-2 text-[11px] leading-4 font-semibold">
-              We convert complete groups of 50 XP. Any XP left over stays safely
-              in your balance.
-            </p> */}
+            <p className="text-muted-foreground mt-2 text-[11px] leading-4 font-semibold">
+              The exact coin value is credited to two decimal places.
+            </p>
             <button
               className="bg-primary text-primary-foreground hover:bg-primary/90 mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-45"
               disabled={
@@ -393,14 +455,39 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             onSubmit={(event) => {
               event.preventDefault();
               if (
-                !bankDetails.bank ||
+                !bankDetails.bankCode ||
                 bankDetails.account.length !== 10 ||
                 !accountName
               )
                 return;
-              setIsBankLinked(true);
-              setShowBankModal(false);
-              setPendingAction("withdraw");
+              setIsLinkingAccount(true);
+              void linkPayoutAccount({
+                bankCode: bankDetails.bankCode,
+                accountNumber: bankDetails.account,
+              })
+                .then(async () => {
+                  await queryClient.invalidateQueries({
+                    queryKey: ["payments", "payout-account"],
+                  });
+                  setShowBankModal(false);
+                  showFeedback({
+                    kind: "success",
+                    title: "Bank account submitted",
+                    message:
+                      "Bachs will make the account available after its checks are complete.",
+                  });
+                })
+                .catch((error: unknown) =>
+                  showFeedback({
+                    kind: "error",
+                    title: "Could not link account",
+                    message:
+                      error instanceof Error
+                        ? error.message
+                        : "Please try again.",
+                  }),
+                )
+                .finally(() => setIsLinkingAccount(false));
             }}
           >
             <div>
@@ -414,29 +501,81 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 Link an account securely before withdrawing your coins.
               </p>
             </div>
-            <label className="text-foreground block text-xs font-semibold">
-              Select bank
-              <select
-                className="border-border bg-surface focus:border-primary mt-1.5 h-10 w-full rounded-xl border px-3 text-[.8rem] outline-none"
-                onChange={(event) => {
-                  setAccountName("");
-                  setIsVerifyingAccount(bankDetails.account.length === 10);
-                  setBankDetails((value) => ({
-                    ...value,
-                    bank: event.target.value,
-                  }));
-                }}
-                required
-                value={bankDetails.bank}
+            <div className="relative">
+              <span className="text-foreground block text-xs font-semibold">
+                Select bank
+              </span>
+              <button
+                aria-expanded={isBankPickerOpen}
+                className="border-border bg-surface focus:border-primary mt-1.5 flex h-11 w-full items-center justify-between rounded-xl border px-3 text-left text-[.8rem] outline-none"
+                onClick={() => setIsBankPickerOpen((open) => !open)}
+                type="button"
               >
-                <option value="">Choose your bank</option>
-                {BANKS.map((bank) => (
-                  <option key={bank} value={bank}>
-                    {bank}
-                  </option>
-                ))}
-              </select>
-            </label>
+                <span
+                  className={
+                    bankDetails.bankName
+                      ? "text-foreground truncate font-semibold"
+                      : "text-muted-foreground"
+                  }
+                >
+                  {bankDetails.bankName || "Search and select your bank"}
+                </span>
+                <ChevronDown
+                  className={`text-muted-foreground size-4 shrink-0 transition-transform ${isBankPickerOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+              {isBankPickerOpen ? (
+                <div className="border-border bg-surface absolute z-30 mt-2 w-full overflow-hidden rounded-2xl border p-2 shadow-xl">
+                  <label className="bg-surface-subtle flex items-center gap-2 rounded-xl px-3 py-2">
+                    <Search className="text-muted-foreground size-4" />
+                    <span className="sr-only">Search banks</span>
+                    <input
+                      autoFocus
+                      className="min-w-0 flex-1 bg-transparent text-sm outline-none"
+                      onChange={(event) => setBankSearch(event.target.value)}
+                      placeholder="Search bank name"
+                      value={bankSearch}
+                    />
+                  </label>
+                  <div className="mt-2 max-h-56 overflow-y-auto">
+                    {banksQuery.isLoading ? (
+                      <p className="text-muted-foreground px-3 py-5 text-center text-xs">
+                        Loading banks…
+                      </p>
+                    ) : null}
+                    {!banksQuery.isLoading && !filteredBanks.length ? (
+                      <p className="text-muted-foreground px-3 py-5 text-center text-xs">
+                        No bank matches that search.
+                      </p>
+                    ) : null}
+                    {filteredBanks.map((bank) => (
+                      <button
+                        className="hover:bg-surface-subtle flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm"
+                        key={bank.code}
+                        onClick={() => {
+                          setAccountName("");
+                          setAccountResolveError(null);
+                          setIsResolvingAccount(false);
+                          setBankDetails((value) => ({
+                            ...value,
+                            bankCode: bank.code,
+                            bankName: bank.name,
+                          }));
+                          setBankSearch("");
+                          setIsBankPickerOpen(false);
+                        }}
+                        type="button"
+                      >
+                        <span className="truncate">{bank.name}</span>
+                        {bank.code === bankDetails.bankCode ? (
+                          <Check className="text-primary size-4 shrink-0" />
+                        ) : null}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </div>
             <label className="text-foreground block text-xs font-semibold">
               Account number
               <input
@@ -445,10 +584,8 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 maxLength={10}
                 onChange={(event) => {
                   setAccountName("");
-                  setIsVerifyingAccount(
-                    event.target.value.replace(/\D/g, "").length === 10 &&
-                      Boolean(bankDetails.bank),
-                  );
+                  setAccountResolveError(null);
+                  setIsResolvingAccount(false);
                   setBankDetails((value) => ({
                     ...value,
                     account: event.target.value.replace(/\D/g, ""),
@@ -459,19 +596,29 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 value={bankDetails.account}
               />
             </label>
-            {isVerifyingAccount ? (
-              <div className="text-muted-foreground flex items-center gap-2 text-xs">
-                <LoaderCircle className="text-primary size-4 animate-spin" />{" "}
-                Verifying account details…
+            <label className="text-foreground block text-xs font-semibold">
+              Account holder name
+              <div className="border-border bg-surface mt-1.5 flex h-10 items-center rounded-xl border px-3 text-[.8rem]">
+                {isResolvingAccount ? (
+                  <span className="text-muted-foreground">
+                    Verifying account…
+                  </span>
+                ) : accountName ? (
+                  <span className="text-success font-semibold">
+                    {accountName}
+                  </span>
+                ) : (
+                  <span className="text-muted-foreground">
+                    Enter a bank and 10-digit account number
+                  </span>
+                )}
               </div>
-            ) : accountName ? (
-              <div className="rounded-xl bg-emerald-500/10 px-3 py-2.5 text-xs">
-                <p className="text-muted-foreground">Account name</p>
-                <p className="text-foreground mt-0.5 font-bold">
-                  {accountName}
+              {accountResolveError ? (
+                <p className="text-destructive mt-1 text-[11px]">
+                  {accountResolveError}
                 </p>
-              </div>
-            ) : null}
+              ) : null}
+            </label>
             <div className="flex gap-2 pt-1">
               <button
                 className="flex-1 rounded-xl border !border-rose-600 px-3 py-2 text-xs font-semibold text-rose-600"
@@ -482,10 +629,202 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
               </button>
               <button
                 className="bg-primary text-primary-foreground flex-1 rounded-xl px-3 py-2 text-xs font-semibold"
-                disabled={!accountName || isVerifyingAccount}
+                disabled={
+                  !bankDetails.bankCode ||
+                  !bankDetails.account ||
+                  !accountName ||
+                  isResolvingAccount ||
+                  isLinkingAccount
+                }
                 type="submit"
               >
-                Link account
+                {isLinkingAccount ? "Submitting securely…" : "Link account"}
+              </button>
+            </div>
+          </form>
+        </div>
+      ) : null}
+
+      {showDepositModal ? (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+          <button
+            aria-label="Close deposit dialog"
+            className="absolute inset-0 cursor-default bg-black/45 backdrop-blur-sm"
+            onClick={() => setShowDepositModal(false)}
+            type="button"
+          />
+          <form
+            className="bg-surface relative z-10 w-full max-w-md space-y-5 rounded-3xl p-6 shadow-2xl sm:p-7"
+            onSubmit={(event) => {
+              event.preventDefault();
+              const amount = Math.floor(Number(depositAmount));
+              if (!Number.isInteger(amount) || amount < 1000) return;
+              setIsStartingPayment(true);
+              void createDepositCheckout(amount)
+                .then((checkout) =>
+                  window.location.assign(checkout.checkoutUrl),
+                )
+                .catch((error: unknown) => {
+                  setIsStartingPayment(false);
+                  showFeedback({
+                    kind: "error",
+                    title: "Deposit could not start",
+                    message:
+                      error instanceof Error
+                        ? error.message
+                        : "Please try again.",
+                  });
+                });
+            }}
+          >
+            <div>
+              <div className="bg-primary/10 text-primary mb-3 flex size-10 items-center justify-center rounded-xl">
+                <Plus className="size-5" />
+              </div>
+              <h2 className="text-foreground text-base font-bold">
+                Deposit funds
+              </h2>
+              <p className="text-muted-foreground mt-1 text-xs leading-5">
+                Deposits are spend-only funds for premium plans and eligible
+                purchases. They cannot be withdrawn.
+              </p>
+            </div>
+            <label className="text-foreground block text-xs font-semibold">
+              Amount in naira
+              <div className="border-border mt-1.5 flex h-11 items-center rounded-xl border px-3">
+                <span className="text-muted-foreground text-sm font-bold">
+                  ₦
+                </span>
+                <input
+                  className="text-foreground w-full bg-transparent px-2 text-sm font-bold outline-none"
+                  inputMode="numeric"
+                  min={1000}
+                  max={5_000_000}
+                  onChange={(event) => setDepositAmount(event.target.value)}
+                  required
+                  type="number"
+                  value={depositAmount}
+                />
+              </div>
+            </label>
+            <p className="text-muted-foreground flex items-center gap-2 text-[11px]">
+              <SaxSecuritySafeBulk className="text-primary size-4" /> Payment is
+              completed securely on Bachs.
+            </p>
+            <div className="flex gap-2">
+              <button
+                className="border-border flex-1 rounded-xl border px-3 py-2.5 text-xs font-semibold"
+                onClick={() => setShowDepositModal(false)}
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-primary text-primary-foreground flex-1 rounded-xl px-3 py-2.5 text-xs font-semibold disabled:opacity-50"
+                disabled={isStartingPayment || Number(depositAmount) < 1000}
+                type="submit"
+              >
+                {isStartingPayment ? "Opening checkout…" : "Continue to Bachs"}
+              </button>
+            </div>
+          </form>
+        </div>
+      ) : null}
+
+      {showWithdrawalModal ? (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+          <button
+            aria-label="Close withdrawal dialog"
+            className="absolute inset-0 cursor-default bg-black/45 backdrop-blur-sm"
+            onClick={() => setShowWithdrawalModal(false)}
+            type="button"
+          />
+          <form
+            className="bg-surface relative z-10 w-full max-w-md space-y-5 rounded-3xl p-6 shadow-2xl sm:p-7"
+            onSubmit={(event) => {
+              event.preventDefault();
+              const coins = Math.floor(Number(withdrawalCoins));
+              if (!Number.isInteger(coins) || coins < 1 || coins > balance)
+                return;
+              setIsStartingPayment(true);
+              void createPayout(coins)
+                .then(async () => {
+                  setShowWithdrawalModal(false);
+                  await queryClient.invalidateQueries({ queryKey: ["wallet"] });
+                  showFeedback({
+                    kind: "success",
+                    title: "Withdrawal submitted",
+                    message:
+                      "Your coins are reserved while Bachs processes the bank payout.",
+                  });
+                })
+                .catch((error: unknown) =>
+                  showFeedback({
+                    kind: "error",
+                    title: "Withdrawal could not start",
+                    message:
+                      error instanceof Error
+                        ? error.message
+                        : "Please try again.",
+                  }),
+                )
+                .finally(() => setIsStartingPayment(false));
+            }}
+          >
+            <div>
+              <div className="bg-primary/10 text-primary mb-3 flex size-10 items-center justify-center rounded-xl">
+                <Send className="size-5" />
+              </div>
+              <h2 className="text-foreground text-base font-bold">
+                Withdraw Preppal Coins
+              </h2>
+              <p className="text-muted-foreground mt-1 text-xs">
+                Available: {balance.toLocaleString()} coins · 1 coin = ₦
+                {COIN_VALUE_NGN.toLocaleString()}
+              </p>
+            </div>
+            <label className="text-foreground block text-xs font-semibold">
+              Coins to withdraw
+              <input
+                className="border-border bg-surface mt-1.5 h-11 w-full rounded-xl border px-3 text-sm font-bold outline-none"
+                inputMode="numeric"
+                min={1}
+                max={balance}
+                onChange={(event) => setWithdrawalCoins(event.target.value)}
+                required
+                type="number"
+                value={withdrawalCoins}
+              />
+            </label>
+            <div className="bg-surface-subtle rounded-xl p-3 text-xs">
+              <span className="text-muted-foreground">
+                You receive before provider fees
+              </span>
+              <strong className="text-foreground float-right">
+                ₦
+                {(
+                  (Number(withdrawalCoins) || 0) * COIN_VALUE_NGN
+                ).toLocaleString()}
+              </strong>
+            </div>
+            <div className="flex gap-2">
+              <button
+                className="border-border flex-1 rounded-xl border px-3 py-2.5 text-xs font-semibold"
+                onClick={() => setShowWithdrawalModal(false)}
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-primary text-primary-foreground flex-1 rounded-xl px-3 py-2.5 text-xs font-semibold disabled:opacity-50"
+                disabled={
+                  isStartingPayment ||
+                  Number(withdrawalCoins) < 1 ||
+                  Number(withdrawalCoins) > balance
+                }
+                type="submit"
+              >
+                {isStartingPayment ? "Submitting…" : "Withdraw"}
               </button>
             </div>
           </form>
@@ -503,17 +842,24 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             </h2>
             <p className="text-muted-foreground mt-0.5 text-xs">
               {isBankLinked
-                ? `Linked · ${bankDetails.bank}`
-                : "Link a bank account to withdraw funds"}
+                ? `Linked · ${payoutAccount?.bankName} •••• ${payoutAccount?.accountNumberLast4}`
+                : payoutAccount
+                  ? "Bank account is awaiting Bachs approval"
+                  : "Link a bank account to withdraw funds"}
             </p>
           </div>
         </div>
         <button
           className="border-border text-primary hover:bg-primary/5 rounded-xl border px-4 py-2 text-xs font-bold transition-colors"
           onClick={() => setShowBankModal(true)}
+          disabled={Boolean(payoutAccount)}
           type="button"
         >
-          {isBankLinked ? "Update account" : "Link account"}
+          {isBankLinked
+            ? "Account linked"
+            : payoutAccount
+              ? "Under review"
+              : "Link account"}
         </button>
       </section>
 
@@ -619,6 +965,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             alt=""
             className="size-[22px] object-contain"
             height={22}
+            loading="lazy"
             src="/assets/coins/preppal-coin.png"
             width={22}
           />
@@ -706,6 +1053,16 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
           />
         )}
       </section>
+      <LoadingModal
+        open={isLinkingAccount || isStartingPayment}
+        title={
+          isLinkingAccount
+            ? "Linking your bank account"
+            : showWithdrawalModal
+              ? "Submitting withdrawal"
+              : "Opening secure checkout"
+        }
+      />
     </div>
   );
 }

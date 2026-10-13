@@ -9,7 +9,10 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
+import { LoadingModal, useFeedback } from "@/components/ui";
+import { createPlanCheckout } from "@/features/payments";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store";
 
@@ -27,7 +30,20 @@ const PLAN_ICONS: Readonly<Record<PlanId, LucideIcon>> = {
 
 export function PricingCard({ plan }: PricingCardProps) {
   const PlanIcon = PLAN_ICONS[plan.id];
+  const { showFeedback } = useFeedback();
+  const [isStartingCheckout, setIsStartingCheckout] = useState(false);
+  const paidPlanId =
+    plan.id === "monthly" || plan.id === "annual" ? plan.id : null;
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const membership = useAuthStore((state) => state.membership);
+  const hasActivePremium = Boolean(
+    isAuthenticated && membership?.isPremium && membership.status === "ACTIVE",
+  );
+  const isCurrentPlan = Boolean(
+    isAuthenticated &&
+    membership?.status === "ACTIVE" &&
+    membership.plan.slug === plan.id,
+  );
   const ctaHref = isAuthenticated
     ? plan.id === "free"
       ? "/dashboard"
@@ -123,19 +139,91 @@ export function PricingCard({ plan }: PricingCardProps) {
           </p>
         ) : null}
 
-        <Link
-          className={cn(
-            "mt-5 inline-flex min-h-10 items-center justify-center rounded-full px-4 text-xs font-semibold transition-colors",
-            plan.featured
-              ? "text-primary bg-white hover:bg-white/90"
-              : plan.id === "free"
-                ? "bg-surface-subtle text-foreground hover:bg-border"
+        {isCurrentPlan && membership?.currentPeriodEnd ? (
+          <p
+            className={cn(
+              "mt-2 text-[10px] font-bold",
+              plan.featured ? "text-white/80" : "text-primary",
+            )}
+          >
+            Your access is active until{" "}
+            {new Intl.DateTimeFormat("en-NG", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            }).format(new Date(membership.currentPeriodEnd))}
+          </p>
+        ) : null}
+
+        {isCurrentPlan ? (
+          <div
+            className={cn(
+              "mt-5 inline-flex min-h-10 items-center justify-center gap-2 rounded-full px-4 text-xs font-bold",
+              plan.featured
+                ? "bg-white/15 text-white"
+                : "bg-emerald-500/10 text-emerald-600",
+            )}
+          >
+            <Check className="size-3.5" /> Current plan
+          </div>
+        ) : isAuthenticated && paidPlanId && hasActivePremium ? (
+          <Link
+            className={cn(
+              "mt-5 inline-flex min-h-10 items-center justify-center rounded-full px-4 text-xs font-semibold transition-colors",
+              plan.featured
+                ? "bg-white/15 text-white hover:bg-white/20"
+                : "border-border text-primary hover:bg-primary/5 border",
+            )}
+            href="/dashboard?tab=account"
+          >
+            Manage current plan
+          </Link>
+        ) : isAuthenticated && paidPlanId ? (
+          <button
+            className={cn(
+              "mt-5 inline-flex min-h-10 items-center justify-center rounded-full px-4 text-xs font-semibold transition-colors",
+              plan.featured
+                ? "text-primary bg-white hover:bg-white/90"
                 : "bg-primary text-primary-foreground hover:bg-primary-strong",
-          )}
-          href={ctaHref}
-        >
-          {ctaLabel}
-        </Link>
+            )}
+            disabled={isStartingCheckout}
+            type="button"
+            onClick={() => {
+              setIsStartingCheckout(true);
+              void createPlanCheckout(paidPlanId)
+                .then((checkout) =>
+                  window.location.assign(checkout.checkoutUrl),
+                )
+                .catch((error: unknown) => {
+                  setIsStartingCheckout(false);
+                  showFeedback({
+                    kind: "error",
+                    title: "Checkout could not start",
+                    message:
+                      error instanceof Error
+                        ? error.message
+                        : "Please try again shortly.",
+                  });
+                });
+            }}
+          >
+            {isStartingCheckout ? "Opening secure checkout…" : ctaLabel}
+          </button>
+        ) : (
+          <Link
+            className={cn(
+              "mt-5 inline-flex min-h-10 items-center justify-center rounded-full px-4 text-xs font-semibold transition-colors",
+              plan.featured
+                ? "text-primary bg-white hover:bg-white/90"
+                : plan.id === "free"
+                  ? "bg-surface-subtle text-foreground hover:bg-border"
+                  : "bg-primary text-primary-foreground hover:bg-primary-strong",
+            )}
+            href={ctaHref}
+          >
+            {ctaLabel}
+          </Link>
+        )}
 
         <div
           className={cn(
@@ -187,6 +275,7 @@ export function PricingCard({ plan }: PricingCardProps) {
           ))}
         </ul>
       </div>
+      <LoadingModal open={isStartingCheckout} title="Opening secure checkout" />
     </article>
   );
 }

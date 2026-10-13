@@ -310,7 +310,7 @@ export function LeaderboardOverview({ userName }: LeaderboardOverviewProps) {
           />
           <div>
             <p className="text-sm opacity-80">Your current rank</p>
-            <p className="text-3xl font-black">
+            <p className="text-xl font-black sm:text-3xl">
               {userEntry ? `#${userEntry.rank}` : "Not ranked yet"}
             </p>
             {userEntry ? (

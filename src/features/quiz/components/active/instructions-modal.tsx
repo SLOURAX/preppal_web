@@ -28,6 +28,7 @@ export function InstructionsModal({ onClose }: InstructionsModalProps) {
             alt="Preppal mascot ready to teach"
             className="size-20 object-contain"
             height={80}
+            loading="lazy"
             src="/assets/mascots/thinking.png"
             width={80}
           />

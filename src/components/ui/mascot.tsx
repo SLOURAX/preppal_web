@@ -67,6 +67,7 @@ export function Mascot({
             "motion-safe:animate-[mascot-breathe_2.8s_ease-in-out_infinite]",
         )}
         fill
+        loading="lazy"
         sizes="112px"
         src={moodSources[mood]}
       />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, Suspense } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Lightbulb, Send, RobotArm, X } from "lucide-react";
 import {
@@ -16,15 +17,25 @@ import { InstructionsModal } from "@/features/quiz/components/active/instruction
 import { SubmitModal } from "@/features/quiz/components/active/submit-modal";
 import { QuestionAudioPlayer } from "@/features/quiz/components/active/question-audio-player";
 import { QuickCalculator } from "@/features/quiz/components/active/quick-calculator";
-import { ConfirmationModal, LoadingModal } from "@/components/ui";
+import { ConfirmationModal, LoadingModal, useFeedback } from "@/components/ui";
 import type { QuestionStatus } from "@/features/quiz/components/active/types";
-import {
-  generateExamSimulation,
-  QUIZ_QUESTIONS,
-} from "@/features/quiz/mock-questions";
+import type { QuizQuestion } from "@/features/quiz/mock-questions";
 import { useAuthStore } from "@/store";
+import { apiClient } from "@/lib/api/client";
 
 const TOTAL_SECONDS = 45 * 60;
+
+interface ApiQuizQuestion {
+  readonly id: string;
+  readonly prompt: string;
+  readonly passage?: string | null;
+  readonly explanation?: string;
+  readonly correctAnswer: string;
+  readonly options: readonly {
+    readonly text: string;
+    readonly position: number;
+  }[];
+}
 
 /*
   {
@@ -96,7 +107,10 @@ const QUIZ_PATTERN_BG =
 function ActiveQuizContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { showFeedback } = useFeedback();
   const recordQuizAttempt = useAuthStore((state) => state.recordQuizAttempt);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const setLevelProgress = useAuthStore((state) => state.setLevelProgress);
   const mode = searchParams.get("mode") || "timed";
   const isUntimed = mode === "untimed";
   const parsedCount = Number(searchParams.get("count") || 40);
@@ -104,10 +118,49 @@ function ActiveQuizContent() {
     ? Math.max(5, Math.min(30, Number.isFinite(parsedCount) ? parsedCount : 10))
     : 40;
   const simulationSeed = Number(searchParams.get("seed") || 0);
-  const questions =
-    !isUntimed && simulationSeed
-      ? generateExamSimulation(simulationSeed, questionCount)
-      : QUIZ_QUESTIONS.slice(0, questionCount);
+  const path = searchParams.get("path") === "subject" ? "STANDALONE" : "EXAM";
+  const selectedSubjectId = searchParams.get("subject") ?? "";
+  const yearLink = searchParams.get("yearLink") ?? "";
+  const difficulty = searchParams.get("difficulty") ?? "";
+  const topicIds = searchParams.get("topicIds") ?? "";
+  const questionQuery = useQuery({
+    queryKey: [
+      "quiz",
+      "questions",
+      path,
+      selectedSubjectId,
+      yearLink,
+      difficulty,
+      topicIds,
+      questionCount,
+    ],
+    enabled: Boolean(selectedSubjectId) && (path === "STANDALONE" || Boolean(yearLink)),
+    queryFn: async () => {
+      const params = new URLSearchParams({
+        path,
+        count: String(questionCount),
+      });
+      if (path === "EXAM") params.set("examSubjectId", selectedSubjectId);
+      else params.set("subjectId", selectedSubjectId);
+      if (yearLink) params.set("examSubjectYearId", yearLink);
+      if (difficulty) params.set("difficulty", difficulty.toUpperCase());
+      if (topicIds) params.set("topicIds", topicIds);
+      const result = await apiClient<ApiQuizQuestion[]>(
+        `/api/v1/question-bank/quiz-questions?${params}`,
+      );
+      return result.map<QuizQuestion>((question, index) => ({
+        id: index + 1,
+        text: question.prompt,
+        passage: question.passage ?? undefined,
+        options: [...question.options]
+          .sort((a, b) => a.position - b.position)
+          .map((option) => option.text),
+        correctAnswer: question.correctAnswer,
+        explanation: question.explanation ?? "",
+      }));
+    },
+  });
+  const questions = questionQuery.data ?? [];
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
@@ -117,6 +170,10 @@ function ActiveQuizContent() {
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
   const [isAiLoading, setIsAiLoading] = useState(false);
+  const [isSubmittingQuiz, setIsSubmittingQuiz] = useState(false);
+  const [clientAttemptId] = useState(() => `attempt-${crypto.randomUUID()}`);
+  const [startedAt] = useState(() => new Date().toISOString());
+  const [startedAtMs] = useState(() => Date.now());
   const [aiHints, setAiHints] = useState<Record<number, string>>({});
   const [aiConversation, setAiConversation] = useState<
     Record<number, string[]>
@@ -128,7 +185,13 @@ function ActiveQuizContent() {
     Record<number, "correct" | "incorrect">
   >({});
 
-  const currentQ = questions[Math.min(currentIndex, questions.length - 1)]!;
+  const currentQ = questions[Math.min(currentIndex, questions.length - 1)] ?? {
+    id: 0,
+    text: "",
+    options: [],
+    correctAnswer: "",
+    explanation: "",
+  };
   const answeredCount = Object.keys(answers).length;
   const flaggedCount = Object.values(flagged).filter(Boolean).length;
   const unansweredCount = questions.length - answeredCount;
@@ -136,7 +199,7 @@ function ActiveQuizContent() {
     (value) => value === "correct",
   ).length;
 
-  const textToRead = `Question ${currentIndex + 1}. ${currentQ.text}. Options: ${currentQ.options.map((opt, i) => `${String.fromCharCode(65 + i)}: ${opt}`).join(". ")}.`;
+  const textToRead = `Question ${currentIndex + 1}. ${currentQ.text.replace(/<[^>]*>/g, " ")}. Options: ${currentQ.options.map((opt, i) => `${String.fromCharCode(65 + i)}: ${opt.replace(/<[^>]*>/g, " ")}`).join(". ")}.`;
 
   useEffect(() => {
     if (isUntimed || secondsLeft <= 0) return;
@@ -207,16 +270,36 @@ function ActiveQuizContent() {
     }));
   };
 
-  const requestAiHint = () => {
+  const requestAiHint = async () => {
     if (aiHints[currentQ.id]) return;
     setIsAiLoading(true);
-    setTimeout(() => {
+    try {
+      await Promise.all([
+        new Promise((resolve) => window.setTimeout(resolve, 1500)),
+        isAuthenticated
+          ? apiClient("/api/v1/learning/ai-hints", {
+              method: "POST",
+              body: JSON.stringify({
+                subject: searchParams.get("subjectName") || "Selected subject",
+                examType: searchParams.get("examName") || undefined,
+                mode: isUntimed ? "untimed" : "timed",
+              }),
+            })
+          : Promise.resolve(),
+      ]);
       setAiHints((prev) => ({
         ...prev,
         [currentQ.id]: `Here's a hint for question ${currentQ.id}: Try isolating the variable step by step, or remember the key formula for this topic. Notice how the options are structured.`,
       }));
+    } catch {
+      showFeedback({
+        kind: "error",
+        title: "Hint could not load",
+        message: "Please check your connection and try again.",
+      });
+    } finally {
       setIsAiLoading(false);
-    }, 1500);
+    }
   };
 
   const askAiFollowUp = (): void => {
@@ -235,35 +318,126 @@ function ActiveQuizContent() {
 
   const confirmExit = (): void => {
     if (isUntimed) {
-      submitQuiz();
+      void submitQuiz();
       return;
     }
     router.push("/quiz/preview");
   };
 
-  const submitQuiz = (): void => {
+  const submitQuiz = async (): Promise<void> => {
+    if (isSubmittingQuiz) return;
     const correct = questions.filter(
       (question) => answers[question.id] === question.correctAnswer,
     ).length;
-    recordQuizAttempt({
-      id: `attempt-${Date.now()}`,
-      subject: searchParams.get("subject") || "Mathematics",
-      exam: searchParams.get("exam") || "JAMB",
-      mode: isUntimed ? "untimed" : "timed",
-      path: searchParams.get("path") === "subject" ? "subject" : "exam",
+    const completedAt = new Date().toISOString();
+    const score = questions.length
+      ? Math.round((correct / questions.length) * 100)
+      : 0;
+    const durationSeconds = isUntimed
+      ? Math.max(0, Math.round((Date.now() - startedAtMs) / 1000))
+      : TOTAL_SECONDS - secondsLeft;
+    const attempt = {
+      id: clientAttemptId,
+      subject: searchParams.get("subjectName") || "Selected subject",
+      exam: searchParams.get("examName") || "Standalone practice",
+      mode: (isUntimed ? "untimed" : "timed") as "timed" | "untimed",
+      path: (searchParams.get("path") === "subject" ? "subject" : "exam") as
+        "exam" | "subject",
       year: searchParams.get("year") || undefined,
-      score: questions.length
-        ? Math.round((correct / questions.length) * 100)
-        : 0,
+      score,
       total: questions.length,
       correct,
-      date: new Date().toISOString(),
-      durationSeconds: TOTAL_SECONDS - secondsLeft,
+      date: completedAt,
+      durationSeconds,
       answers,
       seed: simulationSeed || undefined,
-    });
-    router.push("/quiz/results");
+    };
+
+    if (!isAuthenticated) {
+      recordQuizAttempt(attempt);
+      router.push("/quiz/results");
+      return;
+    }
+
+    setIsSubmittingQuiz(true);
+    try {
+      const result = await apiClient<{
+        id: string;
+        completedAt: string;
+        progress: Parameters<typeof setLevelProgress>[0] | null;
+      }>("/api/v1/learning/quiz-sessions", {
+        method: "POST",
+        body: JSON.stringify({
+          clientAttemptId,
+          examType: attempt.exam,
+          subject: attempt.subject,
+          mode: attempt.mode,
+          path: attempt.path,
+          year: attempt.year,
+          simulationSeed: attempt.seed,
+          totalQuestions: attempt.total,
+          correctAnswers: attempt.correct,
+          scorePercent: attempt.score,
+          durationSeconds: attempt.durationSeconds,
+          startedAt,
+          answers,
+        }),
+      });
+      if (result.progress) setLevelProgress(result.progress);
+      recordQuizAttempt({
+        ...attempt,
+        id: result.id,
+        date: result.completedAt ?? completedAt,
+      });
+      router.push("/quiz/results");
+    } catch (error) {
+      showFeedback({
+        kind: "error",
+        title: "Quiz could not be saved",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Please check your connection and submit again.",
+      });
+    } finally {
+      setIsSubmittingQuiz(false);
+    }
   };
+
+  if (questionQuery.isLoading) {
+    return (
+      <div className="bg-background min-h-screen">
+        <LoadingModal
+          description="Loading the questions prepared for this subject and year."
+          open
+          title="Preparing your quiz"
+        />
+      </div>
+    );
+  }
+
+  if (questionQuery.error || !questions.length) {
+    return (
+      <main className="bg-background grid min-h-screen place-items-center px-5">
+        <section className="surface-card max-w-md p-7 text-center">
+          <h1 className="text-foreground text-lg font-bold">
+            No published questions yet
+          </h1>
+          <p className="text-muted-foreground mt-2 text-sm leading-6">
+            {questionQuery.error?.message ??
+              "This subject and year are set up, but no published questions are available yet."}
+          </p>
+          <button
+            className="bg-primary text-primary-foreground mt-5 h-10 rounded-xl px-5 text-sm font-semibold"
+            onClick={() => router.push("/quiz")}
+            type="button"
+          >
+            Choose another quiz
+          </button>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <div className="bg-background flex h-screen flex-col overflow-hidden">
@@ -444,6 +618,12 @@ function ActiveQuizContent() {
         description="Scanning the question and preparing a useful hint."
         open={isAiLoading}
         title="Preppal is thinking"
+      />
+
+      <LoadingModal
+        description="Saving your result and updating your XP securely."
+        open={isSubmittingQuiz}
+        title="Completing your quiz"
       />
 
       {showSubmitModal && !isUntimed && (

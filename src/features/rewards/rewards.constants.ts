@@ -11,7 +11,7 @@ export const REDEEMABLE_REWARDS: readonly RedeemableReward[] = [
     id: "premium-plan",
     title: "Premium plan",
     description:
-      "Unlock advanced analytics and the complete mock-exam library for one month.",
+      "Unlock advanced analytics and the complete exam library for one month.",
     cost: 5000,
     type: "plan",
   },
@@ -19,7 +19,7 @@ export const REDEEMABLE_REWARDS: readonly RedeemableReward[] = [
     id: "gift-card",
     title: "Digital gift cards",
     description:
-      "Redeem your withdrawable Preppal Coins for selected shopping and app-store gift cards.",
+      "Redeem your withdrawable Preppal Coins for shopping and other gifts.",
     cost: 7500,
     type: "gift",
   },

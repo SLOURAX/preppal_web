@@ -11,11 +11,12 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
 import { DataState } from "@/components/ui";
 
-import { NEWS_ARTICLES, NEWS_CATEGORIES } from "../news.constants";
+import { getNewsPosts, readTime } from "../news-api";
 import { formatNewsDate, formatNewsTime } from "../news.utils";
 import { NewsCard } from "./news-card";
 
@@ -25,11 +26,14 @@ export function NewsLanding() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const featuredArticle = NEWS_ARTICLES.find((article) => article.featured);
+  const news = useQuery({ queryKey: ["news", selectedCategory, searchQuery], queryFn: () => getNewsPosts(selectedCategory, searchQuery) });
+  const articles = news.data?.posts ?? [];
+  const categories = ["All", ...(news.data?.categories ?? [])];
+  const featuredArticle = articles.find((article) => article.featured);
 
   const filteredArticles = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
-    return NEWS_ARTICLES.filter((article) => {
+    return articles.filter((article) => {
       const matchesCategory =
         selectedCategory === "All" || article.category === selectedCategory;
       const matchesSearch =
@@ -40,7 +44,7 @@ export function NewsLanding() {
         article.featured && selectedCategory === "All" && !normalizedQuery;
       return matchesCategory && matchesSearch && !isDefaultFeature;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [articles, searchQuery, selectedCategory]);
 
   const pageCount = Math.max(
     1,
@@ -71,7 +75,7 @@ export function NewsLanding() {
 
       <div className="surface-card mt-8 flex flex-col gap-3 p-3 sm:p-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex gap-2 overflow-x-auto pb-1 lg:pb-0">
-          {NEWS_CATEGORIES.map((category) => (
+          {categories.map((category) => (
             <button
               aria-pressed={selectedCategory === category}
               className={cn(
@@ -114,9 +118,9 @@ export function NewsLanding() {
               alt=""
               className="object-cover transition-transform duration-500 hover:scale-[1.02]"
               fill
-              priority
+              loading="lazy"
               sizes="(max-width: 1024px) 100vw, 58vw"
-              src={featuredArticle.image}
+              src={featuredArticle.image ?? "/news/ai-study-support.png"}
             />
           </Link>
           <div className="flex flex-col justify-center p-6 sm:p-8">
@@ -140,7 +144,7 @@ export function NewsLanding() {
                 {formatNewsTime(featuredArticle.publishedAt)}
               </span>
               <span className="flex items-center gap-1">
-                <Clock3 className="size-3.5" /> {featuredArticle.readTime}
+                <Clock3 className="size-3.5" /> {readTime(featuredArticle.readTimeMinutes)}
               </span>
               <span className="flex items-center gap-1">
                 <Heart className="size-3.5" /> {featuredArticle.likes}
@@ -179,7 +183,7 @@ export function NewsLanding() {
           </p>
         </div>
 
-        {visibleArticles.length > 0 ? (
+        {news.isLoading ? <div className="mt-5"><DataState title="Loading stories" description="Fetching the latest published articles." /></div> : visibleArticles.length > 0 ? (
           <div className="mt-5 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {visibleArticles.map((article) => (
               <NewsCard article={article} key={article.slug} />

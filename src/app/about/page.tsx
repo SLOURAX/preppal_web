@@ -72,6 +72,7 @@ export default function AboutPage() {
                   alt=""
                   className="size-10 object-contain"
                   height={40}
+                  loading="lazy"
                   src={mascot}
                   width={40}
                 />

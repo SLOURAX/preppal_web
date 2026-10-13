@@ -75,6 +75,7 @@ export function OverviewTab() {
   const quizAttempts = useAuthStore((s) => s.quizAttempts);
   const experiencePoints = useAuthStore((s) => s.experiencePoints);
   const levelProgress = useAuthStore((s) => s.levelProgress);
+  const membership = useAuthStore((s) => s.membership);
   const levelsQuery = useQuery({
     queryKey: ["progression", "levels"],
     queryFn: () => apiClient<LevelDefinition[]>("/api/v1/progression/levels"),
@@ -164,20 +165,59 @@ export function OverviewTab() {
             <p className="text-muted-foreground mt-1 text-[11px] sm:text-xs">
               Ready for your next win?
             </p>
-            <Link
-              className="border-primary/20 bg-surface/75 text-primary hover:bg-surface mt-2 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-bold shadow-sm transition-all hover:-translate-y-0.5 sm:px-3 sm:py-1.5 sm:text-[11px]"
-              href="/pricing"
-            >
-              <Crown className="size-3.5" />
-              Go Premium
-              <ArrowRight className="size-3" />
-            </Link>
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              <span className="border-primary/15 bg-primary/8 text-primary inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-bold sm:px-3 sm:py-1.5 sm:text-[11px]">
+                Level {levelProgress?.current.number ?? 1}
+                {levelProgress?.current.name
+                  ? ` · ${levelProgress.current.name}`
+                  : ""}
+              </span>
+              {membership?.isPremium ? (
+                <Link
+                  aria-label={`${membership.plan.name}${membership.currentPeriodEnd ? `, active until ${new Intl.DateTimeFormat("en-NG", { day: "numeric", month: "short" }).format(new Date(membership.currentPeriodEnd))}` : ""}`}
+                  className="border-primary/20 bg-surface/75 text-primary hover:bg-surface inline-flex min-h-8 max-w-full items-center gap-1 rounded-full border px-2 py-1 text-[9px] font-bold whitespace-nowrap shadow-sm transition-all hover:-translate-y-0.5 sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-[11px]"
+                  href="/dashboard?tab=account"
+                >
+                  <Crown className="size-3 shrink-0 sm:size-3.5" />
+                  <span>
+                    {membership.plan.name}
+                    {membership.currentPeriodEnd ? (
+                      <>
+                        <span className="sm:hidden">
+                          {` · ${new Intl.DateTimeFormat("en-NG", {
+                            day: "numeric",
+                            month: "short",
+                          }).format(new Date(membership.currentPeriodEnd))}`}
+                        </span>
+                        <span className="hidden sm:inline">
+                          {` · until ${new Intl.DateTimeFormat("en-NG", {
+                            day: "numeric",
+                            month: "short",
+                          }).format(new Date(membership.currentPeriodEnd))}`}
+                        </span>
+                      </>
+                    ) : null}
+                  </span>
+                  <ArrowRight className="size-3 shrink-0" />
+                </Link>
+              ) : (
+                <Link
+                  className="border-primary/20 bg-surface/75 text-primary hover:bg-surface inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-bold shadow-sm transition-all hover:-translate-y-0.5 sm:px-3 sm:py-1.5 sm:text-[11px]"
+                  href="/pricing"
+                >
+                  <Crown className="size-3.5" />
+                  Go Premium
+                  <ArrowRight className="size-3" />
+                </Link>
+              )}
+            </div>
           </div>
           <div className="relative ml-auto flex h-16 w-20 shrink-0 sm:h-28 sm:w-32">
             <Image
               alt="Preppal mascot waving hello"
               className="object-contain object-bottom drop-shadow-sm"
               fill
+              loading="lazy"
               sizes="112px"
               src="/owl-mascot.png"
             />

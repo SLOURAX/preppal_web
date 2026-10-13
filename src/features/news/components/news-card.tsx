@@ -2,11 +2,12 @@ import { Clock3, Heart, BotMessageSquare } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-import type { NewsArticle } from "../news.constants";
+import type { PublicNewsArticle } from "../news-api";
+import { readTime } from "../news-api";
 import { formatNewsDate, formatNewsTime } from "../news.utils";
 
 interface NewsCardProps {
-  readonly article: NewsArticle;
+  readonly article: PublicNewsArticle;
 }
 
 export function NewsCard({ article }: NewsCardProps) {
@@ -21,8 +22,9 @@ export function NewsCard({ article }: NewsCardProps) {
           alt=""
           className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           fill
+          loading="lazy"
           sizes="(max-width: 768px) 100vw, 33vw"
-          src={article.image}
+          src={article.image ?? "/news/ai-study-support.png"}
         />
       </Link>
       <div className="p-5">
@@ -31,7 +33,7 @@ export function NewsCard({ article }: NewsCardProps) {
             {article.category}
           </span>
           <span className="text-muted-foreground flex items-center gap-1 text-[11px]">
-            <Clock3 className="size-3.5" /> {article.readTime}
+            <Clock3 className="size-3.5" /> {readTime(article.readTimeMinutes)}
           </span>
         </div>
         <h2 className="text-foreground mt-4 line-clamp-2 text-lg leading-6 font-bold tracking-[-0.02em]">

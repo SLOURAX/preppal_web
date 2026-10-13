@@ -1,6 +1,7 @@
 export interface QuizQuestion {
   readonly id: number;
   readonly text: string;
+  readonly passage?: string;
   readonly options: readonly string[];
   readonly correctAnswer: string;
   readonly explanation: string;

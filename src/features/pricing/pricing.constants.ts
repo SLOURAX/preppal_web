@@ -118,5 +118,5 @@ export const PRICING_ASSURANCES = [
 export const PRICING_CAVEATS = [
   "Premium AI support is subject to reasonable fair-use limits and service availability.",
   "The 2× XP benefit applies to eligible completed quizzes and excludes referrals, promotions, refunds, and manual adjustments.",
-  "Monthly and annual plans renew automatically until cancelled. Annual pricing is charged upfront; taxes or payment-provider fees may apply.",
+  "Monthly and annual access is charged upfront and expires at the end of the selected period. You can renew from your account; taxes or payment-provider fees may apply.",
 ] as const;

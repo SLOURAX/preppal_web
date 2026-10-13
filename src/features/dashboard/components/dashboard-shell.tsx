@@ -12,7 +12,8 @@ import {
 } from "lucide-react";
 import { SaxFlashBulk } from "@meysam213/iconsax-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store";
@@ -61,6 +62,8 @@ function TabContent({ activeTab }: { activeTab: TabId }) {
 }
 
 export function DashboardShell() {
+  const pathname = usePathname();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const requestedView = searchParams.get("view");
   const requestedTab = searchParams.get("tab");
@@ -75,12 +78,10 @@ export function DashboardShell() {
   const setSelectedTab = useDashboardStore((state) => state.setActiveTab);
   const isProfileOpen = useAccountStore((state) => state.isProfileOpen);
   const setIsProfileOpen = useAccountStore((state) => state.setProfileOpen);
-  const activeTab: TabId =
-    requestedView === "quiz-history" || requestedView === "wallet-history"
-      ? requestedView
-      : (requestedDashboardTab ?? selectedTab);
+  const activeTab: TabId = selectedTab;
   const userName = useAuthStore((s) => s.userName);
   const userPlan = useAuthStore((s) => s.userPlan);
+  const levelProgress = useAuthStore((s) => s.levelProgress);
   const preppalBalance = useAuthStore((s) => s.preppalBalance);
   const experiencePoints = useAuthStore((s) => s.experiencePoints);
   const openSignOutModal = useAuthStore((state) => state.openSignOutModal);
@@ -92,6 +93,42 @@ export function DashboardShell() {
       .slice(0, 2)
       .map((part) => part[0]?.toUpperCase())
       .join("") || "U";
+
+  useEffect(() => {
+    if (
+      requestedView === "quiz-history" ||
+      requestedView === "wallet-history"
+    ) {
+      setSelectedTab(requestedView);
+      return;
+    }
+    setSelectedTab(requestedDashboardTab ?? "home");
+  }, [requestedDashboardTab, requestedView, setSelectedTab]);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [activeTab]);
+
+  const selectTab = (tab: TabId) => {
+    setSelectedTab(tab);
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("view");
+    params.delete("upgrade");
+    if (tab === "home") {
+      params.delete("tab");
+    } else {
+      params.set("tab", tab);
+    }
+
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, {
+      scroll: false,
+    });
+  };
 
   return (
     <div className="bg-background relative isolate flex min-h-dvh flex-col overflow-hidden">
@@ -149,7 +186,7 @@ export function DashboardShell() {
                     {userName}
                   </span>
                   <span className="text-muted-foreground text-[10px]">
-                    {userPlan}
+                    Level {levelProgress?.current.number ?? 1} · {userPlan}
                   </span>
                 </div>
               </div>
@@ -187,7 +224,7 @@ export function DashboardShell() {
                         {userName}
                       </p>
                       <p className="text-muted-foreground text-[10px]">
-                        {userPlan}
+                        Level {levelProgress?.current.number ?? 1} · {userPlan}
                       </p>
                     </div>
                     <div className="border-border flex items-center justify-between border-b px-3 py-2">
@@ -221,7 +258,7 @@ export function DashboardShell() {
                   return (
                     <button
                       key={id}
-                      onClick={() => setSelectedTab(id)}
+                      onClick={() => selectTab(id)}
                       className={cn(
                         "flex items-center gap-2 rounded-lg px-3.5 py-2 text-[.8rem] font-medium transition-all",
                         isActive
@@ -261,7 +298,7 @@ export function DashboardShell() {
                       ? "text-primary"
                       : "text-muted-foreground hover:text-foreground",
                   )}
-                  onClick={() => setSelectedTab(id)}
+                  onClick={() => selectTab(id)}
                   type="button"
                 >
                   <span

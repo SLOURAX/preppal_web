@@ -104,6 +104,7 @@ export function Footer() {
               alt=""
               className="size-11 object-contain"
               height={44}
+              loading="lazy"
               src="/assets/brand/preppal-mark.svg"
               width={44}
             />

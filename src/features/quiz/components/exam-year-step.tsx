@@ -4,14 +4,13 @@ import { Button } from "@/components/ui";
 import { ListSelect } from "@/components/ui/list-select";
 import { cn } from "@/lib/utils";
 
-import { EXAM_YEARS } from "../quiz.constants";
-
 interface ExamYearStepProps {
   readonly examLabel: string;
   readonly selectedYear: number | null;
   readonly onBack: () => void;
   readonly onSelectYear: (year: number) => void;
   readonly onContinue: () => void;
+  readonly years: readonly number[];
 }
 
 export function ExamYearStep({
@@ -20,6 +19,7 @@ export function ExamYearStep({
   onBack,
   onSelectYear,
   onContinue,
+  years,
 }: ExamYearStepProps) {
   return (
     <section className="surface-card mx-auto max-w-3xl p-5 sm:p-8">
@@ -44,7 +44,7 @@ export function ExamYearStep({
         <ListSelect
           icon={CalendarDays}
           onChange={(value) => onSelectYear(Number(value))}
-          options={EXAM_YEARS.map((year) => ({
+          options={years.map((year) => ({
             label: String(year),
             value: String(year),
           }))}
@@ -55,7 +55,7 @@ export function ExamYearStep({
       </div>
 
       <div className="mt-6 hidden grid-cols-2 gap-2 sm:grid sm:grid-cols-4">
-        {EXAM_YEARS.map((year) => {
+        {years.map((year) => {
           const isSelected = selectedYear === year;
 
           return (

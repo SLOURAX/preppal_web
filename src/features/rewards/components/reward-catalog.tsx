@@ -30,7 +30,7 @@ export function RewardCatalog({ balance }: RewardCatalogProps) {
 
             return (
               <article
-                className="surface-card flex items-center gap-4 p-5"
+                className="surface-card flex items-center gap-4 p-3"
                 key={reward.id}
               >
                 <span
@@ -56,6 +56,7 @@ export function RewardCatalog({ balance }: RewardCatalogProps) {
                         alt=""
                         className="size-[18px] object-contain"
                         height={18}
+                        loading="lazy"
                         src="/assets/coins/preppal-coin.png"
                         width={18}
                       />
@@ -63,10 +64,11 @@ export function RewardCatalog({ balance }: RewardCatalogProps) {
                     </span>
                     {reward.type === "plan" ? (
                       <Link
-                        className="bg-primary text-primary-foreground inline-flex min-h-8 items-center rounded-full px-6 text-xs font-medium transition hover:opacity-90"
+                        className="bg-primary text-primary-foreground inline-flex min-h-8 items-center rounded-full px-6 text-xs font-medium transition hover:opacity-90 gap-2"
                         href="/pricing"
                       >
                         View plans
+                        <ArrowRight className="size-4" />
                       </Link>
                     ) : (
                       <Link

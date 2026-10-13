@@ -63,7 +63,7 @@ export function NavBar() {
               alt="Preppal home"
               className="size-10 object-contain"
               height={40}
-              priority
+              loading="lazy"
               src="/assets/brand/preppal-mark.svg"
               width={40}
             />
@@ -78,6 +78,7 @@ export function NavBar() {
                     alt="Preppal Coin"
                     className="size-[22px] object-contain"
                     height={22}
+                    loading="lazy"
                     src="/assets/coins/preppal-coin.png"
                     width={22}
                   />
@@ -232,6 +233,7 @@ export function NavBar() {
                     alt="Preppal mascot"
                     className="object-contain"
                     fill
+                    loading="lazy"
                     sizes="56px"
                     src="/owl-mascot.png"
                   />

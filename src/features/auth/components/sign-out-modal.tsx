@@ -27,6 +27,7 @@ export function SignOutModal() {
               alt="Preppal mascot waving goodbye"
               className="size-20 object-contain"
               height={80}
+              loading="lazy"
               src="/assets/mascots/encouraging.png"
               width={80}
             />

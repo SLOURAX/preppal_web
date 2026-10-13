@@ -33,9 +33,9 @@ export function DataState({
             <Inbox className="size-5" />
           ))}
       </span> */}
-      {!isError ? <Mascot mood="encourage" size="lg" className="mt-3" /> : null}
-      <p className="text-foreground mt-1 text-[.9rem] font-semibold">{title}</p>
-      <p className="text-muted-foreground mt-1 max-w-sm text-xs leading-5">
+      {!isError ? <Mascot mood="disappointed" size="lg" className="mt-3" animated={false} /> : null}
+      <p className="text-foreground mt-1 text-[1rem] font-semibold">{title}</p>
+      <p className="text-muted-foreground mt-1 max-w-sm text-[.85rem] leading-5">
         {description}
       </p>
       {action ? <div className="mt-4">{action}</div> : null}

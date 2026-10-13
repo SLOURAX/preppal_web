@@ -44,6 +44,7 @@ export function QuizAuthGate({
             alt="Preppal mascot encouraging you to keep learning"
             className="size-20 object-contain"
             height={80}
+            loading="lazy"
             src="/assets/mascots/encouraging.png"
             width={80}
           />

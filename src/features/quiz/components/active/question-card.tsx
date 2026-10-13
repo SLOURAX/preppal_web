@@ -95,9 +95,21 @@ export function QuestionCard({
             </span>
           </div>
         ) : null}
-        <p className="text-foreground text-[.8rem] leading-normal font-medium sm:text-[.9rem]">
-          {question.text}
-        </p>
+        {question.passage ? (
+          <div className="bg-surface-subtle mb-4 rounded-xl p-3 sm:p-4">
+            <p className="text-muted-foreground mb-2 text-[.58rem] font-bold tracking-wide uppercase">
+              Read the passage
+            </p>
+            <div
+              className="rich-content text-foreground text-[.76rem] leading-6"
+              dangerouslySetInnerHTML={{ __html: question.passage }}
+            />
+          </div>
+        ) : null}
+        <div
+          className="rich-content text-foreground text-[.8rem] leading-normal font-medium sm:text-[.9rem]"
+          dangerouslySetInnerHTML={{ __html: question.text }}
+        />
         <div className="mt-5 space-y-2.5">
           {question.options.map((option, idx) => (
             <AnswerOption
@@ -120,6 +132,54 @@ export function QuestionCard({
             />
           ))}
         </div>
+        <style jsx>{`
+          .rich-content :global(img) {
+            display: block;
+            max-width: 100%;
+            max-height: 20rem;
+            margin: 0.75rem auto;
+            border-radius: 0.75rem;
+            object-fit: contain;
+          }
+          .rich-content :global(figure) {
+            margin: 0.75rem 0;
+            text-align: center;
+          }
+          .rich-content :global(figcaption) {
+            color: var(--muted-foreground);
+            font-size: 0.72rem;
+            margin-top: 0.35rem;
+          }
+          .rich-content :global(.rich-inline) {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            background: color-mix(in srgb, var(--primary) 8%, transparent);
+            border-radius: 0.35rem;
+            padding: 0.1rem 0.28rem;
+            white-space: pre-wrap;
+          }
+          .rich-content :global(ul) {
+            list-style: disc;
+            padding-left: 1.4rem;
+          }
+          .rich-content :global(ol) {
+            list-style: decimal;
+            padding-left: 1.4rem;
+          }
+          .rich-content :global(blockquote) {
+            border-left: 2px solid var(--primary);
+            padding-left: 0.75rem;
+            opacity: 0.85;
+          }
+          .rich-content :global(table) {
+            width: 100%;
+            border-collapse: collapse;
+          }
+          .rich-content :global(th),
+          .rich-content :global(td) {
+            border: 1px solid var(--border);
+            padding: 0.35rem 0.5rem;
+          }
+        `}</style>
       </div>
     </div>
   );

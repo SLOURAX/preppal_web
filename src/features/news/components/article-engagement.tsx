@@ -15,40 +15,22 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store";
-
-interface ReaderComment {
-  readonly id: string;
-  readonly author: string;
-  readonly message: string;
-  readonly postedAt: string;
-}
+import { postNewsComment, type ReaderComment } from "../news-api";
 
 interface ArticleEngagementProps {
+  readonly articleSlug: string;
   readonly articleTitle: string;
   readonly initialLikes: number;
   readonly initialCommentCount: number;
+  readonly initialComments: readonly ReaderComment[];
 }
 
-const INITIAL_COMMENTS: readonly ReaderComment[] = [
-  {
-    id: "comment-1",
-    author: "Ada M.",
-    message:
-      "This is a useful way to think about reviewing mistakes. I’m going to try it in my next practice session.",
-    postedAt: "2 hours ago",
-  },
-  {
-    id: "comment-2",
-    author: "Daniel O.",
-    message: "The practical examples made the idea much easier to understand.",
-    postedAt: "Yesterday",
-  },
-];
-
 export function ArticleEngagement({
+  articleSlug,
   articleTitle,
   initialLikes,
   initialCommentCount,
+  initialComments,
 }: ArticleEngagementProps) {
   const router = useRouter();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -56,8 +38,9 @@ export function ArticleEngagement({
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
   const [hasShared, setHasShared] = useState<boolean>(false);
   const [commentText, setCommentText] = useState<string>("");
-  const [comments, setComments] =
-    useState<readonly ReaderComment[]>(INITIAL_COMMENTS);
+  const [comments, setComments] = useState<readonly ReaderComment[]>(initialComments);
+  const [isPosting, setIsPosting] = useState(false);
+  const [commentError, setCommentError] = useState<string | null>(null);
 
   const requireAuth = (): void => {
     if (isAuthenticated) return;
@@ -75,20 +58,14 @@ export function ArticleEngagement({
     window.setTimeout(() => setHasShared(false), 1800);
   };
 
-  const submitComment = (event: FormEvent<HTMLFormElement>): void => {
+  const submitComment = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     const message = commentText.trim();
     if (!message) return;
-    setComments((current) => [
-      {
-        id: `comment-${Date.now()}`,
-        author: "You",
-        message,
-        postedAt: "Just now",
-      },
-      ...current,
-    ]);
-    setCommentText("");
+    setCommentError(null); setIsPosting(true);
+    try { const comment = await postNewsComment(articleSlug, message); setComments((current) => [comment, ...current]); setCommentText(""); }
+    catch { setCommentError("Your comment could not be posted. Please try again."); }
+    finally { setIsPosting(false); }
   };
 
   return (
@@ -177,12 +154,13 @@ export function ArticleEngagement({
               </span>
               <Button
                 className="gap-2"
-                disabled={!commentText.trim()}
+                disabled={!commentText.trim() || isPosting}
                 type="submit"
               >
-                <Send className="size-4" /> Post comment
+                <Send className="size-4" /> {isPosting ? "Posting…" : "Post comment"}
               </Button>
             </div>
+            {commentError ? <p className="mt-2 text-xs text-destructive">{commentError}</p> : null}
           </form>
         ) : (
           <div className="surface-card mt-5 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -208,7 +186,7 @@ export function ArticleEngagement({
                 <div className="flex flex-wrap items-center gap-x-2">
                   <h3 className="text-sm font-semibold">{comment.author}</h3>
                   <time className="text-muted-foreground text-xs">
-                    {comment.postedAt}
+                    {new Intl.DateTimeFormat("en-NG", { dateStyle: "medium", timeStyle: "short" }).format(new Date(comment.postedAt))}
                   </time>
                 </div>
                 <p className="text-muted-foreground mt-2 text-sm leading-6">

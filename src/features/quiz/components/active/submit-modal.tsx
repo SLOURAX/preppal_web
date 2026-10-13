@@ -27,6 +27,7 @@ export function SubmitModal({
             alt="Preppal mascot focused and ready"
             className="size-20 object-contain"
             height={80}
+            loading="lazy"
             src="/assets/mascots/proud.png"
             width={80}
           />

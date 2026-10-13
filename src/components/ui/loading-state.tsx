@@ -1,4 +1,9 @@
+"use client";
+
+import { Info } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useId, useRef } from "react";
+import { createPortal } from "react-dom";
 
 interface LoadingVisualProps {
   readonly title?: string;
@@ -46,6 +51,7 @@ function LoadingVisual({
           alt=""
           className={`relative z-10 object-contain ${isLarge ? "p-5 sm:p-6" : "p-3 motion-safe:animate-[mascot-float_3s_ease-in-out_infinite]"}`}
           fill
+          loading="lazy"
           sizes={compact ? "56px" : isLarge ? "160px" : "128px"}
           src="/assets/mascots/thinking.png"
         />
@@ -94,15 +100,74 @@ export function LoadingState(props: LoadingVisualProps) {
 
 export function LoadingModal({
   open,
-  title,
-  description,
+  title = "Processing your request",
+  description = "Please wait while we complete this securely.",
 }: LoadingVisualProps & { readonly open: boolean }) {
-  if (!open) return null;
-  return (
-    <div className="fixed inset-0 z-[90] grid place-items-center bg-black/35 p-5 backdrop-blur-sm">
-      <div className="bg-surface w-full max-w-xs rounded-3xl border border-white/60 p-7 shadow-2xl dark:border-white/10">
-        <LoadingVisual title={title} description={description} />
+  const titleId = useId();
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    const blockInteractionKeys = (event: KeyboardEvent) => {
+      if (["Tab", "Escape", "Enter", " "].includes(event.key)) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", blockInteractionKeys, true);
+    dialogRef.current?.focus();
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", blockInteractionKeys, true);
+      previousFocus?.focus();
+    };
+  }, [open]);
+
+  if (!open || typeof document === "undefined") return null;
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[300] grid cursor-wait place-items-center bg-slate-950/35 p-5 backdrop-blur-md dark:bg-black/55"
+      onContextMenu={(event) => event.preventDefault()}
+    >
+      <div
+        ref={dialogRef}
+        aria-busy="true"
+        aria-labelledby={titleId}
+        aria-modal="true"
+        className="border-border/70 bg-surface/95 w-full max-w-sm rounded-2xl border p-8 text-center shadow-2xl shadow-slate-950/20 backdrop-blur-2xl outline-none sm:p-8 dark:shadow-black/40"
+        role="alertdialog"
+        tabIndex={-1}
+      >
+        <Info className="mx-auto h-10 w-10 text-primary mb-10" />
+        <h2 className="text-foreground text-base font-semibold" id={titleId}>
+          {title}
+        </h2>
+        <p className="text-muted-foreground mx-auto mt-1 max-w-[17rem] text-xs leading-5">
+          {description}
+        </p>
+        <div
+          aria-hidden="true"
+          className="mt-6 flex items-center justify-center gap-2.5"
+        >
+          {Array.from({ length: 5 }, (_, index) => (
+            <span
+              className={`size-2.5 rounded-full motion-safe:animate-bounce ${
+                index === 2
+                  ? "bg-amber-400"
+                  : index % 2 === 0
+                    ? "bg-primary"
+                    : "bg-violet-300 dark:bg-violet-400"
+              }`}
+              key={index}
+              style={{ animationDelay: `${index * 120}ms` }}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
