@@ -133,7 +133,7 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       sessionChecked: false,
       ...INITIAL_FINANCE_BALANCES,
-      userName: "Solomon Udumizi",
+      userName: "Learner",
       userEmail: "",
       userPlan: "Starter",
       membership: null,
@@ -146,6 +146,7 @@ export const useAuthStore = create<AuthState>()(
       login: async (credentials): Promise<void> => {
         const validated = loginSchema.parse(credentials);
         const response = await apiClient<{
+          accessToken?: string;
           expiresAt: string;
           user: AuthUserPayload;
         }>("/api/v1/auth/login", {
@@ -153,8 +154,11 @@ export const useAuthStore = create<AuthState>()(
           credentials: "include",
           body: JSON.stringify(validated),
         });
+        if (response.accessToken && typeof window !== "undefined") {
+          window.localStorage.setItem("preppal_token", response.accessToken);
+        }
         const [membership, quizAttempts] = await Promise.all([
-          getMembership(),
+          getMembership().catch(() => null),
           getQuizHistory().catch(() => []),
         ]);
         set({
@@ -167,7 +171,7 @@ export const useAuthStore = create<AuthState>()(
           referralLink: response.user.referralLink,
           depositedFunds:
             (response.user.wallet?.depositedBalanceMinor ?? 0) / 100,
-          userPlan: membership.plan.name,
+          userPlan: membership?.plan.name ?? "Starter",
           membership,
           levelProgress: response.user.progress,
           quizAttempts,
@@ -176,9 +180,9 @@ export const useAuthStore = create<AuthState>()(
       },
       restoreSession: async (): Promise<void> => {
         try {
-          const [user, membership, quizAttempts] = await Promise.all([
-            apiClient<AuthUserPayload>("/api/v1/auth/me"),
-            getMembership(),
+          const user = await apiClient<AuthUserPayload>("/api/v1/auth/me");
+          const [membership, quizAttempts] = await Promise.all([
+            getMembership().catch(() => null),
             getQuizHistory().catch(() => []),
           ]);
           set({
@@ -191,7 +195,7 @@ export const useAuthStore = create<AuthState>()(
             referralCode: user.referralCode,
             referralLink: user.referralLink,
             depositedFunds: (user.wallet?.depositedBalanceMinor ?? 0) / 100,
-            userPlan: membership.plan.name,
+            userPlan: membership?.plan.name ?? "Starter",
             membership,
             levelProgress: user.progress,
             quizAttempts,
@@ -208,6 +212,9 @@ export const useAuthStore = create<AuthState>()(
         }
       },
       clearSession: (): void => {
+        if (typeof window !== "undefined") {
+          window.localStorage.removeItem("preppal_token");
+        }
         set({
           isAuthenticated: false,
           sessionChecked: true,
@@ -284,19 +291,16 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "preppal-auth",
-      version: 4,
+      version: 5,
       migrate: (persistedState) => ({
         ...(persistedState as AuthState),
-        userPlan: "Starter",
-        membership: null,
-        isAuthenticated: false,
+        userPlan: (persistedState as AuthState).userPlan ?? "Starter",
+        membership: (persistedState as AuthState).membership ?? null,
+        isAuthenticated: (persistedState as AuthState).isAuthenticated ?? false,
         sessionChecked: false,
-        ...INITIAL_FINANCE_BALANCES,
-        levelProgress: null,
       }),
       partialize: (state) => ({
         ...state,
-        isAuthenticated: false,
         sessionChecked: false,
         isSignOutModalOpen: false,
       }),

@@ -16,14 +16,23 @@ export async function apiClient<T>(
 ): Promise<T> {
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), 30_000);
+  const token =
+    typeof window !== "undefined"
+      ? window.localStorage.getItem("preppal_token")
+      : null;
+  const headers = new Headers(init?.headers);
+  if (!headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+  if (token && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
   const response = await fetch(`${env.apiUrl}${path}`, {
     credentials: "include",
     ...init,
     signal: controller.signal,
-    headers: {
-      "Content-Type": "application/json",
-      ...init?.headers,
-    },
+    headers,
   });
   window.clearTimeout(timeout);
 
