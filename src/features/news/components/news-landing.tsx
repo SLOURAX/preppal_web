@@ -6,6 +6,7 @@ import {
   Clock3,
   Heart,
   BotMessageSquare,
+  Bookmark,
   Search,
 } from "lucide-react";
 import Image from "next/image";
@@ -63,14 +64,19 @@ export function NewsLanding() {
 
   return (
     <main className="mx-auto w-full max-w-6xl px-5 py-10 sm:px-8">
-      <header className="max-w-2xl">
-        <h1 className="text-foreground mt-4 text-3xl font-black tracking-[-0.045em] sm:text-4xl">
-          Ideas for better learning.
-        </h1>
-        <p className="text-muted-foreground mt-2 text-[.85rem] leading-5">
-          Practical study guidance, product updates, learner stories, and
-          thoughtful perspectives from the Preppal community.
-        </p>
+      <header className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <div className="max-w-2xl">
+          <h1 className="text-foreground mt-4 text-3xl font-black tracking-[-0.045em] sm:text-4xl">
+            Ideas for better learning.
+          </h1>
+          <p className="text-muted-foreground mt-2 text-[.85rem] leading-5">
+            Practical study guidance, product updates, learner stories, and
+            thoughtful perspectives from the Preppal community.
+          </p>
+        </div>
+        <Link className="border-border bg-surface hover:bg-surface-subtle inline-flex w-fit shrink-0 items-center gap-2 rounded-full border px-4 py-2.5 text-xs font-semibold" href="/news/saved">
+          <Bookmark className="text-primary size-4" /> Saved articles
+        </Link>
       </header>
 
       <div className="surface-card mt-8 flex flex-col gap-3 p-3 sm:p-4 lg:flex-row lg:items-center lg:justify-between">

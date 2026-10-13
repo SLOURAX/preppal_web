@@ -8,14 +8,20 @@ import {
   Send,
   Share2,
 } from "lucide-react";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store";
-import { postNewsComment, type ReaderComment } from "../news-api";
+import {
+  getNewsEngagement,
+  postNewsComment,
+  toggleNewsBookmark,
+  toggleNewsLike,
+  type ReaderComment,
+} from "../news-api";
 
 interface ArticleEngagementProps {
   readonly articleSlug: string;
@@ -35,12 +41,38 @@ export function ArticleEngagement({
   const router = useRouter();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [likeCount, setLikeCount] = useState<number>(initialLikes);
+  const [isUpdatingLike, setIsUpdatingLike] = useState<boolean>(false);
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
+  const [isUpdatingBookmark, setIsUpdatingBookmark] = useState<boolean>(false);
   const [hasShared, setHasShared] = useState<boolean>(false);
   const [commentText, setCommentText] = useState<string>("");
   const [comments, setComments] = useState<readonly ReaderComment[]>(initialComments);
+  const [commentCount, setCommentCount] = useState<number>(initialCommentCount);
   const [isPosting, setIsPosting] = useState(false);
   const [commentError, setCommentError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLikeCount(initialLikes);
+    setCommentCount(initialCommentCount);
+    if (!isAuthenticated) {
+      setIsLiked(false);
+      setIsBookmarked(false);
+      return;
+    }
+
+    let active = true;
+    void getNewsEngagement(articleSlug)
+      .then((engagement) => {
+        if (!active) return;
+        setIsLiked(engagement.liked);
+        setIsBookmarked(engagement.bookmarked);
+        setLikeCount(engagement.likeCount);
+        setCommentCount(engagement.commentCount);
+      })
+      .catch(() => undefined);
+    return () => { active = false; };
+  }, [articleSlug, initialCommentCount, initialLikes, isAuthenticated]);
 
   const requireAuth = (): void => {
     if (isAuthenticated) return;
@@ -63,7 +95,7 @@ export function ArticleEngagement({
     const message = commentText.trim();
     if (!message) return;
     setCommentError(null); setIsPosting(true);
-    try { const comment = await postNewsComment(articleSlug, message); setComments((current) => [comment, ...current]); setCommentText(""); }
+    try { const comment = await postNewsComment(articleSlug, message); setComments((current) => [comment, ...current]); setCommentCount((current) => current + 1); setCommentText(""); }
     catch { setCommentError("Your comment could not be posted. Please try again."); }
     finally { setIsPosting(false); }
   };
@@ -74,35 +106,54 @@ export function ArticleEngagement({
         <div className="flex items-center gap-2">
           <button
             aria-pressed={isLiked}
+            aria-busy={isUpdatingLike}
             className={cn(
               "hover:bg-surface-subtle flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium",
               isLiked && "bg-red-500/10 text-red-500",
             )}
-            onClick={() => {
+            disabled={isUpdatingLike}
+            onClick={async () => {
               if (!isAuthenticated) return requireAuth();
-              setIsLiked((current) => !current);
+              setIsUpdatingLike(true);
+              try {
+                const engagement = await toggleNewsLike(articleSlug);
+                setIsLiked(engagement.liked);
+                setLikeCount(engagement.likeCount);
+              } finally {
+                setIsUpdatingLike(false);
+              }
             }}
             type="button"
           >
             <Heart className={cn("size-4", isLiked && "fill-current")} />{" "}
-            {initialLikes + (isLiked ? 1 : 0)}
+            {likeCount}
           </button>
           <span className="text-muted-foreground flex items-center gap-2 rounded-full px-3 py-2 text-sm">
             <MessageCircle className="size-4" />{" "}
-            {initialCommentCount + comments.length}
+            {commentCount}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <button
             aria-label="Bookmark article"
             aria-pressed={isBookmarked}
+            aria-busy={isUpdatingBookmark}
             className={cn(
               "hover:bg-surface-subtle grid size-9 place-items-center rounded-full",
               isBookmarked && "bg-primary/10 text-primary",
             )}
-            onClick={() => {
+            disabled={isUpdatingBookmark}
+            onClick={async () => {
               if (!isAuthenticated) return requireAuth();
-              setIsBookmarked((current) => !current);
+              setIsUpdatingBookmark(true);
+              try {
+                const engagement = await toggleNewsBookmark(articleSlug);
+                setIsBookmarked(engagement.bookmarked);
+              } catch {
+                // Keep the last confirmed server state when the request fails.
+              } finally {
+                setIsUpdatingBookmark(false);
+              }
             }}
             type="button"
           >
