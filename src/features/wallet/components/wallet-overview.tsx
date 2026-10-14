@@ -103,6 +103,18 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
   });
   const payoutAccount = payoutAccountQuery.data;
   const isBankLinked = Boolean(payoutAccount?.isUsable);
+  const openBankEditor = (): void => {
+    setBankDetails({
+      bankCode: payoutAccount?.bankCode ?? "",
+      bankName: payoutAccount?.bankName ?? "",
+      account: "",
+    });
+    setAccountName("");
+    setAccountResolveError(null);
+    setBankSearch("");
+    setIsBankPickerOpen(false);
+    setShowBankModal(true);
+  };
   const filteredBanks = useMemo(() => {
     const term = bankSearch.trim().toLowerCase();
     return (banksQuery.data ?? []).filter((bank) =>
@@ -233,7 +245,14 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 onClick={() =>
                   isBankLinked
                     ? setShowWithdrawalModal(true)
-                    : setShowBankModal(true)
+                    : payoutAccount
+                      ? showFeedback({
+                          kind: "error",
+                          title: "Withdrawals are not available yet",
+                          message:
+                            "Your bank account is saved, but Bachs has not enabled payouts to it yet.",
+                        })
+                      : openBankEditor()
                 }
               >
                 <Send className="size-4" />
@@ -472,9 +491,9 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                   setShowBankModal(false);
                   showFeedback({
                     kind: "success",
-                    title: "Bank account submitted",
+                    title: "Bank account linked",
                     message:
-                      "Bachs will make the account available after its checks are complete.",
+                      "Your verified bank details were saved. We will update its payout status automatically.",
                   });
                 })
                 .catch((error: unknown) =>
@@ -495,10 +514,12 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 <SaxSecuritySafeBulk className="size-5" />
               </div>
               <h2 className="text-foreground text-base font-bold">
-                Link a bank account
+                {payoutAccount ? "Edit bank account" : "Link a bank account"}
               </h2>
               <p className="text-muted-foreground mt-1 text-xs">
-                Link an account securely before withdrawing your coins.
+                {payoutAccount
+                  ? "Enter and verify the replacement account details."
+                  : "Link an account securely before withdrawing your coins."}
               </p>
             </div>
             <div className="relative">
@@ -638,7 +659,11 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 }
                 type="submit"
               >
-                {isLinkingAccount ? "Submitting securely…" : "Link account"}
+                {isLinkingAccount
+                  ? "Saving securely…"
+                  : payoutAccount
+                    ? "Save account"
+                    : "Link account"}
               </button>
             </div>
           </form>
@@ -841,26 +866,34 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
               Withdrawal account
             </h2>
             <p className="text-muted-foreground mt-0.5 text-xs">
-              {isBankLinked
-                ? `Linked · ${payoutAccount?.bankName} •••• ${payoutAccount?.accountNumberLast4}`
-                : payoutAccount
-                  ? "Bank account is awaiting Bachs approval"
-                  : "Link a bank account to withdraw funds"}
+              {payoutAccount
+                ? `${payoutAccount.bankName} · ••••${payoutAccount.accountNumberLast4}`
+                : "Link a bank account to withdraw funds"}
             </p>
           </div>
         </div>
-        <button
-          className="border-border text-primary hover:bg-primary/5 rounded-xl border px-4 py-2 text-xs font-bold transition-colors"
-          onClick={() => setShowBankModal(true)}
-          disabled={Boolean(payoutAccount)}
-          type="button"
-        >
-          {isBankLinked
-            ? "Account linked"
-            : payoutAccount
-              ? "Under review"
-              : "Link account"}
-        </button>
+        {payoutAccount ? (
+          <div className="flex items-center gap-2">
+            <span className="bg-success/10 text-success rounded-xl px-3 py-2 text-xs font-bold">
+              Account linked
+            </span>
+            <button
+              className="border-border text-primary hover:bg-primary/5 rounded-xl border px-4 py-2 text-xs font-bold transition-colors"
+              onClick={openBankEditor}
+              type="button"
+            >
+              Edit account
+            </button>
+          </div>
+        ) : (
+          <button
+            className="border-border text-primary hover:bg-primary/5 rounded-xl border px-4 py-2 text-xs font-bold transition-colors"
+            onClick={openBankEditor}
+            type="button"
+          >
+            Link account
+          </button>
+        )}
       </section>
 
       <section className="surface-card space-y-4 p-4 sm:p-5">

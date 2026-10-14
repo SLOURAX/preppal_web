@@ -27,6 +27,9 @@ export interface PayoutAccount {
   bankName: string;
   accountNumberLast4: string;
   accountName: string;
+  providerStatus: string | null;
+  statusReason: string | null;
+  reviewedAt: string | null;
   status: "PENDING" | "ACTIVE" | "RESTRICTED";
   isUsable: boolean;
 }
