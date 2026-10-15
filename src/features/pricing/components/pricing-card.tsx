@@ -12,7 +12,11 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { LoadingModal, useFeedback } from "@/components/ui";
-import { createPlanCheckout } from "@/features/payments";
+import {
+  createPlanCheckout,
+  PaymentMethodModal,
+  type PaymentMethod,
+} from "@/features/payments";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store";
 
@@ -32,10 +36,15 @@ export function PricingCard({ plan }: PricingCardProps) {
   const PlanIcon = PLAN_ICONS[plan.id];
   const { showFeedback } = useFeedback();
   const [isStartingCheckout, setIsStartingCheckout] = useState(false);
+  const [paymentOptionsOpen, setPaymentOptionsOpen] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] =
+    useState<PaymentMethod | null>(null);
   const paidPlanId =
     plan.id === "monthly" || plan.id === "annual" ? plan.id : null;
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const membership = useAuthStore((state) => state.membership);
+  const depositedFunds = useAuthStore((state) => state.depositedFunds);
+  const restoreSession = useAuthStore((state) => state.restoreSession);
   const hasActivePremium = Boolean(
     isAuthenticated && membership?.isPremium && membership.status === "ACTIVE",
   );
@@ -188,26 +197,9 @@ export function PricingCard({ plan }: PricingCardProps) {
             )}
             disabled={isStartingCheckout}
             type="button"
-            onClick={() => {
-              setIsStartingCheckout(true);
-              void createPlanCheckout(paidPlanId)
-                .then((checkout) =>
-                  window.location.assign(checkout.checkoutUrl),
-                )
-                .catch((error: unknown) => {
-                  setIsStartingCheckout(false);
-                  showFeedback({
-                    kind: "error",
-                    title: "Checkout could not start",
-                    message:
-                      error instanceof Error
-                        ? error.message
-                        : "Please try again shortly.",
-                  });
-                });
-            }}
+            onClick={() => setPaymentOptionsOpen(true)}
           >
-            {isStartingCheckout ? "Opening secure checkout…" : ctaLabel}
+            {isStartingCheckout ? "Processing payment…" : ctaLabel}
           </button>
         ) : (
           <Link
@@ -275,7 +267,67 @@ export function PricingCard({ plan }: PricingCardProps) {
           ))}
         </ul>
       </div>
-      <LoadingModal open={isStartingCheckout} title="Opening secure checkout" />
+      {paidPlanId ? (
+        <PaymentMethodModal
+          amountMinor={Math.round(plan.price * 100)}
+          currency="NGN"
+          depositedBalanceMinor={Math.round(depositedFunds * 100)}
+          onClose={() => {
+            if (!isStartingCheckout) setPaymentOptionsOpen(false);
+          }}
+          onSelect={(method) => {
+            setSelectedPaymentMethod(method);
+            setIsStartingCheckout(true);
+            void createPlanCheckout(paidPlanId, method)
+              .then(async (checkout) => {
+                if (checkout.paymentMethod === "BACHS") {
+                  if (!checkout.checkoutUrl)
+                    throw new Error("Secure checkout URL was not returned.");
+                  window.location.assign(checkout.checkoutUrl);
+                  return;
+                }
+                await restoreSession();
+                setPaymentOptionsOpen(false);
+                setIsStartingCheckout(false);
+                setSelectedPaymentMethod(null);
+                showFeedback({
+                  kind: "success",
+                  title: "Subscription activated",
+                  message: `${plan.name} was paid from your deposited funds and is now active.`,
+                });
+              })
+              .catch((error: unknown) => {
+                setIsStartingCheckout(false);
+                setPaymentOptionsOpen(false);
+                setSelectedPaymentMethod(null);
+                showFeedback({
+                  kind: "error",
+                  title: "Payment could not be completed",
+                  message:
+                    error instanceof Error
+                      ? error.message
+                      : "Please try again shortly.",
+                });
+              });
+          }}
+          open={paymentOptionsOpen}
+          planName={plan.name}
+          processing={isStartingCheckout}
+        />
+      ) : null}
+      <LoadingModal
+        description={
+          selectedPaymentMethod === "WALLET"
+            ? "Applying your deposited funds and activating your plan."
+            : "Preparing Bachs checkout. You will be redirected when it is ready."
+        }
+        open={isStartingCheckout}
+        title={
+          selectedPaymentMethod === "WALLET"
+            ? "Activating your subscription"
+            : "Opening secure checkout"
+        }
+      />
     </article>
   );
 }

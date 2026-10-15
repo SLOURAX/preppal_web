@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   Clock3,
   Compass,
+  Crown,
   Filter,
   Crosshair,
   Timer,
@@ -14,6 +15,7 @@ import {
   TrendingUp,
   Trophy,
 } from "lucide-react";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { ListSelect } from "@/components/ui/list-select";
@@ -290,6 +292,14 @@ function ExamPerformance({ attempts }: { readonly attempts: QuizAttempt[] }) {
 
 export function AnalyticsTab() {
   const attempts = useAuthStore((state) => state.quizAttempts);
+  const membership = useAuthStore((state) => state.membership);
+  const hasAdvancedAnalytics =
+    membership?.entitlements?.advancedAnalyticsEnabled ?? false;
+  const periodOptions = hasAdvancedAnalytics
+    ? PERIOD_OPTIONS
+    : PERIOD_OPTIONS.filter(
+        (option) => option.value === "7" || option.value === "30",
+      );
   const [exam, setExam] = useState("all");
   const [subject, setSubject] = useState("all");
   const [mode, setMode] = useState("all");
@@ -412,7 +422,7 @@ export function AnalyticsTab() {
         <ListSelect
           label="Time range"
           onChange={(value) => setPeriod(value as Period)}
-          options={PERIOD_OPTIONS}
+          options={periodOptions}
           placeholder="Choose a time range"
           showOptionDescriptions={false}
           compact
@@ -471,213 +481,251 @@ export function AnalyticsTab() {
         />
       </div>
 
-      <ReadinessCard score={totals.accuracy} />
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <SubjectPerformance attempts={filteredAttempts} />
-        <ExamPerformance attempts={filteredAttempts} />
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <section className="surface-card p-5 sm:p-6">
-          <div className="mb-5 flex items-start justify-between gap-3">
+      {!hasAdvancedAnalytics ? (
+        <section className="surface-card border-primary/20 bg-primary/5 flex flex-col items-start gap-4 border p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+          <div className="flex items-start gap-3">
+            <span className="bg-primary/10 text-primary grid size-10 shrink-0 place-items-center rounded-xl">
+              <Crown className="size-5" />
+            </span>
             <div>
-              <h3 className="text-foreground font-semibold">Time analytics</h3>
-              <p className="text-muted-foreground text-xs">
-                How long you spend in each selected session
+              <h3 className="text-foreground text-sm font-semibold">
+                Unlock advanced learning analytics
+              </h3>
+              <p className="text-muted-foreground mt-1 max-w-xl text-xs leading-5">
+                Premium adds all-time history, readiness, subject and exam
+                comparisons, time analysis, and personalised study insights.
               </p>
             </div>
-            <Timer className="text-primary size-5" />
           </div>
-          {timeBySubject.length ? (
-            <div className="space-y-3">
-              {timeBySubject
-                .slice(0, 5)
-                .map(({ subject, seconds, percentage }) => (
-                  <div key={subject}>
-                    <div className="mb-1 flex items-center justify-between gap-3">
-                      <span className="text-foreground truncate text-xs font-medium">
-                        {titleCase(subject)}
-                      </span>
-                      <span className="text-muted-foreground text-[11px]">
-                        {formatDuration(seconds)}
-                      </span>
+          <Link
+            className="bg-primary text-primary-foreground inline-flex min-h-10 shrink-0 items-center justify-center rounded-xl px-4 text-xs font-semibold"
+            href="/pricing"
+          >
+            View Premium
+          </Link>
+        </section>
+      ) : (
+        <>
+          <ReadinessCard score={totals.accuracy} />
+
+          <div className="grid gap-4 lg:grid-cols-2">
+            <SubjectPerformance attempts={filteredAttempts} />
+            <ExamPerformance attempts={filteredAttempts} />
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-2">
+            <section className="surface-card p-5 sm:p-6">
+              <div className="mb-5 flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="text-foreground font-semibold">
+                    Time analytics
+                  </h3>
+                  <p className="text-muted-foreground text-xs">
+                    How long you spend in each selected session
+                  </p>
+                </div>
+                <Timer className="text-primary size-5" />
+              </div>
+              {timeBySubject.length ? (
+                <div className="space-y-3">
+                  {timeBySubject
+                    .slice(0, 5)
+                    .map(({ subject, seconds, percentage }) => (
+                      <div key={subject}>
+                        <div className="mb-1 flex items-center justify-between gap-3">
+                          <span className="text-foreground truncate text-xs font-medium">
+                            {titleCase(subject)}
+                          </span>
+                          <span className="text-muted-foreground text-[11px]">
+                            {formatDuration(seconds)}
+                          </span>
+                        </div>
+                        <div className="bg-surface-subtle h-2 overflow-hidden rounded-full">
+                          <div
+                            className="h-full rounded-full bg-violet-500"
+                            style={{ width: `${percentage}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground bg-surface-subtle rounded-2xl p-4 text-xs">
+                  Your time breakdown will appear after you complete a quiz.
+                </p>
+              )}
+            </section>
+            <section className="surface-card p-5 sm:p-6">
+              <div className="mb-5 flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="text-foreground font-semibold">
+                    Strengths & focus areas
+                  </h3>
+                  <p className="text-muted-foreground text-xs">
+                    Use your results to choose what to practise next
+                  </p>
+                </div>
+                <TrendingDown className="text-muted-foreground size-5" />
+              </div>
+              {filteredAttempts.length ? (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {[
+                    [
+                      "Strongest result",
+                      Math.max(...filteredAttempts.map((item) => item.score)),
+                    ],
+                    [
+                      "Needs attention",
+                      Math.min(...filteredAttempts.map((item) => item.score)),
+                    ],
+                  ].map(([label, value]) => (
+                    <div
+                      className="bg-surface-subtle rounded-2xl p-4"
+                      key={label}
+                    >
+                      <p className="text-muted-foreground text-xs">{label}</p>
+                      <p className="text-foreground mt-1 text-xl font-bold sm:text-2xl">
+                        {value}%
+                      </p>
+                      <p className="text-muted-foreground mt-1 text-[11px]">
+                        Based on your selected results
+                      </p>
                     </div>
-                    <div className="bg-surface-subtle h-2 overflow-hidden rounded-full">
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground bg-surface-subtle rounded-2xl p-4 text-xs">
+                  Complete more quizzes to identify reliable strengths and focus
+                  areas.
+                </p>
+              )}
+            </section>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-2">
+            <section className="surface-card p-5 sm:p-6">
+              <div className="mb-5 flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="text-foreground font-semibold">
+                    Study activity
+                  </h3>
+                  <p className="text-muted-foreground text-xs">
+                    Your quiz sessions over the last 7 days
+                  </p>
+                </div>
+                <CheckCircle2 className="text-primary size-5" />
+              </div>
+              <div className="flex items-end justify-between gap-2">
+                {studyActivity.map(({ label, count }) => (
+                  <div
+                    className="flex min-w-0 flex-1 flex-col items-center gap-2"
+                    key={label}
+                  >
+                    <div className="bg-surface-subtle flex h-24 w-full items-end overflow-hidden rounded-lg">
                       <div
-                        className="h-full rounded-full bg-violet-500"
-                        style={{ width: `${percentage}%` }}
+                        className="bg-primary/80 w-full rounded-t-lg"
+                        style={{
+                          height: `${count ? Math.min(100, count * 35 + 18) : 5}%`,
+                        }}
                       />
                     </div>
+                    <span className="text-muted-foreground text-[10px]">
+                      {label}
+                    </span>
                   </div>
                 ))}
-            </div>
-          ) : (
-            <p className="text-muted-foreground bg-surface-subtle rounded-2xl p-4 text-xs">
-              Your time breakdown will appear after you complete a quiz.
-            </p>
-          )}
-        </section>
-        <section className="surface-card p-5 sm:p-6">
-          <div className="mb-5 flex items-start justify-between gap-3">
-            <div>
-              <h3 className="text-foreground font-semibold">
-                Strengths & focus areas
-              </h3>
-              <p className="text-muted-foreground text-xs">
-                Use your results to choose what to practise next
-              </p>
-            </div>
-            <TrendingDown className="text-muted-foreground size-5" />
-          </div>
-          {filteredAttempts.length ? (
-            <div className="grid gap-3 sm:grid-cols-2">
-              {[
-                [
-                  "Strongest result",
-                  Math.max(...filteredAttempts.map((item) => item.score)),
-                ],
-                [
-                  "Needs attention",
-                  Math.min(...filteredAttempts.map((item) => item.score)),
-                ],
-              ].map(([label, value]) => (
-                <div className="bg-surface-subtle rounded-2xl p-4" key={label}>
-                  <p className="text-muted-foreground text-xs">{label}</p>
-                  <p className="text-foreground mt-1 text-xl font-bold sm:text-2xl">
-                    {value}%
-                  </p>
-                  <p className="text-muted-foreground mt-1 text-[11px]">
-                    Based on your selected results
+              </div>
+            </section>
+
+            <section className="surface-card p-5 sm:p-6">
+              <div className="mb-5 flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="text-foreground font-semibold">
+                    Your insights
+                  </h3>
+                  <p className="text-muted-foreground text-xs">
+                    Small signals from your selected results
                   </p>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-muted-foreground bg-surface-subtle rounded-2xl p-4 text-xs">
-              Complete more quizzes to identify reliable strengths and focus
-              areas.
-            </p>
-          )}
-        </section>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <section className="surface-card p-5 sm:p-6">
-          <div className="mb-5 flex items-start justify-between gap-3">
-            <div>
-              <h3 className="text-foreground font-semibold">Study activity</h3>
-              <p className="text-muted-foreground text-xs">
-                Your quiz sessions over the last 7 days
-              </p>
-            </div>
-            <CheckCircle2 className="text-primary size-5" />
-          </div>
-          <div className="flex items-end justify-between gap-2">
-            {studyActivity.map(({ label, count }) => (
-              <div
-                className="flex min-w-0 flex-1 flex-col items-center gap-2"
-                key={label}
-              >
-                <div className="bg-surface-subtle flex h-24 w-full items-end overflow-hidden rounded-lg">
+                <BrainCircuit className="text-primary size-5" />
+              </div>
+              <div className="space-y-2">
+                {(filteredAttempts.length
+                  ? [
+                      totals.accuracy >= 75
+                        ? "Your accuracy is trending in a strong direction."
+                        : "Keep practising to lift your overall accuracy.",
+                      `${totals.answered} questions completed in this filter range.`,
+                      totals.duration
+                        ? `You have spent ${formatDuration(totals.duration)} practising.`
+                        : "Complete a timed quiz to track study time.",
+                    ]
+                  : [
+                      "Complete a quiz to unlock personalised insights.",
+                      "Your strengths and focus areas will be based on real answers.",
+                      "Use the filters above to compare progress over time.",
+                    ]
+                ).map((insight) => (
                   <div
-                    className="bg-primary/80 w-full rounded-t-lg"
-                    style={{
-                      height: `${count ? Math.min(100, count * 35 + 18) : 5}%`,
-                    }}
-                  />
-                </div>
-                <span className="text-muted-foreground text-[10px]">
-                  {label}
-                </span>
+                    className="bg-surface-subtle flex items-start gap-3 rounded-2xl p-3"
+                    key={insight}
+                  >
+                    <span className="bg-primary/10 text-primary mt-0.5 grid size-6 shrink-0 place-items-center rounded-full text-xs">
+                      •
+                    </span>
+                    <p className="text-foreground text-xs leading-5">
+                      {insight}
+                    </p>
+                  </div>
+                ))}
               </div>
-            ))}
+            </section>
           </div>
-        </section>
 
-        <section className="surface-card p-5 sm:p-6">
-          <div className="mb-5 flex items-start justify-between gap-3">
-            <div>
-              <h3 className="text-foreground font-semibold">Your insights</h3>
-              <p className="text-muted-foreground text-xs">
-                Small signals from your selected results
-              </p>
+          <section className="surface-card p-5 sm:p-6">
+            <div className="mb-4 flex items-start justify-between gap-3">
+              <div>
+                <h3 className="text-foreground font-semibold">
+                  Question difficulty
+                </h3>
+                <p className="text-muted-foreground text-xs">
+                  Review performance by difficulty as question tags become
+                  available.
+                </p>
+              </div>
+              <Crosshair className="text-muted-foreground size-5" />
             </div>
-            <BrainCircuit className="text-primary size-5" />
-          </div>
-          <div className="space-y-2">
-            {(filteredAttempts.length
-              ? [
-                  totals.accuracy >= 75
-                    ? "Your accuracy is trending in a strong direction."
-                    : "Keep practising to lift your overall accuracy.",
-                  `${totals.answered} questions completed in this filter range.`,
-                  totals.duration
-                    ? `You have spent ${formatDuration(totals.duration)} practising.`
-                    : "Complete a timed quiz to track study time.",
-                ]
-              : [
-                  "Complete a quiz to unlock personalised insights.",
-                  "Your strengths and focus areas will be based on real answers.",
-                  "Use the filters above to compare progress over time.",
-                ]
-            ).map((insight) => (
-              <div
-                className="bg-surface-subtle flex items-start gap-3 rounded-2xl p-3"
-                key={insight}
-              >
-                <span className="bg-primary/10 text-primary mt-0.5 grid size-6 shrink-0 place-items-center rounded-full text-xs">
-                  •
-                </span>
-                <p className="text-foreground text-xs leading-5">{insight}</p>
+            <p className="text-muted-foreground bg-surface-subtle rounded-2xl p-4 text-xs">
+              Difficulty-level insights will populate from tagged questions in
+              your completed quizzes.
+            </p>
+          </section>
+
+          <section className="surface-card from-primary/10 via-surface to-surface flex flex-col gap-4 bg-gradient-to-r p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+            <div className="flex items-start gap-3">
+              <span className="bg-primary text-primary-foreground grid size-10 shrink-0 place-items-center rounded-xl">
+                <BrainCircuit className="size-5" />
+              </span>
+              <div>
+                <h3 className="text-foreground font-semibold">
+                  Your next best move
+                </h3>
+                <p className="text-muted-foreground max-w-xl text-[.75rem] leading-5">
+                  {filteredAttempts.length
+                    ? "Keep a steady practice rhythm and revisit the subjects with your lowest scores."
+                    : "Take your first practice quiz to unlock personalised recommendations."}
+                </p>
               </div>
-            ))}
-          </div>
-        </section>
-      </div>
-
-      <section className="surface-card p-5 sm:p-6">
-        <div className="mb-4 flex items-start justify-between gap-3">
-          <div>
-            <h3 className="text-foreground font-semibold">
-              Question difficulty
-            </h3>
-            <p className="text-muted-foreground text-xs">
-              Review performance by difficulty as question tags become
-              available.
-            </p>
-          </div>
-          <Crosshair className="text-muted-foreground size-5" />
-        </div>
-        <p className="text-muted-foreground bg-surface-subtle rounded-2xl p-4 text-xs">
-          Difficulty-level insights will populate from tagged questions in your
-          completed quizzes.
-        </p>
-      </section>
-
-      <section className="surface-card from-primary/10 via-surface to-surface flex flex-col gap-4 bg-gradient-to-r p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
-        <div className="flex items-start gap-3">
-          <span className="bg-primary text-primary-foreground grid size-10 shrink-0 place-items-center rounded-xl">
-            <BrainCircuit className="size-5" />
-          </span>
-          <div>
-            <h3 className="text-foreground font-semibold">
-              Your next best move
-            </h3>
-            <p className="text-muted-foreground max-w-xl text-[.75rem] leading-5">
-              {filteredAttempts.length
-                ? "Keep a steady practice rhythm and revisit the subjects with your lowest scores."
-                : "Take your first practice quiz to unlock personalised recommendations."}
-            </p>
-          </div>
-        </div>
-        <a
-          className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex shrink-0 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-[.8rem] font-semibold transition-colors"
-          href="/quiz"
-        >
-          Start practice <ArrowUpRight className="size-4" />
-        </a>
-      </section>
+            </div>
+            <a
+              className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex shrink-0 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-[.8rem] font-semibold transition-colors"
+              href="/quiz"
+            >
+              Start practice <ArrowUpRight className="size-4" />
+            </a>
+          </section>
+        </>
+      )}
     </div>
   );
 }

@@ -34,17 +34,17 @@ export const PRICING_PLANS: readonly PricingPlan[] = [
     featured: false,
     features: [
       {
-        label: "Daily practice quizzes",
-        detail: "Subject to daily limits",
+        label: "3 practice quizzes daily",
+        detail: "Up to 20 questions per quiz",
         included: true,
       },
       {
-        label: "AI learning support",
-        detail: "Limited explanations",
+        label: "3 AI explanations daily",
+        detail: "Allowance resets every day",
         included: true,
       },
-      { label: "Basic progress tracking", included: true },
-      { label: "Standard XP earning", included: true },
+      { label: "30-day progress overview", included: true },
+      { label: "Standard 1× quiz XP", included: true },
       { label: "Ad-free learning", included: false },
       { label: "Advanced analytics", included: false },
     ],
@@ -62,18 +62,25 @@ export const PRICING_PLANS: readonly PricingPlan[] = [
     featured: true,
     badge: "Most popular",
     features: [
-      { label: "Unlimited practice quizzes", included: true },
       {
-        label: "Expanded AI support",
-        detail: "Fair-use limits apply",
+        label: "Unlimited practice quizzes",
+        detail: "Up to 100 questions per quiz",
+        included: true,
+      },
+      {
+        label: "30 AI explanations daily",
+        detail: "With AI follow-up support",
         included: true,
       },
       { label: "Completely ad-free", included: true },
       { label: "Advanced learning analytics", included: true },
-      { label: "2× XP on eligible activities", included: true },
       {
-        label: "Faster XP accumulation",
-        detail: "2× eligible quiz XP",
+        label: "Personalised study recommendations",
+        included: true,
+      },
+      {
+        label: "2× XP on completed quizzes",
+        detail: "Excludes referrals and adjustments",
         included: true,
       },
     ],
@@ -93,16 +100,19 @@ export const PRICING_PLANS: readonly PricingPlan[] = [
     features: [
       { label: "Everything in Monthly", included: true },
       {
-        label: "Expanded AI support",
-        detail: "Fair-use limits apply",
+        label: "12 months of uninterrupted access",
+        included: true,
+      },
+      {
+        label: "30 AI explanations daily",
+        detail: "With AI follow-up support",
         included: true,
       },
       { label: "Completely ad-free", included: true },
       { label: "Advanced learning analytics", included: true },
-      { label: "2× XP on eligible activities", included: true },
       {
-        label: "Faster XP accumulation",
-        detail: "2× eligible quiz XP",
+        label: "2× XP on completed quizzes",
+        detail: "Excludes referrals and adjustments",
         included: true,
       },
     ],
@@ -110,13 +120,13 @@ export const PRICING_PLANS: readonly PricingPlan[] = [
 ];
 
 export const PRICING_ASSURANCES = [
-  "Cancel whenever you need",
+  "No automatic renewal",
   "Secure local payment options",
   "Your quiz history stays yours",
 ] as const;
 
 export const PRICING_CAVEATS = [
-  "Premium AI support is subject to reasonable fair-use limits and service availability.",
+  "AI allowances reset daily and remain subject to service availability and platform safety limits.",
   "The 2× XP benefit applies to eligible completed quizzes and excludes referrals, promotions, refunds, and manual adjustments.",
-  "Monthly and annual access is charged upfront and expires at the end of the selected period. You can renew from your account; taxes or payment-provider fees may apply.",
+  "Monthly and annual access is prepaid, does not renew automatically, and expires at the end of the selected period. You can renew from your account.",
 ] as const;

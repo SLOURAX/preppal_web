@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, Suspense } from "react";
+import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Lightbulb, Send, RobotArm, X } from "lucide-react";
@@ -110,13 +110,17 @@ function ActiveQuizContent() {
   const { showFeedback } = useFeedback();
   const recordQuizAttempt = useAuthStore((state) => state.recordQuizAttempt);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const maxQuestionsPerQuiz = useAuthStore(
+    (state) => state.membership?.entitlements?.maxQuestionsPerQuiz ?? 20,
+  );
   const setLevelProgress = useAuthStore((state) => state.setLevelProgress);
   const mode = searchParams.get("mode") || "timed";
   const isUntimed = mode === "untimed";
   const parsedCount = Number(searchParams.get("count") || 40);
-  const questionCount = isUntimed
+  const requestedQuestionCount = isUntimed
     ? Math.max(5, Math.min(30, Number.isFinite(parsedCount) ? parsedCount : 10))
     : 40;
+  const questionCount = Math.min(requestedQuestionCount, maxQuestionsPerQuiz);
   const simulationSeed = Number(searchParams.get("seed") || 0);
   const path = searchParams.get("path") === "subject" ? "STANDALONE" : "EXAM";
   const selectedSubjectId = searchParams.get("subject") ?? "";
@@ -134,7 +138,9 @@ function ActiveQuizContent() {
       topicIds,
       questionCount,
     ],
-    enabled: Boolean(selectedSubjectId) && (path === "STANDALONE" || Boolean(yearLink)),
+    enabled:
+      Boolean(selectedSubjectId) &&
+      (path === "STANDALONE" || Boolean(yearLink)),
     queryFn: async () => {
       const params = new URLSearchParams({
         path,
@@ -160,7 +166,10 @@ function ActiveQuizContent() {
       }));
     },
   });
-  const questions = questionQuery.data ?? [];
+  const questions = useMemo(
+    () => questionQuery.data ?? [],
+    [questionQuery.data],
+  );
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
@@ -185,13 +194,17 @@ function ActiveQuizContent() {
     Record<number, "correct" | "incorrect">
   >({});
 
-  const currentQ = questions[Math.min(currentIndex, questions.length - 1)] ?? {
-    id: 0,
-    text: "",
-    options: [],
-    correctAnswer: "",
-    explanation: "",
-  };
+  const currentQ = useMemo(
+    () =>
+      questions[Math.min(currentIndex, questions.length - 1)] ?? {
+        id: 0,
+        text: "",
+        options: [],
+        correctAnswer: "",
+        explanation: "",
+      },
+    [currentIndex, questions],
+  );
   const answeredCount = Object.keys(answers).length;
   const flaggedCount = Object.values(flagged).filter(Boolean).length;
   const unansweredCount = questions.length - answeredCount;

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/store";
 
 declare global {
   interface Window {
@@ -30,22 +31,35 @@ export function AdSlot({
   className,
 }: AdSlotProps) {
   const adRef = useRef<HTMLModElement>(null);
+  const sessionChecked = useAuthStore((state) => state.sessionChecked);
+  const adFree = useAuthStore(
+    (state) => state.membership?.entitlements?.adFree ?? false,
+  );
   useEffect(() => {
-    if (!publisherId || !adRef.current || adRef.current.dataset.loaded) return;
+    if (
+      !publisherId ||
+      !sessionChecked ||
+      adFree ||
+      !adRef.current ||
+      adRef.current.dataset.loaded
+    )
+      return;
     try {
       (window.adsbygoogle ??= []).push({});
       adRef.current.dataset.loaded = "true";
     } catch {
       /* unavailable locally or blocked */
     }
-  }, []);
-  if (!publisherId) return null;
+  }, [adFree, sessionChecked]);
+  if (!publisherId || !sessionChecked || adFree) return null;
   return (
     <div
       aria-label="Advertisement"
       className={cn(
         "relative flex w-full overflow-hidden rounded-2xl border border-violet-100/80 bg-gradient-to-br from-violet-50 via-white to-indigo-50 p-2",
-        "justify-center",
+        placement === "top-right"
+          ? "items-start justify-end"
+          : "justify-center",
         className,
       )}
       role="complementary"

@@ -13,13 +13,51 @@ export interface Membership {
   currentPeriodEnd: string | null;
   cancelAtPeriodEnd: boolean;
   isPremium: boolean;
+  entitlements: PlanEntitlements;
+}
+
+export interface PlanEntitlements {
+  dailyQuizLimit: number | null;
+  maxQuestionsPerQuiz: number;
+  dailyAiRequestLimit: number;
+  dailyAiTokenLimit: number;
+  analyticsHistoryDays: number | null;
+  advancedAnalyticsEnabled: boolean;
+  personalizedRecommendationsEnabled: boolean;
+  xpMultiplier: number;
+  adFree: boolean;
+  fullQuestionBankAccess: boolean;
+}
+
+export interface PublicPlan {
+  slug: "free" | "monthly" | "annual";
+  name: string;
+  description: string;
+  amountMinor: number;
+  currency: string;
+  interval: "FREE" | "MONTH" | "YEAR";
+  durationDays: number | null;
+  dailyQuizLimit: number | null;
+  maxQuestionsPerQuiz: number;
+  dailyAiRequestLimit: number;
+  dailyAiTokenLimit: number;
+  analyticsHistoryDays: number | null;
+  advancedAnalyticsEnabled: boolean;
+  personalizedRecommendationsEnabled: boolean;
+  xpMultiplier: number;
+  adFree: boolean;
+  fullQuestionBankAccess: boolean;
 }
 
 export interface CheckoutResult {
   paymentId: string;
-  checkoutId: string;
-  checkoutUrl: string;
+  paymentMethod: "BACHS" | "WALLET";
+  status: "PENDING" | "SUCCEEDED";
+  checkoutId: string | null;
+  checkoutUrl: string | null;
   expiresAt: string | null;
+  remainingWalletBalanceMinor?: number;
+  membership?: Membership;
 }
 
 export interface PayoutAccount {
@@ -37,10 +75,13 @@ export interface PayoutAccount {
 export const getMembership = () =>
   apiClient<Membership>("/api/v1/payments/membership");
 
-export const createPlanCheckout = (plan: "monthly" | "annual") =>
+export const createPlanCheckout = (
+  plan: "monthly" | "annual",
+  paymentMethod: "BACHS" | "WALLET",
+) =>
   apiClient<CheckoutResult>("/api/v1/payments/checkout/plan", {
     method: "POST",
-    body: JSON.stringify({ plan }),
+    body: JSON.stringify({ plan, paymentMethod }),
   });
 
 export const createDepositCheckout = (amountNgn: number) =>
@@ -70,10 +111,15 @@ export const resolveNigerianBankAccount = (input: {
   bankCode: string;
   accountNumber: string;
 }) =>
-  apiClient<{ bankCode: string; bankName: string; accountNumber: string; accountName: string }>(
-    "/api/v1/payments/payouts/resolve-account",
-    { method: "POST", body: JSON.stringify(input) },
-  );
+  apiClient<{
+    bankCode: string;
+    bankName: string;
+    accountNumber: string;
+    accountName: string;
+  }>("/api/v1/payments/payouts/resolve-account", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 
 export const createPayout = (coins: number) =>
   apiClient<{ id: string; status: string }>("/api/v1/payments/payouts", {

@@ -16,6 +16,8 @@ import {
 } from "../pricing.constants";
 import { PricingCard } from "./pricing-card";
 import { apiClient } from "@/lib/api/client";
+import type { PublicPlan } from "@/features/payments";
+import type { PricingPlan } from "../pricing.constants";
 
 const PREMIUM_HIGHLIGHTS = [
   { label: "AI-supported learning", icon: BrainCircuit },
@@ -23,18 +25,67 @@ const PREMIUM_HIGHLIGHTS = [
   { label: "Faster progress", icon: Gauge },
 ] as const;
 
+function featuresFromPlan(plan: PublicPlan): PricingPlan["features"] {
+  const quizzes = plan.dailyQuizLimit
+    ? `${plan.dailyQuizLimit} practice quizzes daily`
+    : "Unlimited practice quizzes";
+  const analytics = plan.advancedAnalyticsEnabled
+    ? "Advanced learning analytics"
+    : `${plan.analyticsHistoryDays ?? 30}-day progress overview`;
+  return [
+    ...(plan.slug === "annual"
+      ? [
+          { label: "Everything in Monthly", included: true },
+          {
+            label: "12 months of uninterrupted access",
+            included: true,
+          },
+        ]
+      : []),
+    {
+      label: quizzes,
+      detail: `Up to ${plan.maxQuestionsPerQuiz} questions per quiz`,
+      included: true,
+    },
+    {
+      label: `${plan.dailyAiRequestLimit} AI explanations daily`,
+      detail: "Allowance resets every day",
+      included: plan.dailyAiRequestLimit > 0,
+    },
+    { label: analytics, included: true },
+    {
+      label: "Personalised study recommendations",
+      included: plan.personalizedRecommendationsEnabled,
+    },
+    {
+      label: "Completely ad-free",
+      included: plan.adFree,
+    },
+    {
+      label: `${plan.xpMultiplier}× XP on completed quizzes`,
+      detail: "Excludes referrals and adjustments",
+      included: true,
+    },
+  ];
+}
+
 export function PricingPage() {
   const plansQuery = useQuery({
     queryKey: ["payments", "plans"],
-    queryFn: () =>
-      apiClient<Array<{ slug: string; amountMinor: number }>>(
-        "/api/v1/payments/plans",
-      ),
+    queryFn: () => apiClient<PublicPlan[]>("/api/v1/payments/plans"),
     staleTime: 5 * 60 * 1000,
   });
   const plans = PRICING_PLANS.map((plan) => {
     const current = plansQuery.data?.find((item) => item.slug === plan.id);
-    return current ? { ...plan, price: current.amountMinor / 100 } : plan;
+    return current
+      ? {
+          ...plan,
+          name: current.name,
+          description: current.description,
+          price: current.amountMinor / 100,
+          features: featuresFromPlan(current),
+        }
+      : plan;
   });
   return (
     <main className="mx-auto w-full max-w-5xl px-5 py-8 sm:px-8 sm:py-10">
@@ -47,7 +98,7 @@ export function PricingPage() {
           experience, richer insights, and faster rewards.
         </p>
 
-        {/* <div className="mt-8 mb-5 flex flex-wrap justify-center gap-x-5 gap-y-2">
+        <div className="mt-7 flex flex-wrap justify-center gap-x-5 gap-y-2">
           {PRICING_ASSURANCES.map((assurance) => (
             <span
               className="text-muted-foreground flex items-center gap-2 text-xs font-medium"
@@ -56,7 +107,18 @@ export function PricingPage() {
               <BadgeCheck className="text-success size-4" /> {assurance}
             </span>
           ))}
-        </div> */}
+        </div>
+
+        <div className="mt-5 flex flex-wrap justify-center gap-2">
+          {PREMIUM_HIGHLIGHTS.map(({ label, icon: Icon }) => (
+            <span
+              className="bg-primary/5 text-primary inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold"
+              key={label}
+            >
+              <Icon className="size-3.5" /> {label}
+            </span>
+          ))}
+        </div>
       </header>
 
       <section
@@ -66,6 +128,17 @@ export function PricingPage() {
         {plans.map((plan) => (
           <PricingCard key={plan.id} plan={plan} />
         ))}
+      </section>
+
+      <section className="border-border/70 bg-surface-subtle mt-6 rounded-2xl border p-4">
+        <div className="flex items-start gap-3">
+          <ShieldCheck className="text-primary mt-0.5 size-4 shrink-0" />
+          <ul className="text-muted-foreground space-y-1.5 text-[11px] leading-5">
+            {PRICING_CAVEATS.map((caveat) => (
+              <li key={caveat}>{caveat}</li>
+            ))}
+          </ul>
+        </div>
       </section>
 
       <section className="mt-12 text-center">

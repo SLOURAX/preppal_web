@@ -686,9 +686,11 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
               if (!Number.isInteger(amount) || amount < 1000) return;
               setIsStartingPayment(true);
               void createDepositCheckout(amount)
-                .then((checkout) =>
-                  window.location.assign(checkout.checkoutUrl),
-                )
+                .then((checkout) => {
+                  if (!checkout.checkoutUrl)
+                    throw new Error("Secure checkout URL was not returned.");
+                  window.location.assign(checkout.checkoutUrl);
+                })
                 .catch((error: unknown) => {
                   setIsStartingPayment(false);
                   showFeedback({

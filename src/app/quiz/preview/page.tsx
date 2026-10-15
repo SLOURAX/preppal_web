@@ -12,6 +12,7 @@ import {
   Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui";
+import { useAuthStore } from "@/store";
 
 function QuizPreviewContent() {
   const router = useRouter();
@@ -19,6 +20,10 @@ function QuizPreviewContent() {
 
   const mode = searchParams.get("mode") || "timed";
   const isUntimed = mode === "untimed";
+  const maxQuestionsPerQuiz = useAuthStore(
+    (state) => state.membership?.entitlements?.maxQuestionsPerQuiz ?? 20,
+  );
+  const timedQuestionCount = Math.min(40, maxQuestionsPerQuiz);
 
   const subject =
     searchParams.get("subjectName") ||
@@ -34,7 +39,7 @@ function QuizPreviewContent() {
     {
       icon: FileText,
       label: "Questions",
-      value: isUntimed ? String(questionCount) : "40",
+      value: isUntimed ? String(questionCount) : String(timedQuestionCount),
     },
     {
       icon: Zap,
@@ -59,7 +64,7 @@ function QuizPreviewContent() {
         "Use the question grid on the right to jump between questions at any time.",
       ]
     : [
-        "This exam consists of 40 multiple-choice questions to be completed in 45 minutes.",
+        `This exam consists of ${timedQuestionCount} multiple-choice questions to be completed in 45 minutes.`,
         "Each question carries equal marks. There is no negative marking.",
         "You can flag any question and return to it before submitting.",
         "The exam will auto-submit when time expires — make sure to answer all questions.",
@@ -119,21 +124,23 @@ function QuizPreviewContent() {
                 role="group"
                 aria-label="Number of questions"
               >
-                {[5, 10, 15, 20, 30].map((count) => (
-                  <button
-                    key={count}
-                    type="button"
-                    aria-pressed={questionCount === count}
-                    onClick={() => setQuestionCount(count)}
-                    className={`rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
-                      questionCount === count
-                        ? "bg-primary text-primary-foreground shadow-sm"
-                        : "bg-surface-subtle text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    {count}
-                  </button>
-                ))}
+                {[5, 10, 15, 20, 30]
+                  .filter((count) => count <= maxQuestionsPerQuiz)
+                  .map((count) => (
+                    <button
+                      key={count}
+                      type="button"
+                      aria-pressed={questionCount === count}
+                      onClick={() => setQuestionCount(count)}
+                      className={`rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
+                        questionCount === count
+                          ? "bg-primary text-primary-foreground shadow-sm"
+                          : "bg-surface-subtle text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {count}
+                    </button>
+                  ))}
               </div>
             </div>
           </section>
