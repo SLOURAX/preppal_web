@@ -13,6 +13,7 @@ import { useState } from "react";
 import { DataState } from "@/components/ui";
 import {
   formatWalletDate,
+  formatWalletAmount,
   useWalletActivity,
   type WalletAsset,
   type WalletRange,
@@ -20,7 +21,11 @@ import {
 
 export function WalletHistoryTab() {
   const params = useSearchParams();
-  const initialAsset = params.get("asset") === "xp" ? "xp" : "coin";
+  const requestedAsset = params.get("asset");
+  const initialAsset: WalletAsset =
+    requestedAsset === "xp" || requestedAsset === "coin"
+      ? requestedAsset
+      : "funds";
   const requestedRange = params.get("range");
   const initialRange: WalletRange =
     requestedRange === "7d" ||
@@ -60,13 +65,13 @@ export function WalletHistoryTab() {
           All transactions
         </h1>
         <p className="text-muted-foreground mt-2 text-sm">
-          A complete, server-backed record of your Coin and XP activity.
+          A complete record of deposits, subscription spending, Coins, and XP.
         </p>
       </header>
 
       <section className="surface-card space-y-4 p-4 sm:p-5">
-        <div className="bg-surface-subtle grid max-w-md grid-cols-2 rounded-xl p-1">
-          {(["coin", "xp"] as const).map((option) => (
+        <div className="bg-surface-subtle grid max-w-lg grid-cols-3 rounded-xl p-1">
+          {(["funds", "coin", "xp"] as const).map((option) => (
             <button
               className={`rounded-lg px-4 py-2 text-xs font-bold ${
                 asset === option
@@ -80,7 +85,11 @@ export function WalletHistoryTab() {
               }}
               type="button"
             >
-              {option === "coin" ? "Preppal Coins" : "Experience points"}
+              {option === "funds"
+                ? "Money"
+                : option === "coin"
+                  ? "Preppal Coins"
+                  : "Experience points"}
             </button>
           ))}
         </div>
@@ -144,8 +153,22 @@ export function WalletHistoryTab() {
             {activity?.total ?? 0} transactions
           </p>
           <div className="text-muted-foreground flex gap-4 text-xs">
-            <span>Earned: {activity?.earned.toLocaleString() ?? 0}</span>
-            <span>Redeemed: {activity?.redeemed.toLocaleString() ?? 0}</span>
+            <span>
+              {asset === "funds" ? "Deposited" : "Earned"}:{" "}
+              {formatWalletAmount(
+                activity?.earned ?? 0,
+                asset,
+                activity?.currency,
+              )}
+            </span>
+            <span>
+              {asset === "funds" ? "Spent" : "Redeemed"}:{" "}
+              {formatWalletAmount(
+                activity?.redeemed ?? 0,
+                asset,
+                activity?.currency,
+              )}
+            </span>
           </div>
         </div>
         {activityQuery.isLoading ? (
@@ -181,14 +204,23 @@ export function WalletHistoryTab() {
                       <p className="text-muted-foreground text-xs">
                         {formatWalletDate(transaction.createdAt)}
                       </p>
+                      {transaction.status ? (
+                        <p className="text-muted-foreground mt-0.5 text-[9px] font-semibold uppercase">
+                          {transaction.status.toLowerCase()} ·{" "}
+                          {transaction.provider?.toLowerCase()}
+                        </p>
+                      ) : null}
                     </div>
                   </div>
                   <span
                     className={`shrink-0 text-sm font-bold ${isCredit ? "text-emerald-600" : "text-rose-600"}`}
                   >
                     {isCredit ? "+" : "−"}
-                    {transaction.amount.toLocaleString()}{" "}
-                    {asset === "coin" ? "coins" : "XP"}
+                    {formatWalletAmount(
+                      transaction.amount,
+                      asset,
+                      transaction.currency ?? activity.currency,
+                    )}
                   </span>
                 </div>
               );

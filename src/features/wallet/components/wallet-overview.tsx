@@ -31,6 +31,7 @@ import { COIN_VALUE_NGN, XP_TO_COIN_RATE } from "@/constants/finance";
 import { useAuthStore } from "@/store";
 import {
   formatWalletDate,
+  formatWalletAmount,
   useWalletActivity,
   type WalletAsset,
   type WalletRange,
@@ -76,7 +77,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
   const [isLinkingAccount, setIsLinkingAccount] = useState(false);
   const [isStartingPayment, setIsStartingPayment] = useState(false);
   const [isConverting, setIsConverting] = useState(false);
-  const [asset, setAsset] = useState<WalletAsset>("coin");
+  const [asset, setAsset] = useState<WalletAsset>("funds");
   const [range, setRange] = useState<WalletRange>("month");
   const [customFrom, setCustomFrom] = useState("");
   const [customTo, setCustomTo] = useState("");
@@ -902,14 +903,14 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-foreground text-sm font-bold">
-              Coin and XP activity
+              Complete transaction activity
             </h2>
             <p className="text-muted-foreground mt-0.5 text-xs">
-              Switch between your withdrawable Coins and learning XP ledger.
+              Track deposits, payments, withdrawable Coins, and XP.
             </p>
           </div>
-          <div className="bg-surface-subtle grid grid-cols-2 rounded-xl p-1">
-            {(["coin", "xp"] as const).map((option) => (
+          <div className="bg-surface-subtle grid grid-cols-3 rounded-xl p-1">
+            {(["funds", "coin", "xp"] as const).map((option) => (
               <button
                 className={`rounded-lg px-5 py-2 text-xs font-bold transition-colors ${
                   asset === option
@@ -920,7 +921,11 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 onClick={() => setAsset(option)}
                 type="button"
               >
-                {option === "coin" ? "Preppal Coins" : "Experience points"}
+                {option === "funds"
+                  ? "Money"
+                  : option === "coin"
+                    ? "Preppal Coins"
+                    : "Experience points"}
               </button>
             ))}
           </div>
@@ -978,20 +983,31 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
         <div className="surface-card flex items-center gap-3 rounded-2xl p-4 sm:p-5">
           <CreditCard className="text-primary size-5" />
           <div>
-            <p className="text-muted-foreground text-xs">Earned</p>
+            <p className="text-muted-foreground text-xs">
+              {asset === "funds" ? "Deposited" : "Earned"}
+            </p>
             <p className="text-foreground text-sm font-bold">
-              +{(activity?.earned ?? 0).toLocaleString()}{" "}
-              {asset === "coin" ? "coins" : "XP"}
+              +
+              {formatWalletAmount(
+                activity?.earned ?? 0,
+                asset,
+                activity?.currency,
+              )}
             </p>
           </div>
         </div>
         <div className="surface-card flex items-center gap-3 rounded-2xl p-4 sm:p-5">
           <ArrowUpRight className="size-5 text-rose-500" />
           <div>
-            <p className="text-muted-foreground text-xs">Redeemed</p>
+            <p className="text-muted-foreground text-xs">
+              {asset === "funds" ? "Spent" : "Redeemed"}
+            </p>
             <p className="text-foreground text-sm font-bold">
-              {(activity?.redeemed ?? 0).toLocaleString()}{" "}
-              {asset === "coin" ? "coins" : "XP"}
+              {formatWalletAmount(
+                activity?.redeemed ?? 0,
+                asset,
+                activity?.currency,
+              )}
             </p>
           </div>
         </div>
@@ -1005,9 +1021,17 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             width={22}
           />
           <div>
-            <p className="text-muted-foreground text-xs">Conversion rate</p>
+            <p className="text-muted-foreground text-xs">
+              {asset === "funds" ? "Available balance" : "Conversion rate"}
+            </p>
             <p className="text-foreground text-sm font-bold">
-              {XP_TO_COIN_RATE} XP = 1 coin
+              {asset === "funds"
+                ? formatWalletAmount(
+                    activity?.balance ?? depositedFunds,
+                    asset,
+                    activity?.currency,
+                  )
+                : `${XP_TO_COIN_RATE} XP = 1 coin`}
             </p>
           </div>
         </div>
@@ -1068,14 +1092,23 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                       <p className="text-muted-foreground text-[.7rem]">
                         {formatWalletDate(transaction.createdAt)}
                       </p>
+                      {transaction.status ? (
+                        <p className="text-muted-foreground mt-0.5 text-[9px] font-semibold uppercase">
+                          {transaction.status.toLowerCase()} ·{" "}
+                          {transaction.provider?.toLowerCase()}
+                        </p>
+                      ) : null}
                     </div>
                   </div>
                   <span
                     className={`shrink-0 text-sm font-bold ${isCredit ? "text-emerald-600" : "text-rose-600"}`}
                   >
                     {isCredit ? "+" : "−"}
-                    {transaction.amount.toLocaleString()}{" "}
-                    {asset === "coin" ? "coins" : "XP"}
+                    {formatWalletAmount(
+                      transaction.amount,
+                      asset,
+                      transaction.currency ?? activity.currency,
+                    )}
                   </span>
                 </div>
               );
@@ -1084,7 +1117,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
         ) : (
           <DataState
             title="No wallet activity yet"
-            description="Your XP conversions and coin activity will appear here after you start earning."
+            description="Deposits, payments, XP conversions, Coins, and rewards will appear here."
           />
         )}
       </section>

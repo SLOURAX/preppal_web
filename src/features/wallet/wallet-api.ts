@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api/client";
 
-export type WalletAsset = "coin" | "xp";
+export type WalletAsset = "funds" | "coin" | "xp";
 export type WalletRange = "7d" | "month" | "all" | "custom";
 
 export interface WalletActivityTransaction {
@@ -12,6 +12,9 @@ export interface WalletActivityTransaction {
   amount: number;
   label: string;
   source: string;
+  currency?: string;
+  status?: "PENDING" | "SUCCEEDED" | "FAILED" | "EXPIRED" | "REFUNDED";
+  provider?: string;
   createdAt: string;
 }
 
@@ -22,6 +25,7 @@ export interface WalletActivity {
   redeemed: number;
   conversionRate: number;
   coinValueNgn: number;
+  currency?: string;
   total: number;
   hasMore: boolean;
   transactions: WalletActivityTransaction[];
@@ -66,4 +70,18 @@ export function formatWalletDate(value: string): string {
     minute: "2-digit",
     hour12: true,
   }).format(new Date(value));
+}
+
+export function formatWalletAmount(
+  amount: number,
+  asset: WalletAsset,
+  currency = "NGN",
+): string {
+  if (asset === "funds")
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency,
+      minimumFractionDigits: 2,
+    }).format(amount);
+  return `${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${asset === "coin" ? "coins" : "XP"}`;
 }
