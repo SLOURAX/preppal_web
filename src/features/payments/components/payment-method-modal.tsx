@@ -106,7 +106,7 @@ export function PaymentMethodModal({
 
           {!canUseWallet ? (
             <p className="text-muted-foreground px-1 text-[11px] leading-4">
-              You need {money(amountMinor - depositedBalanceMinor, currency)} {' '}
+              You need {money(amountMinor - depositedBalanceMinor, currency)}{" "}
               more.{" "}
               <Link
                 className="text-primary font-bold"

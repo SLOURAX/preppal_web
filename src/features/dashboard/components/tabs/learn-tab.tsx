@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowUpRight,
   BookOpenCheck,
@@ -8,53 +8,64 @@ import {
   Lightbulb,
   RotateCw,
   Crosshair,
+  LoaderCircle,
+  Bot,
 } from "lucide-react";
 import { SaxLampOnBulk } from "@meysam213/iconsax-react";
 
 import { ExamsTab } from "./exams-tab";
 import { SubjectsTab } from "./subjects-tab";
+import {
+  getDailyFlashcard,
+  getNextFlashcard,
+  type AiFlashcard,
+} from "@/features/ai/tutor-api";
 
 type LearnMode = "exams" | "subjects";
 
-const DAILY_FLASHCARDS = [
-  {
-    question: "Which planet is known as the Red Planet?",
-    answer: "Mars — its iron-rich surface gives it a reddish appearance.",
-    category: "Science",
-  },
-  {
-    question: "What is the largest ocean on Earth?",
-    answer: "The Pacific Ocean, covering more than 30% of Earth’s surface.",
-    category: "Geography",
-  },
-  {
-    question: "Who wrote the play Romeo and Juliet?",
-    answer: "William Shakespeare, who wrote it in the late 16th century.",
-    category: "Literature",
-  },
-  {
-    question: "What is the chemical symbol for gold?",
-    answer: "Au — from the Latin word aurum, meaning shining dawn.",
-    category: "Chemistry",
-  },
-  {
-    question: "How many continents are there?",
-    answer:
-      "Seven: Africa, Antarctica, Asia, Europe, North America, South America, and Australia.",
-    category: "General knowledge",
-  },
-] as const;
+const FALLBACK_FLASHCARD: AiFlashcard = {
+  id: "fallback",
+  dayKey: "",
+  sequence: 0,
+  question: "Which planet is known as the Red Planet?",
+  answer: "Mars — its iron-rich surface gives it a reddish appearance.",
+  category: "Science",
+};
 
 function DailyFlashcard() {
-  const [cardIndex, setCardIndex] = useState(
-    () => Math.floor(Date.now() / 86_400_000) % DAILY_FLASHCARDS.length,
-  );
+  const [card, setCard] = useState<AiFlashcard>(FALLBACK_FLASHCARD);
   const [isFlipped, setIsFlipped] = useState(false);
-  const card = DAILY_FLASHCARDS[cardIndex];
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
-  const showNextCard = () => {
+  useEffect(() => {
+    let active = true;
+    void getDailyFlashcard()
+      .then((result) => {
+        if (active) setCard(result);
+      })
+      .catch(() => {
+        if (active) setLoadError(true);
+      })
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const showNextCard = async () => {
     setIsFlipped(false);
-    setCardIndex((current) => (current + 1) % DAILY_FLASHCARDS.length);
+    setIsLoading(true);
+    setLoadError(false);
+    try {
+      setCard(await getNextFlashcard());
+    } catch {
+      setLoadError(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -90,17 +101,21 @@ function DailyFlashcard() {
             type="button"
           >
             <div
-              className="relative h-full w-full rounded-2xl transition-transform duration-700 [transform-style:preserve-3d]"
+              className="relative h-full w-full rounded-2xl transition-transform duration-700 transform-3d"
               style={{
                 transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
               }}
             >
-              <div className="absolute inset-0 flex flex-col justify-between rounded-2xl border border-white/15 bg-white/[0.1] p-4 shadow-2xl [backface-visibility:hidden] sm:p-5">
+              <div className="absolute inset-0 flex flex-col justify-between rounded-2xl border border-white/15 bg-white/10 p-4 shadow-2xl [backface-visibility:hidden] sm:p-5">
                 <div className="flex items-center justify-between gap-3">
                   <span className="rounded-full bg-violet-300/15 px-2.5 py-1 text-[10px] font-bold tracking-wider text-violet-100 uppercase">
                     {card.category}
                   </span>
-                  <RotateCw className="size-4 text-violet-200/70 transition-transform duration-500 group-hover:rotate-45" />
+                  {isLoading ? (
+                    <LoaderCircle className="size-4 animate-spin text-violet-200/70" />
+                  ) : (
+                    <RotateCw className="size-4 text-violet-200/70 transition-transform duration-500 group-hover:rotate-45" />
+                  )}
                 </div>
                 <p className="max-w-xl text-sm leading-5 font-bold sm:text-xl sm:leading-6">
                   {card.question}
@@ -110,7 +125,7 @@ function DailyFlashcard() {
                 </span>
               </div>
               <div
-                className="absolute inset-0 flex flex-col justify-between rounded-2xl border border-emerald-300/25 bg-gradient-to-br from-emerald-400/20 to-violet-400/20 p-4 shadow-2xl [backface-visibility:hidden] sm:p-5"
+                className="absolute inset-0 flex flex-col justify-between rounded-2xl border border-emerald-300/25 bg-linear-to-br from-emerald-400/20 to-violet-400/20 p-4 shadow-2xl backface-hidden sm:p-5"
                 style={{ transform: "rotateY(180deg)" }}
               >
                 <span className="text-[10px] font-bold tracking-wider text-emerald-200 uppercase">
@@ -127,14 +142,23 @@ function DailyFlashcard() {
           </button>
           <div className="mt-3 flex items-center justify-between gap-3">
             <span className="text-[11px] text-violet-200/70">
-              {cardIndex + 1} of {DAILY_FLASHCARDS.length} discoveries
+              <span className="inline-flex items-center gap-1">
+                <Bot className="size-3" /> Well curated daily discovery
+              </span>
+              {loadError ? " · Showing a saved fallback" : ""}
             </span>
             <button
               className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-2.5 py-1.5 text-[10px] font-semibold text-white transition-colors hover:bg-white/15 sm:px-3 sm:text-[11px]"
-              onClick={showNextCard}
+              disabled={isLoading}
+              onClick={() => void showNextCard()}
               type="button"
             >
-              Another fact <ArrowUpRight className="size-3.5" />
+              {isLoading ? "Finding a fact…" : "Another fact"}{" "}
+              {isLoading ? (
+                <LoaderCircle className="size-3.5 animate-spin" />
+              ) : (
+                <ArrowUpRight className="size-3.5" />
+              )}
             </button>
           </div>
         </div>

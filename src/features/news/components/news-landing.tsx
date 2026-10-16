@@ -27,7 +27,10 @@ export function NewsLanding() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const news = useQuery({ queryKey: ["news", selectedCategory, searchQuery], queryFn: () => getNewsPosts(selectedCategory, searchQuery) });
+  const news = useQuery({
+    queryKey: ["news", selectedCategory, searchQuery],
+    queryFn: () => getNewsPosts(selectedCategory, searchQuery),
+  });
   const articles = news.data?.posts ?? [];
   const categories = ["All", ...(news.data?.categories ?? [])];
   const featuredArticle = articles.find((article) => article.featured);
@@ -74,7 +77,10 @@ export function NewsLanding() {
             thoughtful perspectives from the Preppal community.
           </p>
         </div>
-        <Link className="border-border bg-surface hover:bg-surface-subtle inline-flex w-fit shrink-0 items-center gap-2 rounded-full border px-4 py-2.5 text-xs font-semibold" href="/news/saved">
+        <Link
+          className="border-border bg-surface hover:bg-surface-subtle inline-flex w-fit shrink-0 items-center gap-2 rounded-full border px-4 py-2.5 text-xs font-semibold"
+          href="/news/saved"
+        >
           <Bookmark className="text-primary size-4" /> Saved articles
         </Link>
       </header>
@@ -150,7 +156,8 @@ export function NewsLanding() {
                 {formatNewsTime(featuredArticle.publishedAt)}
               </span>
               <span className="flex items-center gap-1">
-                <Clock3 className="size-3.5" /> {readTime(featuredArticle.readTimeMinutes)}
+                <Clock3 className="size-3.5" />{" "}
+                {readTime(featuredArticle.readTimeMinutes)}
               </span>
               <span className="flex items-center gap-1">
                 <Heart className="size-3.5" /> {featuredArticle.likes}
@@ -189,7 +196,14 @@ export function NewsLanding() {
           </p>
         </div>
 
-        {news.isLoading ? <div className="mt-5"><DataState title="Loading stories" description="Fetching the latest published articles." /></div> : visibleArticles.length > 0 ? (
+        {news.isLoading ? (
+          <div className="mt-5">
+            <DataState
+              title="Loading stories"
+              description="Fetching the latest published articles."
+            />
+          </div>
+        ) : visibleArticles.length > 0 ? (
           <div className="mt-5 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {visibleArticles.map((article) => (
               <NewsCard article={article} key={article.slug} />

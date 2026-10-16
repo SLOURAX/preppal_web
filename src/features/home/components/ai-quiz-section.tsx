@@ -1,34 +1,151 @@
 "use client";
 
-import { SaxCpuChargeBulk, SaxTickCircleBulk } from "@meysam213/iconsax-react";
-import { useState } from "react";
-
+import Link from "next/link";
+import { Bot, CheckCircle2, Lightbulb, LoaderCircle, Send } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui";
+import {
+  answerPracticeQuestion,
+  askPracticeQuestion,
+  generatePracticeQuestion,
+  getPracticeHint,
+  type AiPracticeQuestion,
+} from "@/features/ai/tutor-api";
 import { cn } from "@/lib/utils";
-import { RefreshCw } from "lucide-react";
+import { useAuthStore } from "@/store";
 
-interface QuizOption {
-  readonly id: string;
-  readonly label: string;
-}
-
-const QUIZ_OPTIONS: readonly QuizOption[] = [
-  { id: "nucleus", label: "Nucleus" },
-  { id: "ribosome", label: "Ribosome" },
-  { id: "mitochondrion", label: "Mitochondrion" },
-  { id: "chloroplast", label: "Chloroplast" },
-];
-
-const CORRECT_ANSWER = "mitochondrion";
+const SAMPLE: AiPracticeQuestion = {
+  id: "sample",
+  subject: "Biology",
+  topic: "Cell biology",
+  difficulty: "easy",
+  question: "Which organelle is known as the powerhouse of the cell?",
+  options: [
+    { id: "A", label: "Nucleus" },
+    { id: "B", label: "Ribosome" },
+    { id: "C", label: "Mitochondrion" },
+    { id: "D", label: "Chloroplast" },
+  ],
+  expiresAt: "",
+};
 
 export function AiQuizSection() {
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [showExplanation, setShowExplanation] = useState<boolean>(false);
-  const isCorrect = selectedAnswer === CORRECT_ANSWER;
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const [question, setQuestion] = useState(SAMPLE);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [result, setResult] = useState<{
+    isCorrect: boolean | null;
+    correctOptionId: string;
+    feedback: string;
+    explanation: string;
+  } | null>(null);
+  const [hint, setHint] = useState<string | null>(null);
+  const [followUp, setFollowUp] = useState("");
+  const [answer, setAnswer] = useState<string | null>(null);
+  const [busy, setBusy] = useState<
+    "generate" | "answer" | "hint" | "ask" | null
+  >(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const resetQuestion = (): void => {
-    setSelectedAnswer(null);
-    setShowExplanation(false);
+  const resetState = useCallback(() => {
+    setSelected(null);
+    setResult(null);
+    setHint(null);
+    setFollowUp("");
+    setAnswer(null);
+    setError(null);
+  }, []);
+  const newQuestion = useCallback(async () => {
+    if (!isAuthenticated) return;
+    setBusy("generate");
+    setError(null);
+    try {
+      setQuestion(
+        await generatePracticeQuestion({
+          subject: "Biology",
+          difficulty: "medium",
+        }),
+      );
+      resetState();
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "A new question could not be generated.",
+      );
+    } finally {
+      setBusy(null);
+    }
+  }, [isAuthenticated, resetState]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    void newQuestion();
+    const timer = window.setInterval(() => void newQuestion(), 3 * 60 * 1000);
+    return () => window.clearInterval(timer);
+  }, [isAuthenticated, newQuestion]);
+
+  const checkAnswer = async (selectedOptionId?: string) => {
+    const choice = selectedOptionId ?? selected ?? undefined;
+    if (question.id === "sample") {
+      setResult({
+        isCorrect: choice ? choice === "C" : null,
+        correctOptionId: "C",
+        feedback: choice
+          ? choice === "C"
+            ? "Correct — well done."
+            : "Not quite. The correct option is highlighted."
+          : "The correct option is highlighted.",
+        explanation:
+          "Mitochondria produce most of the usable energy in a cell.",
+      });
+      return;
+    }
+    setBusy("answer");
+    setError(null);
+    try {
+      setResult(await answerPracticeQuestion(question.id, choice));
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Your answer could not be checked.",
+      );
+    } finally {
+      setBusy(null);
+    }
+  };
+  const requestHint = async () => {
+    if (question.id === "sample") return;
+    setBusy("hint");
+    setError(null);
+    try {
+      setHint((await getPracticeHint(question.id)).hint);
+    } catch (cause) {
+      setError(
+        cause instanceof Error ? cause.message : "A hint could not be loaded.",
+      );
+    } finally {
+      setBusy(null);
+    }
+  };
+  const ask = async () => {
+    const message = followUp.trim();
+    if (!message || question.id === "sample") return;
+    setBusy("ask");
+    setError(null);
+    try {
+      setAnswer((await askPracticeQuestion(question.id, message)).answer);
+      setFollowUp("");
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Preppal AI could not answer right now.",
+      );
+    } finally {
+      setBusy(null);
+    }
   };
 
   return (
@@ -39,86 +156,174 @@ export function AiQuizSection() {
           you need it.
         </h2>
         <p className="text-muted-foreground mt-4 max-w-lg text-[.8rem] leading-5">
-          Ask Preppal AI for guidance for practice questions, and understand the
-          reasoning behind every answer before moving forward.
+          Generate fresh practice questions, check your answer, request a hint,
+          and ask follow-up questions with Preppal AI.
         </p>
         <ul className="text-muted-foreground mt-6 space-y-3 text-[.8rem]">
           {[
-            "Clear explanations for every question",
+            "Clear feedback for every answer",
             "Helpful hints without giving the answer away",
-            "Fresh practice questions based on weak areas",
+            "Fresh curriculum-aligned practice questions",
           ].map((benefit) => (
             <li className="flex items-center gap-2" key={benefit}>
-              <SaxTickCircleBulk className="text-success size-4 shrink-0" />
+              <CheckCircle2 className="text-success size-4 shrink-0" />
               {benefit}
             </li>
           ))}
         </ul>
       </div>
-
       <div className="surface-card border-primary/20 from-surface via-surface to-primary/5 relative overflow-hidden bg-gradient-to-br p-5 sm:p-7">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-primary text-xs font-extrabold">
-              Biology · Question 3
+            <p className="text-primary text-[.8rem] font-extrabold">
+              {question.subject}
+              {question.topic ? ` · ${question.topic}` : ""}
             </p>
-            <h3 className="text-foreground mt-2 text-[1rem] font-semibold">
-              Which organelle is known as the powerhouse of the cell?
+            <h3 className="text-foreground mt-2 text-[1rem] font-medium">
+              {question.question}
             </h3>
           </div>
         </div>
-
         <div className="mt-5 grid gap-2 sm:grid-cols-2">
-          {QUIZ_OPTIONS.map((option) => {
-            const isSelected = selectedAnswer === option.id;
+          {question.options.map((option) => {
+            const chosen = selected === option.id;
+            const correct = result?.correctOptionId === option.id;
+            const wrong = Boolean(result && chosen && !result.isCorrect);
             return (
               <button
-                aria-pressed={isSelected}
+                aria-pressed={chosen}
                 className={cn(
                   "border-border hover:border-primary/50 rounded-xl border px-4 py-3 text-left text-[.85rem] font-medium transition-colors",
-                  isSelected && "border-primary bg-primary/10 text-primary",
+                  chosen &&
+                    !result &&
+                    "border-primary bg-primary/10 text-primary",
+                  correct &&
+                    "border-emerald-500 bg-emerald-500/10 text-emerald-700",
+                  wrong && "border-rose-500 bg-rose-500/10 text-rose-700",
                 )}
+                disabled={Boolean(result)}
                 key={option.id}
                 onClick={() => {
-                  setSelectedAnswer(option.id);
-                  setShowExplanation(false);
+                  setSelected(option.id);
+                  void checkAnswer(option.id);
                 }}
                 type="button"
               >
+                <span className="text-muted-foreground mr-2 text-[10px] font-bold">
+                  {option.id}
+                </span>
                 {option.label}
               </button>
             );
           })}
         </div>
-
-        {showExplanation ? (
-          <div className="bg-surface-subtle mt-4 rounded-2xl p-4">
-            <p className="text-foreground flex items-center gap-2 text-sm font-semibold">
-              {isCorrect ? "That’s correct." : "Here’s a useful explanation."}
-            </p>
-            <p className="text-muted-foreground mt-2 text-sm leading-6">
-              Mitochondria convert nutrients into ATP, the usable energy that
-              powers most cellular activities.
-            </p>
+        {hint && <Feedback title="Hint" text={hint} icon={Lightbulb} />}
+        {result && (
+          <Feedback
+            title={
+              result.isCorrect === null
+                ? "Correct answer"
+                : result.isCorrect
+                  ? "Correct — well done"
+                  : "Let’s learn from this one"
+            }
+            text={`${result.feedback} ${result.explanation}`}
+            icon={result.isCorrect ? CheckCircle2 : Bot}
+          />
+        )}
+        {answer && <Feedback title="Preppal AI" text={answer} icon={Bot} />}
+        {error && (
+          <p className="mt-4 rounded-xl bg-rose-500/10 p-3 text-xs text-rose-700">
+            {error}
+          </p>
+        )}
+        {question.id !== "sample" && (
+          <div className="mt-4 flex gap-2">
+            <input
+              aria-label="Ask a follow-up question"
+              className="border-border bg-surface text-foreground min-w-0 flex-1 rounded-xl border px-3 py-2.5 text-xs outline-none"
+              onChange={(event) => setFollowUp(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") void ask();
+              }}
+              placeholder="Ask why, or request another explanation…"
+              value={followUp}
+            />
+            <button
+              aria-label="Send to Preppal AI"
+              className="bg-primary text-primary-foreground grid size-10 shrink-0 place-items-center rounded-xl disabled:opacity-50"
+              disabled={!followUp.trim() || busy !== null}
+              onClick={() => void ask()}
+              type="button"
+            >
+              <Send className="size-4" />
+            </button>
           </div>
-        ) : null}
-
-        <div className="mt-5 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
-          <Button
-            className="w-full min-w-0 gap-1 px-2 text-[.8rem] sm:w-auto sm:gap-2 sm:px-4"
-            disabled={!selectedAnswer}
-            onClick={() => setShowExplanation(true)}
-          >
-            <SaxCpuChargeBulk className="size-4" /> Ask Preppal AI
-          </Button>
-          <Button
-            className="bg-surface-subtle text-foreground hover:bg-border w-full min-w-0 gap-1 px-2 text-[.8rem] sm:w-auto sm:gap-2 sm:px-4"
-            onClick={resetQuestion}
-          >
-            <RefreshCw className="size-3" /> Reset Question
-          </Button>
+        )}
+        <div className="mt-5 flex flex-wrap gap-2">
+          {!isAuthenticated ? (
+            <>
+              <Button
+                disabled={Boolean(result)}
+                onClick={() => void checkAnswer()}
+              >
+                <Bot className="size-4" /> Check answer
+              </Button>
+              <Link
+                className="text-primary inline-flex min-h-10 items-center justify-center px-2 text-[.75rem] font-semibold"
+                href="/login"
+              >
+                Sign in for live AI questions
+              </Link>
+            </>
+          ) : (
+            <>
+              <Button
+                disabled={Boolean(result) || busy !== null}
+                onClick={() => void checkAnswer()}
+                className="gap-3"
+              >
+                {busy === "answer" ? (
+                  <LoaderCircle className="size-4 animate-spin" />
+                ) : (
+                  <Bot className="size-4" />
+                )}{" "}
+                Check answer
+              </Button>
+              <Button
+                className="bg-surface-subtle text-foreground hover:bg-border"
+                disabled={Boolean(hint) || busy !== null}
+                onClick={() => void requestHint()}
+              >
+                <Lightbulb className="size-4" /> Get hint
+              </Button>
+              <span className="text-muted-foreground inline-flex items-center text-[10px] font-medium">
+                A new question appears every 3 minutes
+              </span>
+            </>
+          )}
         </div>
       </div>
     </section>
+  );
+}
+
+function Feedback({
+  title,
+  text,
+  icon: Icon,
+}: {
+  title: string;
+  text: string;
+  icon: typeof Bot;
+}) {
+  return (
+    <div className="bg-surface-subtle mt-4 rounded-2xl p-4">
+      <p className="text-foreground flex items-center gap-2 text-sm font-semibold">
+        <Icon className="text-primary size-4" />
+        {title}
+      </p>
+      <p className="text-muted-foreground mt-2 text-xs leading-5">{text}</p>
+    </div>
   );
 }

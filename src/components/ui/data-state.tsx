@@ -33,7 +33,14 @@ export function DataState({
             <Inbox className="size-5" />
           ))}
       </span> */}
-      {!isError ? <Mascot mood="disappointed" size="lg" className="mt-3" animated={false} /> : null}
+      {!isError ? (
+        <Mascot
+          mood="disappointed"
+          size="lg"
+          className="mt-3"
+          animated={false}
+        />
+      ) : null}
       <p className="text-foreground mt-1 text-[1rem] font-semibold">{title}</p>
       <p className="text-muted-foreground mt-1 max-w-sm text-[.85rem] leading-5">
         {description}

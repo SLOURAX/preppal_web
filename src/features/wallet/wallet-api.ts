@@ -8,7 +8,7 @@ export interface WalletActivityTransaction {
   id: string;
   reference: string;
   asset: WalletAsset;
-  direction: "credit" | "debit";
+  direction: "credit" | "debit" | "neutral";
   amount: number;
   label: string;
   source: string;

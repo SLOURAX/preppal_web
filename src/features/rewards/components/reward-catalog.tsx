@@ -64,7 +64,7 @@ export function RewardCatalog({ balance }: RewardCatalogProps) {
                     </span>
                     {reward.type === "plan" ? (
                       <Link
-                        className="bg-primary text-primary-foreground inline-flex min-h-8 items-center rounded-full px-6 text-xs font-medium transition hover:opacity-90 gap-2"
+                        className="bg-primary text-primary-foreground inline-flex min-h-8 items-center gap-2 rounded-full px-6 text-xs font-medium transition hover:opacity-90"
                         href="/pricing"
                       >
                         View plans

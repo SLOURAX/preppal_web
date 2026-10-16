@@ -216,8 +216,7 @@ export function QuizEntryScreen({
       (subject) => subject.id === selectedSubject,
     );
     const selectedSubjectName =
-      selectedExamSubjectRecord?.name ??
-      selectedStandaloneSubject?.name;
+      selectedExamSubjectRecord?.name ?? selectedStandaloneSubject?.name;
     if (selectedSubjectName) params.set("subjectName", selectedSubjectName);
     if (selectedYear) params.set("year", selectedYear.toString());
     const selectedYearLink = selectedExamSubjectRecord?.years.find(

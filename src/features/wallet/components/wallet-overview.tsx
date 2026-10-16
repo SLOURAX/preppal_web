@@ -17,6 +17,8 @@ import {
   Check,
   ChevronDown,
   Search,
+  CircleDashed,
+  ShoppingBag,
 } from "lucide-react";
 import {
   ConfirmationModal,
@@ -259,6 +261,13 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 <Send className="size-4" />
                 Withdraw coins
               </button>
+              <Link
+                className="inline-flex items-center gap-2 rounded-xl bg-violet-400/20 px-6 py-2.5 text-[.8rem] font-semibold text-white ring-1 ring-violet-200/25 transition-colors ring-inset hover:bg-violet-400/30"
+                href="/marketplace"
+              >
+                <ShoppingBag className="size-4" />
+                Use deposited funds
+              </Link>
             </div>
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="rounded-xl bg-white/10 p-3">
@@ -274,6 +283,34 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 </p>
               </div>
             </div>
+          </div>
+        </section>
+
+        <section className="surface-card relative overflow-hidden p-4 sm:p-5">
+          <div className="bg-primary/5 pointer-events-none absolute -top-12 -right-10 size-36 rounded-full" />
+          <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-3">
+              <span className="bg-primary/10 text-primary grid size-10 shrink-0 place-items-center rounded-xl">
+                <ShoppingBag className="size-5" />
+              </span>
+              <div>
+                <p className="text-foreground text-sm font-bold">
+                  Put your deposited funds to work
+                </p>
+                <p className="text-muted-foreground mt-1 max-w-2xl text-xs leading-5">
+                  Buy Streak Freezes, activate 24-hour Double XP, or get exam
+                  simulation credits. These purchases use spend-only deposits,
+                  never your withdrawable Preppal Coins.
+                </p>
+              </div>
+            </div>
+            <Link
+              className="bg-primary text-primary-foreground inline-flex shrink-0 items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold"
+              href="/marketplace"
+            >
+              Explore marketplace
+              <ChevronRight className="size-4" />
+            </Link>
           </div>
         </section>
 
@@ -1073,7 +1110,12 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
           <div className="divide-border divide-y">
             {activity.transactions.map((transaction) => {
               const isCredit = transaction.direction === "credit";
-              const Icon = isCredit ? ArrowDownLeft : ArrowUpRight;
+              const isNeutral = transaction.direction === "neutral";
+              const Icon = isNeutral
+                ? CircleDashed
+                : isCredit
+                  ? ArrowDownLeft
+                  : ArrowUpRight;
               return (
                 <div
                   className="flex items-center justify-between gap-4 py-3.5"
@@ -1081,7 +1123,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     <span
-                      className={`grid size-9 shrink-0 place-items-center rounded-xl ${isCredit ? "bg-emerald-500/10 text-emerald-600" : "bg-rose-500/10 text-rose-600"}`}
+                      className={`grid size-9 shrink-0 place-items-center rounded-xl ${isNeutral ? "bg-slate-500/10 text-slate-500" : isCredit ? "bg-emerald-500/10 text-emerald-600" : "bg-rose-500/10 text-rose-600"}`}
                     >
                       <Icon className="size-4" />
                     </span>
@@ -1101,14 +1143,19 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                     </div>
                   </div>
                   <span
-                    className={`shrink-0 text-sm font-bold ${isCredit ? "text-emerald-600" : "text-rose-600"}`}
+                    className={`shrink-0 text-sm font-bold ${isNeutral ? "text-muted-foreground" : isCredit ? "text-emerald-600" : "text-rose-600"}`}
                   >
-                    {isCredit ? "+" : "−"}
-                    {formatWalletAmount(
-                      transaction.amount,
-                      asset,
-                      transaction.currency ?? activity.currency,
-                    )}
+                    {isNeutral
+                      ? transaction.status === "PENDING"
+                        ? "Pending"
+                        : transaction.status === "REFUNDED"
+                          ? "Refunded"
+                          : "Not charged"
+                      : `${isCredit ? "+" : "−"}${formatWalletAmount(
+                          transaction.amount,
+                          asset,
+                          transaction.currency ?? activity.currency,
+                        )}`}
                   </span>
                 </div>
               );

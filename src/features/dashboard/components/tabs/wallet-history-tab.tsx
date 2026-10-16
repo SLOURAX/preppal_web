@@ -6,6 +6,7 @@ import {
   ArrowUpRight,
   History,
   LoaderCircle,
+  CircleDashed,
 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -185,7 +186,12 @@ export function WalletHistoryTab() {
           <div className="divide-border divide-y">
             {activity.transactions.map((transaction) => {
               const isCredit = transaction.direction === "credit";
-              const Icon = isCredit ? ArrowDownLeft : ArrowUpRight;
+              const isNeutral = transaction.direction === "neutral";
+              const Icon = isNeutral
+                ? CircleDashed
+                : isCredit
+                  ? ArrowDownLeft
+                  : ArrowUpRight;
               return (
                 <div
                   className="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0"
@@ -193,7 +199,7 @@ export function WalletHistoryTab() {
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     <span
-                      className={`grid size-9 shrink-0 place-items-center rounded-xl ${isCredit ? "bg-emerald-500/10 text-emerald-600" : "bg-rose-500/10 text-rose-600"}`}
+                      className={`grid size-9 shrink-0 place-items-center rounded-xl ${isNeutral ? "bg-slate-500/10 text-slate-500" : isCredit ? "bg-emerald-500/10 text-emerald-600" : "bg-rose-500/10 text-rose-600"}`}
                     >
                       <Icon className="size-4" />
                     </span>
@@ -213,14 +219,19 @@ export function WalletHistoryTab() {
                     </div>
                   </div>
                   <span
-                    className={`shrink-0 text-sm font-bold ${isCredit ? "text-emerald-600" : "text-rose-600"}`}
+                    className={`shrink-0 text-sm font-bold ${isNeutral ? "text-muted-foreground" : isCredit ? "text-emerald-600" : "text-rose-600"}`}
                   >
-                    {isCredit ? "+" : "−"}
-                    {formatWalletAmount(
-                      transaction.amount,
-                      asset,
-                      transaction.currency ?? activity.currency,
-                    )}
+                    {isNeutral
+                      ? transaction.status === "PENDING"
+                        ? "Pending"
+                        : transaction.status === "REFUNDED"
+                          ? "Refunded"
+                          : "Not charged"
+                      : `${isCredit ? "+" : "−"}${formatWalletAmount(
+                          transaction.amount,
+                          asset,
+                          transaction.currency ?? activity.currency,
+                        )}`}
                   </span>
                 </div>
               );

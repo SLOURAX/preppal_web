@@ -47,7 +47,8 @@ export function ArticleEngagement({
   const [isUpdatingBookmark, setIsUpdatingBookmark] = useState<boolean>(false);
   const [hasShared, setHasShared] = useState<boolean>(false);
   const [commentText, setCommentText] = useState<string>("");
-  const [comments, setComments] = useState<readonly ReaderComment[]>(initialComments);
+  const [comments, setComments] =
+    useState<readonly ReaderComment[]>(initialComments);
   const [commentCount, setCommentCount] = useState<number>(initialCommentCount);
   const [isPosting, setIsPosting] = useState(false);
   const [commentError, setCommentError] = useState<string | null>(null);
@@ -71,7 +72,9 @@ export function ArticleEngagement({
         setCommentCount(engagement.commentCount);
       })
       .catch(() => undefined);
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [articleSlug, initialCommentCount, initialLikes, isAuthenticated]);
 
   const requireAuth = (): void => {
@@ -90,14 +93,24 @@ export function ArticleEngagement({
     window.setTimeout(() => setHasShared(false), 1800);
   };
 
-  const submitComment = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+  const submitComment = async (
+    event: FormEvent<HTMLFormElement>,
+  ): Promise<void> => {
     event.preventDefault();
     const message = commentText.trim();
     if (!message) return;
-    setCommentError(null); setIsPosting(true);
-    try { const comment = await postNewsComment(articleSlug, message); setComments((current) => [comment, ...current]); setCommentCount((current) => current + 1); setCommentText(""); }
-    catch { setCommentError("Your comment could not be posted. Please try again."); }
-    finally { setIsPosting(false); }
+    setCommentError(null);
+    setIsPosting(true);
+    try {
+      const comment = await postNewsComment(articleSlug, message);
+      setComments((current) => [comment, ...current]);
+      setCommentCount((current) => current + 1);
+      setCommentText("");
+    } catch {
+      setCommentError("Your comment could not be posted. Please try again.");
+    } finally {
+      setIsPosting(false);
+    }
   };
 
   return (
@@ -129,8 +142,7 @@ export function ArticleEngagement({
             {likeCount}
           </button>
           <span className="text-muted-foreground flex items-center gap-2 rounded-full px-3 py-2 text-sm">
-            <MessageCircle className="size-4" />{" "}
-            {commentCount}
+            <MessageCircle className="size-4" /> {commentCount}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -208,10 +220,13 @@ export function ArticleEngagement({
                 disabled={!commentText.trim() || isPosting}
                 type="submit"
               >
-                <Send className="size-4" /> {isPosting ? "Posting…" : "Post comment"}
+                <Send className="size-4" />{" "}
+                {isPosting ? "Posting…" : "Post comment"}
               </Button>
             </div>
-            {commentError ? <p className="mt-2 text-xs text-destructive">{commentError}</p> : null}
+            {commentError ? (
+              <p className="text-destructive mt-2 text-xs">{commentError}</p>
+            ) : null}
           </form>
         ) : (
           <div className="surface-card mt-5 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -237,7 +252,10 @@ export function ArticleEngagement({
                 <div className="flex flex-wrap items-center gap-x-2">
                   <h3 className="text-sm font-semibold">{comment.author}</h3>
                   <time className="text-muted-foreground text-xs">
-                    {new Intl.DateTimeFormat("en-NG", { dateStyle: "medium", timeStyle: "short" }).format(new Date(comment.postedAt))}
+                    {new Intl.DateTimeFormat("en-NG", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    }).format(new Date(comment.postedAt))}
                   </time>
                 </div>
                 <p className="text-muted-foreground mt-2 text-sm leading-6">
