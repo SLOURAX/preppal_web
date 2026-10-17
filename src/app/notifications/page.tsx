@@ -3,7 +3,6 @@
 import {
   AlertTriangle,
   ArrowLeft,
-  Bell,
   Check,
   ChevronLeft,
   ChevronRight,

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { INITIAL_FINANCE_BALANCES, XP_TO_COIN_RATE } from "@/constants/finance";
+import { INITIAL_FINANCE_BALANCES } from "@/constants/finance";
 import { apiClient } from "@/lib/api/client";
 import type { LoginInput } from "@/features/auth/auth.schemas";
 import { loginSchema } from "@/features/auth/auth.schemas";
@@ -18,6 +18,7 @@ export interface QuizAttempt {
   correct: number;
   date: string;
   durationSeconds: number;
+  xpAwarded?: number;
   answers: Record<number, string>;
   seed?: number;
   context?: {
@@ -82,6 +83,7 @@ interface StoredQuizSession {
   correctAnswers: number;
   completedAt: string;
   durationSeconds?: number | null;
+  xpAwarded?: number | null;
   answers?: Record<string, string> | null;
   simulationSeed?: number | null;
   selectionContext?: QuizAttempt["context"] | null;
@@ -104,6 +106,7 @@ const getQuizHistory = async (): Promise<QuizAttempt[]> => {
     correct: session.correctAnswers,
     date: session.completedAt,
     durationSeconds: session.durationSeconds ?? 0,
+    xpAwarded: session.xpAwarded ?? 0,
     answers: Object.fromEntries(
       Object.entries(session.answers ?? {}).map(([key, value]) => [
         Number(key),
@@ -274,7 +277,7 @@ export const useAuthStore = create<AuthState>()(
         const requestedXp = Math.floor(amount);
         const state = get();
         if (
-          requestedXp < XP_TO_COIN_RATE ||
+          requestedXp <= 0 ||
           requestedXp > state.experiencePoints
         )
           return false;

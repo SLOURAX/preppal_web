@@ -8,7 +8,6 @@ import {
   SaxGameBulk,
   SaxGiftBulk,
   SaxMagicStarBulk,
-  SaxStar1Bulk,
 } from "@meysam213/iconsax-react";
 import { AppShell } from "@/components/layout";
 import { AdSlot } from "@/components/ads";

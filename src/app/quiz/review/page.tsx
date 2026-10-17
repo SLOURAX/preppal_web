@@ -16,11 +16,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import {
-  generateExamSimulation,
-  QUIZ_QUESTIONS,
-} from "@/features/quiz/mock-questions";
-import { ConfirmationModal } from "@/components/ui";
+import { ConfirmationModal, DataState } from "@/components/ui";
 import { useAuthStore } from "@/store";
 
 export default function QuizReviewPage() {
@@ -35,15 +31,14 @@ export default function QuizReviewPage() {
   const [followUp, setFollowUp] = useState("");
   const [conversation, setConversation] = useState<string[]>([]);
   const [showSimulationModal, setShowSimulationModal] = useState(false);
-  const reviewQuestions = latestAttempt?.questions?.length
-    ? latestAttempt.questions
-    : latestAttempt?.seed
-      ? generateExamSimulation(latestAttempt.seed, latestAttempt.total)
-      : QUIZ_QUESTIONS.slice(0, latestAttempt?.total ?? 40);
-  const activeQuestion = reviewQuestions[activeIndex]!;
-  const number = String(activeQuestion.id).padStart(2, "0");
-  const { text, options, correctAnswer: correct, explanation } = activeQuestion;
-  const selected = latestAttempt?.answers[activeQuestion.id];
+  const reviewQuestions = latestAttempt?.questions ?? [];
+  const activeQuestion = reviewQuestions[activeIndex];
+  const number = activeQuestion ? String(activeQuestion.id).padStart(2, "0") : "";
+  const text = activeQuestion?.text ?? "";
+  const options = activeQuestion?.options ?? [];
+  const correct = activeQuestion?.correctAnswer ?? "";
+  const explanation = activeQuestion?.explanation ?? "";
+  const selected = activeQuestion ? latestAttempt?.answers[activeQuestion.id] : undefined;
   const isCorrect = selected === correct;
   const submitFollowUp = (): void => {
     const question = followUp.trim();
@@ -79,6 +74,22 @@ export default function QuizReviewPage() {
     }
     router.push(`/quiz/preview?${params.toString()}`);
   };
+
+  if (!latestAttempt || !activeQuestion) {
+    return (
+      <main className="bg-background grid min-h-screen place-items-center px-5">
+        <DataState
+          title="No question review available"
+          description="Complete a quiz with published questions to review your answers."
+          action={
+            <button className="text-primary font-semibold" onClick={() => router.push("/quiz")} type="button">
+              Start a quiz
+            </button>
+          }
+        />
+      </main>
+    );
+  }
 
   return (
     <main className="bg-background min-h-screen">

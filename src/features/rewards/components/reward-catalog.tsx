@@ -17,15 +17,18 @@ export function RewardCatalog({ balance }: RewardCatalogProps) {
       <div className="mt-5 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-foreground mt-1 text-[1rem] font-bold">
-            Redeem your coins
+            Explore coin benefits
           </h2>
+          <p className="text-muted-foreground mt-1 text-xs">
+            Current balance: {balance.toLocaleString()} P. These are examples,
+            not directly redeemable offers.
+          </p>
         </div>
       </div>
 
       {REDEEMABLE_REWARDS.length ? (
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {REDEEMABLE_REWARDS.map((reward) => {
-            const canRedeem = balance >= reward.cost;
             const RewardIcon = reward.type === "plan" ? Award : Gift;
 
             return (
@@ -60,7 +63,7 @@ export function RewardCatalog({ balance }: RewardCatalogProps) {
                         src="/assets/coins/preppal-coin.png"
                         width={18}
                       />
-                      {balance.toLocaleString()} P
+                      {reward.cost.toLocaleString()} P estimated
                     </span>
                     {reward.type === "plan" ? (
                       <Link
@@ -72,12 +75,7 @@ export function RewardCatalog({ balance }: RewardCatalogProps) {
                       </Link>
                     ) : (
                       <Link
-                        className={cn(
-                          "inline-flex min-h-9 items-center gap-1.5 rounded-full px-4 text-xs font-bold transition",
-                          canRedeem
-                            ? "bg-primary text-primary hover:opacity-90"
-                            : "bg-surface text-primary",
-                        )}
+                        className="bg-surface text-primary inline-flex min-h-9 items-center gap-1.5 rounded-full px-4 text-xs font-bold transition"
                         href="/marketplace"
                       >
                         Explore marketplace

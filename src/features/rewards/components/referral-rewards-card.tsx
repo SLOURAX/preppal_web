@@ -9,12 +9,6 @@ import type { RewardSummary } from "../reward.types";
 
 type CopiedValue = "code" | "link" | null;
 
-export const REFERRALS = [
-  { name: "Amaka O.", status: "Completed first quiz", reward: "+50 XP" },
-  { name: "Daniel K.", status: "Invite sent", reward: "Pending" },
-  { name: "Fatima A.", status: "Invite sent", reward: "Pending" },
-] as const;
-
 export function ReferralRewardsCard({
   summary,
 }: {

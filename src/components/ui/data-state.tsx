@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { AlertCircle, Inbox } from "lucide-react";
 import { Mascot } from "./mascot";
 
 interface DataStateProps {
@@ -23,16 +22,7 @@ export function DataState({
       className="bg-surface-subtle/55 border-border/70 flex flex-col items-center rounded-2xl border border-dashed px-5 py-5 text-center"
       role={isError ? "alert" : undefined}
     >
-      {/* <span
-        className={`grid size-11 place-items-center rounded-2xl ${isError ? "bg-danger/10 text-danger" : "bg-primary/10 text-primary"}`}
-      >
-        {icon ??
-          (isError ? (
-            <AlertCircle className="size-5" />
-          ) : (
-            <Inbox className="size-5" />
-          ))}
-      </span> */}
+      {icon ? <span className="mb-2">{icon}</span> : null}
       {!isError ? (
         <Mascot
           mood="disappointed"

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, BookOpen, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 

@@ -44,6 +44,7 @@ export function SubjectsTab() {
   const subjects = (catalogQuery.data?.standaloneSubjects ?? []).slice(0, 6);
   const [selectedSubject, setSelectedSubject] = useState<string>("");
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initialize from async catalogue
     if (!selectedSubject && subjects[0]) setSelectedSubject(subjects[0].id);
   }, [selectedSubject, subjects]);
   const selectedSubjectDetails = subjects.find(

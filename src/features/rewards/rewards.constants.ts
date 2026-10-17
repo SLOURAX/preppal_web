@@ -25,5 +25,3 @@ export const REDEEMABLE_REWARDS: readonly RedeemableReward[] = [
   },
 ];
 
-export const REFERRAL_CODE = "5D091517";
-export const REFERRAL_LINK = `https://preppal.app/r/${REFERRAL_CODE}`;

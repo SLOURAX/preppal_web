@@ -5,7 +5,6 @@ import {
   ArrowUpRight,
   BookOpenCheck,
   GraduationCap,
-  Lightbulb,
   RotateCw,
   Crosshair,
   LoaderCircle,

@@ -1,5 +1,4 @@
 import { FcGoogle } from "react-icons/fc";
-import { Button } from "@/components/ui";
 
 interface GoogleAuthButtonProps {
   readonly text: string;

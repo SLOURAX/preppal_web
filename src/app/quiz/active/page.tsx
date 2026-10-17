@@ -23,7 +23,7 @@ import type { QuizQuestion } from "@/features/quiz/mock-questions";
 import { useAuthStore } from "@/store";
 import { apiClient } from "@/lib/api/client";
 
-const TOTAL_SECONDS = 45 * 60;
+const DEFAULT_TOTAL_SECONDS = 30 * 60;
 
 interface ApiQuizQuestion {
   readonly id: string;
@@ -128,10 +128,18 @@ function ActiveQuizContent() {
   const setLevelProgress = useAuthStore((state) => state.setLevelProgress);
   const mode = searchParams.get("mode") || "timed";
   const isUntimed = mode === "untimed";
+  const parsedDurationMinutes = Number(
+    searchParams.get("durationMinutes") || DEFAULT_TOTAL_SECONDS / 60,
+  );
+  const totalSeconds =
+    Math.max(
+      1,
+      Number.isFinite(parsedDurationMinutes) ? parsedDurationMinutes : 30,
+    ) * 60;
   const parsedCount = Number(searchParams.get("count") || 40);
   const requestedQuestionCount = isUntimed
     ? Math.max(5, Math.min(30, Number.isFinite(parsedCount) ? parsedCount : 10))
-    : 40;
+    : Math.max(1, Number.isFinite(parsedCount) ? parsedCount : 20);
   const questionCount = Math.min(requestedQuestionCount, maxQuestionsPerQuiz);
   const rawSimulationSeed = Number(searchParams.get("seed") || 0);
   const simulationSeed = Number.isFinite(rawSimulationSeed)
@@ -193,7 +201,7 @@ function ActiveQuizContent() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [flagged, setFlagged] = useState<Record<number, boolean>>({});
-  const [secondsLeft, setSecondsLeft] = useState(TOTAL_SECONDS);
+  const [secondsLeft, setSecondsLeft] = useState(totalSeconds);
   const [showInstructions, setShowInstructions] = useState(false);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
@@ -465,7 +473,7 @@ function ActiveQuizContent() {
       : 0;
     const durationSeconds = isUntimed
       ? Math.max(0, Math.round((Date.now() - startedAtMs) / 1000))
-      : TOTAL_SECONDS - secondsLeft;
+      : totalSeconds - secondsLeft;
     const attempt = {
       id: clientAttemptId,
       subject: subjectName || "Standalone subject",
@@ -531,6 +539,7 @@ function ActiveQuizContent() {
         ...attempt,
         id: result.id,
         date: result.completedAt ?? completedAt,
+        xpAwarded: result.xpAwarded,
       });
       if (result.xpAwarded > 0) {
         showFeedback({

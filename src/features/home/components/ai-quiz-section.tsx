@@ -8,30 +8,31 @@ import {
   answerPracticeQuestion,
   askPracticeQuestion,
   generatePracticeQuestion,
+  generatePublicPracticeQuestion,
   getPracticeHint,
   type AiPracticeQuestion,
 } from "@/features/ai/tutor-api";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store";
 
-const SAMPLE: AiPracticeQuestion = {
-  id: "sample",
-  subject: "Biology",
-  topic: "Cell biology",
+const LOADING_QUESTION: AiPracticeQuestion = {
+  id: "loading",
+  subject: "Preppal AI",
+  topic: null,
   difficulty: "easy",
-  question: "Which organelle is known as the powerhouse of the cell?",
-  options: [
-    { id: "A", label: "Nucleus" },
-    { id: "B", label: "Ribosome" },
-    { id: "C", label: "Mitochondrion" },
-    { id: "D", label: "Chloroplast" },
-  ],
+  question: "Preparing a fresh AI question…",
+  options: [],
   expiresAt: "",
 };
 
 export function AiQuizSection() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const [question, setQuestion] = useState(SAMPLE);
+  const [question, setQuestion] = useState(LOADING_QUESTION);
+  const [publicAnswer, setPublicAnswer] = useState<{
+    correctOptionId: string;
+    explanation: string;
+    hint: string;
+  } | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [result, setResult] = useState<{
     isCorrect: boolean | null;
@@ -56,16 +57,28 @@ export function AiQuizSection() {
     setError(null);
   }, []);
   const newQuestion = useCallback(async () => {
-    if (!isAuthenticated) return;
     setBusy("generate");
     setError(null);
     try {
-      setQuestion(
-        await generatePracticeQuestion({
+      if (isAuthenticated) {
+        setQuestion(await generatePracticeQuestion({
           subject: "Biology",
           difficulty: "medium",
-        }),
-      );
+        }));
+        setPublicAnswer(null);
+      } else {
+        const generated = await generatePublicPracticeQuestion();
+        setQuestion({
+          id: "public",
+          subject: "General knowledge",
+          topic: null,
+          difficulty: "medium",
+          question: generated.question,
+          options: generated.options,
+          expiresAt: generated.generatedAt,
+        });
+        setPublicAnswer(generated);
+      }
       resetState();
     } catch (cause) {
       setError(
@@ -79,7 +92,7 @@ export function AiQuizSection() {
   }, [isAuthenticated, resetState]);
 
   useEffect(() => {
-    if (!isAuthenticated) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- begin async question load
     void newQuestion();
     const timer = window.setInterval(() => void newQuestion(), 3 * 60 * 1000);
     return () => window.clearInterval(timer);
@@ -87,17 +100,16 @@ export function AiQuizSection() {
 
   const checkAnswer = async (selectedOptionId?: string) => {
     const choice = selectedOptionId ?? selected ?? undefined;
-    if (question.id === "sample") {
+    if (question.id === "public" && publicAnswer) {
       setResult({
-        isCorrect: choice ? choice === "C" : null,
-        correctOptionId: "C",
+        isCorrect: choice ? choice === publicAnswer.correctOptionId : null,
+        correctOptionId: publicAnswer.correctOptionId,
         feedback: choice
-          ? choice === "C"
+          ? choice === publicAnswer.correctOptionId
             ? "Correct — well done."
             : "Not quite. The correct option is highlighted."
           : "The correct option is highlighted.",
-        explanation:
-          "Mitochondria produce most of the usable energy in a cell.",
+        explanation: publicAnswer.explanation,
       });
       return;
     }
@@ -116,7 +128,10 @@ export function AiQuizSection() {
     }
   };
   const requestHint = async () => {
-    if (question.id === "sample") return;
+    if (question.id === "public" && publicAnswer) {
+      setHint(publicAnswer.hint);
+      return;
+    }
     setBusy("hint");
     setError(null);
     try {
@@ -131,7 +146,7 @@ export function AiQuizSection() {
   };
   const ask = async () => {
     const message = followUp.trim();
-    if (!message || question.id === "sample") return;
+    if (!message || question.id === "public" || question.id === "loading") return;
     setBusy("ask");
     setError(null);
     try {
@@ -237,7 +252,7 @@ export function AiQuizSection() {
             {error}
           </p>
         )}
-        {question.id !== "sample" && (
+        {isAuthenticated && question.id !== "loading" && (
           <div className="mt-4 flex gap-2">
             <input
               aria-label="Ask a follow-up question"
@@ -273,7 +288,7 @@ export function AiQuizSection() {
                 className="text-primary inline-flex min-h-10 items-center justify-center px-2 text-[.75rem] font-semibold"
                 href="/login"
               >
-                Sign in for live AI questions
+                Sign in to ask follow-up questions
               </Link>
             </>
           ) : (

@@ -14,61 +14,7 @@ import {
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store";
-import {
-  generateExamSimulation,
-  QUIZ_QUESTIONS,
-} from "@/features/quiz/mock-questions";
-import { Mascot } from "@/components/ui";
-
-const REVIEW = [
-  {
-    number: "01",
-    title: "Angles in a straight line",
-    time: "2m 14s",
-    selected: "78°",
-    correct: "78°",
-    options: ["68°", "78°", "88°", "98°"],
-    explanation:
-      "Combine the angles on the straight line, simplify, and isolate the expression to get 78°.",
-  },
-  {
-    number: "02",
-    title: "Factorising polynomials",
-    time: "1m 08s",
-    selected: "(x − 2)",
-    correct: "(x − 2)",
-    options: ["(x − 3)", "(x − 2)", "(x + 1)", "(x + 2)"],
-    explanation:
-      "x³ − 3x² + 2x factors to x(x − 1)(x − 2), so (x − 2) is a factor.",
-  },
-  {
-    number: "03",
-    title: "Average speed",
-    time: "3m 42s",
-    selected: "120 km/h",
-    correct: "150 km/h",
-    options: ["100 km/h", "120 km/h", "150 km/h", "180 km/h"],
-    explanation: "Average speed is distance ÷ time: 300 ÷ 2 = 150 km/h.",
-  },
-  {
-    number: "04",
-    title: "Logarithms",
-    time: "1m 27s",
-    selected: "6",
-    correct: "6",
-    options: ["4", "5", "6", "8"],
-    explanation: "Because 2⁶ = 64, log₂ 64 equals 6.",
-  },
-  {
-    number: "05",
-    title: "Interior angles",
-    time: "2m 31s",
-    selected: undefined,
-    correct: "9",
-    options: ["7", "8", "9", "10"],
-    explanation: "Use (n − 2) × 180 = 1260, giving n = 9 sides.",
-  },
-] as const;
+import { Mascot, DataState } from "@/components/ui";
 
 const formatAveragePace = (seconds: number): string => {
   if (seconds < 60) return `${seconds}s / question`;
@@ -86,13 +32,7 @@ export default function QuizResultsPage() {
   const [openReview, setOpenReview] = useState<string | null>(null);
   const latestAttempt = useAuthStore((state) => state.quizAttempts[0]);
 
-  const reviewItems = latestAttempt
-    ? (latestAttempt.questions?.length
-        ? latestAttempt.questions
-        : latestAttempt.seed
-          ? generateExamSimulation(latestAttempt.seed, latestAttempt.total)
-          : QUIZ_QUESTIONS.slice(0, latestAttempt.total)
-      ).map((question, index) => ({
+  const reviewItems = (latestAttempt?.questions ?? []).map((question, index) => ({
         number: String(index + 1).padStart(2, "0"),
         title: question.text,
         time: "—",
@@ -100,12 +40,11 @@ export default function QuizResultsPage() {
         correct: question.correctAnswer,
         options: question.options,
         explanation: question.explanation,
-      }))
-    : REVIEW;
-  const resultScore = latestAttempt?.score ?? 80;
-  const resultCorrect = latestAttempt?.correct ?? 32;
-  const resultTotal = latestAttempt?.total ?? 40;
-  const resultPoints = resultCorrect * 10;
+      }));
+  const resultScore = latestAttempt?.score ?? 0;
+  const resultCorrect = latestAttempt?.correct ?? 0;
+  const resultTotal = latestAttempt?.total ?? 0;
+  const resultPoints = latestAttempt?.xpAwarded ?? 0;
   const isPlayground = latestAttempt?.mode === "untimed";
   const averagePaceSeconds =
     latestAttempt && latestAttempt.durationSeconds > 0 && resultTotal > 0
@@ -125,9 +64,7 @@ export default function QuizResultsPage() {
       "text-rose-600 bg-rose-500/10",
     ],
     [
-      latestAttempt
-        ? `${Math.round(latestAttempt.durationSeconds / 60)}m`
-        : "24m",
+      `${Math.round((latestAttempt?.durationSeconds ?? 0) / 60)}m`,
       "Time spent",
       SaxClockBulk,
       "text-primary bg-primary/10",
@@ -152,6 +89,22 @@ export default function QuizResultsPage() {
     setShared(true);
     window.setTimeout(() => setShared(false), 1800);
   };
+
+  if (!latestAttempt) {
+    return (
+      <main className="bg-background grid min-h-screen place-items-center px-5">
+        <DataState
+          title="No quiz result available"
+          description="Complete a quiz to see an accurate score and question review."
+          action={
+            <button className="text-primary font-semibold" onClick={() => router.push("/quiz")} type="button">
+              Start a quiz
+            </button>
+          }
+        />
+      </main>
+    );
+  }
 
   return (
     <main className="bg-background min-h-screen">

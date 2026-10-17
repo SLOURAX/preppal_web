@@ -6,7 +6,7 @@ import {
   GraduationCap,
   LoaderCircle,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 
@@ -19,9 +19,13 @@ export function ExamsTab() {
     queryKey: ["quiz", "catalog"],
     queryFn: () => apiClient<QuizCatalog>("/api/v1/question-bank/catalog"),
   });
-  const exams = catalogQuery.data?.exams ?? [];
+  const exams = useMemo(
+    () => catalogQuery.data?.exams ?? [],
+    [catalogQuery.data?.exams],
+  );
   const [selectedExam, setSelectedExam] = useState<string>("");
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initialize from async catalogue
     if (!selectedExam && exams[0]) setSelectedExam(exams[0].id);
   }, [exams, selectedExam]);
   const selectedExamDetails = exams.find((exam) => exam.id === selectedExam);

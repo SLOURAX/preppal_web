@@ -20,10 +20,23 @@ interface QuestionAvailability {
   readonly total: number;
   readonly byDifficulty: Partial<Record<"EASY" | "MEDIUM" | "HARD", number>>;
 }
+interface PlatformSettings {
+  readonly defaultQuestionCount: number;
+  readonly defaultQuizDurationMinutes: number;
+}
 
 function QuizPreviewContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const settingsQuery = useQuery({
+    queryKey: ["platform", "settings"],
+    queryFn: () =>
+      apiClient<PlatformSettings>("/api/v1/platform/settings"),
+    staleTime: 5 * 60 * 1000,
+  });
+  const defaultQuestionCount = settingsQuery.data?.defaultQuestionCount ?? 20;
+  const quizDurationMinutes =
+    settingsQuery.data?.defaultQuizDurationMinutes ?? 30;
 
   const mode = searchParams.get("mode") || "";
   const isUntimed = mode === "untimed";
@@ -70,7 +83,9 @@ function QuizPreviewContent() {
   const subject = searchParams.get("subjectName") || "";
   const exam = searchParams.get("examName") || "";
   const year = searchParams.get("year") || "";
-  const requestedCount = Number(searchParams.get("count") || 10);
+  const requestedCount = Number(
+    searchParams.get("count") || defaultQuestionCount,
+  );
   const [questionCount, setQuestionCount] = useState<number>(() =>
     Number.isFinite(requestedCount) ? Math.max(1, requestedCount) : 10,
   );
@@ -90,6 +105,7 @@ function QuizPreviewContent() {
   );
   useEffect(() => {
     if (availableQuestionCount > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- clamp live inventory changes
       setQuestionCount((current) =>
         Math.min(current, maxQuestionsPerQuiz, availableQuestionCount),
       );
@@ -117,7 +133,7 @@ function QuizPreviewContent() {
         ]
       : []),
     ...(mode === "timed"
-      ? [{ icon: Clock3, label: "Time Limit", value: "45 mins" }]
+      ? [{ icon: Clock3, label: "Time Limit", value: `${quizDurationMinutes} mins` }]
       : []),
     ...(year ? [{ icon: BookOpen, label: "Year", value: year }] : []),
     ...(subject
@@ -137,7 +153,7 @@ function QuizPreviewContent() {
         "Use the question grid on the right to jump between questions at any time.",
       ]
     : [
-        `This ${path === "EXAM" ? "exam" : "practice session"} consists of ${timedQuestionCount} multiple-choice questions to be completed in 45 minutes.`,
+        `This ${path === "EXAM" ? "exam" : "practice session"} consists of ${timedQuestionCount} multiple-choice questions to be completed in ${quizDurationMinutes} minutes.`,
         "Each question carries equal marks. There is no negative marking.",
         "You can flag any question and return to it before submitting.",
         "The exam will auto-submit when time expires — make sure to answer all questions.",
@@ -288,7 +304,12 @@ function QuizPreviewContent() {
             }
             onClick={() => {
               const params = new URLSearchParams(searchParams.toString());
-              if (isUntimed) params.set("count", String(questionCount));
+              params.set(
+                "count",
+                String(isUntimed ? questionCount : timedQuestionCount),
+              );
+              if (!isUntimed)
+                params.set("durationMinutes", String(quizDurationMinutes));
               router.push(`/quiz/active?${params.toString()}`);
             }}
             className="min-w-0 flex-1 gap-2 rounded-xl px-3 text-xs font-semibold sm:flex-none sm:px-8 sm:text-sm"

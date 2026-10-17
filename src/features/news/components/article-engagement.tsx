@@ -54,6 +54,7 @@ export function ArticleEngagement({
   const [commentError, setCommentError] = useState<string | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset optimistic state on article navigation
     setLikeCount(initialLikes);
     setCommentCount(initialCommentCount);
     if (!isAuthenticated) {

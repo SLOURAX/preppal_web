@@ -31,7 +31,7 @@ export function NewsLanding() {
     queryKey: ["news", selectedCategory, searchQuery],
     queryFn: () => getNewsPosts(selectedCategory, searchQuery),
   });
-  const articles = news.data?.posts ?? [];
+  const articles = useMemo(() => news.data?.posts ?? [], [news.data?.posts]);
   const categories = ["All", ...(news.data?.categories ?? [])];
   const featuredArticle = articles.find((article) => article.featured);
 

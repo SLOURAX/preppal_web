@@ -21,6 +21,21 @@ export function generatePracticeQuestion(input: {
   });
 }
 
+export interface PublicAiPracticeQuestion {
+  question: string;
+  options: Array<{ id: "A" | "B" | "C" | "D"; label: string }>;
+  correctOptionId: "A" | "B" | "C" | "D";
+  explanation: string;
+  hint: string;
+  generatedAt: string;
+}
+
+export function generatePublicPracticeQuestion() {
+  return apiClient<PublicAiPracticeQuestion>("/api/v1/ai/public/question", {
+    method: "POST",
+  });
+}
+
 export function answerPracticeQuestion(
   questionId: string,
   selectedOptionId?: string,

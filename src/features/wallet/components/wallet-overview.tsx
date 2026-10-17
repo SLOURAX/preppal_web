@@ -29,7 +29,6 @@ import {
 import { SaxSecuritySafeBulk } from "@meysam213/iconsax-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { COIN_VALUE_NGN, XP_TO_COIN_RATE } from "@/constants/finance";
 import { useAuthStore } from "@/store";
 import {
   formatWalletDate,
@@ -162,13 +161,15 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
     const parsed = Number(xp);
     return Number.isFinite(parsed) ? Math.max(0, Math.floor(parsed)) : 0;
   }, [xp]);
-  const convertedCoins = useMemo(
-    () => requestedXp / XP_TO_COIN_RATE,
-    [requestedXp],
-  );
-  const xpNeededToConvert = Math.max(0, XP_TO_COIN_RATE - experiencePoints);
-  const canStartConverting = experiencePoints >= XP_TO_COIN_RATE;
   const activity = activityQuery.data;
+  const xpToCoinRate = activity?.conversionRate ?? 50;
+  const coinValueNgn = activity?.coinValueNgn ?? 1_000;
+  const convertedCoins = useMemo(
+    () => requestedXp / xpToCoinRate,
+    [requestedXp, xpToCoinRate],
+  );
+  const xpNeededToConvert = Math.max(0, xpToCoinRate - experiencePoints);
+  const canStartConverting = experiencePoints >= xpToCoinRate;
   const actionCopy =
     pendingAction === "convert"
       ? {
@@ -321,7 +322,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 </p>
                 <p className="text-muted-foreground mt-1 text-xs leading-5">
                   See the cash value of your Preppal Coins. One coin is worth ₦
-                  {COIN_VALUE_NGN.toLocaleString()}.
+                  {coinValueNgn.toLocaleString()}.
                 </p>
               </div>
             </div>
@@ -348,7 +349,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 equals
               </span>
               <span className="text-foreground min-w-24 text-right text-base font-black">
-                ₦{((Number(coinAmount) || 0) * COIN_VALUE_NGN).toLocaleString()}
+                ₦{((Number(coinAmount) || 0) * coinValueNgn).toLocaleString()}
               </span>
             </div>
           </div>
@@ -422,7 +423,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                   id="xp-amount"
                   inputMode="numeric"
                   max={experiencePoints}
-                  min={XP_TO_COIN_RATE}
+                  min={xpToCoinRate}
                   onChange={(event) => setXp(event.target.value)}
                   type="number"
                   value={xp}
@@ -446,7 +447,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
             <button
               className="bg-primary text-primary-foreground hover:bg-primary/90 mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-45"
               disabled={
-                requestedXp < XP_TO_COIN_RATE || requestedXp > experiencePoints
+                requestedXp < xpToCoinRate || requestedXp > experiencePoints
               }
               type="button"
               onClick={() => setPendingAction("convert")}
@@ -840,7 +841,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
               </h2>
               <p className="text-muted-foreground mt-1 text-xs">
                 Available: {balance.toLocaleString()} coins · 1 coin = ₦
-                {COIN_VALUE_NGN.toLocaleString()}
+                {coinValueNgn.toLocaleString()}
               </p>
             </div>
             <label className="text-foreground block text-xs font-semibold">
@@ -863,7 +864,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
               <strong className="text-foreground float-right">
                 ₦
                 {(
-                  (Number(withdrawalCoins) || 0) * COIN_VALUE_NGN
+                  (Number(withdrawalCoins) || 0) * coinValueNgn
                 ).toLocaleString()}
               </strong>
             </div>
@@ -1063,7 +1064,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                     asset,
                     activity?.currency,
                   )
-                : `${XP_TO_COIN_RATE} XP = 1 coin`}
+                : `${xpToCoinRate} XP = 1 coin`}
             </p>
           </div>
         </div>
