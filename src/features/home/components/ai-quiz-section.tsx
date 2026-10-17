@@ -281,7 +281,7 @@ export function AiQuizSection() {
               <Button
                 disabled={Boolean(result)}
                 onClick={() => void checkAnswer()}
-                className="gap-3"
+                className="gap-1"
               >
                 <Bot className="size-4" /> Check answer
               </Button>
