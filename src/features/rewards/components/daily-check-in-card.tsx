@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-import { Button } from "@/components/ui";
+import { Button, useFeedback } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { apiClient } from "@/lib/api/client";
 import type { RewardSummary } from "../reward.types";
@@ -26,6 +26,7 @@ export function DailyCheckInCard({
   onUpdated: () => void;
 }) {
   const queryClient = useQueryClient();
+  const { showFeedback } = useFeedback();
   const [visibleMonth, setVisibleMonth] = useState<Date>(new Date());
   const [isCheckingIn, setIsCheckingIn] = useState(false);
   const now = new Date();
@@ -72,13 +73,40 @@ export function DailyCheckInCard({
   const checkIn = (): void => {
     if (hasCheckedIn) return;
     setIsCheckingIn(true);
-    void apiClient("/api/v1/rewards/check-in", {
+    void apiClient<{
+      checkedIn: boolean;
+      xpAwarded: number;
+      message?: string;
+    }>("/api/v1/rewards/check-in", {
       method: "POST",
       credentials: "include",
     })
-      .then(() => {
+      .then((result) => {
+        if (!result.checkedIn) {
+          showFeedback({
+            kind: "info",
+            title: "Already checked in",
+            message: result.message ?? "You have already checked in today.",
+          });
+          return;
+        }
         onUpdated();
         void queryClient.invalidateQueries({ queryKey: weeklyGoalQueryKey });
+        showFeedback({
+          kind: "reward",
+          title: "Daily check-in complete!",
+          message: `You earned ${result.xpAwarded.toLocaleString()} XP. Come back tomorrow to keep your streak growing.`,
+        });
+      })
+      .catch((error: unknown) => {
+        showFeedback({
+          kind: "error",
+          title: "Check-in unsuccessful",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Please try checking in again.",
+        });
       })
       .finally(() => setIsCheckingIn(false));
   };

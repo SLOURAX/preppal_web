@@ -70,6 +70,16 @@ const REVIEW = [
   },
 ] as const;
 
+const formatAveragePace = (seconds: number): string => {
+  if (seconds < 60) return `${seconds}s / question`;
+
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return remainingSeconds
+    ? `${minutes}m ${remainingSeconds}s / question`
+    : `${minutes}m / question`;
+};
+
 export default function QuizResultsPage() {
   const router = useRouter();
   const [shared, setShared] = useState<boolean>(false);
@@ -77,9 +87,11 @@ export default function QuizResultsPage() {
   const latestAttempt = useAuthStore((state) => state.quizAttempts[0]);
 
   const reviewItems = latestAttempt
-    ? (latestAttempt.seed
-        ? generateExamSimulation(latestAttempt.seed, latestAttempt.total)
-        : QUIZ_QUESTIONS.slice(0, latestAttempt.total)
+    ? (latestAttempt.questions?.length
+        ? latestAttempt.questions
+        : latestAttempt.seed
+          ? generateExamSimulation(latestAttempt.seed, latestAttempt.total)
+          : QUIZ_QUESTIONS.slice(0, latestAttempt.total)
       ).map((question, index) => ({
         number: String(index + 1).padStart(2, "0"),
         title: question.text,
@@ -95,6 +107,10 @@ export default function QuizResultsPage() {
   const resultTotal = latestAttempt?.total ?? 40;
   const resultPoints = resultCorrect * 10;
   const isPlayground = latestAttempt?.mode === "untimed";
+  const averagePaceSeconds =
+    latestAttempt && latestAttempt.durationSeconds > 0 && resultTotal > 0
+      ? Math.round(latestAttempt.durationSeconds / resultTotal)
+      : null;
   const resultStats = [
     [
       String(resultCorrect),
@@ -237,7 +253,7 @@ export default function QuizResultsPage() {
               <h1 className="text-foreground text-xl font-bold tracking-tight sm:text-2xl">
                 {isPlayground
                   ? "Challenge Complete!"
-                  : "Great work on JAMB Mathematics"}
+                  : `Great work${latestAttempt?.subject ? ` on ${latestAttempt.subject}` : ""}`}
               </h1>
               <p className="text-muted-foreground mt-2 max-w-xl text-sm leading-5">
                 {isPlayground
@@ -297,31 +313,38 @@ export default function QuizResultsPage() {
               <SaxChartSuccessBulk className="text-primary size-5" />
             </div>
             <div className="space-y-4">
-              {[
-                ["Accuracy", resultScore, "Questions answered correctly"],
-                ["Consistency", 74, "Steady performance across the quiz"],
-                ["Pace", 68, "Time spent per question"],
-              ].map(([label, value, detail]) => (
-                <div key={label as string}>
-                  <div className="mb-1.5 flex items-center justify-between">
-                    <span className="text-foreground text-sm font-medium">
-                      {label}
-                    </span>
-                    <span className="text-primary text-xs font-bold">
-                      {value}%
-                    </span>
-                  </div>
-                  <div className="bg-surface-subtle h-2 overflow-hidden rounded-full">
-                    <div
-                      className="bg-primary h-full rounded-full"
-                      style={{ width: `${value}%` }}
-                    />
-                  </div>
+              <div>
+                <div className="mb-1.5 flex items-center justify-between">
+                  <span className="text-foreground text-sm font-medium">
+                    Accuracy
+                  </span>
+                  <span className="text-primary text-xs font-bold">
+                    {resultScore}%
+                  </span>
+                </div>
+                <div className="bg-surface-subtle h-2 overflow-hidden rounded-full">
+                  <div
+                    className="bg-primary h-full rounded-full"
+                    style={{ width: `${resultScore}%` }}
+                  />
+                </div>
+                <p className="text-muted-foreground mt-1 text-[11px]">
+                  Questions answered correctly
+                </p>
+              </div>
+              <div className="bg-surface-subtle flex flex-col gap-1 rounded-2xl px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-foreground text-sm font-medium">Pace</p>
                   <p className="text-muted-foreground mt-1 text-[11px]">
-                    {detail}
+                    Average time spent on each question
                   </p>
                 </div>
-              ))}
+                <p className="text-primary text-sm font-bold">
+                  {averagePaceSeconds === null
+                    ? "Not available"
+                    : formatAveragePace(averagePaceSeconds)}
+                </p>
+              </div>
             </div>
           </section>
         </div>

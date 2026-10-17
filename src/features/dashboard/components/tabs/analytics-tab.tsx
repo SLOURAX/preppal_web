@@ -19,7 +19,6 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { ListSelect } from "@/components/ui/list-select";
-import { EXAM_CHOICES, SUBJECT_CHOICES } from "@/features/quiz/quiz.constants";
 import type { QuizAttempt } from "@/store/use-auth-store";
 import { useAuthStore } from "@/store";
 
@@ -101,7 +100,7 @@ function ReadinessCard({ score }: { readonly score: number }) {
             Your current readiness
           </h3>
           <p className="text-muted-foreground mt-1 max-w-md text-xs leading-5">
-            Based on accuracy and consistency across the selected filters.
+            Based on completed-question accuracy across the selected filters.
           </p>
         </div>
         <Compass className="text-primary size-5" />
@@ -233,13 +232,19 @@ function SubjectPerformance({
 function ExamPerformance({ attempts }: { readonly attempts: QuizAttempt[] }) {
   const rows = useMemo(() => {
     const grouped = new Map<string, { correct: number; total: number }>();
-    attempts.forEach((attempt) => {
+    attempts
+      .filter(
+        (attempt) =>
+          attempt.path !== "subject" &&
+          !attempt.exam.toLowerCase().startsWith("standalone"),
+      )
+      .forEach((attempt) => {
       const current = grouped.get(attempt.exam) ?? { correct: 0, total: 0 };
       grouped.set(attempt.exam, {
         correct: current.correct + attempt.correct,
         total: current.total + attempt.total,
       });
-    });
+      });
     return [...grouped.entries()].map(([exam, result]) => ({
       exam,
       score: result.total
@@ -375,14 +380,44 @@ export function AnalyticsTab() {
     }));
   }, [filteredAttempts]);
 
-  const subjectOptions = [
-    { value: "all", label: "All subjects" },
-    ...SUBJECT_CHOICES.map(({ value, label }) => ({ value, label })),
-  ];
-  const examOptions = [
-    { value: "all", label: "All exams" },
-    ...EXAM_CHOICES.map(({ value, label }) => ({ value, label })),
-  ];
+  const examOptions = useMemo(() => {
+    const values = new Set(
+      attempts
+        .filter(
+          (attempt) =>
+            attempt.path !== "subject" &&
+            attempt.exam.trim().length > 0 &&
+            !attempt.exam.toLowerCase().startsWith("standalone"),
+        )
+        .map((attempt) => attempt.exam.trim()),
+    );
+    return [
+      { value: "all", label: "All exams" },
+      ...[...values]
+        .sort((a, b) => a.localeCompare(b))
+        .map((value) => ({ value, label: titleCase(value) })),
+    ];
+  }, [attempts]);
+  const subjectOptions = useMemo(() => {
+    const relevantAttempts =
+      exam === "all"
+        ? attempts
+        : attempts.filter((attempt) => attempt.exam === exam);
+    const values = new Set(
+      relevantAttempts
+        .map((attempt) => attempt.subject.trim())
+        .filter(
+          (value) =>
+            value.length > 0 && !value.toLowerCase().startsWith("standalone"),
+        ),
+    );
+    return [
+      { value: "all", label: "All subjects" },
+      ...[...values]
+        .sort((a, b) => a.localeCompare(b))
+        .map((value) => ({ value, label: titleCase(value) })),
+    ];
+  }, [attempts, exam]);
 
   return (
     <div className="space-y-6">
@@ -403,7 +438,10 @@ export function AnalyticsTab() {
       <section className="surface-card grid grid-cols-2 gap-2 p-3 sm:grid-cols-4 sm:gap-3 sm:p-4">
         <ListSelect
           label="Exam"
-          onChange={setExam}
+          onChange={(value) => {
+            setExam(value);
+            setSubject("all");
+          }}
           options={examOptions}
           placeholder="Choose an exam"
           showOptionDescriptions={false}

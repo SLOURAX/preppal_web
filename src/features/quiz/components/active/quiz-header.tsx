@@ -13,6 +13,9 @@ interface QuizHeaderProps {
   readonly onSubmit: () => void;
   readonly isUntimed?: boolean;
   readonly correctCount?: number;
+  readonly examName?: string;
+  readonly subjectName?: string;
+  readonly year?: string;
 }
 
 export function QuizHeader({
@@ -23,8 +26,13 @@ export function QuizHeader({
   onSubmit,
   isUntimed = false,
   correctCount = 0,
+  examName,
+  subjectName,
+  year,
 }: QuizHeaderProps) {
   const progress = ((currentIndex + 1) / total) * 100;
+  const title = [examName, subjectName].filter(Boolean).join(" ");
+  const modeLabel = isUntimed ? "Practice Playground" : "Timed Simulation";
 
   return (
     <header className="border-border bg-surface/95 relative z-30 flex h-14 shrink-0 items-center justify-between border-b px-4 backdrop-blur-md sm:px-6">
@@ -36,11 +44,13 @@ export function QuizHeader({
           <X className="size-4" />
         </button>
         <div className="hidden min-w-0 sm:block">
-          <p className="text-foreground truncate text-sm font-semibold">
-            JAMB Mathematics
-          </p>
+          {title ? (
+            <p className="text-foreground truncate text-sm font-semibold">
+              {title}
+            </p>
+          ) : null}
           <p className="text-muted-foreground text-xs">
-            2023 · {isUntimed ? "Practice Playground" : "Timed Simulation"}
+            {[year, modeLabel].filter(Boolean).join(" · ")}
           </p>
         </div>
         {isUntimed ? (

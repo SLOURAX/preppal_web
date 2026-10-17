@@ -22,6 +22,8 @@ const DIFFICULTY_ICONS: Readonly<Record<QuizDifficulty, LucideIcon>> = {
 interface SubjectDifficultyStepProps {
   readonly subjectLabel: string;
   readonly selectedDifficulty: QuizDifficulty | null;
+  readonly availableDifficulties: readonly QuizDifficulty[];
+  readonly hasTopics: boolean;
   readonly onBack: () => void;
   readonly onContinue: () => void;
   readonly onSelectDifficulty: (difficulty: QuizDifficulty) => void;
@@ -30,6 +32,8 @@ interface SubjectDifficultyStepProps {
 export function SubjectDifficultyStep({
   subjectLabel,
   selectedDifficulty,
+  availableDifficulties,
+  hasTopics,
   onBack,
   onContinue,
   onSelectDifficulty,
@@ -60,7 +64,9 @@ export function SubjectDifficultyStep({
       </div>
 
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
-        {DIFFICULTY_CHOICES.map((difficulty) => {
+        {DIFFICULTY_CHOICES.filter((difficulty) =>
+          availableDifficulties.includes(difficulty.value),
+        ).map((difficulty) => {
           const isSelected = selectedDifficulty === difficulty.value;
           const Icon = DIFFICULTY_ICONS[difficulty.value];
 
@@ -118,7 +124,8 @@ export function SubjectDifficultyStep({
           disabled={!selectedDifficulty}
           onClick={onContinue}
         >
-          Choose topics <ArrowRight className="size-4" />
+          {hasTopics ? "Choose topics" : "Choose mode"}{" "}
+          <ArrowRight className="size-4" />
         </Button>
       </div>
     </section>

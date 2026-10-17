@@ -20,10 +20,3 @@ export const LEARNING_LEVELS: readonly string[] = [
   "Undergraduate",
 ];
 
-export const EXAM_GOALS: readonly string[] = [
-  "JAMB / UTME",
-  "WAEC",
-  "NECO",
-  "Post-UTME",
-  "General practice",
-];

@@ -140,20 +140,25 @@ function DailyFlashcard() {
               </div>
             </div>
           </button>
-          <div className="mt-3 flex items-center justify-between gap-3">
-            <span className="text-[11px] text-violet-200/70">
-              <span className="inline-flex items-center gap-1">
-                <Bot className="size-3" /> Well curated daily discovery
+          <div className="mt-4 flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+            <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-[11px] leading-5 text-violet-200/70">
+              <span className="inline-flex min-w-0 items-center gap-1.5">
+                <Bot className="size-3.5 shrink-0" />
+                <span>Well-curated daily discovery</span>
               </span>
-              {loadError ? " · Showing a saved fallback" : ""}
-            </span>
+              {loadError ? (
+                <span className="rounded-full bg-white/8 px-2 py-0.5 text-violet-100/75">
+                  Saved fallback
+                </span>
+              ) : null}
+            </div>
             <button
-              className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-2.5 py-1.5 text-[10px] font-semibold text-white transition-colors hover:bg-white/15 sm:px-3 sm:text-[11px]"
+              className="inline-flex min-h-10 w-full shrink-0 items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[11px] font-semibold whitespace-nowrap text-white transition-colors hover:bg-white/15 disabled:cursor-wait disabled:opacity-70 sm:w-auto"
               disabled={isLoading}
               onClick={() => void showNextCard()}
               type="button"
             >
-              {isLoading ? "Finding a fact…" : "Another fact"}{" "}
+              {isLoading ? "Finding a fact…" : "Another fact"}
               {isLoading ? (
                 <LoaderCircle className="size-3.5 animate-spin" />
               ) : (
@@ -215,7 +220,7 @@ export function LearnTab() {
             <span
               className={`mt-1 block text-xs ${mode === "exams" ? "text-primary-foreground/75" : "text-muted-foreground"}`}
             >
-              JAMB, WAEC, NECO and more
+              Choose from available published exams
             </span>
           </span>
           <ArrowUpRight className="size-4 opacity-70 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

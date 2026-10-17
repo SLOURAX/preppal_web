@@ -20,6 +20,25 @@ export interface QuizAttempt {
   durationSeconds: number;
   answers: Record<number, string>;
   seed?: number;
+  context?: {
+    examId?: string;
+    subjectId?: string;
+    examName?: string;
+    subjectName?: string;
+    yearLink?: string;
+    difficulty?: string;
+    topicIds?: string;
+    topics?: string;
+  };
+  questions?: Array<{
+    id: number;
+    sourceQuestionId: string;
+    text: string;
+    passage?: string;
+    options: readonly string[];
+    correctAnswer: string;
+    explanation: string;
+  }>;
 }
 
 export interface LevelProgress {
@@ -65,6 +84,8 @@ interface StoredQuizSession {
   durationSeconds?: number | null;
   answers?: Record<string, string> | null;
   simulationSeed?: number | null;
+  selectionContext?: QuizAttempt["context"] | null;
+  reviewQuestions?: QuizAttempt["questions"];
 }
 
 const getQuizHistory = async (): Promise<QuizAttempt[]> => {
@@ -90,6 +111,8 @@ const getQuizHistory = async (): Promise<QuizAttempt[]> => {
       ]),
     ),
     seed: session.simulationSeed ?? undefined,
+    context: session.selectionContext ?? undefined,
+    questions: session.reviewQuestions,
   }));
 };
 

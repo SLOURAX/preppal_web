@@ -35,9 +35,11 @@ export default function QuizReviewPage() {
   const [followUp, setFollowUp] = useState("");
   const [conversation, setConversation] = useState<string[]>([]);
   const [showSimulationModal, setShowSimulationModal] = useState(false);
-  const reviewQuestions = latestAttempt?.seed
-    ? generateExamSimulation(latestAttempt.seed, latestAttempt.total)
-    : QUIZ_QUESTIONS.slice(0, latestAttempt?.total ?? 40);
+  const reviewQuestions = latestAttempt?.questions?.length
+    ? latestAttempt.questions
+    : latestAttempt?.seed
+      ? generateExamSimulation(latestAttempt.seed, latestAttempt.total)
+      : QUIZ_QUESTIONS.slice(0, latestAttempt?.total ?? 40);
   const activeQuestion = reviewQuestions[activeIndex]!;
   const number = String(activeQuestion.id).padStart(2, "0");
   const { text, options, correctAnswer: correct, explanation } = activeQuestion;
@@ -52,14 +54,29 @@ export default function QuizReviewPage() {
 
   const generateFreshSimulation = (): void => {
     if (!latestAttempt) return;
+    const context = latestAttempt.context;
+    if (!context?.subjectId) {
+      router.push(`/quiz?path=${latestAttempt.path ?? "exam"}`);
+      return;
+    }
     const params = new URLSearchParams({
-      mode: "timed",
+      mode: latestAttempt.mode,
       path: latestAttempt.path ?? "exam",
-      exam: latestAttempt.exam,
-      subject: latestAttempt.subject,
-      seed: String(Date.now()),
+      count: String(latestAttempt.total),
     });
+    if (context?.examId) params.set("exam", context.examId);
+    if (context?.examName) params.set("examName", context.examName);
+    if (context?.subjectId) params.set("subject", context.subjectId);
+    if (context?.subjectName) params.set("subjectName", context.subjectName);
+    if (context?.yearLink) params.set("yearLink", context.yearLink);
+    if (context?.difficulty) params.set("difficulty", context.difficulty);
+    if (context?.topicIds) params.set("topicIds", context.topicIds);
+    if (context?.topics) params.set("topics", context.topics);
     if (latestAttempt.year) params.set("year", latestAttempt.year);
+    if (latestAttempt.mode === "timed") {
+      const seed = crypto.getRandomValues(new Uint32Array(1))[0]! & 0x7fffffff;
+      params.set("seed", String(seed || 1));
+    }
     router.push(`/quiz/preview?${params.toString()}`);
   };
 
@@ -76,7 +93,14 @@ export default function QuizReviewPage() {
           </button>
           <span className="text-muted-foreground text-xs font-semibold">
             {latestAttempt
-              ? `${latestAttempt.exam} ${latestAttempt.subject}`
+              ? [
+                  latestAttempt.path === "exam"
+                    ? latestAttempt.context?.examName || latestAttempt.exam
+                    : null,
+                  latestAttempt.context?.subjectName || latestAttempt.subject,
+                ]
+                  .filter(Boolean)
+                  .join(" ")
               : "Quiz review"}
           </span>
           {latestAttempt ? (

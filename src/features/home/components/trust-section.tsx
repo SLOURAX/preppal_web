@@ -19,7 +19,7 @@ const TRUST_POINTS: readonly TrustPillar[] = [
   {
     title: "Curated Exam Pathways",
     detail:
-      "JAMB, WAEC & NECO questions authored to syllabus standards with line-by-line working.",
+      "Published exam questions aligned to each available syllabus, with line-by-line working.",
     variant: "content",
     icon: BookOpenCheck,
     badgeBg:

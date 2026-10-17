@@ -503,6 +503,12 @@ export function AccountTab() {
                 updateNotificationPreferences.mutate(
                   { [pref.key]: !enabled } as Partial<NotificationPreferences>,
                   {
+                    onSuccess: (preferences) =>
+                      showFeedback({
+                        kind: "success",
+                        title: "Notification preference saved",
+                        message: `${pref.label} are now ${preferences[pref.key] ? "enabled" : "turned off"}.`,
+                      }),
                     onError: (error) =>
                       showFeedback({
                         kind: "error",

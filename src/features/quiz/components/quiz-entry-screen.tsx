@@ -40,13 +40,13 @@ const QUIZ_PATHS = [
   {
     value: "exam",
     title: "Prepare for an exam",
-    description: "Practice exams on JAMB, WAEC, NECO and more...",
+    description: "Choose from exams with published questions available now.",
     icon: GraduationCap,
   },
   {
     value: "subject",
     title: "Practice a subject",
-    description: "Focus directly on Maths, English, Sciences, and more...",
+    description: "Focus directly on an available subject and its topics.",
     icon: BookOpenCheck,
   },
 ] as const;
@@ -133,11 +133,26 @@ export function QuizEntryScreen({
     }
   }
 
-  const subjectTopics = selectedSubject
-    ? (catalog?.standaloneSubjects
-        .find((subject) => subject.id === selectedSubject)
-        ?.topics.map((topic) => topic.name) ?? [])
+  const selectedStandaloneSubject = catalog?.standaloneSubjects.find(
+    (subject) => subject.id === selectedSubject,
+  );
+  const availableDifficulties: QuizDifficulty[] = selectedStandaloneSubject
+    ? (["easy", "medium", "hard"] as const).filter(
+        (difficulty) =>
+          selectedStandaloneSubject.questionCounts[
+            difficulty.toUpperCase() as "EASY" | "MEDIUM" | "HARD"
+          ] > 0,
+      )
     : [];
+  const availableTopicRecords = selectedDifficulty
+    ? (selectedStandaloneSubject?.topics.filter(
+        (topic) =>
+          topic.questionCounts[
+            selectedDifficulty.toUpperCase() as "EASY" | "MEDIUM" | "HARD"
+          ] > 0,
+      ) ?? [])
+    : [];
+  const subjectTopics = availableTopicRecords.map((topic) => topic.name);
   const selectedExamRecord = catalog?.exams.find(
     (exam) => exam.id === selectedExam,
   );
@@ -212,9 +227,6 @@ export function QuizEntryScreen({
     if (selectedExamRecord) params.set("examName", selectedExamRecord.name);
     if (selectedExamSubject) params.set("subject", selectedExamSubject);
     if (selectedSubject) params.set("subject", selectedSubject);
-    const selectedStandaloneSubject = catalog?.standaloneSubjects.find(
-      (subject) => subject.id === selectedSubject,
-    );
     const selectedSubjectName =
       selectedExamSubjectRecord?.name ?? selectedStandaloneSubject?.name;
     if (selectedSubjectName) params.set("subjectName", selectedSubjectName);
@@ -226,12 +238,15 @@ export function QuizEntryScreen({
     if (selectedDifficulty) params.set("difficulty", selectedDifficulty);
     if (selectedTopics.length) {
       params.set("topics", selectedTopics.join(","));
-      const topicIds = selectedStandaloneSubject?.topics
+      const topicIds = availableTopicRecords
         .filter((topic) => selectedTopics.includes(topic.name))
         .map((topic) => topic.id);
       if (topicIds?.length) params.set("topicIds", topicIds.join(","));
     }
-    if (selectedMode === "timed") params.set("seed", String(Date.now()));
+    if (selectedMode === "timed") {
+      const seed = crypto.getRandomValues(new Uint32Array(1))[0]! & 0x7fffffff;
+      params.set("seed", String(seed || 1));
+    }
 
     router.push(`/quiz/preview?${params.toString()}`);
   };
@@ -325,6 +340,19 @@ export function QuizEntryScreen({
                   {catalogQuery.error.message}
                 </p>
               ) : null}
+              {!catalogQuery.isLoading &&
+              !catalogQuery.error &&
+              choices.length === 0 ? (
+                <div className="mb-4 rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4">
+                  <p className="text-foreground text-sm font-semibold">
+                    No published questions are available here yet.
+                  </p>
+                  <p className="text-muted-foreground mt-1 text-xs leading-5">
+                    Try the other practice path. Empty subjects and exams stay
+                    hidden until questions are ready.
+                  </p>
+                </div>
+              ) : null}
               <QuizSelect
                 icon={quizPath === "exam" ? GraduationCap : BookOpenCheck}
                 id="quiz-category"
@@ -397,9 +425,20 @@ export function QuizEntryScreen({
 
         {setupStep === "subject-difficulty" && selectedChoice ? (
           <SubjectDifficultyStep
+            availableDifficulties={availableDifficulties}
+            hasTopics={availableTopicRecords.length > 0}
             onBack={() => setSetupStep("entry")}
-            onContinue={() => setSetupStep("subject-topics")}
-            onSelectDifficulty={setSelectedDifficulty}
+            onContinue={() =>
+              setSetupStep(
+                availableTopicRecords.length > 0
+                  ? "subject-topics"
+                  : "quiz-mode",
+              )
+            }
+            onSelectDifficulty={(difficulty) => {
+              setSelectedDifficulty(difficulty);
+              setSelectedTopics([]);
+            }}
             selectedDifficulty={selectedDifficulty}
             subjectLabel={selectedChoice.label}
           />
@@ -437,7 +476,11 @@ export function QuizEntryScreen({
             onBack={() =>
               quizPath === "exam"
                 ? setSetupStep("exam-year")
-                : setSetupStep("subject-topics")
+                : setSetupStep(
+                    availableTopicRecords.length > 0
+                      ? "subject-topics"
+                      : "subject-difficulty",
+                  )
             }
             onSelectMode={setSelectedMode}
             onStart={handleStartPractice}

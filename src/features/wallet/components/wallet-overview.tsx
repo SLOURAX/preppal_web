@@ -34,6 +34,7 @@ import { useAuthStore } from "@/store";
 import {
   formatWalletDate,
   formatWalletAmount,
+  formatTransactionLabel,
   useWalletActivity,
   type WalletAsset,
   type WalletRange,
@@ -233,9 +234,24 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
               wallet for premium plans and other eligible in-app purchases.
             </p>
 
-            <div className="flex flex-wrap justify-start gap-2.5">
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="rounded-xl bg-white/10 p-3">
+                <p className="text-violet-200">Experience points</p>
+                <p className="mt-1 font-bold">
+                  {experiencePoints.toLocaleString()} XP
+                </p>
+              </div>
+              <div className="rounded-xl bg-white/10 p-3">
+                <p className="text-violet-200">Spend-only deposits</p>
+                <p className="mt-1 font-bold">
+                  {depositedFunds.toLocaleString()} NGN
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap lg:justify-start md:justify-start justify-center gap-2.5">
               <button
-                className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-2.5 text-[.8rem] font-semibold text-[#21194d] transition-transform hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-2.5 text-[.8rem] font-semibold text-[#21194d] transition-transform hover:-translate-y-0.5"
                 type="button"
                 onClick={() => setShowDepositModal(true)}
               >
@@ -243,7 +259,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 Deposit funds
               </button>
               <button
-                className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-6 py-2.5 text-[.8rem] font-semibold text-white ring-1 ring-white/15 transition-colors ring-inset hover:bg-white/15"
+                className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-8 py-2.5 text-[.8rem] font-semibold text-white ring-1 ring-white/15 transition-colors ring-inset hover:bg-white/15"
                 type="button"
                 onClick={() =>
                   isBankLinked
@@ -261,27 +277,6 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                 <Send className="size-4" />
                 Withdraw coins
               </button>
-              <Link
-                className="inline-flex items-center gap-2 rounded-xl bg-violet-400/20 px-6 py-2.5 text-[.8rem] font-semibold text-white ring-1 ring-violet-200/25 transition-colors ring-inset hover:bg-violet-400/30"
-                href="/marketplace"
-              >
-                <ShoppingBag className="size-4" />
-                Use deposited funds
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="rounded-xl bg-white/10 p-3">
-                <p className="text-violet-200">Experience points</p>
-                <p className="mt-1 font-bold">
-                  {experiencePoints.toLocaleString()} XP
-                </p>
-              </div>
-              <div className="rounded-xl bg-white/10 p-3">
-                <p className="text-violet-200">Spend-only deposits</p>
-                <p className="mt-1 font-bold">
-                  {depositedFunds.toLocaleString()} NGN
-                </p>
-              </div>
             </div>
           </div>
         </section>
@@ -1129,7 +1124,7 @@ export function WalletOverview({ balance }: WalletOverviewProps) {
                     </span>
                     <div className="min-w-0">
                       <p className="text-foreground truncate text-[.75rem] font-semibold">
-                        {transaction.label}
+                        {formatTransactionLabel(transaction.label)}
                       </p>
                       <p className="text-muted-foreground text-[.7rem]">
                         {formatWalletDate(transaction.createdAt)}

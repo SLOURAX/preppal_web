@@ -37,6 +37,18 @@ interface ApiQuizQuestion {
   }[];
 }
 
+type ActiveQuizQuestion = QuizQuestion & { readonly sourceQuestionId: string };
+
+interface AiAllowance {
+  readonly requestLimit: number;
+  readonly requestsUsed: number;
+  readonly requestsRemaining: number;
+  readonly tokenLimit: number;
+  readonly tokensUsed: number;
+  readonly tokensRemaining: number;
+  readonly resetsAt: string;
+}
+
 /*
   {
     text: "In the diagram, PQR is a straight line. If (a + 12)° + (a + b)° + (3b + 12)° = 180°. Find 2b + a.",
@@ -121,12 +133,18 @@ function ActiveQuizContent() {
     ? Math.max(5, Math.min(30, Number.isFinite(parsedCount) ? parsedCount : 10))
     : 40;
   const questionCount = Math.min(requestedQuestionCount, maxQuestionsPerQuiz);
-  const simulationSeed = Number(searchParams.get("seed") || 0);
+  const rawSimulationSeed = Number(searchParams.get("seed") || 0);
+  const simulationSeed = Number.isFinite(rawSimulationSeed)
+    ? Math.abs(Math.trunc(rawSimulationSeed)) % 2_147_483_647
+    : 0;
   const path = searchParams.get("path") === "subject" ? "STANDALONE" : "EXAM";
   const selectedSubjectId = searchParams.get("subject") ?? "";
   const yearLink = searchParams.get("yearLink") ?? "";
   const difficulty = searchParams.get("difficulty") ?? "";
   const topicIds = searchParams.get("topicIds") ?? "";
+  const examName = searchParams.get("examName") ?? "";
+  const subjectName = searchParams.get("subjectName") ?? "";
+  const year = searchParams.get("year") ?? "";
   const questionQuery = useQuery({
     queryKey: [
       "quiz",
@@ -154,8 +172,9 @@ function ActiveQuizContent() {
       const result = await apiClient<ApiQuizQuestion[]>(
         `/api/v1/question-bank/quiz-questions?${params}`,
       );
-      return result.map<QuizQuestion>((question, index) => ({
+      return result.map<ActiveQuizQuestion>((question, index) => ({
         id: index + 1,
+        sourceQuestionId: question.id,
         text: question.prompt,
         passage: question.passage ?? undefined,
         options: [...question.options]
@@ -190,6 +209,9 @@ function ActiveQuizContent() {
   const [aiInput, setAiInput] = useState<string>("");
   const [showCalculator, setShowCalculator] = useState<boolean>(false);
   const [showAiPanel, setShowAiPanel] = useState<boolean>(false);
+  const [quizSessionId, setQuizSessionId] = useState<string | null>(null);
+  const [quizSessionError, setQuizSessionError] = useState<string | null>(null);
+  const [aiAllowance, setAiAllowance] = useState<AiAllowance | null>(null);
   const [feedback, setFeedback] = useState<
     Record<number, "correct" | "incorrect">
   >({});
@@ -198,6 +220,7 @@ function ActiveQuizContent() {
     () =>
       questions[Math.min(currentIndex, questions.length - 1)] ?? {
         id: 0,
+        sourceQuestionId: "",
         text: "",
         options: [],
         correctAnswer: "",
@@ -205,14 +228,76 @@ function ActiveQuizContent() {
       },
     [currentIndex, questions],
   );
+  const textToRead = `Question ${currentIndex + 1}. ${currentQ.text.replace(/<[^>]*>/g, " ")}. Options: ${currentQ.options.map((option, index) => `${String.fromCharCode(65 + index)}: ${option.replace(/<[^>]*>/g, " ")}`).join(". ")}.`;
+
+  useEffect(() => {
+    if (!isAuthenticated || !questions.length || quizSessionId) return;
+    let cancelled = false;
+    const startSession = async () => {
+      try {
+        const [session, allowance] = await Promise.all([
+          apiClient<{ id: string; status: string }>(
+            "/api/v1/learning/quiz-sessions/start",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                clientAttemptId,
+                examType: examName || "Standalone practice",
+                subject: subjectName || "Standalone subject",
+                mode: isUntimed ? "untimed" : "timed",
+                path:
+                  searchParams.get("path") === "subject" ? "subject" : "exam",
+                year: year || undefined,
+                simulationSeed: simulationSeed || undefined,
+                startedAt,
+                questionIds: questions.map(
+                  (question) => question.sourceQuestionId,
+                ),
+              }),
+            },
+          ),
+          apiClient<AiAllowance>("/api/v1/ai/tutor/quiz/allowance"),
+        ]);
+        if (!cancelled) {
+          setQuizSessionId(session.id);
+          setAiAllowance(allowance);
+          setQuizSessionError(null);
+        }
+      } catch (error) {
+        if (!cancelled)
+          setQuizSessionError(
+            error instanceof Error
+              ? error.message
+              : "The quiz session could not be started.",
+          );
+      }
+    };
+    void startSession();
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    clientAttemptId,
+    isAuthenticated,
+    isUntimed,
+    questions,
+    quizSessionId,
+    searchParams,
+    simulationSeed,
+    examName,
+    subjectName,
+    year,
+    startedAt,
+  ]);
   const answeredCount = Object.keys(answers).length;
   const flaggedCount = Object.values(flagged).filter(Boolean).length;
   const unansweredCount = questions.length - answeredCount;
   const correctCount = Object.values(feedback).filter(
     (value) => value === "correct",
   ).length;
-
-  const textToRead = `Question ${currentIndex + 1}. ${currentQ.text.replace(/<[^>]*>/g, " ")}. Options: ${currentQ.options.map((opt, i) => `${String.fromCharCode(65 + i)}: ${opt.replace(/<[^>]*>/g, " ")}`).join(". ")}.`;
+  const hasAiAllowance =
+    !aiAllowance ||
+    (aiAllowance.requestsRemaining > 0 && aiAllowance.tokensRemaining > 0);
 
   useEffect(() => {
     if (isUntimed || secondsLeft <= 0) return;
@@ -284,49 +369,81 @@ function ActiveQuizContent() {
   };
 
   const requestAiHint = async () => {
-    if (aiHints[currentQ.id]) return;
+    if (aiHints[currentQ.id] || !quizSessionId) return;
     setIsAiLoading(true);
     try {
-      await Promise.all([
-        new Promise((resolve) => window.setTimeout(resolve, 1500)),
-        isAuthenticated
-          ? apiClient("/api/v1/learning/ai-hints", {
-              method: "POST",
-              body: JSON.stringify({
-                subject: searchParams.get("subjectName") || "Selected subject",
-                examType: searchParams.get("examName") || undefined,
-                mode: isUntimed ? "untimed" : "timed",
-              }),
-            })
-          : Promise.resolve(),
-      ]);
+      const result = await apiClient<{
+        hint: string;
+        allowance: AiAllowance;
+      }>("/api/v1/ai/tutor/quiz/hint", {
+        method: "POST",
+        body: JSON.stringify({
+          sessionId: quizSessionId,
+          questionId: currentQ.sourceQuestionId,
+          selectedAnswer: answers[currentQ.id] || undefined,
+        }),
+      });
       setAiHints((prev) => ({
         ...prev,
-        [currentQ.id]: `Here's a hint for question ${currentQ.id}: Try isolating the variable step by step, or remember the key formula for this topic. Notice how the options are structured.`,
+        [currentQ.id]: result.hint,
       }));
-    } catch {
+      setAiAllowance(result.allowance);
+    } catch (error) {
       showFeedback({
         kind: "error",
         title: "Hint could not load",
-        message: "Please check your connection and try again.",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Please check your connection and try again.",
       });
     } finally {
       setIsAiLoading(false);
     }
   };
 
-  const askAiFollowUp = (): void => {
+  const askAiFollowUp = async (): Promise<void> => {
     const question = aiInput.trim();
-    if (!question || isAiLoading) return;
+    if (!question || isAiLoading || !quizSessionId) return;
     setAiInput("");
     setAiConversation((prev) => ({
       ...prev,
-      [currentQ.id]: [
-        ...(prev[currentQ.id] ?? []),
-        `You: ${question}`,
-        "Preppal AI: Good question. Break the problem into smaller steps and compare your working with each answer option. I can help you reason through the next step.",
-      ],
+      [currentQ.id]: [...(prev[currentQ.id] ?? []), `You: ${question}`],
     }));
+    setIsAiLoading(true);
+    try {
+      const result = await apiClient<{
+        answer: string;
+        allowance: AiAllowance;
+      }>("/api/v1/ai/tutor/quiz/ask", {
+        method: "POST",
+        body: JSON.stringify({
+          sessionId: quizSessionId,
+          questionId: currentQ.sourceQuestionId,
+          selectedAnswer: answers[currentQ.id] || undefined,
+          message: question,
+        }),
+      });
+      setAiConversation((prev) => ({
+        ...prev,
+        [currentQ.id]: [
+          ...(prev[currentQ.id] ?? []),
+          `Preppal AI: ${result.answer}`,
+        ],
+      }));
+      setAiAllowance(result.allowance);
+    } catch (error) {
+      showFeedback({
+        kind: "error",
+        title: "Preppal AI could not answer",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Please check your connection and try again.",
+      });
+    } finally {
+      setIsAiLoading(false);
+    }
   };
 
   const confirmExit = (): void => {
@@ -334,7 +451,7 @@ function ActiveQuizContent() {
       void submitQuiz();
       return;
     }
-    router.push("/quiz/preview");
+    router.push(`/quiz/preview?${searchParams.toString()}`);
   };
 
   const submitQuiz = async (): Promise<void> => {
@@ -351,12 +468,12 @@ function ActiveQuizContent() {
       : TOTAL_SECONDS - secondsLeft;
     const attempt = {
       id: clientAttemptId,
-      subject: searchParams.get("subjectName") || "Selected subject",
-      exam: searchParams.get("examName") || "Standalone practice",
+      subject: subjectName || "Standalone subject",
+      exam: examName || "Standalone practice",
       mode: (isUntimed ? "untimed" : "timed") as "timed" | "untimed",
       path: (searchParams.get("path") === "subject" ? "subject" : "exam") as
         "exam" | "subject",
-      year: searchParams.get("year") || undefined,
+      year: year || undefined,
       score,
       total: questions.length,
       correct,
@@ -364,6 +481,17 @@ function ActiveQuizContent() {
       durationSeconds,
       answers,
       seed: simulationSeed || undefined,
+      context: {
+        examId: searchParams.get("exam") || undefined,
+        subjectId: selectedSubjectId || undefined,
+        examName: examName || undefined,
+        subjectName: subjectName || undefined,
+        yearLink: yearLink || undefined,
+        difficulty: difficulty || undefined,
+        topicIds: topicIds || undefined,
+        topics: searchParams.get("topics") || undefined,
+      },
+      questions,
     };
 
     if (!isAuthenticated) {
@@ -377,6 +505,7 @@ function ActiveQuizContent() {
       const result = await apiClient<{
         id: string;
         completedAt: string;
+        xpAwarded: number;
         progress: Parameters<typeof setLevelProgress>[0] | null;
       }>("/api/v1/learning/quiz-sessions", {
         method: "POST",
@@ -394,6 +523,7 @@ function ActiveQuizContent() {
           durationSeconds: attempt.durationSeconds,
           startedAt,
           answers,
+          context: attempt.context,
         }),
       });
       if (result.progress) setLevelProgress(result.progress);
@@ -402,6 +532,13 @@ function ActiveQuizContent() {
         id: result.id,
         date: result.completedAt ?? completedAt,
       });
+      if (result.xpAwarded > 0) {
+        showFeedback({
+          kind: "reward",
+          title: "Quiz reward earned!",
+          message: `You earned ${result.xpAwarded.toLocaleString()} XP for completing this quiz. Keep practising to earn more.`,
+        });
+      }
       router.push("/quiz/results");
     } catch (error) {
       showFeedback({
@@ -421,7 +558,7 @@ function ActiveQuizContent() {
     return (
       <div className="bg-background min-h-screen">
         <LoadingModal
-          description="Loading the questions prepared for this subject and year."
+          description="Loading the published questions for your selected practice setup."
           open
           title="Preparing your quiz"
         />
@@ -438,7 +575,7 @@ function ActiveQuizContent() {
           </h1>
           <p className="text-muted-foreground mt-2 text-sm leading-6">
             {questionQuery.error?.message ??
-              "This subject and year are set up, but no published questions are available yet."}
+              "No published questions are available for this practice selection yet."}
           </p>
           <button
             className="bg-primary text-primary-foreground mt-5 h-10 rounded-xl px-5 text-sm font-semibold"
@@ -461,6 +598,9 @@ function ActiveQuizContent() {
         onExit={() => setShowExitModal(true)}
         isUntimed={isUntimed}
         correctCount={correctCount}
+        examName={path === "EXAM" ? examName || undefined : undefined}
+        subjectName={subjectName || undefined}
+        year={path === "EXAM" ? year || undefined : undefined}
         onSubmit={() =>
           isUntimed ? setShowExitModal(true) : setShowSubmitModal(true)
         }
@@ -499,7 +639,7 @@ function ActiveQuizContent() {
               onNavigate={goTo}
             />
 
-            {isUntimed && showAiPanel && (
+            {showAiPanel && (
               <div
                 className="fixed right-4 bottom-4 z-50 w-[calc(100vw-2rem)] max-w-md overflow-hidden rounded-2xl border border-violet-300/30 bg-[#3a2b68] p-4 text-white shadow-[0_16px_36px_rgb(76_45_180/0.24)] sm:right-[max(1.5rem,calc((100vw-640px)/2))] sm:bottom-6 sm:p-5"
                 style={{
@@ -532,6 +672,27 @@ function ActiveQuizContent() {
                   </button>
                 </div>
 
+                {aiAllowance ? (
+                  <div className="mb-3 flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-[10px] text-violet-100/75">
+                    <span>Today&apos;s plan allowance</span>
+                    <span className="font-semibold text-white">
+                      {aiAllowance.requestsRemaining} of{" "}
+                      {aiAllowance.requestLimit} requests left
+                    </span>
+                  </div>
+                ) : null}
+                {aiAllowance && !hasAiAllowance ? (
+                  <p className="mb-3 rounded-lg bg-amber-300/15 px-3 py-2 text-[11px] leading-4 text-amber-100">
+                    You have reached today&apos;s AI allowance for your plan. It
+                    resets tomorrow, or you can upgrade for a larger allowance.
+                  </p>
+                ) : null}
+                {quizSessionError ? (
+                  <p className="mb-3 rounded-lg bg-rose-400/15 px-3 py-2 text-[11px] leading-4 text-rose-100">
+                    {quizSessionError}
+                  </p>
+                ) : null}
+
                 {aiHints[currentQ.id] || aiConversation[currentQ.id]?.length ? (
                   <div className="mb-3 max-h-40 space-y-2 overflow-y-auto rounded-xl border border-white/10 bg-black/20 p-3 text-xs leading-5">
                     {aiHints[currentQ.id] ? (
@@ -556,7 +717,7 @@ function ActiveQuizContent() {
                     type="button"
                     className="mx-auto mt-3 mb-3 flex h-9 w-[60%] items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/90 text-sm font-semibold text-violet-900 transition-colors hover:bg-white"
                     onClick={requestAiHint}
-                    disabled={isAiLoading}
+                    disabled={isAiLoading || !quizSessionId || !hasAiAllowance}
                   >
                     <Lightbulb className="size-4" />
                     {isAiLoading ? "Thinking..." : "Get a hint"}
@@ -568,7 +729,7 @@ function ActiveQuizContent() {
                     className="min-w-0 flex-1 rounded-xl bg-white/10 px-3 py-2.5 text-xs text-white ring-1 ring-white/15 outline-none placeholder:text-violet-200/60 focus:ring-violet-300"
                     onChange={(event) => setAiInput(event.target.value)}
                     onKeyDown={(event) => {
-                      if (event.key === "Enter") askAiFollowUp();
+                      if (event.key === "Enter") void askAiFollowUp();
                     }}
                     placeholder="Ask a follow-up question..."
                     value={aiInput}
@@ -576,8 +737,13 @@ function ActiveQuizContent() {
                   <button
                     aria-label="Send question to AI"
                     className="grid size-9 shrink-0 place-items-center rounded-xl bg-violet-400 text-white shadow-lg shadow-violet-950/30 disabled:opacity-50"
-                    disabled={!aiInput.trim()}
-                    onClick={askAiFollowUp}
+                    disabled={
+                      !aiInput.trim() ||
+                      isAiLoading ||
+                      !quizSessionId ||
+                      !hasAiAllowance
+                    }
+                    onClick={() => void askAiFollowUp()}
                     type="button"
                   >
                     <Send className="size-3.5" />
@@ -593,10 +759,11 @@ function ActiveQuizContent() {
                   questionId={currentQ.id}
                 />
               </div>
-              {isUntimed && !showAiPanel ? (
+              {!showAiPanel && isAuthenticated ? (
                 <button
                   aria-label="Ask Preppal AI"
                   className="bg-surface text-primary border-primary/30 shadow-primary/10 mb-0 flex w-full shrink-0 items-center justify-center gap-2 rounded-xl border px-4 py-3 text-[.8rem] font-semibold whitespace-nowrap shadow-lg transition-transform hover:-translate-y-0.5 sm:w-auto"
+                  disabled={!quizSessionId}
                   onClick={() => setShowAiPanel(true)}
                   type="button"
                 >

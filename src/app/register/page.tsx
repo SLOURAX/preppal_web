@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState, type FormEvent } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui";
 import { useFeedback } from "@/components/ui";
@@ -17,7 +18,6 @@ import { ListSelect } from "@/components/ui/list-select";
 import {
   AuthHeader,
   CheckboxField,
-  EXAM_GOALS,
   FormField,
   LEARNING_LEVELS,
   PasswordField,
@@ -27,6 +27,7 @@ import {
 } from "@/features/auth";
 import { useAuthStore } from "@/store";
 import { apiClient } from "@/lib/api/client";
+import type { QuizCatalog } from "@/features/quiz/quiz-catalog";
 
 function RegisterContent() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -43,6 +44,15 @@ function RegisterContent() {
   const [verificationEmail, setVerificationEmail] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
   const { showFeedback } = useFeedback();
+  const catalogQuery = useQuery({
+    queryKey: ["quiz", "catalog"],
+    queryFn: () => apiClient<QuizCatalog>("/api/v1/question-bank/catalog"),
+  });
+  const examGoalOptions =
+    catalogQuery.data?.exams.map((exam) => ({
+      value: exam.name,
+      label: exam.name,
+    })) ?? [];
 
   useEffect(() => {
     if (isAuthenticated) router.replace(returnTo);
@@ -269,11 +279,14 @@ function RegisterContent() {
             id="exam-goal"
             label="Primary exam goal"
             onChange={setExamGoal}
-            options={EXAM_GOALS.map((option) => ({
-              value: option,
-              label: option,
-            }))}
-            placeholder="Choose an exam"
+            options={examGoalOptions}
+            placeholder={
+              catalogQuery.isLoading
+                ? "Loading available exams…"
+                : examGoalOptions.length
+                  ? "Choose an exam"
+                  : "No exams available"
+            }
             compact
             value={examGoal}
             labelClassName="text-xs"

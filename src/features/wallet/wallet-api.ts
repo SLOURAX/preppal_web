@@ -72,6 +72,12 @@ export function formatWalletDate(value: string): string {
   }).format(new Date(value));
 }
 
+export function formatTransactionLabel(value: string): string {
+  const label = value.trim();
+  if (!label) return label;
+  return label.charAt(0).toLocaleUpperCase() + label.slice(1);
+}
+
 export function formatWalletAmount(
   amount: number,
   asset: WalletAsset,

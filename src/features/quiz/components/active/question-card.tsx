@@ -1,6 +1,6 @@
 "use client";
 
-import { Info } from "lucide-react";
+import { Bot, Info } from "lucide-react";
 import { SaxFlag2Bulk } from "@meysam213/iconsax-react";
 import { cn } from "@/lib/utils";
 import { AnswerOption } from "./answer-option";
@@ -97,8 +97,8 @@ export function QuestionCard({
         ) : null}
         {question.passage ? (
           <div className="bg-surface-subtle mb-4 rounded-xl p-3 sm:p-4">
-            <p className="text-muted-foreground mb-2 text-[.58rem] font-bold tracking-wide uppercase">
-              Read the passage
+            <p className="text-muted-foreground mb-2 text-[.7rem] font-bold flex flex-row gap-1 tracking-wide uppercase">
+              <Bot className="size-3.5" /> Read
             </p>
             <div
               className="rich-content text-foreground text-[.76rem] leading-6"

@@ -15,6 +15,7 @@ import { DataState } from "@/components/ui";
 import {
   formatWalletDate,
   formatWalletAmount,
+  formatTransactionLabel,
   useWalletActivity,
   type WalletAsset,
   type WalletRange,
@@ -205,7 +206,7 @@ export function WalletHistoryTab() {
                     </span>
                     <div className="min-w-0">
                       <p className="text-foreground truncate text-sm font-semibold">
-                        {transaction.label}
+                        {formatTransactionLabel(transaction.label)}
                       </p>
                       <p className="text-muted-foreground text-xs">
                         {formatWalletDate(transaction.createdAt)}

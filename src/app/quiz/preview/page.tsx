@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   BookOpen,
   Clock3,
@@ -13,46 +14,118 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui";
 import { useAuthStore } from "@/store";
+import { apiClient } from "@/lib/api/client";
+
+interface QuestionAvailability {
+  readonly total: number;
+  readonly byDifficulty: Partial<Record<"EASY" | "MEDIUM" | "HARD", number>>;
+}
 
 function QuizPreviewContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const mode = searchParams.get("mode") || "timed";
+  const mode = searchParams.get("mode") || "";
   const isUntimed = mode === "untimed";
   const maxQuestionsPerQuiz = useAuthStore(
     (state) => state.membership?.entitlements?.maxQuestionsPerQuiz ?? 20,
   );
-  const timedQuestionCount = Math.min(40, maxQuestionsPerQuiz);
+  const path = searchParams.get("path") === "subject" ? "STANDALONE" : "EXAM";
+  const selectedSubjectId = searchParams.get("subject") ?? "";
+  const yearLink = searchParams.get("yearLink") ?? "";
+  const difficulty = searchParams.get("difficulty") ?? "";
+  const topicIds = searchParams.get("topicIds") ?? "";
+  const availabilityQuery = useQuery({
+    queryKey: [
+      "quiz",
+      "availability",
+      path,
+      selectedSubjectId,
+      yearLink,
+      difficulty,
+      topicIds,
+    ],
+    enabled:
+      Boolean(selectedSubjectId) &&
+      (path === "STANDALONE" || Boolean(yearLink)),
+    queryFn: () => {
+      const params = new URLSearchParams({ path });
+      if (path === "EXAM") params.set("examSubjectId", selectedSubjectId);
+      else params.set("subjectId", selectedSubjectId);
+      if (yearLink) params.set("examSubjectYearId", yearLink);
+      if (difficulty) params.set("difficulty", difficulty.toUpperCase());
+      if (topicIds) params.set("topicIds", topicIds);
+      return apiClient<QuestionAvailability>(
+        `/api/v1/question-bank/availability?${params}`,
+      );
+    },
+  });
+  const availableQuestionCount = availabilityQuery.data?.total ?? 0;
+  const timedQuestionCount = Math.min(
+    40,
+    maxQuestionsPerQuiz,
+    availableQuestionCount,
+  );
 
-  const subject =
-    searchParams.get("subjectName") ||
-    searchParams.get("subject") ||
-    "Mathematics";
-  const exam =
-    searchParams.get("examName") || searchParams.get("exam") || "JAMB";
-  const year = searchParams.get("year") || "2023";
-  const [questionCount, setQuestionCount] = useState<number>(10);
+  const subject = searchParams.get("subjectName") || "";
+  const exam = searchParams.get("examName") || "";
+  const year = searchParams.get("year") || "";
+  const requestedCount = Number(searchParams.get("count") || 10);
+  const [questionCount, setQuestionCount] = useState<number>(() =>
+    Number.isFinite(requestedCount) ? Math.max(1, requestedCount) : 10,
+  );
+  const practiceCountOptions = Array.from(
+    new Set([
+      Math.min(5, availableQuestionCount, maxQuestionsPerQuiz),
+      10,
+      15,
+      20,
+      30,
+    ]),
+  ).filter(
+    (count) =>
+      count > 0 &&
+      count <= maxQuestionsPerQuiz &&
+      count <= availableQuestionCount,
+  );
+  useEffect(() => {
+    if (availableQuestionCount > 0) {
+      setQuestionCount((current) =>
+        Math.min(current, maxQuestionsPerQuiz, availableQuestionCount),
+      );
+    }
+  }, [availableQuestionCount, maxQuestionsPerQuiz]);
 
-  const EXAM_STATS = [
-    { icon: BookOpen, label: "Exam", value: exam },
+  const previewStats = [
+    ...(exam ? [{ icon: BookOpen, label: "Exam", value: exam }] : []),
     {
       icon: FileText,
       label: "Questions",
-      value: isUntimed ? String(questionCount) : String(timedQuestionCount),
+      value: availabilityQuery.isLoading
+        ? "Checking…"
+        : isUntimed
+          ? String(questionCount)
+          : String(timedQuestionCount),
     },
-    {
-      icon: Zap,
-      label: "Mode",
-      value: isUntimed ? "Practice Playground" : "Timed Simulation",
-    },
-    {
-      icon: Clock3,
-      label: "Time Limit",
-      value: isUntimed ? "None" : "45 mins",
-    },
-    { icon: BookOpen, label: "Year", value: year },
-    { icon: ShieldCheck, label: "Subject", value: subject },
+    ...(mode
+      ? [
+          {
+            icon: Zap,
+            label: "Mode",
+            value: isUntimed ? "Practice Playground" : "Timed Simulation",
+          },
+        ]
+      : []),
+    ...(mode === "timed"
+      ? [{ icon: Clock3, label: "Time Limit", value: "45 mins" }]
+      : []),
+    ...(year ? [{ icon: BookOpen, label: "Year", value: year }] : []),
+    ...(subject
+      ? [{ icon: ShieldCheck, label: "Subject", value: subject }]
+      : []),
+    ...(difficulty
+      ? [{ icon: ShieldCheck, label: "Difficulty", value: difficulty }]
+      : []),
   ];
 
   const INSTRUCTIONS = isUntimed
@@ -64,7 +137,7 @@ function QuizPreviewContent() {
         "Use the question grid on the right to jump between questions at any time.",
       ]
     : [
-        `This exam consists of ${timedQuestionCount} multiple-choice questions to be completed in 45 minutes.`,
+        `This ${path === "EXAM" ? "exam" : "practice session"} consists of ${timedQuestionCount} multiple-choice questions to be completed in 45 minutes.`,
         "Each question carries equal marks. There is no negative marking.",
         "You can flag any question and return to it before submitting.",
         "The exam will auto-submit when time expires — make sure to answer all questions.",
@@ -77,12 +150,12 @@ function QuizPreviewContent() {
       <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-6 sm:px-8 sm:py-8">
         <div className="mb-5 text-center">
           <h1 className="text-foreground mt-2 text-xl font-bold tracking-tight capitalize sm:text-3xl">
-            Exam Preview
+            {path === "EXAM" ? "Exam Preview" : "Practice Preview"}
           </h1>
         </div>
 
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {EXAM_STATS.map(({ icon: Icon, label, value }) => (
+          {previewStats.map(({ icon: Icon, label, value }) => (
             <div
               key={label}
               className="bg-surface-subtle flex items-center gap-3 rounded-2xl p-3 text-left"
@@ -124,26 +197,42 @@ function QuizPreviewContent() {
                 role="group"
                 aria-label="Number of questions"
               >
-                {[5, 10, 15, 20, 30]
-                  .filter((count) => count <= maxQuestionsPerQuiz)
-                  .map((count) => (
-                    <button
-                      key={count}
-                      type="button"
-                      aria-pressed={questionCount === count}
-                      onClick={() => setQuestionCount(count)}
-                      className={`rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
-                        questionCount === count
-                          ? "bg-primary text-primary-foreground shadow-sm"
-                          : "bg-surface-subtle text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      {count}
-                    </button>
-                  ))}
+                {practiceCountOptions.map((count) => (
+                  <button
+                    key={count}
+                    type="button"
+                    aria-pressed={questionCount === count}
+                    onClick={() => setQuestionCount(count)}
+                    className={`rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
+                      questionCount === count
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "bg-surface-subtle text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {count}
+                  </button>
+                ))}
               </div>
             </div>
           </section>
+        ) : null}
+
+        {availabilityQuery.isLoading ? (
+          <div className="bg-surface-subtle text-muted-foreground mt-5 rounded-2xl p-4 text-sm">
+            Checking available published questions…
+          </div>
+        ) : null}
+        {availabilityQuery.isError ||
+        (!availabilityQuery.isLoading && availableQuestionCount === 0) ? (
+          <div className="mt-5 rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4">
+            <p className="text-foreground text-sm font-semibold">
+              No published questions are available for this selection yet.
+            </p>
+            <p className="text-muted-foreground mt-1 text-xs leading-5">
+              Go back and choose another available subject, year, difficulty, or
+              topic. You will not be sent into an empty quiz.
+            </p>
+          </div>
         ) : null}
 
         <div className="surface-card mt-5 rounded-3xl p-5 sm:p-6">
@@ -192,6 +281,11 @@ function QuizPreviewContent() {
             Cancel
           </button>
           <Button
+            disabled={
+              availabilityQuery.isLoading ||
+              availabilityQuery.isError ||
+              availableQuestionCount === 0
+            }
             onClick={() => {
               const params = new URLSearchParams(searchParams.toString());
               if (isUntimed) params.set("count", String(questionCount));

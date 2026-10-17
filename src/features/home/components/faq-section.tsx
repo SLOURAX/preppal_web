@@ -12,29 +12,34 @@ interface FaqItem {
 
 const FAQS: readonly FaqItem[] = [
   {
-    question: "How does the AI quiz generation work?",
+    question: "Which exams, subjects, and questions can I practise?",
     answer:
-      "Preppal's AI analyses your selected subject and difficulty level, then generates fresh, unique questions every session. After each answer you get an instant AI-written explanation so you understand exactly where you went right or wrong.",
+      "Preppal only shows exams and subjects that currently have published questions. Choose an exam for structured practice by subject and year, or choose standalone subject practice by difficulty and topic. The available catalog updates automatically as new questions are published.",
   },
   {
-    question: "Are the prizes and rewards real?",
+    question: "What can I ask Preppal AI, and are there usage limits?",
     answer:
-      "Yes — you earn XP from eligible learning activities, then convert XP into withdrawable Preppal Coins. Coins can be used for real-world rewards including gift cards and Preppal Premium subscriptions. Rewards are credited within 24 hours of redemption.",
+      "During supported quizzes, Ask Preppal AI can explain the current question, respond to your follow-up, and help you understand the reasoning without replacing your learning. AI allowances depend on your plan and reset daily. Preppal will notify you clearly whenever you reach your limit.",
   },
   {
-    question: "Is Preppal free to use?",
+    question: "What is included in Free, Monthly, and Annual plans?",
     answer:
-      "Our core features — daily quizzes, leaderboards, streaks, XP earning, and XP-to-coin conversion — are completely free. Preppal Premium unlocks unlimited mock exams, advanced AI analytics, and exclusive reward tiers.",
+      "Free includes a daily quiz allowance, essential progress tracking, and limited AI explanations. Monthly and Annual unlock unlimited practice quizzes, larger quizzes, more daily AI help, advanced analytics, ad-free learning, personalised recommendations, and eligible quiz XP bonuses. The pricing page always shows the current limits and benefits before you subscribe.",
   },
   {
-    question: "How do daily streaks work?",
+    question: "What is the difference between XP, Preppal Coins, and deposited funds?",
     answer:
-      "Log in and complete at least one quiz per day to keep your streak alive. Streaks can provide XP bonuses on eligible activities, helping you reach your next coin conversion sooner.",
+      "XP is earned from eligible learning and reward activities. Eligible XP can be converted into Preppal Coins at the rate shown in your Wallet, and Coins can be redeemed or withdrawn when your account meets the applicable requirements. Deposited funds are separate spend-only money: they can pay for plans and marketplace items but cannot be withdrawn as cash.",
   },
   {
-    question: "Which exams and subjects does Preppal cover?",
+    question: "How can I pay for a subscription, and does it renew automatically?",
     answer:
-      "Preppal covers a wide range of subjects including Biology, Chemistry, Physics, Mathematics, English, Computer Science, Economics, and General Knowledge. Exam-focused tracks for WAEC, JAMB, SAT, and more are actively being added.",
+      "At checkout, you can use your spend-only deposited balance when it is sufficient or continue through the available external payment option. Monthly and Annual plans are prepaid and do not renew automatically. Your access remains active until its displayed expiry date, and you can renew when you are ready.",
+  },
+  {
+    question: "How do Streak Freezes, Double XP, and simulation credits work?",
+    answer:
+      "You can buy available power-ups in the Marketplace with spend-only deposited funds. A Streak Freeze is used automatically after an eligible missed check-in to protect your streak. A Double XP booster increases progress XP on eligible activities for its active period, but booster bonus XP is not convertible into Coins. Simulation credits unlock supported paid exam simulations and are consumed when a simulation is reserved or used.",
   },
 ] as const;
 

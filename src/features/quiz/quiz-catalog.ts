@@ -1,7 +1,15 @@
+export interface QuizQuestionCounts {
+  readonly total: number;
+  readonly EASY: number;
+  readonly MEDIUM: number;
+  readonly HARD: number;
+}
+
 export interface QuizCatalogTopic {
   readonly id: string;
   readonly name: string;
   readonly slug: string;
+  readonly questionCounts: QuizQuestionCounts;
 }
 
 export interface QuizCatalogSubject {
@@ -10,6 +18,7 @@ export interface QuizCatalogSubject {
   readonly slug: string;
   readonly description?: string;
   readonly topics: readonly QuizCatalogTopic[];
+  readonly questionCounts: QuizQuestionCounts;
 }
 
 export interface QuizCatalogExamSubject {
@@ -20,7 +29,9 @@ export interface QuizCatalogExamSubject {
   readonly years: readonly {
     readonly id: string;
     readonly examYear: { readonly id: string; readonly year: number };
+    readonly questionCounts: QuizQuestionCounts;
   }[];
+  readonly questionCounts: QuizQuestionCounts;
 }
 
 export interface QuizCatalogExam {

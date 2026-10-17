@@ -1,68 +1,21 @@
 "use client";
 
-import { ArrowRight, BookOpen } from "lucide-react";
-import { useState } from "react";
+import { ArrowRight, BookOpen, LoaderCircle } from "lucide-react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 import { ListSelect } from "@/components/ui/list-select";
 import { useAuthStore } from "@/store";
+import { apiClient } from "@/lib/api/client";
+import type { QuizCatalog } from "@/features/quiz/quiz-catalog";
 
-const SUBJECTS = [
-  {
-    name: "Mathematics",
-    progress: 72,
-    quizzes: 8,
-    icon: "∑",
-    color: "bg-blue-500/10 text-blue-600",
-  },
-  {
-    name: "English Language",
-    progress: 85,
-    quizzes: 12,
-    icon: "A",
-    color: "bg-violet-500/10 text-violet-600",
-  },
-  {
-    name: "Physics",
-    progress: 54,
-    quizzes: 5,
-    icon: "⚡",
-    color: "bg-amber-500/10 text-amber-600",
-  },
-  {
-    name: "Chemistry",
-    progress: 91,
-    quizzes: 10,
-    icon: "⚗",
-    color: "bg-emerald-500/10 text-emerald-600",
-  },
-  {
-    name: "Biology",
-    progress: 63,
-    quizzes: 7,
-    icon: "🧬",
-    color: "bg-green-500/10 text-green-600",
-  },
-  {
-    name: "Government",
-    progress: 38,
-    quizzes: 3,
-    icon: "🏛",
-    color: "bg-rose-500/10 text-rose-600",
-  },
-  {
-    name: "Economics",
-    progress: 47,
-    quizzes: 4,
-    icon: "📈",
-    color: "bg-orange-500/10 text-orange-600",
-  },
-  {
-    name: "Literature",
-    progress: 29,
-    quizzes: 2,
-    icon: "📖",
-    color: "bg-pink-500/10 text-pink-600",
-  },
+const SUBJECT_STYLES = [
+  "bg-blue-500/10 text-blue-600",
+  "bg-violet-500/10 text-violet-600",
+  "bg-amber-500/10 text-amber-600",
+  "bg-emerald-500/10 text-emerald-600",
+  "bg-rose-500/10 text-rose-600",
+  "bg-orange-500/10 text-orange-600",
 ] as const;
 
 function ProgressBar({ value }: { value: number }) {
@@ -84,11 +37,18 @@ function ProgressBar({ value }: { value: number }) {
 
 export function SubjectsTab() {
   const attempts = useAuthStore((state) => state.quizAttempts);
-  const [selectedSubject, setSelectedSubject] = useState<string>(
-    SUBJECTS[0].name,
+  const catalogQuery = useQuery({
+    queryKey: ["quiz", "catalog"],
+    queryFn: () => apiClient<QuizCatalog>("/api/v1/question-bank/catalog"),
+  });
+  const subjects = (catalogQuery.data?.standaloneSubjects ?? []).slice(0, 6);
+  const [selectedSubject, setSelectedSubject] = useState<string>("");
+  useEffect(() => {
+    if (!selectedSubject && subjects[0]) setSelectedSubject(subjects[0].id);
+  }, [selectedSubject, subjects]);
+  const selectedSubjectDetails = subjects.find(
+    (subject) => subject.id === selectedSubject,
   );
-  const selectedSubjectDetails =
-    SUBJECTS.find((subject) => subject.name === selectedSubject) ?? SUBJECTS[0];
 
   return (
     <div className="space-y-6">
@@ -100,84 +60,108 @@ export function SubjectsTab() {
           </p>
         </div>
         <Link
-          href="/quiz"
-          className="bg-primary text-primary-foreground hover:bg-primary/90 hidden items-center gap-2 rounded-full px-3.5 py-2 text-xs font-semibold transition-colors sm:flex"
+          href="/quiz?path=subject"
+          className="border-primary/25 text-primary hover:bg-primary/5 inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-xs font-semibold transition-colors"
         >
-          <BookOpen className="size-4" /> Practice
+          <BookOpen className="size-4" /> View all
         </Link>
       </div>
 
-      <div className="space-y-3 sm:hidden">
-        <ListSelect
-          onChange={setSelectedSubject}
-          options={SUBJECTS.map((subject) => ({
-            label: subject.name,
-            value: subject.name,
-          }))}
-          placeholder="Choose a subject"
-          showOptionDescriptions={false}
-          value={selectedSubject}
-        />
-        <Link
-          className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition-colors"
-          href={`/quiz?path=subject&choice=${encodeURIComponent(selectedSubjectDetails.name.toLowerCase().replace(/\s+/g, "-"))}`}
-        >
-          Practice {selectedSubjectDetails.name}{" "}
-          <ArrowRight className="size-4" />
-        </Link>
-      </div>
-
-      <div className="hidden gap-3 sm:grid sm:grid-cols-2 lg:grid-cols-3">
-        {SUBJECTS.map((subject) => {
-          const subjectAttempts = attempts.filter(
-            (attempt) =>
-              attempt.subject.toLowerCase() === subject.name.toLowerCase(),
-          );
-          const progress = subjectAttempts.length
-            ? Math.round(
-                subjectAttempts.reduce(
-                  (sum, attempt) => sum + attempt.score,
-                  0,
-                ) / subjectAttempts.length,
-              )
-            : 0;
-          return (
-            <div
-              key={subject.name}
-              className="surface-card group flex flex-col gap-3 p-4"
-            >
-              <div className="flex items-center justify-between">
-                <span
-                  className={`grid size-10 place-items-center rounded-xl text-lg ${subject.color}`}
-                >
-                  {subject.icon}
-                </span>
-                <span className="text-muted-foreground text-[11px] font-medium">
-                  {subjectAttempts.length || "No"}{" "}
-                  {subjectAttempts.length === 1 ? "quiz" : "quizzes"}
-                </span>
-              </div>
-              <div>
-                <p className="text-foreground text-xs font-semibold sm:text-sm">
-                  {subject.name}
-                </p>
-                <div className="mt-2 flex items-center justify-between gap-2">
-                  <ProgressBar value={progress} />
-                  <span className="text-muted-foreground shrink-0 text-[11px] font-bold">
-                    {progress ? `${progress}%` : "Not started"}
-                  </span>
-                </div>
-              </div>
+      {catalogQuery.isLoading ? (
+        <div className="text-muted-foreground flex min-h-32 items-center justify-center gap-2 text-xs">
+          <LoaderCircle className="text-primary size-5 animate-spin" /> Loading
+          available subjects…
+        </div>
+      ) : catalogQuery.isError ? (
+        <div className="surface-card text-muted-foreground p-5 text-center text-xs">
+          Available subjects could not be loaded. Please try again shortly.
+        </div>
+      ) : subjects.length === 0 ? (
+        <div className="surface-card p-5 text-center">
+          <p className="text-foreground text-sm font-semibold">
+            No subjects are ready for practice yet
+          </p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            Subjects will appear here once they have published questions.
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="space-y-3 sm:hidden">
+            <ListSelect
+              onChange={setSelectedSubject}
+              options={subjects.map((subject) => ({
+                label: subject.name,
+                value: subject.id,
+              }))}
+              placeholder="Choose a subject"
+              showOptionDescriptions={false}
+              value={selectedSubject}
+            />
+            {selectedSubjectDetails ? (
               <Link
-                href={`/quiz?path=subject&choice=${encodeURIComponent(subject.name.toLowerCase().replace(/\s+/g, "-"))}`}
-                className="text-primary group-hover:text-primary/80 flex items-center gap-1 text-[11px] font-semibold transition-colors"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition-colors"
+                href={`/quiz?path=subject&choice=${encodeURIComponent(selectedSubjectDetails.id)}`}
               >
-                Practice <ArrowRight className="size-3" />
+                Practice {selectedSubjectDetails.name}{" "}
+                <ArrowRight className="size-4" />
               </Link>
-            </div>
-          );
-        })}
-      </div>
+            ) : null}
+          </div>
+
+          <div className="hidden gap-3 sm:grid sm:grid-cols-2 lg:grid-cols-3">
+            {subjects.map((subject, index) => {
+              const subjectAttempts = attempts.filter(
+                (attempt) =>
+                  attempt.subject.toLowerCase() === subject.name.toLowerCase(),
+              );
+              const progress = subjectAttempts.length
+                ? Math.round(
+                    subjectAttempts.reduce(
+                      (sum, attempt) => sum + attempt.score,
+                      0,
+                    ) / subjectAttempts.length,
+                  )
+                : 0;
+              return (
+                <div
+                  key={subject.name}
+                  className="surface-card group flex flex-col gap-3 p-4"
+                >
+                  <div className="flex items-center justify-between">
+                    <span
+                      className={`grid size-10 place-items-center rounded-xl text-sm font-bold ${SUBJECT_STYLES[index % SUBJECT_STYLES.length]}`}
+                    >
+                      {subject.name.charAt(0).toUpperCase()}
+                    </span>
+                    <span className="text-muted-foreground text-[11px] font-medium">
+                      {subjectAttempts.length || "No"}{" "}
+                      {subjectAttempts.length === 1 ? "quiz" : "quizzes"}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-foreground text-xs font-semibold sm:text-sm">
+                      {subject.name}
+                    </p>
+                    <div className="mt-2 flex items-center justify-between gap-2">
+                      <ProgressBar value={progress} />
+                      <span className="text-muted-foreground shrink-0 text-[11px] font-bold">
+                        {progress ? `${progress}%` : "Not started"}
+                      </span>
+                    </div>
+                  </div>
+                  <Link
+                    href={`/quiz?path=subject&choice=${encodeURIComponent(subject.id)}`}
+                    className="text-primary group-hover:text-primary/80 flex items-center gap-1 text-[11px] font-semibold transition-colors"
+                  >
+                    Practice <ArrowRight className="size-3" />
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
     </div>
   );
 }
