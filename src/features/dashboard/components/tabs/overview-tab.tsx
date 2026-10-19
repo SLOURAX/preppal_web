@@ -11,6 +11,7 @@ import {
   Newspaper,
   Crown,
   Book,
+  Check,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -285,75 +286,105 @@ export function OverviewTab() {
         ))}
       </div>
 
-      <section className="surface-card overflow-hidden p-4 sm:p-6">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-3">
-              <span className="bg-primary/10 text-primary grid size-10 shrink-0 place-items-center rounded-xl">
-                <Book className="size-5" />
-              </span>
-              <div>
-                <p className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase">
-                  Your learning level
-                </p>
-                <h3 className="text-foreground text-base font-bold sm:text-lg">
-                  {levelProgress
-                    ? `Level ${levelProgress.current.number} · ${levelProgress.current.name}`
-                    : "Level 1 · Starter"}
-                </h3>
-              </div>
-            </div>
-            <div className="bg-surface-subtle mt-5 h-2 overflow-hidden rounded-full">
-              <div
-                className="from-primary to-primary-strong h-full rounded-full bg-gradient-to-r transition-[width]"
-                style={{ width: `${levelProgress?.progressPercent ?? 0}%` }}
-              />
-            </div>
-            <div className="text-muted-foreground mt-2 flex items-center justify-between gap-3 text-[11px]">
-              {/* <span className="font-semibold uppercase">
-                {(
-                  levelProgress?.lifetimeExperiencePoints ?? 0
-                ).toLocaleString()}{" "}
-                lifetime XP
-              </span> */}
-              <span className="font-semibold">
-                {levelProgress?.nextLevelXp === null
-                  ? "Maximum level reached"
-                  : `${(levelProgress?.xpToNext ?? 5_000).toLocaleString()} XP to next level`}
-              </span>
+      <section className="surface-card relative overflow-hidden p-4 sm:p-6">
+        <div
+          aria-hidden="true"
+          className="bg-primary/5 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
+        />
+        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="from-primary/15 to-primary/5 text-primary grid size-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br ring-1 ring-white/50 ring-inset">
+              <Book className="size-5" />
+            </span>
+            <div className="min-w-0">
+              <p className="text-muted-foreground text-[10px] font-bold tracking-[0.16em] uppercase">
+                Learning journey
+              </p>
+              <h3 className="text-foreground mt-0.5 truncate text-lg font-extrabold sm:text-xl">
+                Level {levelProgress?.current.number ?? 1}
+                <span className="text-muted-foreground font-semibold">
+                  {" "}
+                  · {levelProgress?.current.name ?? "Starter"}
+                </span>
+              </h3>
             </div>
           </div>
-          {/* <p className="text-muted-foreground max-w-sm text-xs leading-5 lg:pt-1">
-            Every 5,000 lifetime XP unlocks a new level, up to Level 5 at 20,000
-            XP. Converting spendable XP into Preppal Coins never lowers your
-            level.
-          </p> */}
+
+          <div className="bg-primary/8 text-primary flex w-fit items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold">
+            <Crown className="size-3.5" />
+            {levelProgress?.nextLevelXp === null
+              ? "Top level reached"
+              : `${Math.round(levelProgress?.progressPercent ?? 0)}% complete`}
+          </div>
         </div>
-        {levelsQuery.data ? (
-          <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-5">
-            {levelsQuery.data.map((level) => {
-              const active = levelProgress?.current.number === level.number;
-              return (
-                <div
-                  className={`rounded-2xl border p-3 ${
-                    active
-                      ? "border-primary/40 bg-primary/8"
-                      : "border-border/70 bg-surface-subtle/35"
-                  }`}
-                  key={level.number}
-                >
-                  <p className="text-primary text-[10px] font-black uppercase">
-                    Level {level.number}
-                  </p>
-                  <p className="text-foreground mt-1 truncate text-xs font-bold">
-                    {level.name}
-                  </p>
-                  <p className="text-muted-foreground mt-1 text-[10px]">
-                    {level.minXp.toLocaleString()} XP
-                  </p>
-                </div>
-              );
-            })}
+
+        <div className="relative mt-6">
+          <div className="bg-primary/8 ring-primary/10 h-3 overflow-hidden rounded-full p-0.5 ring-1 ring-inset">
+            <div
+              className="from-primary h-full rounded-full bg-gradient-to-r via-violet-500 to-fuchsia-500 shadow-[0_0_16px_color-mix(in_srgb,var(--primary)_35%,transparent)] transition-[width] duration-700"
+              style={{
+                width: `${Math.min(100, Math.max(0, levelProgress?.progressPercent ?? 0))}%`,
+              }}
+            />
+          </div>
+          <div className="mt-2.5 flex items-center justify-between gap-4 text-[11px] font-semibold">
+            <span className="text-foreground">
+              {(levelProgress?.lifetimeExperiencePoints ?? 0).toLocaleString()}{" "}
+              XP earned
+            </span>
+            <span className="text-muted-foreground text-right">
+              {levelProgress?.nextLevelXp === null
+                ? "Journey complete"
+                : `${(levelProgress?.xpToNext ?? 5_000).toLocaleString()} XP to Level ${(levelProgress?.current.number ?? 1) + 1}`}
+            </span>
+          </div>
+        </div>
+
+        {levelsQuery.data?.length ? (
+          <div className="mt-7 scrollbar-none overflow-x-auto pb-1">
+            <div className="grid min-w-[38rem] grid-cols-5">
+              {levelsQuery.data.map((level, index) => {
+                const currentLevel = levelProgress?.current.number ?? 1;
+                const active = currentLevel === level.number;
+                const completed = currentLevel > level.number;
+                return (
+                  <div
+                    className="relative flex min-w-0 flex-col items-center px-2 text-center"
+                    key={level.number}
+                  >
+                    {index < levelsQuery.data.length - 1 ? (
+                      <span
+                        aria-hidden="true"
+                        className={`absolute top-5 left-1/2 h-0.5 w-full ${
+                          completed ? "bg-primary" : "bg-border"
+                        }`}
+                      />
+                    ) : null}
+                    <span
+                      className={`relative z-10 grid size-10 place-items-center rounded-full border-2 text-xs font-black shadow-sm ${
+                        active
+                          ? "border-primary bg-primary text-primary-foreground ring-primary/10 ring-4"
+                          : completed
+                            ? "border-primary bg-surface text-primary"
+                            : "border-border bg-surface text-muted-foreground"
+                      }`}
+                    >
+                      {completed ? <Check className="size-4" /> : level.number}
+                    </span>
+                    <p
+                      className={`mt-3 truncate text-xs font-bold ${
+                        active ? "text-primary" : "text-foreground"
+                      }`}
+                    >
+                      {level.name}
+                    </p>
+                    <p className="text-muted-foreground mt-0.5 text-[10px]">
+                      {level.minXp.toLocaleString()} XP
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         ) : null}
       </section>

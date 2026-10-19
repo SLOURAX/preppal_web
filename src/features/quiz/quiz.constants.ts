@@ -3,6 +3,7 @@ export type QuizSetupStep =
   | "entry"
   | "exam-subject"
   | "exam-year"
+  | "exam-topics"
   | "subject-difficulty"
   | "subject-topics"
   | "quiz-mode";

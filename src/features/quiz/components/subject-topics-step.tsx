@@ -15,7 +15,9 @@ import { cn } from "@/lib/utils";
 import type { QuizDifficulty } from "../quiz.constants";
 
 interface SubjectTopicsStepProps {
-  readonly difficulty: QuizDifficulty;
+  readonly difficulty?: QuizDifficulty;
+  readonly optional?: boolean;
+  readonly backLabel?: string;
   readonly selectedTopics: readonly string[];
   readonly subjectLabel: string;
   readonly topics: readonly string[];
@@ -27,6 +29,8 @@ interface SubjectTopicsStepProps {
 
 export function SubjectTopicsStep({
   difficulty,
+  optional = false,
+  backLabel = "Back to difficulty",
   selectedTopics,
   subjectLabel,
   topics,
@@ -45,7 +49,7 @@ export function SubjectTopicsStep({
         onClick={onBack}
         type="button"
       >
-        <ArrowLeft className="size-4" /> Back to difficulty
+        <ArrowLeft className="size-4" /> {backLabel}
       </button>
 
       <div className="mt-5 flex items-start gap-3">
@@ -55,16 +59,19 @@ export function SubjectTopicsStep({
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <p className="text-primary text-xs font-semibold">{subjectLabel}</p>
-            <span className="bg-surface-subtle text-muted-foreground rounded-full px-2 py-1 text-[10px] font-semibold capitalize">
-              {difficulty}
-            </span>
+            {difficulty ? (
+              <span className="bg-surface-subtle text-muted-foreground rounded-full px-2 py-1 text-[10px] font-semibold capitalize">
+                {difficulty}
+              </span>
+            ) : null}
           </div>
           <h2 className="text-foreground mt-1 text-lg font-bold sm:text-xl">
-            Pick your topics
+            {optional ? "Choose topics (optional)" : "Pick your topics"}
           </h2>
           <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
-            Select one or more areas. Your practice set will focus on these
-            topics.
+            {optional
+              ? "Focus this exam practice on specific areas, or continue with every available topic."
+              : "Select one or more areas. Your practice set will focus on these topics."}
           </p>
         </div>
       </div>
@@ -178,11 +185,13 @@ export function SubjectTopicsStep({
         <p className="text-muted-foreground text-center text-xs sm:text-left">
           {selectedTopics.length > 0
             ? "Your topic choices are ready."
-            : "Select at least one topic for your practice set."}
+            : optional
+              ? "No topic selected — questions can come from any available topic."
+              : "Select at least one topic for your practice set."}
         </p>
         <Button
           className="gap-2"
-          disabled={selectedTopics.length === 0}
+          disabled={!optional && selectedTopics.length === 0}
           onClick={onContinue}
         >
           Choose mode <ChevronRight className="size-4" />

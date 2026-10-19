@@ -305,7 +305,7 @@ export function AccountTab() {
         </div>
       </section>
 
-      {/* Account */}
+      {/* Settings */}
       <div className="surface-card divide-border divide-y overflow-hidden rounded-3xl p-0 shadow-sm">
         <div className="px-5 py-4">
           <p className="text-muted-foreground text-xs font-bold tracking-widest uppercase">
@@ -380,11 +380,7 @@ export function AccountTab() {
             Change
           </button>
         </div>
-      </div>
-
-      {/* Study Goals */}
-      <div className="surface-card divide-border divide-y overflow-hidden rounded-3xl p-0 shadow-sm">
-        <div className="px-5 py-4">
+        <div className="bg-surface-subtle/35 px-5 py-4">
           <p className="text-muted-foreground text-xs font-bold tracking-widest uppercase">
             Study Goals
           </p>
@@ -440,11 +436,7 @@ export function AccountTab() {
             })}
           </div>
         </div>
-      </div>
-
-      {/* Appearance */}
-      <div className="surface-card divide-border divide-y overflow-hidden rounded-3xl p-0 shadow-sm">
-        <div className="px-5 py-4">
+        <div className="bg-surface-subtle/35 px-5 py-4">
           <p className="text-muted-foreground text-xs font-bold tracking-widest uppercase">
             Appearance
           </p>
@@ -465,11 +457,7 @@ export function AccountTab() {
           </div>
           <ThemeToggle />
         </div>
-      </div>
-
-      {/* Notifications */}
-      <div className="surface-card divide-border divide-y overflow-hidden rounded-3xl p-0 shadow-sm">
-        <div className="flex items-center gap-2 px-5 py-4">
+        <div className="bg-surface-subtle/35 flex items-center gap-2 px-5 py-4">
           <Bell className="text-muted-foreground size-4" />
           <p className="text-muted-foreground text-xs font-bold tracking-widest uppercase">
             Notifications

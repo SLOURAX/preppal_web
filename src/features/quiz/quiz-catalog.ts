@@ -30,7 +30,9 @@ export interface QuizCatalogExamSubject {
     readonly id: string;
     readonly examYear: { readonly id: string; readonly year: number };
     readonly questionCounts: QuizQuestionCounts;
+    readonly topics: readonly QuizCatalogTopic[];
   }[];
+  readonly topics: readonly QuizCatalogTopic[];
   readonly questionCounts: QuizQuestionCounts;
 }
 

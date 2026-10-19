@@ -13,6 +13,7 @@ interface QuizModeStepProps {
     subjectLabel?: string;
     yearLabel?: string;
     difficulty?: string;
+    topicsLabel?: string;
   };
   readonly onBack: () => void;
   readonly onSelectMode: (mode: QuizMode) => void;
@@ -59,6 +60,11 @@ export function QuizModeStep({
           {context.difficulty && (
             <span className="bg-surface text-foreground rounded-full border px-4 py-1 text-xs font-semibold capitalize">
               {context.difficulty}
+            </span>
+          )}
+          {context.topicsLabel && (
+            <span className="bg-surface text-foreground rounded-full border px-4 py-1 text-xs font-semibold">
+              {context.topicsLabel}
             </span>
           )}
         </div>

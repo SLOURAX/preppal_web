@@ -9,6 +9,7 @@ import {
   FileText,
   Lightbulb,
   ShieldCheck,
+  Tags,
   TriangleAlert,
   Zap,
 } from "lucide-react";
@@ -83,6 +84,7 @@ function QuizPreviewContent() {
   const subject = searchParams.get("subjectName") || "";
   const exam = searchParams.get("examName") || "";
   const year = searchParams.get("year") || "";
+  const topics = searchParams.get("topics") || "";
   const requestedCount = Number(
     searchParams.get("count") || defaultQuestionCount,
   );
@@ -147,6 +149,9 @@ function QuizPreviewContent() {
       : []),
     ...(difficulty
       ? [{ icon: ShieldCheck, label: "Difficulty", value: difficulty }]
+      : []),
+    ...(topics
+      ? [{ icon: Tags, label: "Topics", value: topics.split(",").join(", ") }]
       : []),
   ];
 

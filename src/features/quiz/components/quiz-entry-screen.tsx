@@ -55,6 +55,7 @@ const EXAM_SETUP_STEPS = [
   { label: "Exam", icon: GraduationCap },
   { label: "Subject", icon: BookOpenCheck },
   { label: "Year", icon: CalendarDays },
+  { label: "Topics", icon: ListChecks },
   { label: "Mode", icon: Gauge },
 ] as const;
 
@@ -125,7 +126,8 @@ export function QuizEntryScreen({
     if (quizPath === "exam") {
       if (setupStep === "exam-subject") activeStepIndex = 1;
       else if (setupStep === "exam-year") activeStepIndex = 2;
-      else if (setupStep === "quiz-mode") activeStepIndex = 3;
+      else if (setupStep === "exam-topics") activeStepIndex = 3;
+      else if (setupStep === "quiz-mode") activeStepIndex = 4;
     } else {
       if (setupStep === "subject-difficulty") activeStepIndex = 1;
       else if (setupStep === "subject-topics") activeStepIndex = 2;
@@ -152,7 +154,6 @@ export function QuizEntryScreen({
           ] > 0,
       ) ?? [])
     : [];
-  const subjectTopics = availableTopicRecords.map((topic) => topic.name);
   const selectedExamRecord = catalog?.exams.find(
     (exam) => exam.id === selectedExam,
   );
@@ -167,6 +168,13 @@ export function QuizEntryScreen({
   );
   const examYears =
     selectedExamSubjectRecord?.years.map((entry) => entry.examYear.year) ?? [];
+  const selectedExamYearRecord = selectedExamSubjectRecord?.years.find(
+    (entry) => entry.examYear.year === selectedYear,
+  );
+  const availableExamTopicRecords = selectedExamYearRecord?.topics ?? [];
+  const selectableTopicRecords =
+    quizPath === "exam" ? availableExamTopicRecords : availableTopicRecords;
+  const subjectTopics = selectableTopicRecords.map((topic) => topic.name);
 
   const updatePath = (path: QuizPath): void => {
     setQuizPath(path);
@@ -183,6 +191,7 @@ export function QuizEntryScreen({
       setSelectedExam(value);
       setSelectedExamSubject(null);
       setSelectedYear(null);
+      setSelectedTopics([]);
       setSelectedMode(null);
       return;
     }
@@ -238,7 +247,7 @@ export function QuizEntryScreen({
     if (selectedDifficulty) params.set("difficulty", selectedDifficulty);
     if (selectedTopics.length) {
       params.set("topics", selectedTopics.join(","));
-      const topicIds = availableTopicRecords
+      const topicIds = selectableTopicRecords
         .filter((topic) => selectedTopics.includes(topic.name))
         .map((topic) => topic.id);
       if (topicIds?.length) params.set("topicIds", topicIds.join(","));
@@ -416,10 +425,33 @@ export function QuizEntryScreen({
           <ExamYearStep
             examLabel={selectedChoice.label}
             onBack={() => setSetupStep("exam-subject")}
-            onSelectYear={setSelectedYear}
+            onSelectYear={(year) => {
+              setSelectedYear(year);
+              setSelectedTopics([]);
+            }}
             selectedYear={selectedYear}
-            onContinue={() => setSetupStep("quiz-mode")}
+            onContinue={() =>
+              setSetupStep(
+                availableExamTopicRecords.length > 0
+                  ? "exam-topics"
+                  : "quiz-mode",
+              )
+            }
             years={examYears}
+          />
+        ) : null}
+
+        {setupStep === "exam-topics" && selectedChoice && selectedYear ? (
+          <SubjectTopicsStep
+            backLabel="Back to year"
+            onBack={() => setSetupStep("exam-year")}
+            onContinue={() => setSetupStep("quiz-mode")}
+            onToggleAll={toggleAllTopics}
+            onToggleTopic={toggleTopic}
+            optional
+            selectedTopics={selectedTopics}
+            subjectLabel={selectedExamSubjectLabel ?? selectedChoice.label}
+            topics={subjectTopics}
           />
         ) : null}
 
@@ -472,10 +504,17 @@ export function QuizEntryScreen({
                   : selectedChoice?.label,
               yearLabel: selectedYear ? String(selectedYear) : undefined,
               difficulty: selectedDifficulty ?? undefined,
+              topicsLabel: selectedTopics.length
+                ? `${selectedTopics.length} topic${selectedTopics.length === 1 ? "" : "s"}`
+                : undefined,
             }}
             onBack={() =>
               quizPath === "exam"
-                ? setSetupStep("exam-year")
+                ? setSetupStep(
+                    availableExamTopicRecords.length > 0
+                      ? "exam-topics"
+                      : "exam-year",
+                  )
                 : setSetupStep(
                     availableTopicRecords.length > 0
                       ? "subject-topics"
