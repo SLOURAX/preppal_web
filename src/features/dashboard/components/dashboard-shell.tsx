@@ -5,12 +5,12 @@ import {
   BarChart3,
   BookOpen,
   ChevronDown,
-  Home,
   LayoutDashboard,
   LogOut,
   UserRound,
 } from "lucide-react";
 import { SaxFlashBulk } from "@meysam213/iconsax-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
@@ -148,10 +148,18 @@ export function DashboardShell() {
             <div className="flex items-center gap-3">
               <Link
                 href="/"
-                className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 rounded-lg p-1.5 text-xs font-medium transition-colors"
+                className="rounded-lg p-1 transition-opacity hover:opacity-80"
                 title="Back to homepage"
+                aria-label="Back to Preppal homepage"
               >
-                <Home className="size-5 sm:size-4" aria-hidden="true" />
+                <Image
+                  src="/assets/brand/preppal-mark.svg"
+                  alt=""
+                  width={32}
+                  height={32}
+                  className="size-8"
+                  priority
+                />
               </Link>
               <div className="bg-border hidden h-4 w-px sm:block" />
               <Link href="/dashboard" className="flex items-center gap-2">
@@ -173,7 +181,7 @@ export function DashboardShell() {
                 </span>
               </div>
 
-              <div className="hidden sm:block">
+              <div className="shrink-0">
                 <ThemeToggle />
               </div>
 
@@ -226,12 +234,6 @@ export function DashboardShell() {
                       <p className="text-muted-foreground text-[10px]">
                         Level {levelProgress?.current.number ?? 1} · {userPlan}
                       </p>
-                    </div>
-                    <div className="border-border flex items-center justify-between border-b px-3 py-2">
-                      <span className="text-muted-foreground text-xs font-semibold">
-                        Theme
-                      </span>
-                      <ThemeToggle />
                     </div>
                     <button
                       type="button"
