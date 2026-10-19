@@ -5,7 +5,6 @@ import {
   Check,
   Crown,
   Gem,
-  Minus,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -225,46 +224,37 @@ export function PricingCard({ plan }: PricingCardProps) {
         />
 
         <ul className="space-y-2.5">
-          {plan.features.map((feature) => (
-            <li className="flex items-start gap-2.5" key={feature.label}>
-              <span
-                className={cn(
-                  "mt-0.5 grid size-[1.125rem] shrink-0 place-items-center rounded-full",
-                  feature.included
-                    ? plan.featured
-                      ? "bg-white/15 text-white"
-                      : "bg-success/10 text-success"
-                    : "bg-surface-subtle text-muted-foreground",
-                )}
-              >
-                {feature.included ? (
-                  <Check className="size-2.5" />
-                ) : (
-                  <Minus className="size-2.5" />
-                )}
-              </span>
-              <div>
-                <p
+          {plan.features
+            .filter((feature) => feature.included)
+            .map((feature) => (
+              <li className="flex items-start gap-2.5" key={feature.label}>
+                <span
                   className={cn(
-                    "text-xs font-medium",
-                    !feature.included && "text-muted-foreground",
+                    "mt-0.5 grid size-[1.125rem] shrink-0 place-items-center rounded-full",
+                    plan.featured
+                      ? "bg-white/15 text-white"
+                      : "bg-success/10 text-success",
                   )}
                 >
-                  {feature.label}
-                </p>
-                {feature.detail ? (
-                  <p
-                    className={cn(
-                      "mt-0.5 text-[10px]",
-                      plan.featured ? "text-white/55" : "text-muted-foreground",
-                    )}
-                  >
-                    {feature.detail}
-                  </p>
-                ) : null}
-              </div>
-            </li>
-          ))}
+                  <Check className="size-2.5" />
+                </span>
+                <div>
+                  <p className="text-xs font-medium">{feature.label}</p>
+                  {feature.detail ? (
+                    <p
+                      className={cn(
+                        "mt-0.5 text-[10px]",
+                        plan.featured
+                          ? "text-white/55"
+                          : "text-muted-foreground",
+                      )}
+                    >
+                      {feature.detail}
+                    </p>
+                  ) : null}
+                </div>
+              </li>
+            ))}
         </ul>
       </div>
       {paidPlanId ? (

@@ -45,8 +45,6 @@ export const PRICING_PLANS: readonly PricingPlan[] = [
       },
       { label: "30-day progress overview", included: true },
       { label: "Standard 1× quiz XP", included: true },
-      { label: "Ad-free learning", included: false },
-      { label: "Advanced analytics", included: false },
     ],
   },
   {

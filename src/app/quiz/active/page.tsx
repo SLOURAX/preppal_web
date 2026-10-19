@@ -20,6 +20,10 @@ import { QuickCalculator } from "@/features/quiz/components/active/quick-calcula
 import { ConfirmationModal, LoadingModal, useFeedback } from "@/components/ui";
 import type { QuestionStatus } from "@/features/quiz/components/active/types";
 import type { QuizQuestion } from "@/features/quiz/mock-questions";
+import {
+  hasCompletedQuiz,
+  markQuizCompleted,
+} from "@/features/quiz/quiz-session-navigation";
 import { useAuthStore } from "@/store";
 import { apiClient } from "@/lib/api/client";
 
@@ -153,6 +157,22 @@ function ActiveQuizContent() {
   const examName = searchParams.get("examName") ?? "";
   const subjectName = searchParams.get("subjectName") ?? "";
   const year = searchParams.get("year") ?? "";
+  const [activeAccessChecked, setActiveAccessChecked] = useState(false);
+
+  useEffect(() => {
+    const protectCompletedQuiz = () => {
+      if (hasCompletedQuiz()) {
+        router.replace("/quiz/results");
+        return;
+      }
+      setActiveAccessChecked(true);
+    };
+
+    protectCompletedQuiz();
+    window.addEventListener("pageshow", protectCompletedQuiz);
+    return () => window.removeEventListener("pageshow", protectCompletedQuiz);
+  }, [router]);
+
   const questionQuery = useQuery({
     queryKey: [
       "quiz",
@@ -165,6 +185,7 @@ function ActiveQuizContent() {
       questionCount,
     ],
     enabled:
+      activeAccessChecked &&
       Boolean(selectedSubjectId) &&
       (path === "STANDALONE" || Boolean(yearLink)),
     queryFn: async () => {
@@ -459,7 +480,7 @@ function ActiveQuizContent() {
       void submitQuiz();
       return;
     }
-    router.push(`/quiz/preview?${searchParams.toString()}`);
+    router.replace(`/quiz/preview?${searchParams.toString()}`);
   };
 
   const submitQuiz = async (): Promise<void> => {
@@ -504,7 +525,8 @@ function ActiveQuizContent() {
 
     if (!isAuthenticated) {
       recordQuizAttempt(attempt);
-      router.push("/quiz/results");
+      markQuizCompleted();
+      router.replace("/quiz/results");
       return;
     }
 
@@ -548,7 +570,8 @@ function ActiveQuizContent() {
           message: `You earned ${result.xpAwarded.toLocaleString()} XP for completing this quiz. Keep practising to earn more.`,
         });
       }
-      router.push("/quiz/results");
+      markQuizCompleted();
+      router.replace("/quiz/results");
     } catch (error) {
       showFeedback({
         kind: "error",
@@ -563,7 +586,7 @@ function ActiveQuizContent() {
     }
   };
 
-  if (questionQuery.isLoading) {
+  if (!activeAccessChecked || questionQuery.isLoading) {
     return (
       <div className="bg-background min-h-screen">
         <LoadingModal

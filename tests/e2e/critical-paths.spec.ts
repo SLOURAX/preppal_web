@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 
-async function authenticateWithNoAttempts(page: import("@playwright/test").Page) {
+async function authenticateWithNoAttempts(
+  page: import("@playwright/test").Page,
+) {
   await page.route("**/api/v1/auth/me", (route) =>
     route.fulfill({
       json: {
@@ -24,7 +26,10 @@ async function authenticateWithNoAttempts(page: import("@playwright/test").Page)
     }),
   );
   await page.route("**/api/v1/payments/membership", (route) =>
-    route.fulfill({ status: 500, json: { message: "Not needed in this test" } }),
+    route.fulfill({
+      status: 500,
+      json: { message: "Not needed in this test" },
+    }),
   );
   await page.route("**/api/v1/learning/quiz-sessions", (route) =>
     route.fulfill({ json: [] }),
@@ -90,4 +95,19 @@ test("review never invents questions", async ({ page }) => {
   await page.goto("/quiz/review");
   await expect(page.getByText("No question review available")).toBeVisible();
   await expect(page.getByText("Angles in a straight line")).toHaveCount(0);
+});
+
+test("a completed quiz cannot be reopened from browser history", async ({
+  page,
+}) => {
+  await authenticateWithNoAttempts(page);
+  await page.addInitScript(() => {
+    window.sessionStorage.setItem("preppal.quiz.completed", "true");
+  });
+
+  await page.goto(
+    "/quiz/active?path=subject&subject=mathematics&subjectName=Mathematics",
+  );
+
+  await expect(page).toHaveURL(/\/quiz\/results$/);
 });

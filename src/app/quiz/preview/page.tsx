@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui";
 import { useAuthStore } from "@/store";
 import { apiClient } from "@/lib/api/client";
+import { clearCompletedQuiz } from "@/features/quiz/quiz-session-navigation";
 
 interface QuestionAvailability {
   readonly total: number;
@@ -30,8 +31,7 @@ function QuizPreviewContent() {
   const searchParams = useSearchParams();
   const settingsQuery = useQuery({
     queryKey: ["platform", "settings"],
-    queryFn: () =>
-      apiClient<PlatformSettings>("/api/v1/platform/settings"),
+    queryFn: () => apiClient<PlatformSettings>("/api/v1/platform/settings"),
     staleTime: 5 * 60 * 1000,
   });
   const defaultQuestionCount = settingsQuery.data?.defaultQuestionCount ?? 20;
@@ -133,7 +133,13 @@ function QuizPreviewContent() {
         ]
       : []),
     ...(mode === "timed"
-      ? [{ icon: Clock3, label: "Time Limit", value: `${quizDurationMinutes} mins` }]
+      ? [
+          {
+            icon: Clock3,
+            label: "Time Limit",
+            value: `${quizDurationMinutes} mins`,
+          },
+        ]
       : []),
     ...(year ? [{ icon: BookOpen, label: "Year", value: year }] : []),
     ...(subject
@@ -310,7 +316,8 @@ function QuizPreviewContent() {
               );
               if (!isUntimed)
                 params.set("durationMinutes", String(quizDurationMinutes));
-              router.push(`/quiz/active?${params.toString()}`);
+              clearCompletedQuiz();
+              router.replace(`/quiz/active?${params.toString()}`);
             }}
             className="min-w-0 flex-1 gap-2 rounded-xl px-3 text-xs font-semibold sm:flex-none sm:px-8 sm:text-sm"
           >
