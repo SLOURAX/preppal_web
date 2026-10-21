@@ -355,13 +355,13 @@ export function OverviewTab() {
                     {index < levelsQuery.data.length - 1 ? (
                       <span
                         aria-hidden="true"
-                        className={`absolute top-5 left-1/2 h-0.5 w-full ${
+                        className={`absolute top-5 left-1/2 h-px w-full ${
                           completed ? "bg-primary" : "bg-border"
                         }`}
                       />
                     ) : null}
                     <span
-                      className={`relative z-10 grid size-10 place-items-center rounded-full border-2 text-xs font-black shadow-sm ${
+                      className={`relative z-10 grid size-10 place-items-center rounded-full border-1 text-xs font-black ${
                         active
                           ? "border-primary bg-primary text-primary-foreground ring-primary/10 ring-4"
                           : completed
@@ -388,7 +388,7 @@ export function OverviewTab() {
           </div>
         ) : null}
         {/* Links back to the main Preppal experience */}
-        <div className="border-border bg-surface-subtle/25 -mx-4 mt-6 -mb-4 border-t px-4 pt-5 pb-4 sm:-mx-6 sm:-mb-6 sm:px-6 sm:pt-6 sm:pb-6">
+        <div className="-mx-4 mt-6 -mb-4 border-t px-4 pt-5 pb-4 sm:-mx-6 sm:-mb-6 sm:px-6 sm:pt-6 sm:pb-6">
           <div className="flex items-end justify-between gap-4">
             <div>
               <h3 className="text-foreground mt-1 text-base font-bold sm:text-lg">
@@ -419,7 +419,7 @@ export function OverviewTab() {
                 glow,
               }) => (
                 <Link
-                  className="border-border/70 bg-surface hover:border-primary/25 group relative min-w-0 overflow-hidden rounded-2xl border p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                  className="border-border/70 bg-surface hover:border-primary/25 group hover:-translate-y-0.2 relative min-w-0 overflow-hidden rounded-2xl border p-4 transition-all duration-200"
                   href={href}
                   key={title}
                 >

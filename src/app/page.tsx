@@ -103,7 +103,7 @@ export default function HomePage() {
   return (
     <AppShell>
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-16 px-3 py-10 sm:px-5 lg:gap-20 lg:py-14">
-        <section className="grid items-center gap-12 lg:grid-cols-2">
+        <section className="grid items-start gap-12 lg:grid-cols-2">
           <div className="flex flex-col gap-6">
             <h1 className="text-foreground text-4xl leading-[1.3] font-extrabold tracking-[-0.04em] sm:text-4xl lg:text-[3.2rem]">
               Prep smarter with AI. <br />{" "}

@@ -195,11 +195,11 @@ export function AccountTab() {
   return (
     <div className="mx-auto max-w-2xl space-y-6 pb-20 md:pb-0">
       {/* Profile card */}
-      <div className="surface-card flex items-center gap-5 rounded-3xl p-6 shadow-sm">
+      <div className="surface-card flex items-center gap-5 rounded-3xl p-6">
         <div className="bg-primary text-primary-foreground relative grid size-14 shrink-0 place-items-center rounded-2xl text-xl font-black shadow-md sm:size-20 sm:text-2xl">
           {userName.slice(0, 1).toUpperCase()}
           <button
-            className="bg-surface hover:bg-surface-subtle absolute -right-2 -bottom-2 grid size-7 place-items-center rounded-full border shadow-sm transition-colors"
+            className="bg-surface hover:bg-surface-subtle absolute -right-2 -bottom-2 grid size-7 place-items-center rounded-full border transition-colors"
             onClick={() => {
               setDraftName(userName);
               setEditingName(true);
@@ -231,7 +231,7 @@ export function AccountTab() {
             </span>
             {!membership?.isPremium ? (
               <Link
-                className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-amber-300/70 bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 px-3.5 py-1.5 text-xs font-extrabold text-amber-950 shadow-sm shadow-amber-500/20 transition-all hover:-translate-y-0.5 hover:shadow-md hover:shadow-amber-500/25 focus-visible:ring-2 focus-visible:ring-amber-400/40 focus-visible:outline-none"
+                className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-amber-300/70 bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 px-3.5 py-1.5 text-xs font-extrabold text-amber-950 shadow-amber-500/20 transition-all hover:-translate-y-0.5 hover:shadow-md hover:shadow-amber-500/25 focus-visible:ring-2 focus-visible:ring-amber-400/40 focus-visible:outline-none"
                 href="/pricing"
               >
                 <Crown className="size-3.5" aria-hidden="true" />
@@ -256,7 +256,7 @@ export function AccountTab() {
       </div>
 
       {/* Membership */}
-      <section className="surface-card relative overflow-hidden rounded-3xl p-5 shadow-sm sm:p-6">
+      <section className="surface-card relative overflow-hidden rounded-3xl p-5 sm:p-6">
         <div className="bg-primary/8 pointer-events-none absolute -top-16 -right-12 size-40 rounded-full blur-3xl" />
         <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3.5">
@@ -306,7 +306,7 @@ export function AccountTab() {
       </section>
 
       {/* Settings */}
-      <div className="surface-card divide-border divide-y overflow-hidden rounded-3xl p-0 shadow-sm">
+      <div className="surface-card divide-border divide-y overflow-hidden rounded-3xl p-0">
         <div className="px-5 py-4">
           <p className="text-muted-foreground text-xs font-bold tracking-widest uppercase">
             Account
@@ -423,7 +423,7 @@ export function AccountTab() {
                   }
                   className={`flex flex-col items-center justify-center rounded-full px-4 py-1.5 transition-all ${
                     isSelected
-                      ? "bg-surface text-primary shadow-sm"
+                      ? "bg-surface text-primary"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -517,7 +517,7 @@ export function AccountTab() {
               type="button"
             >
               <span
-                className={`absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow-sm transition-transform ${
+                className={`absolute top-0.5 left-0.5 size-5 rounded-full bg-white transition-transform ${
                   (notificationPreferencesQuery.data?.[pref.key] ?? true)
                     ? "translate-x-5"
                     : "translate-x-0"
@@ -529,7 +529,7 @@ export function AccountTab() {
       </div>
 
       {/* Danger zone */}
-      <div className="surface-card divide-border divide-y overflow-hidden rounded-3xl border-rose-500/20 p-0 shadow-sm">
+      <div className="surface-card divide-border divide-y overflow-hidden rounded-3xl border-rose-500/20 p-0">
         <div className="flex items-center gap-2 px-5 py-4">
           <Shield className="size-4 text-rose-500" />
           <p className="text-xs font-bold tracking-widest text-rose-500 uppercase">
@@ -546,7 +546,7 @@ export function AccountTab() {
             </p>
           </div>
           <button
-            className="flex items-center gap-2 rounded-2xl bg-rose-500/10 px-5 py-2 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-500/20 disabled:opacity-60"
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-rose-500/10 px-5 py-2 text-xs font-medium whitespace-nowrap text-rose-600 transition-colors hover:bg-rose-500/20 disabled:opacity-60"
             disabled={isRevokingSessions}
             onClick={signOutEverywhere}
             type="button"
@@ -564,7 +564,7 @@ export function AccountTab() {
           </div>
           <button
             onClick={openSignOutModal}
-            className="flex items-center gap-2 rounded-2xl bg-rose-500/10 px-5 py-2 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-500/20"
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-rose-500/10 px-5 py-2 text-xs font-medium whitespace-nowrap text-rose-600 transition-colors hover:bg-rose-500/20"
           >
             <LogOut className="size-3.5" />
             Sign out
@@ -580,7 +580,7 @@ export function AccountTab() {
             </p>
           </div>
           <button
-            className="flex items-center gap-2 rounded-2xl bg-rose-500/10 px-5 py-2 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-500/20"
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-rose-500/10 px-5 py-2 text-xs font-medium whitespace-nowrap text-rose-600 transition-colors hover:bg-rose-500/20"
             onClick={() => setShowDeleteConfirmation(true)}
             type="button"
           >

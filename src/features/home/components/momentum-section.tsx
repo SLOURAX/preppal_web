@@ -210,7 +210,7 @@ export function MomentumSection() {
               key={label}
             >
               <span
-                className={`grid size-11 shrink-0 place-items-center rounded-2xl ${color}`}
+                className={`grid size-11 shrink-0 place-items-center rounded-xl ${color}`}
               >
                 <Icon className="size-5" />
               </span>

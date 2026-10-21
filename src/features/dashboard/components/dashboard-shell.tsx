@@ -131,19 +131,9 @@ export function DashboardShell() {
   };
 
   return (
-    <div className="bg-background relative isolate flex min-h-dvh flex-col overflow-hidden">
-      <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-45"
-        aria-hidden="true"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle, color-mix(in srgb, var(--star) 65%, transparent) 0 1px, transparent 1.5px), radial-gradient(circle, color-mix(in srgb, var(--star) 55%, transparent) 0 1px, transparent 1.5px), radial-gradient(circle at 88% 10%, color-mix(in srgb, var(--primary) 5%, transparent), transparent 28rem), repeating-linear-gradient(135deg, color-mix(in srgb, var(--stripe) 48%, transparent) 0, color-mix(in srgb, var(--stripe) 48%, transparent) 1px, transparent 1px, transparent 15px)",
-          backgroundPosition: "8px 10px, 34px 40px, 0 0, 0 0",
-          backgroundSize: "52px 52px, 68px 68px, 100% 100%, auto",
-        }}
-      />
+    <div className="dashboard-canvas relative isolate flex min-h-dvh flex-col overflow-hidden">
       <div className="relative z-10 flex min-h-dvh flex-col">
-        <header className="bg-surface/95 border-border sticky top-0 z-40 border-b backdrop-blur-xl">
+        <header className="border-border dark:bg-surface/95 sticky top-0 z-40 border-b bg-white/95 backdrop-blur-xl">
           <div className="mx-auto flex h-14 w-full items-center justify-between gap-4 px-4 sm:px-6">
             <div className="flex items-center gap-3">
               <Link
@@ -252,7 +242,7 @@ export function DashboardShell() {
             </div>
           </div>
 
-          <div className="bg-surface-subtle/50 border-border hidden border-t md:block">
+          <div className="border-border dark:bg-surface-subtle/50 hidden border-t bg-[#fdfdfd] md:block">
             <nav className="mx-auto w-full overflow-x-auto px-4 sm:px-6">
               <div className="flex min-w-max justify-center gap-0.5 py-3">
                 {TABS.map(({ id, label, icon: Icon }) => {
@@ -285,7 +275,7 @@ export function DashboardShell() {
 
         <nav
           aria-label="Dashboard navigation"
-          className="border-border bg-surface/95 text-muted-foreground fixed right-0 bottom-0 left-0 z-50 border-t px-2 pt-1.5 pb-[calc(env(safe-area-inset-bottom)+0.45rem)] shadow-[0_-8px_24px_rgb(39_24_93/0.08)] backdrop-blur-xl md:hidden"
+          className="border-border text-muted-foreground dark:bg-surface/95 fixed right-0 bottom-0 left-0 z-50 border-t bg-white/95 px-2 pt-1.5 pb-[calc(env(safe-area-inset-bottom)+0.45rem)] shadow-[0_-8px_24px_rgb(39_24_93/0.08)] backdrop-blur-xl md:hidden"
         >
           <div className="mx-auto grid max-w-lg grid-cols-5 gap-1">
             {TABS.map(({ id, label, icon: Icon }) => {

@@ -130,10 +130,10 @@ export function PricingPage() {
         ))}
       </section>
 
-      <section className="border-border/70 bg-surface-subtle mt-6 rounded-2xl border p-4">
+      <section className="mt-24 p-4 border rounded-2xl">
         <div className="flex items-start gap-3">
           <ShieldCheck className="text-primary mt-0.5 size-4 shrink-0" />
-          <ul className="text-muted-foreground space-y-1.5 text-[11px] leading-5">
+          <ul className="text-muted-foreground space-y-1.5 text-[12px] leading-5">
             {PRICING_CAVEATS.map((caveat) => (
               <li key={caveat}>{caveat}</li>
             ))}

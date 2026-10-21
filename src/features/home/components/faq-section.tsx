@@ -80,7 +80,7 @@ export function FaqSection() {
                   onClick={() => setOpenIndex(isOpen ? null : index)}
                   type="button"
                 >
-                  <span className="text-foreground group-hover:text-primary text-sm leading-snug font-bold transition-colors sm:text-base">
+                  <span className="text-foreground group-hover:text-primary text-[.9rem] leading-snug font-semibold transition-colors">
                     {faq.question}
                   </span>
                   <span

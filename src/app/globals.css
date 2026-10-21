@@ -58,7 +58,7 @@
 
 :root {
   color-scheme: light;
-  --background: #f8f7ff;
+  --background: #fcfcfd;
   --foreground: #111827;
   --surface: #ffffff;
   --surface-subtle: #f2efff;
@@ -70,9 +70,9 @@
   --success: #11865b;
   --danger: #d92d20;
   --shadow: 0 20px 55px rgb(58 34 140 / 0.1);
-  --stripe: rgb(92 53 245 / 0.055);
-  --star: rgb(92 53 245 / 0.16);
-  --page-wash: rgb(255 255 255 / 0.72);
+  --stripe: rgb(92 53 245 / 0.025);
+  --star: rgb(92 53 245 / 0.09);
+  --page-wash: rgb(255 255 255 / 0.88);
 }
 
 .dark .whatsapp-community {
@@ -183,6 +183,15 @@ body {
     auto;
   background-attachment: fixed;
   color: var(--foreground);
+}
+
+.dashboard-canvas {
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
+.dark .dashboard-canvas {
+  background-color: var(--background) !important;
 }
 
 @media (max-width: 767px) {

@@ -94,12 +94,12 @@ export function ReferralSection() {
 
           {isAuthenticated ? (
             <div className="mt-7">
-              <div className="bg-surface-subtle flex min-w-0 items-center justify-between gap-3 rounded-2xl p-2 pl-4">
+              <div className="bg-surface flex min-w-0 items-center justify-between gap-3 rounded-2xl p-2 pl-4">
                 <div className="min-w-0">
-                  <p className="text-muted-foreground text-[11px]">
+                  <p className="text-muted-foreground text-[13px] font-bold">
                     Your invite link
                   </p>
-                  <p className="text-foreground truncate text-[.8rem] font-semibold">
+                  <p className="text-foreground truncate text-[.8rem] font-medium">
                     {referralQuery.isLoading
                       ? "Loading your invite link…"
                       : referralUrl}
@@ -138,7 +138,7 @@ export function ReferralSection() {
           )}
         </div>
 
-        <div className="from-primary/15 via-primary/5 to-surface relative flex min-w-0 flex-col justify-center overflow-hidden bg-gradient-to-br p-4 sm:p-8 lg:p-10">
+        <div className="from-primary/15 via-primary/5 to-surface relative flex min-w-0 flex-col justify-start overflow-hidden bg-gradient-to-br p-4 sm:p-8 lg:p-10">
           <div className="bg-grid-pattern pointer-events-none absolute inset-0 opacity-60" />
           <div className="relative z-10 flex min-w-0 flex-col items-start gap-3 sm:gap-4">
             <span className="bg-primary text-primary-foreground relative z-10 grid size-14 shrink-0 place-items-center rounded-2xl shadow-[0_10px_28px_rgba(124,58,237,0.24)] sm:size-16">

@@ -78,10 +78,10 @@ const MASCOT_BY_VARIANT = {
 export function TrustSection() {
   return (
     <section className="overflow-hidden px-4 py-10 sm:px-8 sm:py-14">
-      <div className="grid items-center gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:gap-14">
+      <div className="grid items-start gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:gap-14">
         {/* Left column: headline & mission statement */}
         <div className="flex flex-col items-start">
-          <h2 className="text-foreground mt-4 text-3xl font-black tracking-[-0.035em] sm:text-4xl lg:text-[2.65rem] lg:leading-[1.15]">
+          <h2 className="text-foreground text-[2rem] font-black tracking-[-0.035em] lg:leading-[1.15]">
             Built for the progress that matters most.
           </h2>
           <p className="text-muted-foreground leading- mt-4 max-w-lg text-[.85rem]">
@@ -108,7 +108,6 @@ export function TrustSection() {
         {/* Right column: 3 interactive frosted pillar cards */}
         <div className="flex flex-col gap-3.5 sm:gap-4">
           {TRUST_POINTS.map((point) => {
-            const Icon = point.icon;
             const mascotSrc = MASCOT_BY_VARIANT[point.variant];
             return (
               <article
@@ -130,37 +129,26 @@ export function TrustSection() {
                   <span className="absolute inset-4 rounded-full border border-current opacity-25" />
                 </div>
 
-                {/* Mascot visual avatar frame */}
-                <div className="relative z-10 shrink-0">
-                  <div
-                    className={`relative grid size-18 place-items-center rounded-2xl border sm:size-20 ${point.badgeBg}`}
-                  >
-                    <Image
-                      alt=""
-                      className={`relative z-10 size-16 object-contain transition-transform duration-300 group-hover:scale-110 sm:size-18 ${
-                        point.variant === "content"
-                          ? "hue-rotate-[8deg]"
-                          : point.variant === "practice"
-                            ? "hue-rotate-[55deg] saturate-150"
-                            : "hue-rotate-[-18deg] saturate-125"
-                      }`}
-                      height={76}
-                      loading="lazy"
-                      src={mascotSrc}
-                      width={76}
-                    />
-                  </div>
-                  {/* Mini floating category icon bubble */}
-                  <span
-                    className={`border-background absolute -right-1.5 -bottom-1.5 grid size-6 place-items-center rounded-full border-2 shadow-sm ${point.badgeBg}`}
-                  >
-                    <Icon className="size-3" />
-                  </span>
+                <div className="relative z-10 grid size-16 shrink-0 place-items-center rounded-2xl border border-slate-300/80 bg-transparent sm:size-18 dark:border-slate-600/70">
+                  <Image
+                    alt=""
+                    className={`size-14 object-contain transition-transform duration-300 group-hover:scale-105 sm:size-16 ${
+                      point.variant === "content"
+                        ? "hue-rotate-[8deg]"
+                        : point.variant === "practice"
+                          ? "hue-rotate-[55deg] saturate-150"
+                          : "hue-rotate-[-18deg] saturate-125"
+                    }`}
+                    height={64}
+                    loading="lazy"
+                    src={mascotSrc}
+                    width={64}
+                  />
                 </div>
 
                 {/* Card copy & badge */}
                 <div className="relative z-10 min-w-0 flex-1">
-                  <h3 className="text-foreground text-sm font-bold sm:text-base">
+                  <h3 className="text-foreground text-sm font-bold sm:text-[1rem]">
                     {point.title}
                   </h3>
                   <p className="text-muted-foreground mt-1 text-xs leading-5 sm:text-[.8rem]">
