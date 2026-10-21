@@ -19,7 +19,6 @@ const LOADING_QUESTION: AiPracticeQuestion = {
   id: "loading",
   subject: "Preppal AI",
   topic: null,
-  difficulty: "easy",
   question: "Preparing a fresh AI question…",
   options: [],
   expiresAt: "",
@@ -61,10 +60,11 @@ export function AiQuizSection() {
     setError(null);
     try {
       if (isAuthenticated) {
-        setQuestion(await generatePracticeQuestion({
-          subject: "Biology",
-          difficulty: "medium",
-        }));
+        setQuestion(
+          await generatePracticeQuestion({
+            subject: "Biology",
+          }),
+        );
         setPublicAnswer(null);
       } else {
         const generated = await generatePublicPracticeQuestion();
@@ -72,7 +72,6 @@ export function AiQuizSection() {
           id: "public",
           subject: "General knowledge",
           topic: null,
-          difficulty: "medium",
           question: generated.question,
           options: generated.options,
           expiresAt: generated.generatedAt,
@@ -146,7 +145,8 @@ export function AiQuizSection() {
   };
   const ask = async () => {
     const message = followUp.trim();
-    if (!message || question.id === "public" || question.id === "loading") return;
+    if (!message || question.id === "public" || question.id === "loading")
+      return;
     setBusy("ask");
     setError(null);
     try {

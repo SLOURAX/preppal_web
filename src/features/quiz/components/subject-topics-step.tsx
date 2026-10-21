@@ -12,10 +12,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
 
-import type { QuizDifficulty } from "../quiz.constants";
-
 interface SubjectTopicsStepProps {
-  readonly difficulty?: QuizDifficulty;
   readonly optional?: boolean;
   readonly backLabel?: string;
   readonly selectedTopics: readonly string[];
@@ -28,9 +25,8 @@ interface SubjectTopicsStepProps {
 }
 
 export function SubjectTopicsStep({
-  difficulty,
   optional = false,
-  backLabel = "Back to difficulty",
+  backLabel = "Back to class",
   selectedTopics,
   subjectLabel,
   topics,
@@ -57,14 +53,7 @@ export function SubjectTopicsStep({
           <BookOpenText className="size-5" />
         </span>
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <p className="text-primary text-xs font-semibold">{subjectLabel}</p>
-            {difficulty ? (
-              <span className="bg-surface-subtle text-muted-foreground rounded-full px-2 py-1 text-[10px] font-semibold capitalize">
-                {difficulty}
-              </span>
-            ) : null}
-          </div>
+          <p className="text-primary text-xs font-semibold">{subjectLabel}</p>
           <h2 className="text-foreground mt-1 text-lg font-bold sm:text-xl">
             {optional ? "Choose topics (optional)" : "Pick your topics"}
           </h2>

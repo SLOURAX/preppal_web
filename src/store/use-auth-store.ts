@@ -27,7 +27,8 @@ export interface QuizAttempt {
     examName?: string;
     subjectName?: string;
     yearLink?: string;
-    difficulty?: string;
+    classId?: string;
+    className?: string;
     topicIds?: string;
     topics?: string;
   };
@@ -276,10 +277,7 @@ export const useAuthStore = create<AuthState>()(
       convertExperienceToCoins: async (amount: number): Promise<boolean> => {
         const requestedXp = Math.floor(amount);
         const state = get();
-        if (
-          requestedXp <= 0 ||
-          requestedXp > state.experiencePoints
-        )
+        if (requestedXp <= 0 || requestedXp > state.experiencePoints)
           return false;
         try {
           const result = await apiClient<{

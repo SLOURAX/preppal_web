@@ -239,11 +239,11 @@ function ExamPerformance({ attempts }: { readonly attempts: QuizAttempt[] }) {
           !attempt.exam.toLowerCase().startsWith("standalone"),
       )
       .forEach((attempt) => {
-      const current = grouped.get(attempt.exam) ?? { correct: 0, total: 0 };
-      grouped.set(attempt.exam, {
-        correct: current.correct + attempt.correct,
-        total: current.total + attempt.total,
-      });
+        const current = grouped.get(attempt.exam) ?? { correct: 0, total: 0 };
+        grouped.set(attempt.exam, {
+          correct: current.correct + attempt.correct,
+          total: current.total + attempt.total,
+        });
       });
     return [...grouped.entries()].map(([exam, result]) => ({
       exam,
@@ -719,25 +719,6 @@ export function AnalyticsTab() {
               </div>
             </section>
           </div>
-
-          <section className="surface-card p-5 sm:p-6">
-            <div className="mb-4 flex items-start justify-between gap-3">
-              <div>
-                <h3 className="text-foreground font-semibold">
-                  Question difficulty
-                </h3>
-                <p className="text-muted-foreground text-xs">
-                  Review performance by difficulty as question tags become
-                  available.
-                </p>
-              </div>
-              <Crosshair className="text-muted-foreground size-5" />
-            </div>
-            <p className="text-muted-foreground bg-surface-subtle rounded-2xl p-4 text-xs">
-              Difficulty-level insights will populate from tagged questions in
-              your completed quizzes.
-            </p>
-          </section>
 
           <section className="surface-card from-primary/10 via-surface to-surface flex flex-col gap-4 bg-gradient-to-r p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
             <div className="flex items-start gap-3">

@@ -152,7 +152,6 @@ function ActiveQuizContent() {
   const path = searchParams.get("path") === "subject" ? "STANDALONE" : "EXAM";
   const selectedSubjectId = searchParams.get("subject") ?? "";
   const yearLink = searchParams.get("yearLink") ?? "";
-  const difficulty = searchParams.get("difficulty") ?? "";
   const topicIds = searchParams.get("topicIds") ?? "";
   const examName = searchParams.get("examName") ?? "";
   const subjectName = searchParams.get("subjectName") ?? "";
@@ -180,7 +179,6 @@ function ActiveQuizContent() {
       path,
       selectedSubjectId,
       yearLink,
-      difficulty,
       topicIds,
       questionCount,
     ],
@@ -196,7 +194,6 @@ function ActiveQuizContent() {
       if (path === "EXAM") params.set("examSubjectId", selectedSubjectId);
       else params.set("subjectId", selectedSubjectId);
       if (yearLink) params.set("examSubjectYearId", yearLink);
-      if (difficulty) params.set("difficulty", difficulty.toUpperCase());
       if (topicIds) params.set("topicIds", topicIds);
       const result = await apiClient<ApiQuizQuestion[]>(
         `/api/v1/question-bank/quiz-questions?${params}`,
@@ -516,7 +513,8 @@ function ActiveQuizContent() {
         examName: examName || undefined,
         subjectName: subjectName || undefined,
         yearLink: yearLink || undefined,
-        difficulty: difficulty || undefined,
+        classId: searchParams.get("class") || undefined,
+        className: searchParams.get("className") || undefined,
         topicIds: topicIds || undefined,
         topics: searchParams.get("topics") || undefined,
       },

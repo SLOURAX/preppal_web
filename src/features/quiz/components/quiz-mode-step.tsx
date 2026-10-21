@@ -12,7 +12,7 @@ interface QuizModeStepProps {
     examLabel?: string;
     subjectLabel?: string;
     yearLabel?: string;
-    difficulty?: string;
+    classLabel?: string;
     topicsLabel?: string;
   };
   readonly onBack: () => void;
@@ -57,9 +57,9 @@ export function QuizModeStep({
               {context.yearLabel}
             </span>
           )}
-          {context.difficulty && (
+          {context.classLabel && (
             <span className="bg-surface text-foreground rounded-full border px-4 py-1 text-xs font-semibold capitalize">
-              {context.difficulty}
+              {context.classLabel}
             </span>
           )}
           {context.topicsLabel && (

@@ -387,62 +387,69 @@ export function OverviewTab() {
             </div>
           </div>
         ) : null}
-      </section>
-
-      {/* Links back to the main Preppal experience */}
-      <section className="surface-card overflow-hidden p-4 sm:p-6">
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <h3 className="text-foreground mt-1 text-base font-bold sm:text-lg">
-              There is more waiting for you
-            </h3>
-            <p className="text-muted-foreground max-w-lg text-xs leading-relaxed">
-              Jump from your dashboard into rankings, games, rewards, and the
-              latest learning stories.
-            </p>
+        {/* Links back to the main Preppal experience */}
+        <div className="border-border bg-surface-subtle/25 -mx-4 mt-6 -mb-4 border-t px-4 pt-5 pb-4 sm:-mx-6 sm:-mb-6 sm:px-6 sm:pt-6 sm:pb-6">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <h3 className="text-foreground mt-1 text-base font-bold sm:text-lg">
+                There is more waiting for you
+              </h3>
+              <p className="text-muted-foreground max-w-lg text-xs leading-relaxed">
+                Jump from your dashboard into rankings, games, rewards, and the
+                latest learning stories.
+              </p>
+            </div>
+            <Mascot
+              alt="Preppal mascot inviting you to explore"
+              className="hidden shrink-0 sm:block"
+              mood="celebrate"
+              size="md"
+            />
           </div>
-          <Mascot
-            alt="Preppal mascot inviting you to explore"
-            className="hidden shrink-0 sm:block"
-            mood="celebrate"
-            size="md"
-          />
-        </div>
 
-        <div className="mt-5 grid grid-cols-[repeat(auto-fit,minmax(min(100%,19rem),1fr))] gap-3">
-          {EXPLORE_LINKS.map(
-            ({ title, description, href, action, icon: Icon, color, glow }) => (
-              <Link
-                className="border-border/70 bg-surface-subtle/35 hover:border-primary/25 hover:bg-surface group relative min-w-0 overflow-hidden rounded-2xl border p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
-                href={href}
-                key={title}
-              >
-                <span
-                  aria-hidden="true"
-                  className={`pointer-events-none absolute -top-8 -right-8 size-24 rounded-full blur-2xl ${glow}`}
-                />
-                <div className="relative flex items-start gap-3">
+          <div className="mt-5 grid grid-cols-[repeat(auto-fit,minmax(min(100%,19rem),1fr))] gap-3">
+            {EXPLORE_LINKS.map(
+              ({
+                title,
+                description,
+                href,
+                action,
+                icon: Icon,
+                color,
+                glow,
+              }) => (
+                <Link
+                  className="border-border/70 bg-surface hover:border-primary/25 group relative min-w-0 overflow-hidden rounded-2xl border p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                  href={href}
+                  key={title}
+                >
                   <span
-                    className={`grid size-10 shrink-0 place-items-center rounded-xl ${color}`}
-                  >
-                    <Icon className="size-5" />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-foreground text-sm font-bold">
-                      {title}
-                    </h4>
-                    <p className="text-muted-foreground text-[11px] leading-4">
-                      {description}
-                    </p>
-                    <span className="text-primary mt-3 inline-flex items-center gap-1 text-[11px] font-bold">
-                      {action}
-                      <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
+                    aria-hidden="true"
+                    className={`pointer-events-none absolute -top-8 -right-8 size-24 rounded-full blur-2xl ${glow}`}
+                  />
+                  <div className="relative flex items-start gap-3">
+                    <span
+                      className={`grid size-10 shrink-0 place-items-center rounded-xl ${color}`}
+                    >
+                      <Icon className="size-5" />
                     </span>
+                    <div className="min-w-0 flex-1">
+                      <h4 className="text-foreground text-sm font-bold">
+                        {title}
+                      </h4>
+                      <p className="text-muted-foreground text-[11px] leading-4">
+                        {description}
+                      </p>
+                      <span className="text-primary mt-3 inline-flex items-center gap-1 text-[11px] font-bold">
+                        {action}
+                        <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ),
-          )}
+                </Link>
+              ),
+            )}
+          </div>
         </div>
       </section>
 

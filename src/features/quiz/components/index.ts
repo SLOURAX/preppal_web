@@ -5,5 +5,5 @@ export { QuizEntryScreen } from "./quiz-entry-screen";
 export { QuizModeStep } from "./quiz-mode-step";
 export { QuizSelect } from "./quiz-select";
 export { QuizSetupProgress } from "./quiz-setup-progress";
-export { SubjectDifficultyStep } from "./subject-difficulty-step";
+export { SubjectClassStep } from "./subject-class-step";
 export { SubjectTopicsStep } from "./subject-topics-step";

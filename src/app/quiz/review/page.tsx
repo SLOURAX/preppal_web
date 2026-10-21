@@ -33,12 +33,16 @@ export default function QuizReviewPage() {
   const [showSimulationModal, setShowSimulationModal] = useState(false);
   const reviewQuestions = latestAttempt?.questions ?? [];
   const activeQuestion = reviewQuestions[activeIndex];
-  const number = activeQuestion ? String(activeQuestion.id).padStart(2, "0") : "";
+  const number = activeQuestion
+    ? String(activeQuestion.id).padStart(2, "0")
+    : "";
   const text = activeQuestion?.text ?? "";
   const options = activeQuestion?.options ?? [];
   const correct = activeQuestion?.correctAnswer ?? "";
   const explanation = activeQuestion?.explanation ?? "";
-  const selected = activeQuestion ? latestAttempt?.answers[activeQuestion.id] : undefined;
+  const selected = activeQuestion
+    ? latestAttempt?.answers[activeQuestion.id]
+    : undefined;
   const isCorrect = selected === correct;
   const submitFollowUp = (): void => {
     const question = followUp.trim();
@@ -64,7 +68,8 @@ export default function QuizReviewPage() {
     if (context?.subjectId) params.set("subject", context.subjectId);
     if (context?.subjectName) params.set("subjectName", context.subjectName);
     if (context?.yearLink) params.set("yearLink", context.yearLink);
-    if (context?.difficulty) params.set("difficulty", context.difficulty);
+    if (context?.classId) params.set("class", context.classId);
+    if (context?.className) params.set("className", context.className);
     if (context?.topicIds) params.set("topicIds", context.topicIds);
     if (context?.topics) params.set("topics", context.topics);
     if (latestAttempt.year) params.set("year", latestAttempt.year);
@@ -82,7 +87,11 @@ export default function QuizReviewPage() {
           title="No question review available"
           description="Complete a quiz with published questions to review your answers."
           action={
-            <button className="text-primary font-semibold" onClick={() => router.push("/quiz")} type="button">
+            <button
+              className="text-primary font-semibold"
+              onClick={() => router.push("/quiz")}
+              type="button"
+            >
               Start a quiz
             </button>
           }
@@ -357,7 +366,7 @@ export default function QuizReviewPage() {
         <ConfirmationModal
           cancelLabel="Cancel"
           confirmLabel="Continue"
-          description="A fresh set of questions will follow the same exam pattern, subject, and difficulty so you can practise the areas you just reviewed."
+          description="A fresh set of questions will follow the same exam or subject setup so you can practise the areas you just reviewed."
           onCancel={() => router.push("/quiz/results")}
           onConfirm={generateFreshSimulation}
           title="Ready for another simulation?"

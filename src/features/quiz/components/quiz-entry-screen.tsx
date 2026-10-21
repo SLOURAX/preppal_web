@@ -8,7 +8,6 @@ import {
   Check,
   GraduationCap,
   ListChecks,
-  SlidersHorizontal,
   Gauge,
 } from "lucide-react";
 import { type FormEvent, useState } from "react";
@@ -21,7 +20,6 @@ import { useAuthStore } from "@/store";
 import { apiClient } from "@/lib/api/client";
 
 import {
-  type QuizDifficulty,
   type QuizPath,
   type QuizSetupStep,
   type QuizMode,
@@ -33,7 +31,7 @@ import { QuizAuthGate } from "./quiz-auth-gate";
 import { QuizModeStep } from "./quiz-mode-step";
 import { QuizSelect } from "./quiz-select";
 import { QuizSetupProgress } from "./quiz-setup-progress";
-import { SubjectDifficultyStep } from "./subject-difficulty-step";
+import { SubjectClassStep } from "./subject-class-step";
 import { SubjectTopicsStep } from "./subject-topics-step";
 
 const QUIZ_PATHS = [
@@ -55,13 +53,12 @@ const EXAM_SETUP_STEPS = [
   { label: "Exam", icon: GraduationCap },
   { label: "Subject", icon: BookOpenCheck },
   { label: "Year", icon: CalendarDays },
-  { label: "Topics", icon: ListChecks },
   { label: "Mode", icon: Gauge },
 ] as const;
 
 const SUBJECT_SETUP_STEPS = [
   { label: "Subject", icon: BookOpenText },
-  { label: "Difficulty", icon: SlidersHorizontal },
+  { label: "Class", icon: GraduationCap },
   { label: "Topics", icon: ListChecks },
   { label: "Mode", icon: Gauge },
 ] as const;
@@ -89,8 +86,7 @@ export function QuizEntryScreen({
     initialPath === "subject" ? initialSelection : "",
   );
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
-  const [selectedDifficulty, setSelectedDifficulty] =
-    useState<QuizDifficulty | null>(null);
+  const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [selectedMode, setSelectedMode] = useState<QuizMode | null>(null);
   const [isAuthGateOpen, setIsAuthGateOpen] = useState<boolean>(false);
@@ -126,10 +122,9 @@ export function QuizEntryScreen({
     if (quizPath === "exam") {
       if (setupStep === "exam-subject") activeStepIndex = 1;
       else if (setupStep === "exam-year") activeStepIndex = 2;
-      else if (setupStep === "exam-topics") activeStepIndex = 3;
-      else if (setupStep === "quiz-mode") activeStepIndex = 4;
+      else if (setupStep === "quiz-mode") activeStepIndex = 3;
     } else {
-      if (setupStep === "subject-difficulty") activeStepIndex = 1;
+      if (setupStep === "subject-class") activeStepIndex = 1;
       else if (setupStep === "subject-topics") activeStepIndex = 2;
       else if (setupStep === "quiz-mode") activeStepIndex = 3;
     }
@@ -138,22 +133,16 @@ export function QuizEntryScreen({
   const selectedStandaloneSubject = catalog?.standaloneSubjects.find(
     (subject) => subject.id === selectedSubject,
   );
-  const availableDifficulties: QuizDifficulty[] = selectedStandaloneSubject
-    ? (["easy", "medium", "hard"] as const).filter(
-        (difficulty) =>
-          selectedStandaloneSubject.questionCounts[
-            difficulty.toUpperCase() as "EASY" | "MEDIUM" | "HARD"
-          ] > 0,
-      )
-    : [];
-  const availableTopicRecords = selectedDifficulty
-    ? (selectedStandaloneSubject?.topics.filter(
-        (topic) =>
-          topic.questionCounts[
-            selectedDifficulty.toUpperCase() as "EASY" | "MEDIUM" | "HARD"
-          ] > 0,
-      ) ?? [])
-    : [];
+  const subjectClasses =
+    selectedStandaloneSubject?.classes.map((entry) => ({
+      value: entry.id,
+      label: entry.name,
+      description: entry.description,
+    })) ?? [];
+  const selectedClassRecord = selectedStandaloneSubject?.classes.find(
+    (entry) => entry.id === selectedClass,
+  );
+  const availableTopicRecords = selectedClassRecord?.topics ?? [];
   const selectedExamRecord = catalog?.exams.find(
     (exam) => exam.id === selectedExam,
   );
@@ -168,19 +157,14 @@ export function QuizEntryScreen({
   );
   const examYears =
     selectedExamSubjectRecord?.years.map((entry) => entry.examYear.year) ?? [];
-  const selectedExamYearRecord = selectedExamSubjectRecord?.years.find(
-    (entry) => entry.examYear.year === selectedYear,
-  );
-  const availableExamTopicRecords = selectedExamYearRecord?.topics ?? [];
-  const selectableTopicRecords =
-    quizPath === "exam" ? availableExamTopicRecords : availableTopicRecords;
+  const selectableTopicRecords = availableTopicRecords;
   const subjectTopics = selectableTopicRecords.map((topic) => topic.name);
 
   const updatePath = (path: QuizPath): void => {
     setQuizPath(path);
     setSetupStep("entry");
     setSelectedYear(null);
-    setSelectedDifficulty(null);
+    setSelectedClass(null);
     setSelectedTopics([]);
     setSelectedExamSubject(null);
     setSelectedMode(null);
@@ -197,7 +181,7 @@ export function QuizEntryScreen({
     }
 
     setSelectedSubject(value);
-    setSelectedDifficulty(null);
+    setSelectedClass(null);
     setSelectedTopics([]);
     setSelectedMode(null);
   };
@@ -211,7 +195,7 @@ export function QuizEntryScreen({
       return;
     }
 
-    setSetupStep(quizPath === "exam" ? "exam-subject" : "subject-difficulty");
+    setSetupStep(quizPath === "exam" ? "exam-subject" : "subject-class");
   };
 
   const toggleTopic = (topic: string): void => {
@@ -244,7 +228,10 @@ export function QuizEntryScreen({
       (entry) => entry.examYear.year === selectedYear,
     );
     if (selectedYearLink) params.set("yearLink", selectedYearLink.id);
-    if (selectedDifficulty) params.set("difficulty", selectedDifficulty);
+    if (selectedClassRecord) {
+      params.set("class", selectedClassRecord.id);
+      params.set("className", selectedClassRecord.name);
+    }
     if (selectedTopics.length) {
       params.set("topics", selectedTopics.join(","));
       const topicIds = selectableTopicRecords
@@ -427,61 +414,31 @@ export function QuizEntryScreen({
             onBack={() => setSetupStep("exam-subject")}
             onSelectYear={(year) => {
               setSelectedYear(year);
-              setSelectedTopics([]);
             }}
             selectedYear={selectedYear}
-            onContinue={() =>
-              setSetupStep(
-                availableExamTopicRecords.length > 0
-                  ? "exam-topics"
-                  : "quiz-mode",
-              )
-            }
+            onContinue={() => setSetupStep("quiz-mode")}
             years={examYears}
           />
         ) : null}
 
-        {setupStep === "exam-topics" && selectedChoice && selectedYear ? (
-          <SubjectTopicsStep
-            backLabel="Back to year"
-            onBack={() => setSetupStep("exam-year")}
-            onContinue={() => setSetupStep("quiz-mode")}
-            onToggleAll={toggleAllTopics}
-            onToggleTopic={toggleTopic}
-            optional
-            selectedTopics={selectedTopics}
-            subjectLabel={selectedExamSubjectLabel ?? selectedChoice.label}
-            topics={subjectTopics}
-          />
-        ) : null}
-
-        {setupStep === "subject-difficulty" && selectedChoice ? (
-          <SubjectDifficultyStep
-            availableDifficulties={availableDifficulties}
-            hasTopics={availableTopicRecords.length > 0}
+        {setupStep === "subject-class" && selectedChoice ? (
+          <SubjectClassStep
+            classes={subjectClasses}
             onBack={() => setSetupStep("entry")}
-            onContinue={() =>
-              setSetupStep(
-                availableTopicRecords.length > 0
-                  ? "subject-topics"
-                  : "quiz-mode",
-              )
-            }
-            onSelectDifficulty={(difficulty) => {
-              setSelectedDifficulty(difficulty);
+            onContinue={() => setSetupStep("subject-topics")}
+            onSelectClass={(subjectClass) => {
+              setSelectedClass(subjectClass);
               setSelectedTopics([]);
             }}
-            selectedDifficulty={selectedDifficulty}
+            selectedClass={selectedClass}
             subjectLabel={selectedChoice.label}
           />
         ) : null}
 
-        {setupStep === "subject-topics" &&
-        selectedChoice &&
-        selectedDifficulty ? (
+        {setupStep === "subject-topics" && selectedChoice && selectedClass ? (
           <SubjectTopicsStep
-            difficulty={selectedDifficulty}
-            onBack={() => setSetupStep("subject-difficulty")}
+            backLabel="Back to class"
+            onBack={() => setSetupStep("subject-class")}
             onToggleAll={toggleAllTopics}
             onToggleTopic={toggleTopic}
             selectedTopics={selectedTopics}
@@ -503,23 +460,15 @@ export function QuizEntryScreen({
                   ? selectedExamSubjectLabel
                   : selectedChoice?.label,
               yearLabel: selectedYear ? String(selectedYear) : undefined,
-              difficulty: selectedDifficulty ?? undefined,
+              classLabel: selectedClassRecord?.name,
               topicsLabel: selectedTopics.length
                 ? `${selectedTopics.length} topic${selectedTopics.length === 1 ? "" : "s"}`
                 : undefined,
             }}
             onBack={() =>
               quizPath === "exam"
-                ? setSetupStep(
-                    availableExamTopicRecords.length > 0
-                      ? "exam-topics"
-                      : "exam-year",
-                  )
-                : setSetupStep(
-                    availableTopicRecords.length > 0
-                      ? "subject-topics"
-                      : "subject-difficulty",
-                  )
+                ? setSetupStep("exam-year")
+                : setSetupStep("subject-topics")
             }
             onSelectMode={setSelectedMode}
             onStart={handleStartPractice}

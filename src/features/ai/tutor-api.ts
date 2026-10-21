@@ -4,7 +4,6 @@ export interface AiPracticeQuestion {
   id: string;
   subject: string;
   topic: string | null;
-  difficulty: string;
   question: string;
   options: Array<{ id: "A" | "B" | "C" | "D"; label: string }>;
   expiresAt: string;
@@ -13,7 +12,6 @@ export interface AiPracticeQuestion {
 export function generatePracticeQuestion(input: {
   subject: string;
   topic?: string;
-  difficulty?: "easy" | "medium" | "hard";
 }) {
   return apiClient<AiPracticeQuestion>("/api/v1/ai/tutor/questions", {
     method: "POST",

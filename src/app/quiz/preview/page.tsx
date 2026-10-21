@@ -7,6 +7,7 @@ import {
   BookOpen,
   Clock3,
   FileText,
+  GraduationCap,
   Lightbulb,
   ShieldCheck,
   Tags,
@@ -20,7 +21,6 @@ import { clearCompletedQuiz } from "@/features/quiz/quiz-session-navigation";
 
 interface QuestionAvailability {
   readonly total: number;
-  readonly byDifficulty: Partial<Record<"EASY" | "MEDIUM" | "HARD", number>>;
 }
 interface PlatformSettings {
   readonly defaultQuestionCount: number;
@@ -47,7 +47,6 @@ function QuizPreviewContent() {
   const path = searchParams.get("path") === "subject" ? "STANDALONE" : "EXAM";
   const selectedSubjectId = searchParams.get("subject") ?? "";
   const yearLink = searchParams.get("yearLink") ?? "";
-  const difficulty = searchParams.get("difficulty") ?? "";
   const topicIds = searchParams.get("topicIds") ?? "";
   const availabilityQuery = useQuery({
     queryKey: [
@@ -56,7 +55,6 @@ function QuizPreviewContent() {
       path,
       selectedSubjectId,
       yearLink,
-      difficulty,
       topicIds,
     ],
     enabled:
@@ -67,7 +65,6 @@ function QuizPreviewContent() {
       if (path === "EXAM") params.set("examSubjectId", selectedSubjectId);
       else params.set("subjectId", selectedSubjectId);
       if (yearLink) params.set("examSubjectYearId", yearLink);
-      if (difficulty) params.set("difficulty", difficulty.toUpperCase());
       if (topicIds) params.set("topicIds", topicIds);
       return apiClient<QuestionAvailability>(
         `/api/v1/question-bank/availability?${params}`,
@@ -85,6 +82,7 @@ function QuizPreviewContent() {
   const exam = searchParams.get("examName") || "";
   const year = searchParams.get("year") || "";
   const topics = searchParams.get("topics") || "";
+  const className = searchParams.get("className") || "";
   const requestedCount = Number(
     searchParams.get("count") || defaultQuestionCount,
   );
@@ -147,8 +145,8 @@ function QuizPreviewContent() {
     ...(subject
       ? [{ icon: ShieldCheck, label: "Subject", value: subject }]
       : []),
-    ...(difficulty
-      ? [{ icon: ShieldCheck, label: "Difficulty", value: difficulty }]
+    ...(className
+      ? [{ icon: GraduationCap, label: "Class", value: className }]
       : []),
     ...(topics
       ? [{ icon: Tags, label: "Topics", value: topics.split(",").join(", ") }]
@@ -256,7 +254,7 @@ function QuizPreviewContent() {
               No published questions are available for this selection yet.
             </p>
             <p className="text-muted-foreground mt-1 text-xs leading-5">
-              Go back and choose another available subject, year, difficulty, or
+              Go back and choose another available subject, class, year, or
               topic. You will not be sent into an empty quiz.
             </p>
           </div>
